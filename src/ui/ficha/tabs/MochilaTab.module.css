@@ -1,5 +1,5 @@
 .cargaBox {
-  padding: 10px;
+  padding: var(--space-3);
 }
 
 .cargaRow {
@@ -12,22 +12,24 @@
 .weightBarOuter {
   height: 6px;
   background: var(--line-soft);
-  border-radius: 3px;
+  border-radius: var(--shape-full);
   overflow: hidden;
-  margin: 6px 0 2px;
+  margin: var(--space-2) 0 2px;
 }
 
 .weightBarInner {
   height: 100%;
   background: var(--good);
+  transition: width var(--motion-emphasized) var(--ease-standard);
 }
 
 .itemRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 4px;
+  padding: var(--space-3) var(--space-1);
   border-bottom: 1px dashed var(--line-soft);
+  min-height: var(--touch-target-min);
 }
 
 .itemName {

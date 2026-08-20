@@ -4,15 +4,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  padding: 16px 12px;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-3);
 }
 
 .art {
   width: min(220px, 55vw);
   height: min(220px, 55vw);
   border: 2px dashed var(--line);
-  border-radius: 14px;
+  border-radius: var(--shape-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +24,7 @@
   width: 160px;
   height: 4px;
   background: var(--line-soft);
-  border-radius: 2px;
+  border-radius: var(--shape-full);
   overflow: hidden;
 }
 

@@ -2,21 +2,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  margin-bottom: 16px;
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
   border-color: var(--accent);
 }
 
 .hpRow {
   display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .hpBox {
   flex: 1;
-  padding: 10px;
+  padding: var(--space-3);
   text-align: center;
+  min-height: var(--touch-target-min);
 }
 
 .hpNum {
@@ -27,23 +28,33 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 9px 4px;
+  padding: var(--space-2) var(--space-1);
   border-bottom: 1px dashed var(--line-soft);
   font-size: 12px;
+  min-height: var(--touch-target-min);
+  cursor: pointer;
+  transition: background var(--motion-standard) var(--ease-standard);
+}
+
+.skillRow:active {
+  background: var(--panel2);
 }
 
 .actionGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .actionBtn {
-  padding: 16px 8px;
+  padding: var(--space-4) var(--space-2);
   text-align: center;
   cursor: pointer;
-  min-height: 48px;
+  min-height: var(--touch-target-min);
+  transition:
+    background var(--motion-standard) var(--ease-standard),
+    border-color var(--motion-standard) var(--ease-standard);
 }
 
 .actionBtn:active {
@@ -64,5 +75,5 @@
 .restStatus {
   font-size: 10px;
   color: var(--accent);
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }

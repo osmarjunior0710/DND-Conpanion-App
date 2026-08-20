@@ -5,7 +5,7 @@
   z-index: 40;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--motion-standard) var(--ease-standard);
 }
 
 .backdropOpen {
@@ -19,10 +19,10 @@
   bottom: 0;
   z-index: 41;
   background: var(--panel);
-  padding: 18px 16px;
+  padding: var(--space-5) var(--space-4);
   overflow-y: auto;
-  transition: transform 0.25s ease;
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.25);
+  transition: transform var(--motion-emphasized) var(--ease-emphasized);
+  box-shadow: var(--elevation-3);
 }
 
 .panelLeft {
@@ -58,7 +58,7 @@
   height: 72%;
   transform: translateY(105%);
   border-top: 1px solid var(--good);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--shape-lg) var(--shape-lg) 0 0;
 }
 
 .panelBottom.panelOpen {
@@ -71,14 +71,18 @@
 
 .title {
   font-size: 13px;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
 .closeLabel {
-  margin-top: 14px;
+  margin-top: var(--space-4);
   font-size: 10px;
   color: var(--accent);
   text-align: center;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-2);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

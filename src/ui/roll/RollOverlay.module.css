@@ -11,32 +11,32 @@
 .card {
   background: var(--panel);
   border: 1px solid var(--accent);
-  border-radius: 14px;
-  padding: 24px 28px;
+  border-radius: var(--shape-lg);
+  padding: var(--space-6) var(--space-6);
   text-align: center;
   min-width: 220px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--elevation-3);
 }
 
 .label {
   font-size: 10px;
   color: var(--text-dim);
   letter-spacing: 0.05em;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
   text-transform: uppercase;
 }
 
 .die {
   width: 64px;
   height: 64px;
-  margin: 0 auto 12px;
+  margin: 0 auto var(--space-3);
   border: 2px solid var(--accent);
-  border-radius: 14px;
+  border-radius: var(--shape-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 26px;
-  animation: spin 0.5s ease-out;
+  animation: spin var(--motion-emphasized) ease-out;
   background: var(--panel2);
 }
 
@@ -76,7 +76,7 @@
 
 .feedback {
   font-size: 11px;
-  margin-top: 6px;
+  margin-top: var(--space-2);
   font-weight: bold;
 }
 
@@ -89,9 +89,13 @@
 }
 
 .close {
-  margin-top: 16px;
+  margin-top: var(--space-4);
   font-size: 10px;
   color: var(--accent);
   cursor: pointer;
-  padding: 8px;
+  padding: var(--space-2);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
