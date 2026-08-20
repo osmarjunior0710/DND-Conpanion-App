@@ -73,13 +73,19 @@ export default function WizardShell() {
     const o = disponiveis[Math.floor(Math.random() * disponiveis.length)];
     update({ origem: o.nome });
   }
-  function randomizarFerramentaOrigem() {
+  function randomizarEscolhasOrigem() {
     const origemSelecionada = origens.find((o) => o.nome === selection.origem);
-    if (!origemSelecionada || origemSelecionada.ferramenta.categoria !== 'escolha') return;
-    const opcoes = gruposFerramenta[origemSelecionada.ferramenta.grupo] ?? [];
-    if (opcoes.length === 0) return;
-    const op = opcoes[Math.floor(Math.random() * opcoes.length)];
-    update({ ferramentaOrigemEscolhida: op.nome });
+    if (!origemSelecionada) return;
+    const patch: Partial<WizardSelection> = {
+      equipamentoOrigemEscolhido: Math.random() < 0.5 ? 'A' : 'B',
+    };
+    if (origemSelecionada.ferramenta.categoria === 'escolha') {
+      const opcoes = gruposFerramenta[origemSelecionada.ferramenta.grupo] ?? [];
+      if (opcoes.length > 0) {
+        patch.ferramentaOrigemEscolhida = opcoes[Math.floor(Math.random() * opcoes.length)].nome;
+      }
+    }
+    update(patch);
   }
   function randomizarEspecie() {
     const e = especiesFixture[Math.floor(Math.random() * especiesFixture.length)];
@@ -128,14 +134,12 @@ export default function WizardShell() {
       render: (p) => <OrigemEscolhasStep {...p} />,
       isValid: (s) => {
         const origemSelecionada = origens.find((o) => o.nome === s.origem);
-        if (!origemSelecionada || origemSelecionada.ferramenta.categoria !== 'escolha') return true;
-        return s.ferramentaOrigemEscolhida !== null;
+        if (!origemSelecionada) return true;
+        if (origemSelecionada.ferramenta.categoria === 'escolha' && s.ferramentaOrigemEscolhida === null) return false;
+        return s.equipamentoOrigemEscolhido !== null;
       },
-      mensagemInvalida: 'Escolha uma ferramenta antes de avançar.',
-      randomize:
-        origens.find((o) => o.nome === selection.origem)?.ferramenta.categoria === 'escolha'
-          ? randomizarFerramentaOrigem
-          : undefined,
+      mensagemInvalida: 'Escolha a ferramenta e o equipamento (A ou B) antes de avançar.',
+      randomize: randomizarEscolhasOrigem,
     },
     {
       name: '3. Espécie',

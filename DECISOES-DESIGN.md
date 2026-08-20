@@ -470,3 +470,48 @@ só um caso isolado.
 
 **Data/origem:** 2026-08, logo após a Fase 1 (entrega 1.1 de Origens) e o
 primeiro passe de Material Design 3.
+
+## Tela de Escolhas da Origem — layout revisado
+
+**Decisão:** revisão de layout pedida pelo Osmar depois de ver a tela na
+prática:
+- Header mostra só o nome da origem (não mais "Origem — Talento: X").
+- Talento vira um card próprio (nome + descrição), não uma linha de
+  resumo genérica.
+- Perícias concedidas ficam lado a lado (tags numa linha), não uma por
+  linha.
+- Tira o rótulo "fixa" de perícia/ferramenta — se está na tela, é porque
+  foi concedido; não precisa dizer que é fixo.
+- Valores de moeda (PO/PP/PC) sempre em `.tag`, preparando pro dia que
+  isso virar ícone de moeda (ex: "50 PO" → "50🪙").
+- **Equipamento inicial vira escolha de verdade** entre Opção A e Opção
+  B (antes era só texto informativo) — clicável, com estado selecionado,
+  valida antes de avançar, e tem sorteio (🔀).
+
+**Contexto:** a primeira versão desta tela era só informativa (mostrava
+o que a origem oferece, mas a escolha real ficava pra depois, na Loja).
+Na prática ficou confuso — o jogador via as opções mas não podia
+escolher ali, e a Loja não sabia dessa escolha.
+
+**Detalhe de implementação:** novo campo `equipamentoOrigemEscolhido:
+'A' | 'B' | null` no estado do wizard.
+
+**Data/origem:** 2026-08, revisão da entrega 1.1.
+
+## FAB de sorteio (🔀) ancorado no canto inferior, não mais no meio vertical
+
+**Decisão:** o FAB de sorteio do wizard passa de `top: 50%` (flutuando
+no meio vertical da tela, fixo na viewport) para ancorado no canto
+inferior esquerdo, logo acima da pill "Voltar".
+
+**Contexto:** bug encontrado durante teste visual da revisão da tela de
+Escolhas da Origem — como o FAB fica fixo na viewport (não rola com o
+conteúdo), qualquer tela com texto mais longo tinha o meio do texto
+tampado pelo círculo do FAB no meio do scroll. Ancorado no rodapé, junto
+das pills, ele nunca mais sobrepõe conteúdo, e ainda fica sempre visível
+igual antes.
+
+**Alternativas descartadas:** manter no meio vertical — descartado por
+ser a causa direta do bug.
+
+**Data/origem:** 2026-08, mesma revisão acima.

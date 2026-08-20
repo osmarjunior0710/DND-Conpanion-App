@@ -4,6 +4,7 @@ export interface WizardSelection {
   classe: string | null;
   origem: string | null;
   ferramentaOrigemEscolhida: string | null;
+  equipamentoOrigemEscolhido: 'A' | 'B' | null;
   especie: string | null;
   linguas: string[];
   alinhamento: string | null;
@@ -22,6 +23,7 @@ export function criarSelecaoInicial(): WizardSelection {
     classe: null,
     origem: null,
     ferramentaOrigemEscolhida: null,
+    equipamentoOrigemEscolhido: null,
     especie: null,
     linguas: [],
     alinhamento: null,

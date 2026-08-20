@@ -13,6 +13,40 @@
 
 ---
 
+## Popup de descrição nos itens de equipamento (falta dado na planilha)
+
+**O que é:** pedido do Osmar — todo item de um kit de origem (Adaga,
+Roupas de Viagem, Saco de Dormir...) deveria ter um "i" ou nome
+serrilhado tocável que abre um popup com nome + descrição do item.
+
+**Por que foi adiado:** checado campo a campo na planilha mestra —
+**nenhuma aba de equipamento geral tem coluna de descrição**:
+- `Equipamento de Aventura`: só Item / Peso / Custo.
+- `Kits — Conteúdo`: só Kit / Custo / Itens Incluídos (lista crua, sem
+  texto por item).
+- `Bugigangas`: são só resultados de tabela 1d100, não descrições de
+  item de equipamento.
+- `Armas` e `Armaduras` **são exceção** — têm colunas mecânicas (dano,
+  propriedades, maestria / CA, força mínima, furtividade) que dão pra
+  virar uma descrição de verdade.
+
+**Estado atual:** a tela de Escolhas da Origem lista os itens normalmente
+(nome + quantidade), mas **sem** ícone de info em nenhum item ainda —
+nada foi importado desta leva.
+
+**O que falta pra resolver:**
+1. Importar `Armas` e `Armaduras` da planilha (únicas abas com dado
+   suficiente) e ligar por nome aos itens que aparecem nos kits de
+   origem/classe.
+2. Construir o componente de popup reutilizável (nome no header +
+   descrição) — mesma peça serve depois pra magias/talentos, é o padrão
+   "tooltip em texto sublinhado / pill com ícone i" já registrado como
+   adiado no `DECISOES-DESIGN.md`.
+3. Decidir o que fazer com os itens de equipamento geral que **não têm**
+   descrição na planilha (a maioria) — ou eles ficam sem o ícone de
+   info mesmo (aceitável), ou o Osmar escreve descrições curtas à mão
+   pra completar a planilha (decisão dele, não travar por isso).
+
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 
 **O que é:** dos 10 Talentos de Origem usados nas 16 origens do Livro do

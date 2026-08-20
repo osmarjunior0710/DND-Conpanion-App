@@ -78,11 +78,13 @@
   transition: box-shadow var(--motion-standard) var(--ease-standard);
 }
 
+/* Ancorado no canto inferior (acima das pills), não mais no meio
+   vertical da tela — flutuando no meio ele acabava tampando texto de
+   telas com mais conteúdo (ex: Escolhas da Origem). */
 .randomFab {
   position: fixed;
-  left: var(--space-3);
-  top: 50%;
-  transform: translateY(-50%);
+  left: var(--space-4);
+  bottom: calc(96px + var(--space-2));
   width: var(--touch-target-min);
   height: var(--touch-target-min);
   border-radius: 50%;
