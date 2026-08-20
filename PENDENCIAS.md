@@ -13,39 +13,30 @@
 
 ---
 
-## Popup de descrição nos itens de equipamento (falta dado na planilha)
+## Popup de descrição só falta pra Armas e Armaduras (Equipamento de Aventura já resolvido)
 
-**O que é:** pedido do Osmar — todo item de um kit de origem (Adaga,
-Roupas de Viagem, Saco de Dormir...) deveria ter um "i" ou nome
-serrilhado tocável que abre um popup com nome + descrição do item.
-
-**Por que foi adiado:** checado campo a campo na planilha mestra —
-**nenhuma aba de equipamento geral tem coluna de descrição**:
-- `Equipamento de Aventura`: só Item / Peso / Custo.
-- `Kits — Conteúdo`: só Kit / Custo / Itens Incluídos (lista crua, sem
-  texto por item).
-- `Bugigangas`: são só resultados de tabela 1d100, não descrições de
-  item de equipamento.
-- `Armas` e `Armaduras` **são exceção** — têm colunas mecânicas (dano,
-  propriedades, maestria / CA, força mínima, furtividade) que dão pra
-  virar uma descrição de verdade.
-
-**Estado atual:** a tela de Escolhas da Origem lista os itens normalmente
-(nome + quantidade), mas **sem** ícone de info em nenhum item ainda —
-nada foi importado desta leva.
+**O que é:** o popup de descrição tocável (nome sublinhado → popup com
+nome + texto) já funciona pra **Equipamento de Aventura** (98 itens,
+Osmar atualizou a planilha com a coluna Descrição) e **Montarias e
+Veículos** (19 itens, só 2 com descrição real — Sela Militar e Sela
+Exótica, o resto é só capacidade/custo mesmo). Itens de arma/armadura
+(Adaga, Armadura de Couro...) ainda aparecem como texto simples, sem
+popup, porque **Armas** e **Armaduras** ainda não foram importadas da
+planilha (essas abas têm colunas mecânicas — dano, propriedades, CA,
+força mínima — em vez de um campo de texto corrido; dá pra virar
+descrição, mas ainda não foi feito).
 
 **O que falta pra resolver:**
-1. Importar `Armas` e `Armaduras` da planilha (únicas abas com dado
-   suficiente) e ligar por nome aos itens que aparecem nos kits de
-   origem/classe.
-2. Construir o componente de popup reutilizável (nome no header +
-   descrição) — mesma peça serve depois pra magias/talentos, é o padrão
-   "tooltip em texto sublinhado / pill com ícone i" já registrado como
-   adiado no `DECISOES-DESIGN.md`.
-3. Decidir o que fazer com os itens de equipamento geral que **não têm**
-   descrição na planilha (a maioria) — ou eles ficam sem o ícone de
-   info mesmo (aceitável), ou o Osmar escreve descrições curtas à mão
-   pra completar a planilha (decisão dele, não travar por isso).
+1. Importar `Armas` e `Armaduras` da planilha, montando uma frase de
+   descrição a partir das colunas mecânicas de cada uma.
+2. Ligar esses itens no mesmo índice de busca por nome que já existe em
+   `data/rulesets/dnd2024/buscarDescricaoItem.ts` (hoje só cobre
+   Equipamento de Aventura + Montarias/Veículos).
+3. `Kits — Conteúdo` e `Bugigangas` continuam sem coluna de descrição
+   própria na planilha — não é falha de importação, é como a planilha
+   está (Bugigangas é tabela de sabor narrativo, o próprio texto já é
+   a "descrição"; Kits são só listas cruas de itens que remetem aos
+   itens individuais, que aí sim têm descrição pelo caminho normal).
 
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 

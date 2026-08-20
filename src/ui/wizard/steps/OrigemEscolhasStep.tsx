@@ -1,9 +1,11 @@
 import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
 import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
+import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
+import ItemComDescricao from '../../components/ItemComDescricao';
 import type { StepProps } from './StepProps';
 
-function formatarItem(it: { nome: string; quantidade: number; unidade: string | null }): string {
+function rotuloItem(it: { nome: string; quantidade: number; unidade: string | null }): string {
   if (it.quantidade <= 1) return it.nome;
   return it.unidade ? `${it.nome} (${it.quantidade} ${it.unidade})` : `${it.quantidade}× ${it.nome}`;
 }
@@ -71,7 +73,12 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
       >
         <div className="opt-card-name">Opção A — kit de aventureiro</div>
         <div className="opt-card-desc">
-          {origem.equipamentoOpcaoA.itens.map(formatarItem).join(', ')}
+          {origem.equipamentoOpcaoA.itens.map((it, i) => (
+            <span key={it.nome}>
+              {i > 0 && ', '}
+              <ItemComDescricao nome={it.nome} descricao={buscarDescricaoItem(it.nome)} rotulo={rotuloItem(it)} />
+            </span>
+          ))}
           {origem.equipamentoOpcaoA.ouro > 0 && `, ${origem.equipamentoOpcaoA.ouro} PO restantes`}
         </div>
       </div>

@@ -517,3 +517,38 @@ igual antes.
 ser a causa direta do bug.
 
 **Data/origem:** 2026-08, mesma revisão acima.
+
+## Popup de descrição de item — implementado (ItemComDescricao)
+
+**Decisão:** o padrão "tooltip em texto sublinhado", que estava adiado
+desde a entrega de Origens, agora existe de verdade:
+`ui/components/ItemComDescricao.tsx`. Nome do item vem com sublinhado
+serrilhado quando tem descrição cadastrada; toque abre um popup central
+(mesmo estilo visual do `RollOverlay`: card com borda de destaque,
+sombra, botão "fechar") com o nome no topo e a descrição embaixo. Item
+sem descrição renderiza como texto simples, sem sublinhado.
+
+**Contexto:** o Osmar atualizou a planilha mestra com uma coluna
+"Descrição" nova em **Equipamento de Aventura** (98/98 itens) e
+**Montarias e Veículos** (2/19 itens — Sela Militar e Sela Exótica são
+os únicos com regra mecânica; o resto é só carga/custo). Isso desbloqueou
+o popup que antes só estava desenhado no papel.
+
+**Detalhe de implementação:**
+- `data/rulesets/dnd2024/equipamentoAventura.ts` e `montariasVeiculos.ts`
+  — dados gerados da planilha, linhas de cabeçalho de seção (ex: "—
+  Foco Arcano —") filtradas na importação.
+- `data/rulesets/dnd2024/buscarDescricaoItem.ts` — índice único por nome
+  (case-insensitive) que cruza as duas fontes; qualquer tela que
+  precise saber "esse item tem descrição?" usa essa mesma função, não
+  reimplementa a busca.
+- O clique no nome do item usa `stopPropagation` — importante porque em
+  vários lugares o item aparece **dentro** de um card clicável maior
+  (ex: o card de "Opção A" na tela de Origem); sem isso, tocar no nome
+  do item também dispararia a seleção do card por baixo.
+- Cobertura ainda parcial: Armas e Armaduras não foram importadas (não
+  têm campo de descrição corrido na planilha, têm colunas mecânicas) —
+  ver `PENDENCIAS.md`.
+
+**Data/origem:** 2026-08, depois da atualização da planilha mestra com a
+coluna Descrição.
