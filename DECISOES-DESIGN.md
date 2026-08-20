@@ -405,3 +405,42 @@ vez do sublinhado.
 
 **Contexto:** mesmo padrão do builder anterior. Ainda não está no
 wireframe atual.
+
+## Referência de design — Material Design 3 (m3.material.io)
+
+**Decisão:** usar o Material Design 3 do Google como referência de
+**estrutura/comportamento** (espaçamento, states de componente, motion,
+acessibilidade, padrões de bottom sheet/FAB/seleção) sempre que houver
+dúvida se um padrão de UI está dentro de boa prática.
+
+**Nota importante (correção de um mal-entendido inicial):** estrutura
+(M3) e identidade visual RPGzística **não são excludentes** — são duas
+camadas independentes. Um botão pode seguir o padrão estrutural de pill
+do M3 (formato, área de toque, comportamento de seleção) e ao mesmo tempo
+ter textura de pedra/pergaminho e tipografia old-school por cima. Não é
+"M3 ou RPG", é "M3 por baixo, RPG por cima" — dá pra fazer os dois ao
+mesmo tempo, a qualquer momento, sem esperar uma fase específica.
+
+**Sobre timing:** a recomendação de "visual pode vir depois" era só
+sobre prioridade (validar fluxo/lógica é mais urgente porque bloqueia
+decisões; visual não bloqueia nada). Não é uma regra contra começar a
+aplicar identidade visual mais cedo, se o Osmar quiser — só não é
+pré-requisito pra avançar o resto.
+
+**Decisão de processo de construção (confirmada):** todo componente será
+construído primeiro seguindo a estrutura/comportamento do M3 (isso é o
+"correto por padrão" ao implementar qualquer tela nova), e só depois
+recebe a alteração temática de RPG por cima. Ou seja, a ordem de trabalho
+padrão é sempre: 1) implementar com M3 como base estrutural → 2) aplicar
+a pele RPGzística. Isso vale como diretriz permanente de como construir
+qualquer tela nova daqui pra frente, não só uma observação pontual. Regra
+correspondente registrada no `CLAUDE.md`, seção 5.1.
+
+**Contexto:** Osmar encontrou o m3.material.io e perguntou se dava pra
+usar sempre como referência.
+
+**Pendência conhecida:** as telas já construídas na Fase 0 (splash,
+login, home, lista, wizard, ficha, combate) **não foram auditadas** contra
+M3 retroativamente — essa regra vale como padrão daqui pra frente, pra
+telas novas ou quando uma tela existente for revisitada por outro motivo.
+Não é gatilho pra uma varredura geral agora.

@@ -65,6 +65,18 @@ desktop são "esticar depois", nunca o ponto de partida. Toda área
 clicável precisa ser grande o suficiente pro dedo, não pro cursor. Nunca
 esconda informação importante atrás de hover.
 
+## 5.1 Ordem de construção de UI: M3 primeiro, pele RPG depois
+
+Ao implementar qualquer componente/tela nova, siga sempre esta ordem:
+1. Estrutura e comportamento seguindo Material Design 3
+   (m3.material.io) — espaçamento, states, motion, acessibilidade,
+   padrões de componente (bottom sheet, FAB, seleção, etc.).
+2. Só depois, aplicar a pele temática de RPG por cima (textura,
+   tipografia old-school, paleta dourada/bronze — ver
+   `DECISOES-DESIGN.md` pra detalhes já registrados).
+Isso é um processo padrão, não uma escolha caso a caso — vale pra toda
+tela nova daqui pra frente.
+
 ## 6. Antes de escrever qualquer código
 
 Proponha um plano de entregas pequenas e espere aprovação. Nunca comece a
