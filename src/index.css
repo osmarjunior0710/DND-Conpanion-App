@@ -1,0 +1,50 @@
+:root {
+  --bg: #121316;
+  --panel: #1b1d22;
+  --panel2: #212429;
+  --line: #3a3d44;
+  --line-soft: #2a2d33;
+  --text: #e8e8ea;
+  --text-dim: #9a9da3;
+  --text-faint: #5f636b;
+  --accent: #7a8cff;
+  --accent-dim: #3a3f66;
+  --good: #5fbf7a;
+  --warn: #e0a94f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-family: inherit;
+}
+
+.label {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
