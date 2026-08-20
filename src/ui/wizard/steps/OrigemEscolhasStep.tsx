@@ -57,7 +57,7 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className="opt-card-name">{opcao.nome}</span>
-                {opcao.preco && <span className="tag">{opcao.preco}</span>}
+                {opcao.preco && <span className="label">{opcao.preco}</span>}
               </div>
             </div>
           ))}
@@ -72,12 +72,7 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
         <div className="opt-card-name">Opção A — kit de aventureiro</div>
         <div className="opt-card-desc">
           {origem.equipamentoOpcaoA.itens.map(formatarItem).join(', ')}
-          {origem.equipamentoOpcaoA.ouro > 0 && (
-            <>
-              {', '}
-              <span className="tag">{origem.equipamentoOpcaoA.ouro} PO</span> restantes
-            </>
-          )}
+          {origem.equipamentoOpcaoA.ouro > 0 && `, ${origem.equipamentoOpcaoA.ouro} PO restantes`}
         </div>
       </div>
       <div
@@ -85,9 +80,7 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
         onClick={() => update({ equipamentoOrigemEscolhido: 'B' })}
       >
         <div className="opt-card-name">Opção B — só ouro</div>
-        <div className="opt-card-desc">
-          <span className="tag">{origem.equipamentoOpcaoB.ouro} PO</span> pra gastar como quiser na Loja
-        </div>
+        <div className="opt-card-desc">{origem.equipamentoOpcaoB.ouro} PO pra gastar como quiser na Loja</div>
       </div>
     </>
   );

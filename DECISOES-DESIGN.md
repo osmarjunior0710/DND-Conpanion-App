@@ -482,8 +482,10 @@ prática:
   linha.
 - Tira o rótulo "fixa" de perícia/ferramenta — se está na tela, é porque
   foi concedido; não precisa dizer que é fixo.
-- Valores de moeda (PO/PP/PC) sempre em `.tag`, preparando pro dia que
-  isso virar ícone de moeda (ex: "50 PO" → "50🪙").
+- Valores de moeda ficam como texto simples (não em `.tag` — correção:
+  a ideia original era só marcar que "PO"/"PP"/"PC" é uma variável que um
+  dia vira símbolo/ícone de moeda, ex: "50 PO" → "50🪙", não colocar o
+  valor inteiro dentro de uma pill visual).
 - **Equipamento inicial vira escolha de verdade** entre Opção A e Opção
   B (antes era só texto informativo) — clicável, com estado selecionado,
   valida antes de avançar, e tem sorteio (🔀).
