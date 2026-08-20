@@ -7,9 +7,9 @@ import {
   classesFixture,
   especiesFixture,
   linguasDisponiveis,
-  origensFixture,
   type Atributo,
 } from '../../data/wizardFixtures';
+import { origens } from '../../data/rulesets/dnd2024/origens';
 import { criarSelecaoInicial, type WizardSelection } from './types';
 import styles from './WizardShell.module.css';
 import ClasseStep from './steps/ClasseStep';
@@ -68,7 +68,8 @@ export default function WizardShell() {
     update({ classe: c.nome });
   }
   function randomizarOrigem() {
-    const o = origensFixture[Math.floor(Math.random() * origensFixture.length)];
+    const disponiveis = origens.filter((o) => o.disponivel);
+    const o = disponiveis[Math.floor(Math.random() * disponiveis.length)];
     update({ origem: o.nome });
   }
   function randomizarEspecie() {
@@ -113,7 +114,16 @@ export default function WizardShell() {
       mensagemInvalida: 'Escolha uma origem antes de avançar.',
       randomize: randomizarOrigem,
     },
-    { name: '2b. Escolhas da Origem', render: (p) => <OrigemEscolhasStep {...p} />, isValid: () => true },
+    {
+      name: '2b. Escolhas da Origem',
+      render: (p) => <OrigemEscolhasStep {...p} />,
+      isValid: (s) => {
+        const origemSelecionada = origens.find((o) => o.nome === s.origem);
+        if (!origemSelecionada || origemSelecionada.ferramenta.categoria !== 'escolha') return true;
+        return s.ferramentaOrigemEscolhida !== null;
+      },
+      mensagemInvalida: 'Escolha uma ferramenta antes de avançar.',
+    },
     {
       name: '3. Espécie',
       render: (p) => <EspecieStep {...p} />,

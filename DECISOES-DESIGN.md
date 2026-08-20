@@ -277,6 +277,42 @@ espadas cruzadas), não "Play" como no rascunho inicial.
 **Contexto:** "Play" era genérico demais e não deixava claro o propósito
 específico da aba (ações de combate em tempo real).
 
+## Origens importadas de verdade — Fase 1, entrega 1.1
+
+**Decisão:** as 16 origens, os 10 Talentos de Origem e os 3 grupos de
+ferramenta com escolha (Instrumento Musical, Kit de Jogos, Ferramentas
+de Artesão) foram importados por script (Python + openpyxl lendo a
+planilha diretamente, gerando os arquivos `.ts`) — não digitados à mão —
+e já substituem os 3 exemplos fixos do wizard na etapa Origem/Escolhas da
+Origem.
+
+**Erro de dado encontrado e corrigido na importação:** a aba
+`Antecedentes` grafa o talento da origem Artesão como "Artífice", mas o
+nome oficial (confirmado pelo Osmar direto no Livro do Jogador 2024,
+tanto na página da origem Artesão quanto na lista de talentos do Cap. 5)
+é **"Artifista"** — bate com a aba `Talentos` da planilha, que também já
+estava certa. A correção foi aplicada só na importação (mapeamento
+`Artífice → Artifista` documentado como comentário no topo de
+`origens.ts`); a planilha mestra em si não foi editada.
+
+**Ferramenta com grupo de escolha agora é seletor de verdade:** na etapa
+"Escolhas da Origem", quando a ferramenta da origem é `categoria:
+"escolha"`, a tela lista os itens concretos do grupo (ex: Alaúde, Flauta,
+Gaita de Foles... pra Instrumento Musical) como cards individuais
+tocáveis — implementando a regra de UI já registrada acima. A escolha
+fica em `WizardSelection.ferramentaOrigemEscolhida`, e o wizard bloqueia
+"Avançar" até uma escolha ser feita (reaproveitando o mesmo mecanismo de
+validação bloqueante do `DECISOES-DESIGN.md`, entrada "Wizard —
+navegação em pills...").
+
+**As 6 origens "em breve" ficam visíveis mas não-selecionáveis:**
+Acólito, Guia, Sábio (Iniciado em Magia) e Nobre, Escriba, Charlatão
+(Habilidoso) aparecem na lista com a tag "(em breve)" e
+`pointer-events` desabilitado — ver `PENDENCIAS.md` pra detalhes de por
+que e o que falta pra liberar.
+
+**Data/origem:** 2026-08, Fase 1, entrega 1.1.
+
 ## Dados — Origens são uniformes, schema único sem exceções
 
 **Decisão:** as 16 origens do Livro do Jogador 2024 usam um schema de

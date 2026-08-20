@@ -15,17 +15,6 @@ export const classesFixture: ClasseFixture[] = [
   { nome: 'Mago', desc: 'Magia através de estudo e livros arcanos.', dadoVida: 'd6', complexidade: 'Média' },
 ];
 
-export interface OrigemFixture {
-  nome: string;
-  desc: string;
-}
-
-export const origensFixture: OrigemFixture[] = [
-  { nome: 'Acólito', desc: 'Serviu num templo, conhece rituais e hierarquia religiosa.' },
-  { nome: 'Criminoso', desc: 'Viveu à margem da lei, bom em contatos duvidosos.' },
-  { nome: 'Marinheiro', desc: 'Anos no mar, conhece navegação e portos.' },
-];
-
 export interface EspecieFixture {
   nome: string;
   desc: string;

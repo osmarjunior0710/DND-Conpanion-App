@@ -3,6 +3,7 @@ import type { Atributo } from '../../data/wizardFixtures';
 export interface WizardSelection {
   classe: string | null;
   origem: string | null;
+  ferramentaOrigemEscolhida: string | null;
   especie: string | null;
   linguas: string[];
   alinhamento: string | null;
@@ -20,6 +21,7 @@ export function criarSelecaoInicial(): WizardSelection {
   return {
     classe: null,
     origem: null,
+    ferramentaOrigemEscolhida: null,
     especie: null,
     linguas: [],
     alinhamento: null,
