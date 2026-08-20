@@ -156,21 +156,19 @@ export default function FichaShell() {
         )}
       </div>
 
-      <div className="label" style={{ textAlign: 'center', padding: '0 0 4px' }}>
-        arraste pra esquerda/direita pra trocar de aba
-      </div>
-
-      <div className={styles.tabbar}>
-        {TABS.map((t) => (
-          <div
-            key={t.id}
-            className={`${styles.tabBtn} ${tab === t.id ? styles.tabBtnActive : ''}`}
-            onClick={() => setTab(t.id)}
-          >
-            <span className={styles.tabIcon}>{t.icon}</span>
-            {t.label}
-          </div>
-        ))}
+      <div className={styles.tabbarLayer}>
+        <div className={styles.tabbar}>
+          {TABS.map((t) => (
+            <div
+              key={t.id}
+              className={`${styles.tabBtn} ${tab === t.id ? styles.tabBtnActive : ''}`}
+              onClick={() => setTab(t.id)}
+            >
+              <span className={styles.tabIcon}>{t.icon}</span>
+              {t.label}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

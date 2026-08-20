@@ -444,3 +444,29 @@ login, home, lista, wizard, ficha, combate) **não foram auditadas** contra
 M3 retroativamente — essa regra vale como padrão daqui pra frente, pra
 telas novas ou quando uma tela existente for revisitada por outro motivo.
 Não é gatilho pra uma varredura geral agora.
+
+## Tabbar da Ficha vira pill flutuante (mesmo padrão do wizard)
+
+**Decisão:** a barra de abas da ficha (Perfil/Mochila/Magias/Combat) deixa
+de ser uma faixa fixa de largura total no rodapé (`border-top`, presa ao
+fim do layout em flex-column) e vira uma pill flutuante centralizada,
+`position: fixed` na viewport, com sombra — igual ao padrão já usado nas
+pills Voltar/Avançar do wizard.
+
+**Contexto:** pedido explícito do Osmar — o scroll de conteúdos longos
+(Mochila, Magias) ficava "triste" com a barra de abas ocupando uma faixa
+fixa inteira no rodapé. A pill flutuante ocupa menos espaço visual e seu
+posicionamento não depende de estar no fim do fluxo do layout.
+
+**Detalhe de implementação:** removida a dica de texto "arraste pra
+esquerda/direita pra trocar de aba" que ficava acima da barra antiga — a
+pill flutuante já é visualmente óbvia o suficiente, e o swipe entre abas
+continua funcionando normalmente por baixo dela.
+
+**Padrão a repetir:** essa é a segunda vez que uma barra de navegação de
+largura total vira pill flutuante (a primeira foi o rodapé do wizard) —
+vale como padrão padrão pra qualquer navegação fixa futura no app, não
+só um caso isolado.
+
+**Data/origem:** 2026-08, logo após a Fase 1 (entrega 1.1 de Origens) e o
+primeiro passe de Material Design 3.
