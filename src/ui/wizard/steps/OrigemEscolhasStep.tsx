@@ -1,4 +1,5 @@
 import { origens } from '../../../data/rulesets/dnd2024/origens';
+import { descricoesOrigens } from '../../../data/rulesets/dnd2024/descricoesOrigens';
 import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
 import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
 import { pericias } from '../../../data/rulesets/dnd2024/pericias';
@@ -31,6 +32,9 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
   return (
     <>
       <div className="section-title">{origem.nome}</div>
+      <div style={{ fontSize: 11, lineHeight: 1.6, color: 'var(--text-dim)', marginBottom: 4 }}>
+        {descricoesOrigens[origem.id]}
+      </div>
 
       <div className="section-title">Concedido pela origem</div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>

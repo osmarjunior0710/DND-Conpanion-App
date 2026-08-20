@@ -583,3 +583,39 @@ de popup por baixo, apresentação diferente por contexto de uso.
 
 **Data/origem:** 2026-08, correção pedida logo após a entrega do popup
 de itens.
+
+## Descrição narrativa das origens — única exceção "fonte = livro, não planilha"
+
+**Decisão:** as 16 descrições narrativas de origem (o parágrafo de
+sabor que existia nos dados fixos do wireframe, ex: "Você se dedicou ao
+serviço em um templo...") foram transcritas direto do **Livro do
+Jogador** (Cap. 4, PDF que o Osmar anexou) pro arquivo
+`data/rulesets/dnd2024/descricoesOrigens.ts` — não vieram da planilha
+mestra.
+
+**Contexto:** o Osmar notou que a descrição de sabor tinha sumido da
+tela de lista de Origens quando a Fase 1 trocou os dados fixos do
+wireframe pelos dados reais da planilha (a aba Antecedentes não tem
+coluna de descrição narrativa — só dados mecânicos). Ele confirmou com
+o PDF do capítulo que o texto existe no livro e pediu pra transcrever
+direto, sem esperar a planilha ser atualizada.
+
+**Por que é uma exceção ao CLAUDE.md (seção 3):** a regra permanente do
+projeto é "nunca busque regra em outro lugar que não a planilha; se
+faltar, avise". Isso continua valendo como padrão — essa é a **única**
+exceção até agora, feita com pedido explícito do Osmar depois de eu ter
+avisado do buraco na planilha, não uma decisão unilateral minha.
+
+**Consequência pra manutenção:** `descricoesOrigens.ts` é um arquivo
+separado de `origens.ts` (que continua 100% gerado da planilha) e
+mapeia por `id` da origem. Se um dia a aba Antecedentes ganhar uma
+coluna "Descrição" de verdade (como já aconteceu com Equipamento de
+Aventura), dá pra apagar esse arquivo e mover o campo pra dentro de
+`origens.ts` via regeneração normal — sem quebrar nada, porque o
+consumo nas telas é só `descricoesOrigens[origem.id]`.
+
+**Onde aparece:** tela de lista de Origens (card completo) e tela de
+Escolhas da Origem (parágrafo logo abaixo do nome, antes da seção
+"Concedido pela origem").
+
+**Data/origem:** 2026-08, mesmo dia da correção acima.

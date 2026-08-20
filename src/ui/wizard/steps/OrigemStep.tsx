@@ -1,12 +1,6 @@
 import { origens } from '../../../data/rulesets/dnd2024/origens';
-import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
+import { descricoesOrigens } from '../../../data/rulesets/dnd2024/descricoesOrigens';
 import type { StepProps } from './StepProps';
-
-function descricaoCurta(o: (typeof origens)[number]): string {
-  const talento = talentosOrigem.find((t) => t.id === o.talentoOrigemId);
-  const nomeTalento = talento?.nome ?? o.talentoOrigemId;
-  return `${o.pericias.join(' e ')} · Talento: ${nomeTalento}${o.talentoOrigemVariante ? ` (${o.talentoOrigemVariante})` : ''}`;
-}
 
 export default function OrigemStep({ selection, update }: StepProps) {
   return (
@@ -25,7 +19,7 @@ export default function OrigemStep({ selection, update }: StepProps) {
                 {o.nome}
                 {!o.disponivel && <span className="tag" style={{ marginLeft: 6 }}>(em breve)</span>}
               </div>
-              <div className="opt-card-desc">{descricaoCurta(o)}</div>
+              <div className="opt-card-desc">{descricoesOrigens[o.id]}</div>
             </div>
           </div>
         </div>
