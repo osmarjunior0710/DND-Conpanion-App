@@ -5,6 +5,7 @@ import Home from './ui/screens/Home';
 import CharacterList from './ui/screens/CharacterList';
 import Placeholder from './ui/screens/Placeholder';
 import VersionBadge from './ui/components/VersionBadge';
+import WizardShell from './ui/wizard/WizardShell';
 
 export default function App() {
   return (
@@ -14,9 +15,10 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/lista" element={<CharacterList />} />
+        <Route path="/wizard" element={<WizardShell />} />
         <Route
-          path="/wizard"
-          element={<Placeholder message="Wizard de criação chega na entrega 0.3" backTo="/home" />}
+          path="/wizard/loja-resumo-pendente"
+          element={<Placeholder message="Loja e Resumo (final do wizard) chegam na entrega 0.4" backTo="/home" />}
         />
         <Route
           path="/ficha/:id"
