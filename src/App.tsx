@@ -17,10 +17,6 @@ export default function App() {
         <Route path="/lista" element={<CharacterList />} />
         <Route path="/wizard" element={<WizardShell />} />
         <Route
-          path="/wizard/loja-resumo-pendente"
-          element={<Placeholder message="Loja e Resumo (final do wizard) chegam na entrega 0.4" backTo="/home" />}
-        />
-        <Route
           path="/ficha/:id"
           element={<Placeholder message="Ficha completa chega na entrega 0.5" backTo="/lista" />}
         />

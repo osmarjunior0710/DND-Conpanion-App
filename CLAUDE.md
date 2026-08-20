@@ -107,11 +107,13 @@ v{AAAA}{MM}_{HHmm}
 ```
 
 - `AAAA` = ano, `MM` = mês, `HHmm` = hora e minuto, **do momento do
-  commit/push** (não do momento em que o código foi escrito).
-- Exemplo: `v202608_1100` = ano 2026, mês 08, 11h00.
+  commit/push**, sempre em **horário de Brasília (UTC-3)** — não o
+  horário do servidor onde o Claude Code roda, que costuma ser UTC.
+- Exemplo: `v202608_1100` = ano 2026, mês 08, 11h00 (Brasília).
 - Fonte única: `src/version.ts`, exportando a constante `APP_VERSION`.
 - **Antes de cada `git push`**, atualize `src/version.ts` com o horário
-  atual (`date +"%Y%m_%H%M"`) e inclua esse arquivo no commit.
+  atual em Brasília (`TZ='America/Sao_Paulo' date +"%Y%m_%H%M"`) e
+  inclua esse arquivo no commit.
 - Motivo: o Osmar usa esse carimbo pra confirmar rapidamente, no celular,
   se o navegador carregou a versão nova ou se ainda está servindo cache
   antigo — sem precisar adivinhar.

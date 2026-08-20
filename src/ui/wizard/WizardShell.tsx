@@ -11,6 +11,8 @@ import EspecieEscolhasStep from './steps/EspecieEscolhasStep';
 import AtributosStep from './steps/AtributosStep';
 import LinguasStep from './steps/LinguasStep';
 import AlinhamentoStep from './steps/AlinhamentoStep';
+import LojaStep from './steps/LojaStep';
+import ResumoStep from './steps/ResumoStep';
 import type { StepProps } from './steps/StepProps';
 
 interface WizardStepDef {
@@ -43,6 +45,8 @@ export default function WizardShell() {
     },
     { name: '4. Línguas', render: (p) => <LinguasStep {...p} /> },
     { name: '5. Alinhamento', render: (p) => <AlinhamentoStep {...p} /> },
+    { name: '6. Loja', render: (p) => <LojaStep {...p} /> },
+    { name: '7. Resumo', render: (p) => <ResumoStep {...p} /> },
   ];
 
   const step = steps[wizIndex];
@@ -50,7 +54,9 @@ export default function WizardShell() {
 
   function wizNext() {
     if (isLast) {
-      navigate('/wizard/loja-resumo-pendente');
+      // Fase 0: ainda não existe salvamento de verdade — a ficha em si
+      // (Perfil/Mochila/Magias/Combat) chega na entrega 0.5.
+      navigate('/ficha/novo-personagem');
       return;
     }
     setWizIndex((i) => i + 1);
@@ -88,7 +94,7 @@ export default function WizardShell() {
           ← Voltar
         </div>
         <div className="btn btn-primary" onClick={wizNext}>
-          {isLast ? 'Continuar →' : 'Avançar →'}
+          {isLast ? 'Salvar ficha ✓' : 'Avançar →'}
         </div>
       </div>
     </div>
