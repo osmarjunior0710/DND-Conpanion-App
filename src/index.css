@@ -48,3 +48,55 @@ button {
   color: var(--text-faint);
   text-transform: uppercase;
 }
+
+.box {
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.box-solid {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  background: var(--panel2);
+  min-height: 48px;
+}
+
+.btn:active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+
+.btn-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.tag {
+  font-size: 9px;
+  border: 1px solid var(--text-faint);
+  border-radius: 10px;
+  padding: 2px 7px;
+  color: var(--text-faint);
+}
+
+.back {
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-dim);
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
