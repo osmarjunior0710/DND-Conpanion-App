@@ -296,6 +296,17 @@ opções reais de cada grupo já estão mapeadas a partir da coluna
 "Variantes" da aba Ferramentas da planilha. Preço não entra nessas opções
 durante a seleção de origem (só importa depois, na Loja).
 
+**Regra de UI decorrente (2 formatos de exibição, não 1):**
+- **Ferramenta fixa** (ex: Kit de Ladrão do Criminoso, Suprimentos de
+  Calígrafo do Acólito) — é 1 item só, um "kit" fechado; aparece como
+  texto simples, sem nada pra tocar/escolher.
+- **Ferramenta com grupo de escolha** (Instrumento Musical, Kit de
+  Jogos, Ferramentas de Artesão) — **nunca mostrar só "(escolha)"**; a
+  tela precisa listar os itens concretos do grupo (ex: Alaúde, Flauta,
+  Gaita de Foles... pra Instrumento Musical) como opções individuais
+  tocáveis, do mesmo jeito que as origens/classes/espécies já aparecem
+  como cards selecionáveis no wizard.
+
 **Pendência conhecida (ver `PENDENCIAS.md`):** 2 dos 10 Talentos de
 Origem usados nas 16 origens pedem uma seleção extra na hora de pegar —
 **Habilidoso** (Nobre, Escriba, Charlatão: escolhe 3 perícias/ferramentas
