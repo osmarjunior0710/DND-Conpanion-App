@@ -1,0 +1,68 @@
+.levelBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-color: var(--accent);
+}
+
+.hpRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.hpBox {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+}
+
+.hpNum {
+  font-size: 18px;
+}
+
+.skillRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 4px;
+  border-bottom: 1px dashed var(--line-soft);
+  font-size: 12px;
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.actionBtn {
+  padding: 16px 8px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.actionBtn:active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+
+.aName {
+  font-size: 12px;
+}
+
+.aType {
+  font-size: 8px;
+  color: var(--text-faint);
+  margin-top: 3px;
+}
+
+.restStatus {
+  font-size: 10px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}

@@ -1,0 +1,40 @@
+.cargaBox {
+  padding: 10px;
+}
+
+.cargaRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-faint);
+}
+
+.weightBarOuter {
+  height: 6px;
+  background: var(--line-soft);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 6px 0 2px;
+}
+
+.weightBarInner {
+  height: 100%;
+  background: var(--good);
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px;
+  border-bottom: 1px dashed var(--line-soft);
+}
+
+.itemName {
+  font-size: 12px;
+}
+
+.itemWeight {
+  font-size: 10px;
+  color: var(--text-faint);
+}
