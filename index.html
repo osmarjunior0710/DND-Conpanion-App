@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>D&D Companion</title>
+    <script>
+      // Contraparte do truque em public/404.html: se a URL chegou aqui
+      // com ?redirect=..., desfaz a codificação e devolve a rota real
+      // pro histórico do navegador antes do React Router montar — assim
+      // um recarregamento em /ficha/123 acaba na tela certa em vez da
+      // Splash. Baseado no padrão spa-github-pages (rafgraph).
+      (function () {
+        var redirect = new URLSearchParams(location.search).get('redirect');
+        if (redirect) {
+          history.replaceState(null, '', location.pathname.replace(/\/$/, '') + redirect);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

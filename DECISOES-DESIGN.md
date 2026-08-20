@@ -660,3 +660,40 @@ o título "Ferramenta" (virou redundante já que o resumo já mostra
 
 **Data/origem:** 2026-08, mesmo dia da entrega das descrições
 narrativas de origem.
+
+## Deploy migrado do Netlify pro GitHub Pages
+
+**Decisão:** o app deixou de ser publicado no Netlify
+(`dndcompapp.netlify.app`) e passou a ser publicado no GitHub Pages,
+via GitHub Actions (`.github/workflows/deploy.yml`), que builda e
+publica automaticamente a cada push na branch de desenvolvimento. Novo
+link: `https://osmarjunior0710.github.io/DND-Conpanion-App/`.
+
+**Contexto:** o time do Netlify ficou sem crédito operacional
+("operational credits"), o que pausou os deploys de produção — os
+commits chegavam no GitHub normalmente, mas o site publicado ficou
+travado numa versão antiga sem nenhum erro de código envolvido. Como o
+app é 100% front-end (sem backend próprio; a Fase 5 com Supabase
+conversa direto do navegador, sem precisar de função de servidor), o
+GitHub Pages cobre o caso de uso sem depender de crédito pago.
+
+**O que mudou tecnicamente:**
+- `vite.config.ts`: `base: '/DND-Conpanion-App/'` (o GitHub Pages serve
+  o site dentro de um subcaminho com o nome do repositório, diferente
+  do Netlify que serve na raiz).
+- `src/main.tsx`: `BrowserRouter` ganhou `basename="/DND-Conpanion-App"`
+  pra as rotas do React Router baterem com esse subcaminho.
+- `public/404.html` + trecho em `index.html`: truque padrão
+  "spa-github-pages" (rafgraph) pra recarregar uma rota tipo
+  `/ficha/123` não dar erro 404 — o GitHub Pages não tem redirecionamento
+  de rota nativo como o `netlify.toml` tinha.
+- `netlify.toml` removido (não é mais usado).
+
+**Limite conhecido pro futuro:** GitHub Pages grátis só serve site
+público enquanto o repositório for público. Se um dia o repositório
+virar privado, o link para de funcionar (exigiria GitHub Enterprise pra
+Pages privado). Registrado aqui pra não ser surpresa depois — hoje o
+repo é público, então não trava nada agora.
+
+**Data/origem:** 2026-08, mesmo dia da entrega acima — Osmar pediu a
+migração depois de descobrir a pausa de créditos do Netlify.

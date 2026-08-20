@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>D&D Companion</title>
+    <script>
+      // Truque pra rodar app de página única (SPA) no GitHub Pages.
+      // O GitHub Pages não tem redirecionamento de rota nativo (o Netlify
+      // tinha, via netlify.toml). Quando alguém recarrega numa rota tipo
+      // /ficha/123, o GitHub Pages devolve este 404.html — em vez de
+      // mostrar erro, ele reescreve a URL como parâmetro de busca e manda
+      // pro index.html, que desfaz a codificação e recoloca a rota certa
+      // (ver o script equivalente em index.html). Baseado no padrão
+      // spa-github-pages (rafgraph).
+      var basePath = '/DND-Conpanion-App';
+      var path = location.pathname.slice(basePath.length) + location.search + location.hash;
+      location.replace(basePath + '/?redirect=' + encodeURIComponent(path));
+    </script>
+  </head>
+  <body></body>
+</html>
