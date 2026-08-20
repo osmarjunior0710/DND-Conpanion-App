@@ -1,0 +1,73 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--accent-dim);
+  color: var(--text);
+  border-radius: var(--shape-full);
+  padding: var(--space-2) var(--space-3);
+  font-size: 11px;
+  min-height: 36px;
+  transition: background var(--motion-standard) var(--ease-standard);
+}
+
+.chipClicavel {
+  cursor: pointer;
+}
+
+.chipClicavel:active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.infoIcon {
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 55;
+  padding: var(--space-5);
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: var(--shape-lg);
+  padding: var(--space-5);
+  box-shadow: var(--elevation-3);
+  max-width: 340px;
+  width: 100%;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: var(--space-3);
+}
+
+.desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.close {
+  margin-top: var(--space-4);
+  font-size: 10px;
+  color: var(--accent);
+  text-align: center;
+  cursor: pointer;
+  padding: var(--space-2);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

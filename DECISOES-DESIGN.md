@@ -552,3 +552,34 @@ o popup que antes só estava desenhado no papel.
 
 **Data/origem:** 2026-08, depois da atualização da planilha mestra com a
 coluna Descrição.
+
+## "Concedido pela origem" — Talento + Perícias como botões tonais (InfoChip)
+
+**Decisão:** tudo que é "garantido/fixado" ao escolher uma origem
+(Talento de Origem, as 2 Perícias) aparece junto, numa seção só
+("Concedido pela origem"), cada um como um **botão tonal** (M3: fundo
+preenchido com `--accent-dim`, sem borda, formato pill) mostrando
+`{nome} ⓘ`. Tocar abre o mesmo popup central (nome + descrição) usado
+pelos itens de equipamento. Novo componente `ui/components/InfoChip.tsx`.
+
+**Contexto:** correção de uma versão anterior desta tela que tinha
+tratado Talento (card grande, sempre expandido) e Perícias (tags sem
+info) como coisas visualmente diferentes — na prática, do ponto de
+vista do jogador, ambos são a mesma categoria ("coisa que a origem te
+dá"), e deveriam ter o mesmo tratamento visual e a mesma interação
+(toque → popup), não um formato por tipo de dado.
+
+**Detalhe de implementação:** `data/rulesets/dnd2024/pericias.ts` — nova
+importação (18 perícias, aba "Perícias" da planilha) usando a coluna
+"Exemplo de uso" como descrição, já que a planilha não tem uma coluna
+chamada literalmente "Descrição" pra perícias.
+
+**`InfoChip` vs `ItemComDescricao`:** dois componentes parecidos de
+propósito, não um só — `InfoChip` é pro padrão "lista curta de coisas
+concedidas" (visual de botão tonal, cabe pouca coisa lado a lado);
+`ItemComDescricao` é pro padrão "termo dentro de um parágrafo/lista
+longa" (texto sublinhado, não quebra o fluxo de leitura). Mesma lógica
+de popup por baixo, apresentação diferente por contexto de uso.
+
+**Data/origem:** 2026-08, correção pedida logo após a entrega do popup
+de itens.

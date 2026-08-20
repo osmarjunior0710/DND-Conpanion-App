@@ -1,13 +1,20 @@
 import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
 import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
+import { pericias } from '../../../data/rulesets/dnd2024/pericias';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import ItemComDescricao from '../../components/ItemComDescricao';
+import InfoChip from '../../components/InfoChip';
 import type { StepProps } from './StepProps';
 
 function rotuloItem(it: { nome: string; quantidade: number; unidade: string | null }): string {
   if (it.quantidade <= 1) return it.nome;
   return it.unidade ? `${it.nome} (${it.quantidade} ${it.unidade})` : `${it.quantidade}× ${it.nome}`;
+}
+
+function descricaoPericia(nome: string): string | null {
+  const p = pericias.find((x) => x.nome === nome);
+  return p ? `${p.atributo} — ${p.exemplo}` : null;
 }
 
 export default function OrigemEscolhasStep({ selection, update }: StepProps) {
@@ -19,27 +26,20 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
 
   const talento = talentosOrigem.find((t) => t.id === origem.talentoOrigemId);
   const nomeTalento = talento?.nome ?? origem.talentoOrigemId;
+  const nomeTalentoCompleto = `${nomeTalento}${origem.talentoOrigemVariante ? ` (${origem.talentoOrigemVariante})` : ''}`;
 
   return (
     <>
       <div className="section-title">{origem.nome}</div>
 
-      <div className="opt-card" style={{ cursor: 'default' }}>
-        <div className="opt-card-name">
-          {nomeTalento}
-          {origem.talentoOrigemVariante ? ` (${origem.talentoOrigemVariante})` : ''}
-        </div>
-        {talento ? (
-          <div className="opt-card-desc">{talento.beneficios}</div>
-        ) : (
-          <div className="opt-card-desc">⚠️ Talento não encontrado nos dados importados — avise o Osmar.</div>
-        )}
-      </div>
-
-      <div className="section-title">Perícias concedidas</div>
+      <div className="section-title">Concedido pela origem</div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-        <span className="tag">{origem.pericias[0]}</span>
-        <span className="tag">{origem.pericias[1]}</span>
+        <InfoChip
+          nome={nomeTalentoCompleto}
+          descricao={talento?.beneficios ?? '⚠️ Talento não encontrado nos dados importados — avise o Osmar.'}
+        />
+        <InfoChip nome={origem.pericias[0]} descricao={descricaoPericia(origem.pericias[0])} />
+        <InfoChip nome={origem.pericias[1]} descricao={descricaoPericia(origem.pericias[1])} />
       </div>
 
       <div className="section-title">Ferramenta</div>
