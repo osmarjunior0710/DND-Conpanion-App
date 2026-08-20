@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { personagemExemplo } from '../../../data/exampleSheet';
 import { espacosMagiaExemplo } from '../../../data/exampleCombat';
+import { useRoll } from '../../roll/RollContext';
 import SidePanel from '../combat/SidePanel';
-import AcaoPanelContent from '../combat/AcaoPanelContent';
+import AcaoPanelContent, { type DanoPendente } from '../combat/AcaoPanelContent';
 import BonusPanelContent from '../combat/BonusPanelContent';
 import ReacaoPanelContent from '../combat/ReacaoPanelContent';
 import styles from './CombatTab.module.css';
@@ -12,6 +12,7 @@ export type EstadoRecurso = 'disponivel' | 'usada';
 
 interface CombatTabProps {
   pvAtual: number;
+  pvMax: number;
   onAlterarPv: (delta: number) => void;
   turnState: Record<RecursoTurno, EstadoRecurso>;
   onMarcarUsado: (categoria: RecursoTurno) => void;
@@ -28,6 +29,7 @@ const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
 
 export default function CombatTab({
   pvAtual,
+  pvMax,
   onAlterarPv,
   turnState,
   onMarcarUsado,
@@ -37,10 +39,13 @@ export default function CombatTab({
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [danoPendente, setDanoPendente] = useState<DanoPendente | null>(null);
+  const { rolarDados } = useRoll();
 
   function abrirPainel(categoria: RecursoTurno) {
     if (turnState[categoria] === 'usada') return;
     setFeedback(null);
+    setDanoPendente(null);
     setPainelAberto(categoria);
   }
 
@@ -48,10 +53,22 @@ export default function CombatTab({
     setPainelAberto(null);
   }
 
-  function escolherNoPainel(categoria: RecursoTurno, nome: string, desc: string) {
+  function escolherNoPainel(categoria: RecursoTurno, nome: string, desc: string, dano?: DanoPendente) {
     onMarcarUsado(categoria);
     setPainelAberto(null);
-    setFeedback(`${nome} — ${desc} (rolagem de dados chega na entrega 0.7)`);
+    setFeedback(`${nome} — ${desc}`);
+    setDanoPendente(dano ?? null);
+  }
+
+  function rolarDanoPendente() {
+    if (!danoPendente) return;
+    rolarDados({
+      label: danoPendente.label,
+      formula: `${danoPendente.quantidade}d${danoPendente.lados}${danoPendente.mod ? ` + ${danoPendente.mod}` : ''}`,
+      quantidade: danoPendente.quantidade,
+      lados: danoPendente.lados,
+      mod: danoPendente.mod,
+    });
   }
 
   function ladoDoPainel(categoria: RecursoTurno): 'left' | 'right' | 'bottom' {
@@ -66,7 +83,7 @@ export default function CombatTab({
         <div>
           <div className="label">Pontos de Vida</div>
           <div className={styles.hpNum}>
-            {pvAtual} / {personagemExemplo.pvMax}
+            {pvAtual} / {pvMax}
           </div>
         </div>
         <div className={styles.hpBtns}>
@@ -105,6 +122,7 @@ export default function CombatTab({
         onClick={() => {
           onFimDoTurno();
           setFeedback(null);
+          setDanoPendente(null);
         }}
       >
         ↻ Fim do Turno — restaura os 3 botões
@@ -114,7 +132,16 @@ export default function CombatTab({
         "Fim do Turno".
       </div>
 
-      {feedback && <div className={styles.feedback}>{feedback}</div>}
+      {feedback && (
+        <div className={styles.feedback}>
+          {feedback}
+          {danoPendente && (
+            <div className="btn btn-primary" style={{ marginTop: 10, padding: '10px 14px', display: 'inline-block' }} onClick={rolarDanoPendente}>
+              🎲 Rolar Dano
+            </div>
+          )}
+        </div>
+      )}
 
       <SidePanel
         open={painelAberto !== null}
@@ -124,7 +151,7 @@ export default function CombatTab({
       >
         {painelAberto === 'acao' && (
           <AcaoPanelContent
-            onEscolher={(nome, desc) => escolherNoPainel('acao', nome, desc)}
+            onEscolher={(nome, desc, dano) => escolherNoPainel('acao', nome, desc, dano)}
             gastarSlot={onGastarSlot}
             espacosGastos={espacosGastos}
             espacosMaximo={espacosMagiaExemplo.maximo}

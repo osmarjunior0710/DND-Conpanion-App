@@ -1,0 +1,97 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 24px 28px;
+  text-align: center;
+  min-width: 220px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.label {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.die {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  animation: spin 0.5s ease-out;
+  background: var(--panel2);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg) scale(0.7);
+    opacity: 0;
+  }
+  60% {
+    transform: rotate(300deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.dieCritFail {
+  border-color: #c94f4f;
+  background: #f9dede;
+}
+
+.dieCritSuccess {
+  border-color: #c9a13f;
+  background: #f7ecd0;
+}
+
+.formula {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+
+.total {
+  font-size: 32px;
+}
+
+.feedback {
+  font-size: 11px;
+  margin-top: 6px;
+  font-weight: bold;
+}
+
+.feedbackCritFail {
+  color: #c94f4f;
+}
+
+.feedbackCritSuccess {
+  color: #a3690f;
+}
+
+.close {
+  margin-top: 16px;
+  font-size: 10px;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 8px;
+}

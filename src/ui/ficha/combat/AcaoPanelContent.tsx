@@ -1,9 +1,17 @@
 import { useState } from 'react';
-import { acoesBase, magiasExemplo, type MagiaExemplo } from '../../../data/exampleCombat';
+import { acoesBase, ataqueArmaExemplo, magiasExemplo, type AtaqueInfo, type MagiaExemplo } from '../../../data/exampleCombat';
+import { useRoll } from '../../roll/RollContext';
 import styles from './PanelRows.module.css';
 
+export interface DanoPendente {
+  label: string;
+  quantidade: number;
+  lados: number;
+  mod: number;
+}
+
 interface AcaoPanelContentProps {
-  onEscolher: (nome: string, desc: string) => void;
+  onEscolher: (nome: string, desc: string, dano?: DanoPendente) => void;
   gastarSlot: () => boolean;
   espacosGastos: number;
   espacosMaximo: number;
@@ -12,6 +20,21 @@ interface AcaoPanelContentProps {
 export default function AcaoPanelContent({ onEscolher, gastarSlot, espacosGastos, espacosMaximo }: AcaoPanelContentProps) {
   const [magiaAberta, setMagiaAberta] = useState(false);
   const [avisoSlot, setAvisoSlot] = useState<string | null>(null);
+  const { rolarD20 } = useRoll();
+
+  function rolarAtaque(nome: string, ataque: AtaqueInfo) {
+    rolarD20({
+      label: `Ataque — ${nome}`,
+      formula: `1d20 + ${ataque.modAcerto}`,
+      mod: ataque.modAcerto,
+    });
+    onEscolher(`🗡 ${nome}`, `Rolagem de acerto feita. Toque "Rolar Dano" pra ver o dano ${ataque.danoTipo}.`, {
+      label: `Dano — ${nome}`,
+      quantidade: ataque.danoQuantidade,
+      lados: ataque.danoLados,
+      mod: ataque.danoMod,
+    });
+  }
 
   function escolherMagia(m: MagiaExemplo) {
     if (m.circulo > 0) {
@@ -22,12 +45,16 @@ export default function AcaoPanelContent({ onEscolher, gastarSlot, espacosGastos
       }
     }
     setAvisoSlot(null);
+    if (m.ataque) {
+      rolarAtaque(m.nome, m.ataque);
+      return;
+    }
     onEscolher(`✨ ${m.nome}`, m.descricao);
   }
 
   return (
     <>
-      <div className={styles.row} onClick={() => onEscolher('🗡 Atacar', 'Ataca com arma ou Ataque Desarmado.')}>
+      <div className={styles.row} onClick={() => rolarAtaque('Atacar (Adaga)', ataqueArmaExemplo)}>
         <div className={styles.rowName}>🗡 Atacar</div>
         <div className={styles.rowDesc}>Ataca com arma ou Ataque Desarmado</div>
       </div>

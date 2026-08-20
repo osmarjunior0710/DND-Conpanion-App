@@ -16,6 +16,48 @@
 
 ---
 
+## Level Up — overlay em cima da ficha, não uma rota separada
+
+**Decisão:** o fluxo de Level Up (`LevelUpShell`) é renderizado como um
+overlay de tela cheia (`position: fixed`) **dentro** do componente da
+ficha (`FichaShell`), trocado por uma flag de estado
+(`levelUpAberto`), e não por uma navegação de rota (`/ficha/:id/levelup`).
+
+**Contexto:** o wireframe HTML original usa uma "tela" separada
+(`screen-levelup`) alcançada por `go('screen-levelup')`. Copiar esse
+padrão literalmente como uma rota React Router faria o React desmontar o
+`FichaShell` ao navegar — perdendo todo o estado vivo da sessão de
+combate (PV atual, Espaços de Magia gastos, estado Ativo/Usada dos 3
+botões de turno) só porque o jogador foi fazer level-up no meio de uma
+sessão. Manter como overlay dentro do mesmo componente preserva esse
+estado.
+
+**Alternativas descartadas:** rota `/ficha/:id/levelup` separada,
+descartada pelo motivo acima.
+
+**Padrão a repetir:** qualquer fluxo futuro que precise "tomar a tela
+inteira" mas continuar dentro do contexto de uma ficha já aberta (ex:
+editor de item, ficha de NPC dentro de uma sessão) deve seguir esse
+mesmo padrão — overlay controlado por estado local, não rota nova.
+
+**Data/origem:** 2026-08, entrega 0.7.
+
+## Rolagem de dados — contexto global (`RollProvider`), não popup por tela
+
+**Decisão:** existe um único componente de overlay de dado
+(`RollOverlay`) montado uma vez no topo do app (`App.tsx`), controlado
+por um React Context (`RollContext`/`useRoll()`). Qualquer tela chama
+`rolarD20(...)` ou `rolarDados(...)` de qualquer lugar da árvore de
+componentes, sem precisar montar sua própria cópia do overlay.
+
+**Contexto:** o wireframe tinha um único `#roll-overlay` compartilhado
+manipulado via funções globais (`roll()`, `rollDamage()`) porque era só
+HTML/JS solto. Em React, o equivalente correto de "uma coisa só que
+qualquer tela aciona" é Context + Provider no topo da árvore, não
+duplicar o componente de overlay em cada tela que precisa rolar dado.
+
+**Data/origem:** 2026-08, entrega 0.7.
+
 ## Tema visual do app de verdade (React): light, não dark
 
 **Decisão:** o app em React usa paleta **clara** (fundo claro, texto

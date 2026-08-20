@@ -1,30 +1,49 @@
 import { atributosExemplo, personagemExemplo } from '../../../data/exampleSheet';
+import { useRoll } from '../../roll/RollContext';
 import styles from './PerfilTab.module.css';
 
 interface PerfilTabProps {
+  nivel: number;
+  pvMax: number;
   pvAtual: number;
   xpBloqueado: boolean;
   onDescansoLongo: () => void;
   onDescansoCurto: () => void;
   restStatus: string | null;
+  onAbrirLevelUp: () => void;
 }
 
-export default function PerfilTab({ pvAtual, xpBloqueado, onDescansoLongo, onDescansoCurto, restStatus }: PerfilTabProps) {
+export default function PerfilTab({
+  nivel,
+  pvMax,
+  pvAtual,
+  xpBloqueado,
+  onDescansoLongo,
+  onDescansoCurto,
+  restStatus,
+  onAbrirLevelUp,
+}: PerfilTabProps) {
+  const { rolarD20 } = useRoll();
+
   return (
     <>
       <div className={`box-solid ${styles.levelBox}`}>
         <div>
           <div className="label">nível atual</div>
-          <div style={{ fontSize: 16 }}>{personagemExemplo.nivel}</div>
+          <div style={{ fontSize: 16 }}>{nivel}</div>
         </div>
-        <div className="btn btn-disabled" style={{ padding: '8px 16px' }}>
-          ⬆ Level Up (entrega 0.7)
+        <div className="btn btn-primary" style={{ padding: '8px 16px' }} onClick={onAbrirLevelUp}>
+          ⬆ Level Up
         </div>
       </div>
 
       <div className="stat-grid">
         {atributosExemplo.map((a) => (
-          <div key={a.nome} className="box stat-box" style={{ cursor: 'default' }}>
+          <div
+            key={a.nome}
+            className="box stat-box"
+            onClick={() => rolarD20({ label: a.nome, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
+          >
             <div className="stat-name">{a.nome}</div>
             <div className="stat-mod">
               {a.mod >= 0 ? '+' : ''}
@@ -39,26 +58,31 @@ export default function PerfilTab({ pvAtual, xpBloqueado, onDescansoLongo, onDes
         <div className={`box ${styles.hpBox}`}>
           <div className="label">PV</div>
           <div className={styles.hpNum}>
-            {pvAtual}/{personagemExemplo.pvMax}
+            {pvAtual}/{pvMax}
           </div>
         </div>
         <div className={`box ${styles.hpBox}`}>
           <div className="label">CA</div>
           <div className={styles.hpNum}>{personagemExemplo.ca}</div>
         </div>
-        <div className={`box ${styles.hpBox}`}>
+        <div
+          className={`box ${styles.hpBox}`}
+          onClick={() =>
+            rolarD20({ label: 'Iniciativa', formula: `1d20 + ${personagemExemplo.iniciativa}`, mod: personagemExemplo.iniciativa })
+          }
+        >
           <div className="label">Iniciativa</div>
-          <div className={styles.hpNum}>+{personagemExemplo.iniciativa}</div>
+          <div className={styles.hpNum}>+{personagemExemplo.iniciativa} 🎲</div>
         </div>
       </div>
 
       <div className="section-title">Perícias (exemplo)</div>
-      <div className={styles.skillRow}>
-        <span>Enganação (CAR)</span>
+      <div className={styles.skillRow} onClick={() => rolarD20({ label: 'Enganação', formula: '1d20 + 4', mod: 4 })}>
+        <span>Enganação (CAR) 🎲</span>
         <span>+4</span>
       </div>
-      <div className={styles.skillRow}>
-        <span>Intimidação (CAR)</span>
+      <div className={styles.skillRow} onClick={() => rolarD20({ label: 'Intimidação', formula: '1d20 + 4', mod: 4 })}>
+        <span>Intimidação (CAR) 🎲</span>
         <span>+4</span>
       </div>
       <div className={styles.skillRow}>
@@ -66,7 +90,7 @@ export default function PerfilTab({ pvAtual, xpBloqueado, onDescansoLongo, onDes
         <span>11</span>
       </div>
       <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
-        rolagem de dados (🎲) chega na entrega 0.7 — por enquanto os números aqui são só visualização.
+        toque num atributo, perícia ou iniciativa pra rolar o dado.
       </div>
 
       {!xpBloqueado ? (
