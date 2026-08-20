@@ -697,3 +697,50 @@ repo é público, então não trava nada agora.
 
 **Data/origem:** 2026-08, mesmo dia da entrega acima — Osmar pediu a
 migração depois de descobrir a pausa de créditos do Netlify.
+
+## Dados — Espécies têm 3 naturezas diferentes de sub-escolha
+
+**Decisão:** das 10 espécies do Livro do Jogador 2024, 5 têm uma
+sub-escolha além dos traços fixos (Herança Dracônica, Linhagem Élfica,
+Linhagem Gnômica, Ancestralidade Gigante, Legado Ínfero). Schema
+genérico com campo `natureza`, que **não é a mesma coisa** pras 3:
+
+- `identidade_permanente` — escolhida 1x na criação, nunca muda, é
+  "quem seu personagem é" (Draconato, Golias).
+- `linhagem_com_progressao_magica` — escolhida 1x, mas desbloqueia
+  magia automática nos níveis 3 e 5 (Elfo, Tiferino; Gnomo é só nível 1,
+  sem progressão 3/5, mas mesma natureza geral).
+- `escolha_reutilizavel` — não é identidade fixa, é escolhida de novo
+  toda vez que a habilidade é usada (Aasimar — Revelação Celestial).
+
+**Por que a distinção importa:** tratar as 3 como a mesma coisa geraria
+bug de UX real — perguntar de novo no combate algo que já devia estar
+fixo desde a criação (`identidade_permanente`), ou nunca perguntar algo
+que precisa ser escolhido a cada uso (`escolha_reutilizavel`).
+`identidade_permanente` e `linhagem_com_progressao_magica` fazem
+pergunta na tela de "Escolhas da Espécie" do wizard;
+`escolha_reutilizavel` não aparece no wizard — aparece como opção dentro
+da aba Combat quando o jogador for usar a habilidade.
+`linhagem_com_progressao_magica` também precisa "conversar" com o motor
+de level-up (ao chegar no nível 3/5, desbloquear a magia automaticamente
+— não é escolha manual do jogador nesses níveis).
+
+**Detalhe de implementação:** traços que herdam efeito da sub-escolha
+(ex: tipo de dano do Ataque de Sopro do Draconato muda conforme a cor de
+dragão escolhida) são marcados com `traçosVinculadosASubescolha` e
+resolvidos em tempo de leitura pelo motor de cálculo — nunca duplicados
+como valor fixo em dois lugares.
+
+**Precedente adicional (achado parecido, mas separado):** Aasimar,
+Humano e Tiferino têm campo Tamanho como escolha (Médio ou Pequeno) em
+vez de valor fixo — schema `{ fixo, opcoes }` cobre os dois casos.
+
+**Espécies sem sub-escolha nenhuma:** Anão, Humano, Orc e Pequenino —
+`subescolha: null` é o valor correto pra elas, não é dado faltando.
+
+**Contexto:** análise feita com apoio do Claude (chat separado, fora
+deste ambiente de código) a pedido do Osmar, que queria organizar o
+schema antes de eu começar a importar Espécies. Revisado e adotado aqui
+como a decisão real do projeto.
+
+**Data/origem:** 2026-08, antes da entrega de importação de Espécies.
