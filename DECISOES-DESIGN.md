@@ -41,6 +41,53 @@ e essa entrada deve ser atualizada.
 **Data/origem:** 2026-08, durante a entrega 0.2 (Fase 0 — esqueleto
 navegável).
 
+## Wizard — navegação em pills flutuantes ancoradas + sorteio + validação bloqueante
+
+**Decisão:** a partir da entrega 0.4-extra, o wizard de criação (e deve
+valer pra qualquer fluxo de múltiplos passos que vier depois — level-up,
+por exemplo) usa 3 mecanismos que **não existiam no wireframe original**:
+
+1. **Voltar/Avançar viram pills flutuantes** (`border-radius: 999px`),
+   ancoradas com `position: fixed` no rodapé da viewport — Voltar no
+   canto inferior esquerdo, Avançar/Salvar no canto inferior direito.
+   O conteúdo da etapa rola por baixo delas (scroll não move as pills).
+   Isso troca a barra de rodapé fixa de largura total do wireframe
+   (`.wiz-footer`), que ocupava uma faixa inteira da tela.
+2. **Botão de sorteio (🔀)**, um FAB circular ancorado na borda esquerda
+   da tela (fixed, `left: 12px`, centralizado verticalmente). Aparece só
+   nas etapas que têm algo pra sortear (Classe, Origem, Espécie,
+   Atributos — inclui o ajuste de antecedente +1/+1/+1, Línguas,
+   Alinhamento, Resumo — sorteia um nome). Não aparece nas telas
+   puramente informativas (Escolhas da Classe/Origem/Espécie) nem na
+   Loja (compra é opcional, nada "precisa" ser sorteado ali).
+3. **Validação bloqueante no Avançar:** cada etapa declara o que é
+   obrigatório pra sair dela. Se faltar, o clique em Avançar não navega
+   — mostra um aviso curto (ex: "Escolha uma classe antes de avançar.")
+   e mantém o jogador na mesma tela.
+
+**Contexto:** pedido explícito do Osmar, pra acelerar o preenchimento
+(sorteio pra quem não se importa em escolher manualmente cada campo) e
+evitar avançar com uma etapa incompleta sem perceber.
+
+**Quais campos foram considerados "obrigatórios" (decisão minha, meio
+arbitrária — revisar com o Osmar se algo não fizer sentido):**
+- Classe, Origem, Espécie, Alinhamento: obrigatórios (todo personagem
+  precisa ter os quatro).
+- Atributos: obrigatório preencher os 6 valores **e** aplicar o ajuste de
+  antecedente (+1/+1/+1) antes de avançar — sem isso o PV/Percepção do
+  Resumo saem errados.
+- Línguas: **opcional** — o livro permite escolher até 2, não exige
+  mínimo.
+- Loja: **opcional** — comprar item nenhum é uma escolha válida.
+- Resumo: só o **nome** é obrigatório pra salvar (aparência/personalidade
+  ficam livres).
+
+**Alternativas descartadas:** manter o rodapé de largura total do
+wireframe — descartado porque ocupava espaço vertical fixo em toda tela,
+e o pedido explícito era "ocupar menos espaço".
+
+**Data/origem:** 2026-08, logo após a entrega 0.4 (Fase 0).
+
 ## Carimbo de versão visível em toda entrega
 
 **Decisão:** todo build publicado mostra um carimbo `v{AAAA}{MM}_{HHmm}`

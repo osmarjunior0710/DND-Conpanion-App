@@ -1,6 +1,6 @@
 .badge {
   position: fixed;
-  bottom: 4px;
+  top: 4px;
   right: 6px;
   font-size: 9px;
   color: var(--text-faint);
