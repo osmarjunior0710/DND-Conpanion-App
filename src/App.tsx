@@ -4,23 +4,27 @@ import Login from './ui/screens/Login';
 import Home from './ui/screens/Home';
 import CharacterList from './ui/screens/CharacterList';
 import Placeholder from './ui/screens/Placeholder';
+import VersionBadge from './ui/components/VersionBadge';
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Splash />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/lista" element={<CharacterList />} />
-      <Route
-        path="/wizard"
-        element={<Placeholder message="Wizard de criação chega na entrega 0.3" backTo="/home" />}
-      />
-      <Route
-        path="/ficha/:id"
-        element={<Placeholder message="Ficha completa chega na entrega 0.5" backTo="/lista" />}
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Splash />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/lista" element={<CharacterList />} />
+        <Route
+          path="/wizard"
+          element={<Placeholder message="Wizard de criação chega na entrega 0.3" backTo="/home" />}
+        />
+        <Route
+          path="/ficha/:id"
+          element={<Placeholder message="Ficha completa chega na entrega 0.5" backTo="/lista" />}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <VersionBadge />
+    </>
   );
 }
