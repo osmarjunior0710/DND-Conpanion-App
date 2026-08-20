@@ -10,6 +10,7 @@ import {
   type Atributo,
 } from '../../data/wizardFixtures';
 import { origens } from '../../data/rulesets/dnd2024/origens';
+import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
 import { criarSelecaoInicial, type WizardSelection } from './types';
 import styles from './WizardShell.module.css';
 import ClasseStep from './steps/ClasseStep';
@@ -72,6 +73,14 @@ export default function WizardShell() {
     const o = disponiveis[Math.floor(Math.random() * disponiveis.length)];
     update({ origem: o.nome });
   }
+  function randomizarFerramentaOrigem() {
+    const origemSelecionada = origens.find((o) => o.nome === selection.origem);
+    if (!origemSelecionada || origemSelecionada.ferramenta.categoria !== 'escolha') return;
+    const opcoes = gruposFerramenta[origemSelecionada.ferramenta.grupo] ?? [];
+    if (opcoes.length === 0) return;
+    const op = opcoes[Math.floor(Math.random() * opcoes.length)];
+    update({ ferramentaOrigemEscolhida: op.nome });
+  }
   function randomizarEspecie() {
     const e = especiesFixture[Math.floor(Math.random() * especiesFixture.length)];
     update({ especie: e.nome });
@@ -123,6 +132,10 @@ export default function WizardShell() {
         return s.ferramentaOrigemEscolhida !== null;
       },
       mensagemInvalida: 'Escolha uma ferramenta antes de avançar.',
+      randomize:
+        origens.find((o) => o.nome === selection.origem)?.ferramenta.categoria === 'escolha'
+          ? randomizarFerramentaOrigem
+          : undefined,
     },
     {
       name: '3. Espécie',
