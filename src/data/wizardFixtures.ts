@@ -15,18 +15,6 @@ export const classesFixture: ClasseFixture[] = [
   { nome: 'Mago', desc: 'Magia através de estudo e livros arcanos.', dadoVida: 'd6', complexidade: 'Média' },
 ];
 
-export interface EspecieFixture {
-  nome: string;
-  desc: string;
-}
-
-export const especiesFixture: EspecieFixture[] = [
-  { nome: 'Humano', desc: 'Versátil, adaptável, um talento extra no nível 1.' },
-  { nome: 'Elfo', desc: 'Sentidos aguçados, imune a sono mágico.' },
-  { nome: 'Tiefling', desc: 'Herança infernal, resistência a fogo, magia inata.' },
-  { nome: 'Anão', desc: 'Resiliente, visão no escuro, resistência a veneno.' },
-];
-
 export const linguasDisponiveis = ['Comum', 'Élfico', 'Anão', 'Infernal', 'Celestial', 'Abissal'];
 
 export const alinhamentos = [

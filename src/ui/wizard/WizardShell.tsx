@@ -5,11 +5,11 @@ import {
   arrayPadrao,
   atributosOrdem,
   classesFixture,
-  especiesFixture,
   linguasDisponiveis,
   type Atributo,
 } from '../../data/wizardFixtures';
 import { origens } from '../../data/rulesets/dnd2024/origens';
+import { especies } from '../../data/rulesets/dnd2024/especies';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
 import { criarSelecaoInicial, type WizardSelection } from './types';
 import styles from './WizardShell.module.css';
@@ -88,7 +88,8 @@ export default function WizardShell() {
     update(patch);
   }
   function randomizarEspecie() {
-    const e = especiesFixture[Math.floor(Math.random() * especiesFixture.length)];
+    const disponiveis = especies.filter((e) => e.disponivel);
+    const e = disponiveis[Math.floor(Math.random() * disponiveis.length)];
     update({ especie: e.nome });
   }
   function randomizarAtributos() {

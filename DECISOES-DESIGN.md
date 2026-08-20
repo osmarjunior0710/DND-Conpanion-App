@@ -744,3 +744,26 @@ schema antes de eu começar a importar Espécies. Revisado e adotado aqui
 como a decisão real do projeto.
 
 **Data/origem:** 2026-08, antes da entrega de importação de Espécies.
+
+## Espécies importadas — Anão como piloto, mesmo padrão de Origens
+
+**Decisão:** as 10 espécies do Livro do Jogador 2024 foram importadas
+pra `data/rulesets/dnd2024/especies.ts`, com **Anão, Orc e Pequenino**
+selecionáveis (as 3 sem nenhuma escolha embutida) e as outras 7 "(em
+breve)" — mesmo tratamento visual de Origens (`btn-disabled`, tag "(em
+breve)" no card). A tela "3b. Escolhas da Espécie" mostra os traços como
+botões tonais InfoChip (mesmo componente/padrão de Origem), cada um com
+popup de descrição fiel ao texto da planilha.
+
+**Correção de um dado errado no PENDENCIAS.md:** eu tinha registrado
+"varrer as 40 espécies" — na verdade são só **10** espécies no Livro do
+Jogador 2024. Corrigido na pendência atualizada.
+
+**`.summary-row` ganhou `gap` e `text-align: right` no valor:** ao
+mostrar o campo Tamanho do Anão (texto longo, quebra linha), o rótulo e
+o valor coincidiam sem espaço nenhum ("TamanhoMédio..."). Corrigido
+globalmente no estilo compartilhado — não afeta os outros usos de
+`summary-row` (Resumo, Loja, Level Up, Escolhas de Classe), que têm
+valores curtos sem quebra de linha.
+
+**Data/origem:** 2026-08, mesmo dia da decisão de schema acima.

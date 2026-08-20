@@ -257,9 +257,18 @@ button {
 .summary-row {
   display: flex;
   justify-content: space-between;
+  gap: var(--space-3);
   padding: var(--space-2) var(--space-1);
   border-bottom: 1px dashed var(--line-soft);
   font-size: 12px;
+}
+
+.summary-row span:first-child {
+  flex-shrink: 0;
+}
+
+.summary-row span:last-child {
+  text-align: right;
 }
 
 .summary-row span:last-child {

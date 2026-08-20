@@ -100,22 +100,36 @@ breve)"**, e ficam **não-selecionáveis** (mesmo tratamento visual que
    depois pra escolha de magias conhecidas de classes conjuradoras).
 3. Depois de ambos existirem, tirar o "(em breve)" dessas 5 origens.
 
-## Espécies — formato "uma linha por traço" precisa de agrupamento
+## Espécies com sub-escolha ainda não têm as opções estruturadas (Aasimar, Draconato, Elfo, Gnomo, Golias, Tiferino)
 
-**O que é:** ao contrário de Origens (uma linha = uma origem completa), a
-aba Espécies da planilha tem **uma linha por traço**, agrupadas por
-espécie via uma linha-separador (`— Aasimar —`). Um traço pode ser texto
-descritivo puro, um traço passivo simples, ou embutir uma escolha dentro
-do próprio texto (ex: tamanho "Médio ou Pequeno, escolhido ao selecionar
-esta espécie").
+**O que é:** das 10 espécies do Livro do Jogador 2024 (não são 40 como eu
+tinha registrado errado antes — só 10), **Anão, Orc e Pequenino** já
+estão importadas e selecionáveis no wizard (sem sub-escolha nenhuma,
+`disponivel: true`). As outras 7 ficam "(em breve)": Humano (concede
+perícia/talento à escolha livre, mesmo problema do Habilidoso — ver
+pendência acima) e 6 espécies com sub-escolha de linhagem/herança
+(Aasimar, Draconato, Elfo, Gnomo, Golias, Tiferino — schema da
+sub-escolha já definido em `DECISOES-DESIGN.md`, ver "Dados — Espécies
+têm 3 naturezas diferentes de sub-escolha").
 
-**Por que foi adiado:** ainda não foi feita a análise completa de quantas
-espécies têm escolha embutida no texto (como o exemplo de tamanho do
-Aasimar) vs. quantas são só traços fixos — isso decide o schema.
+**Por que foi adiado:** as opções de cada sub-escolha (as 10 cores de
+dragão do Draconato, as 3 linhagens do Elfo, as 6 ancestralidades do
+Golias, etc.) **existem** na planilha, mas embutidas como texto corrido
+dentro da descrição do traço (ex: "Tabela Herança Dracônica (Dragão:
+Tipo de Dano) — Azul: Elétrico; Branco: Gélido; ..."), não como linhas
+próprias — precisam ser extraídas/parseadas antes de virarem uma lista
+selecionável na UI.
 
-**O que falta pra resolver:** varrer as 40 espécies da planilha, listar
-quais têm escolha embutida em texto (não em coluna própria) e desenhar
-como isso vira um campo estruturado antes de importar.
+**O que falta pra resolver:**
+1. Pra cada uma das 6 espécies, parsear o texto embutido da sub-escolha
+   pra uma lista estruturada de opções (nome + efeito).
+2. Desenhar a UI de escolha — provavelmente reutilizável entre as 3
+   naturezas de sub-escolha (`identidade_permanente`,
+   `linhagem_com_progressao_magica`, `escolha_reutilizavel`), mas cada
+   natureza aparece em lugar diferente (wizard vs. aba Combat) e
+   `linhagem_com_progressao_magica` precisa avisar o motor de level-up
+   pra desbloquear magia nos níveis 3/5.
+3. Depois de ambos existirem, tirar o "(em breve)" dessas espécies.
 
 ## Classes/Subclasses — variação estrutural grande, ainda sem schema
 
