@@ -1,0 +1,33 @@
+import type { ReactNode } from 'react';
+import styles from './SidePanel.module.css';
+
+type Side = 'left' | 'right' | 'bottom';
+
+interface SidePanelProps {
+  open: boolean;
+  side: Side;
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+}
+
+const sideClass: Record<Side, string> = {
+  left: styles.panelLeft,
+  right: styles.panelRight,
+  bottom: styles.panelBottom,
+};
+
+export default function SidePanel({ open, side, title, onClose, children }: SidePanelProps) {
+  return (
+    <>
+      <div className={`${styles.backdrop} ${open ? styles.backdropOpen : ''}`} onClick={onClose} />
+      <div className={`${styles.panel} ${sideClass[side]} ${open ? styles.panelOpen : ''}`}>
+        <div className={styles.title}>{title}</div>
+        {children}
+        <div className={styles.closeLabel} onClick={onClose}>
+          fechar
+        </div>
+      </div>
+    </>
+  );
+}

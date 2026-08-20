@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { personagemExemplo } from '../../data/exampleSheet';
+import { espacosMagiaExemplo } from '../../data/exampleCombat';
 import styles from './FichaShell.module.css';
 import PerfilTab from './tabs/PerfilTab';
 import MochilaTab from './tabs/MochilaTab';
+import MagiasTab from './tabs/MagiasTab';
+import CombatTab, { type EstadoRecurso, type RecursoTurno } from './tabs/CombatTab';
 
 type TabName = 'perfil' | 'mochila' | 'magias' | 'combat';
 
@@ -14,22 +17,49 @@ const TABS: { id: TabName; label: string; icon: string }[] = [
   { id: 'combat', label: 'Combat', icon: '⚔' },
 ];
 
+const turnoInicial: Record<RecursoTurno, EstadoRecurso> = {
+  acao: 'disponivel',
+  bonus: 'disponivel',
+  reacao: 'disponivel',
+};
+
 export default function FichaShell() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<TabName>('perfil');
   const [pvAtual, setPvAtual] = useState(personagemExemplo.pvMax);
   const [xpBloqueado, setXpBloqueado] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
+  const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
+  const [espacosGastos, setEspacosGastos] = useState(0);
+
+  function alterarPv(delta: number) {
+    setPvAtual((v) => Math.max(0, Math.min(personagemExemplo.pvMax, v + delta)));
+  }
+
+  function marcarUsado(categoria: RecursoTurno) {
+    setTurnState((prev) => ({ ...prev, [categoria]: 'usada' }));
+  }
+
+  function fimDoTurno() {
+    setTurnState(turnoInicial);
+  }
+
+  function gastarSlot(): boolean {
+    if (espacosGastos >= espacosMagiaExemplo.maximo) return false;
+    setEspacosGastos((v) => v + 1);
+    return true;
+  }
 
   function descansoLongo() {
     setPvAtual(personagemExemplo.pvMax);
-    setRestStatus(`Descanso Longo: PV restaurado para ${personagemExemplo.pvMax}/${personagemExemplo.pvMax}.`);
+    setEspacosGastos(0);
+    fimDoTurno();
+    setRestStatus(`Descanso Longo: PV restaurado para ${personagemExemplo.pvMax}/${personagemExemplo.pvMax} e Espaços de Magia recuperados.`);
   }
 
   function descansoCurto() {
-    setRestStatus(
-      'Descanso Curto: nada pra recuperar ainda nesta ficha de exemplo — Espaços de Magia chegam na aba Magias (entrega 0.6).',
-    );
+    setEspacosGastos(0);
+    setRestStatus('Descanso Curto: Espaços de Magia (Magia de Pacto) recuperados. PV não recupera automaticamente por descanso curto.');
   }
 
   return (
@@ -69,15 +99,17 @@ export default function FichaShell() {
           />
         )}
         {tab === 'mochila' && <MochilaTab />}
-        {tab === 'magias' && (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-faint)', fontSize: 12 }}>
-            Aba Magias (espaços de magia, truques) chega na entrega 0.6.
-          </div>
-        )}
+        {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} />}
         {tab === 'combat' && (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-faint)', fontSize: 12 }}>
-            Aba Combat (Layout C — Ação/Ação Bônus/Reação) chega na entrega 0.6.
-          </div>
+          <CombatTab
+            pvAtual={pvAtual}
+            onAlterarPv={alterarPv}
+            turnState={turnState}
+            onMarcarUsado={marcarUsado}
+            onFimDoTurno={fimDoTurno}
+            espacosGastos={espacosGastos}
+            onGastarSlot={gastarSlot}
+          />
         )}
       </div>
 

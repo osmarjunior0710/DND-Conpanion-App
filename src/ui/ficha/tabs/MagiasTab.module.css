@@ -1,0 +1,43 @@
+.slotRow {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.slotPip {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.slotPipGasto {
+  border-color: var(--line-soft);
+  color: var(--text-faint);
+  background: var(--panel2);
+}
+
+.spellRow {
+  padding: 10px 4px;
+  border-bottom: 1px dashed var(--line-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.spellName {
+  font-size: 12px;
+}
+
+.spellDesc {
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}

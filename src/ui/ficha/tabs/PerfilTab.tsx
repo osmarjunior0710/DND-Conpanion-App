@@ -93,8 +93,8 @@ export default function PerfilTab({ pvAtual, xpBloqueado, onDescansoLongo, onDes
       {restStatus && <div className={styles.restStatus}>{restStatus}</div>}
       <div className="label">
         Bruxo é um caso especial de regra: Espaços de Magia (Magia de Pacto) recuperam no Descanso{' '}
-        <b>Curto</b>, diferente da maioria dos conjuradores (que só recuperam no Longo). A aba Magias, onde isso
-        aparece de verdade, chega na entrega 0.6.
+        <b>Curto</b>, diferente da maioria dos conjuradores (que só recuperam no Longo). Veja o contador na aba
+        Magias.
       </div>
     </>
   );

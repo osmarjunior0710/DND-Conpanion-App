@@ -1,0 +1,140 @@
+import { useState } from 'react';
+import { personagemExemplo } from '../../../data/exampleSheet';
+import { espacosMagiaExemplo } from '../../../data/exampleCombat';
+import SidePanel from '../combat/SidePanel';
+import AcaoPanelContent from '../combat/AcaoPanelContent';
+import BonusPanelContent from '../combat/BonusPanelContent';
+import ReacaoPanelContent from '../combat/ReacaoPanelContent';
+import styles from './CombatTab.module.css';
+
+export type RecursoTurno = 'acao' | 'bonus' | 'reacao';
+export type EstadoRecurso = 'disponivel' | 'usada';
+
+interface CombatTabProps {
+  pvAtual: number;
+  onAlterarPv: (delta: number) => void;
+  turnState: Record<RecursoTurno, EstadoRecurso>;
+  onMarcarUsado: (categoria: RecursoTurno) => void;
+  onFimDoTurno: () => void;
+  espacosGastos: number;
+  onGastarSlot: () => boolean;
+}
+
+const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
+  acao: { icone: '⚔', nome: 'Ação' },
+  bonus: { icone: '⚡', nome: 'Bônus' },
+  reacao: { icone: '🛡', nome: 'Reação' },
+};
+
+export default function CombatTab({
+  pvAtual,
+  onAlterarPv,
+  turnState,
+  onMarcarUsado,
+  onFimDoTurno,
+  espacosGastos,
+  onGastarSlot,
+}: CombatTabProps) {
+  const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  function abrirPainel(categoria: RecursoTurno) {
+    if (turnState[categoria] === 'usada') return;
+    setFeedback(null);
+    setPainelAberto(categoria);
+  }
+
+  function fecharPainel() {
+    setPainelAberto(null);
+  }
+
+  function escolherNoPainel(categoria: RecursoTurno, nome: string, desc: string) {
+    onMarcarUsado(categoria);
+    setPainelAberto(null);
+    setFeedback(`${nome} — ${desc} (rolagem de dados chega na entrega 0.7)`);
+  }
+
+  function ladoDoPainel(categoria: RecursoTurno): 'left' | 'right' | 'bottom' {
+    if (categoria === 'acao') return 'left';
+    if (categoria === 'bonus') return 'right';
+    return 'bottom';
+  }
+
+  return (
+    <>
+      <div className={`box-solid ${styles.hpLive}`}>
+        <div>
+          <div className="label">Pontos de Vida</div>
+          <div className={styles.hpNum}>
+            {pvAtual} / {personagemExemplo.pvMax}
+          </div>
+        </div>
+        <div className={styles.hpBtns}>
+          <div className={styles.hpBtn} onClick={() => onAlterarPv(-1)}>
+            −
+          </div>
+          <div className={styles.hpBtn} onClick={() => onAlterarPv(1)}>
+            +
+          </div>
+        </div>
+      </div>
+      <div className="label" style={{ marginBottom: 14 }}>
+        ⚠️ Protótipo: cada toque muda 1 PV por vez. Um campo pra digitar quantidade de dano/cura fica pra quando o
+        motor de cálculo (`core/`) entrar de verdade.
+      </div>
+
+      <div className="section-title">Ação · Ação Bônus · Reação — estado do turno</div>
+      <div className={styles.splitBtns}>
+        {(['acao', 'bonus', 'reacao'] as RecursoTurno[]).map((categoria) => (
+          <div
+            key={categoria}
+            className={`${styles.splitBtn} ${styles[`splitBtn${categoria === 'acao' ? 'Acao' : categoria === 'bonus' ? 'Bonus' : 'Reacao'}`]} ${
+              turnState[categoria] === 'usada' ? styles.splitBtnUsada : ''
+            }`}
+            onClick={() => abrirPainel(categoria)}
+          >
+            <div className={styles.sbIcon}>{LABELS[categoria].icone}</div>
+            <div className={styles.sbLabel}>{LABELS[categoria].nome}</div>
+            <div className={styles.sbState}>{turnState[categoria] === 'usada' ? 'usada' : 'ativo'}</div>
+          </div>
+        ))}
+      </div>
+
+      <div
+        className={styles.endTurnBtn}
+        onClick={() => {
+          onFimDoTurno();
+          setFeedback(null);
+        }}
+      >
+        ↻ Fim do Turno — restaura os 3 botões
+      </div>
+      <div className="label">
+        Ação abre da esquerda, Ação Bônus da direita, Reação sobe de baixo. Ao usar um, ele fica cinza/travado até
+        "Fim do Turno".
+      </div>
+
+      {feedback && <div className={styles.feedback}>{feedback}</div>}
+
+      <SidePanel
+        open={painelAberto !== null}
+        side={painelAberto ? ladoDoPainel(painelAberto) : 'left'}
+        title={painelAberto ? `${LABELS[painelAberto].icone} ${LABELS[painelAberto].nome} — escolha uma` : ''}
+        onClose={fecharPainel}
+      >
+        {painelAberto === 'acao' && (
+          <AcaoPanelContent
+            onEscolher={(nome, desc) => escolherNoPainel('acao', nome, desc)}
+            gastarSlot={onGastarSlot}
+            espacosGastos={espacosGastos}
+            espacosMaximo={espacosMagiaExemplo.maximo}
+          />
+        )}
+        {painelAberto === 'bonus' && <BonusPanelContent />}
+        {painelAberto === 'reacao' && (
+          <ReacaoPanelContent onEscolher={(nome, desc) => escolherNoPainel('reacao', nome, desc)} gastarSlot={onGastarSlot} />
+        )}
+      </SidePanel>
+    </>
+  );
+}

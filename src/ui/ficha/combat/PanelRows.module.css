@@ -1,0 +1,71 @@
+.row {
+  padding: 11px 8px;
+  border-bottom: 1px dashed var(--line-soft);
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.row:active {
+  background: var(--panel2);
+}
+
+.rowName {
+  font-size: 12px;
+}
+
+.rowDesc {
+  font-size: 9px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.accordionBody {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease;
+}
+
+.accordionBodyOpen {
+  max-height: 600px;
+}
+
+.slotCounter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin: 6px 0 10px;
+  border: 1px dashed var(--line-soft);
+  border-radius: 8px;
+  font-size: 10px;
+  flex-wrap: wrap;
+}
+
+.slotPipLg {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+}
+
+.slotPipLgGasto {
+  background: var(--line-soft);
+  border-color: var(--line-soft);
+}
+
+.spellMiniRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 10px;
+  margin-top: 6px;
+  border: 1px dashed var(--line-soft);
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 40px;
+  align-items: center;
+}
+
+.spellMiniRow:active {
+  background: var(--accent-dim);
+}

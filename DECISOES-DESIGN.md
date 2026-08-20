@@ -41,6 +41,25 @@ e essa entrada deve ser atualizada.
 **Data/origem:** 2026-08, durante a entrega 0.2 (Fase 0 — esqueleto
 navegável).
 
+## Combat Layout C — painéis com `position: fixed` na viewport (não relativos ao frame)
+
+**Decisão:** os painéis deslizantes de Ação/Ação Bônus/Reação (Layout C,
+já escolhido antes — ver entrada "Combate — economia de ação" abaixo)
+usam `position: fixed` relativo à viewport do navegador, igual às pills
+do wizard, em vez de `position: absolute` relativo a um elemento "frame"
+como no wireframe HTML original (que simulava um celular dentro da
+página). Como o app de verdade não tem esse frame — a tela real do
+celular já é o contêiner — `fixed` é o equivalente correto.
+
+**Contexto:** decisão técnica quase óbvia (o wireframe tinha uma div
+`#frame` simulando um celular; o app de verdade não tem isso), mas
+registro aqui porque estabelece um padrão: **qualquer overlay/painel
+futuro** (bottom sheet, modais, o Roll Overlay que chega na 0.7) deve
+seguir esse mesmo padrão de `fixed` na viewport, não tentar reproduzir
+posicionamento relativo ao "frame" do wireframe.
+
+**Data/origem:** 2026-08, entrega 0.6.
+
 ## Wizard — navegação em pills flutuantes ancoradas + sorteio + validação bloqueante
 
 **Decisão:** a partir da entrega 0.4-extra, o wizard de criação (e deve
