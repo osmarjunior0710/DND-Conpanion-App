@@ -276,3 +276,85 @@ espadas cruzadas), não "Play" como no rascunho inicial.
 
 **Contexto:** "Play" era genérico demais e não deixava claro o propósito
 específico da aba (ações de combate em tempo real).
+
+## Dados — Origens são uniformes, schema único sem exceções
+
+**Decisão:** as 16 origens do Livro do Jogador 2024 usam um schema de
+dados único e idêntico (3 atributos, 1 talento, 2 perícias, 1 ferramenta,
+2 opções de equipamento). Nenhuma variação estrutural entre elas.
+
+**Contexto:** confirmado campo a campo na planilha mestra antes de
+importar. Vale como precedente: ao importar Classes/Subclasses depois,
+NÃO assumir que o mesmo nível de uniformidade vai se repetir — já
+sabemos, por outras análises, que características de classe têm bem
+mais variação (tipos de ação, recursos limitados, etc.).
+
+**Detalhe de implementação:** 5 das 16 origens (Artista, Artesão, Guarda,
+Nobre, Soldado) têm um campo de ferramenta com escolha dentro de um
+grupo (Instrumento Musical, Ferramentas de Artesão, Kit de Jogos) — as
+opções reais de cada grupo já estão mapeadas a partir da coluna
+"Variantes" da aba Ferramentas da planilha. Preço não entra nessas opções
+durante a seleção de origem (só importa depois, na Loja).
+
+**Pendência conhecida (ver `PENDENCIAS.md`):** 2 dos 10 Talentos de
+Origem usados nas 16 origens pedem uma seleção extra na hora de pegar —
+**Habilidoso** (Nobre, Escriba, Charlatão: escolhe 3 perícias/ferramentas
+livres) e **Iniciado em Magia** (Acólito, Guia, Sábio: escolhe 2 truques
++ 1 magia de 1º círculo de uma lista de classe). Essas origens ficam
+marcadas "(em breve)" e não-selecionáveis na lista até essa UI de seleção
+ser desenhada — não travam a importação das outras 14.
+
+## Dados — todo import segue a mesma pasta/formato
+
+**Decisão:** `data/rulesets/dnd2024/` recebe um arquivo por categoria
+(origens.ts, talentos.ts, ferramentas.ts, ...), todos exportando um array
+no mesmo padrão de objeto, indexado por `id`.
+
+**Contexto:** evita que cada categoria de dado vire "um jeito diferente de
+importar", o que dificultaria manutenção assim que o projeto crescer.
+
+## Itens de origem/classe já nascem no formato de Mochila
+
+**Decisão:** equipamento concedido por origem (e depois por classe) deve
+usar a mesma estrutura de item que a aba Mochila espera (nome,
+quantidade, peso, categoria), com uma tag `origemDoItem` indicando de
+onde veio (antecedente, classe, ou compra na loja).
+
+**Contexto:** esses itens vão parar de verdade no inventário do
+personagem assim que a ficha for criada — não são só texto decorativo no
+resumo do wizard. Uma estrutura de item única evita reimplementar "o que
+é um item" em três lugares diferentes do código (origem, classe, loja).
+
+## Talentos são importados junto com Origens, não depois
+
+**Decisão:** a importação de Talentos entra na mesma leva que a
+importação de Origens, não fica pra uma entrega futura separada.
+
+**Contexto:** cada origem concede exatamente 1 Talento de Origem fixo, e
+esse mesmo talento pode reaparecer como opção no level-up (níveis de
+ASI/Talento). Sem os Talentos importados, a origem teria só um nome solto
+sem descrição/efeito de verdade conectado.
+
+## UI — floaters de resumo em progresso durante o wizard (a implementar)
+
+**Decisão (adiada, só registrada por ora):** 3 painéis flutuantes durante
+a criação de personagem, cada um acumulando o que já foi adicionado numa
+categoria — Perfil (perícias, talentos), Itens (kits, itens de
+classe/origem), Truques e Magias. Ajuda o jogador a ver o que já está
+"garantido" na ficha e evita duplicata de concessão (ex: duas fontes
+diferentes dando a mesma perícia).
+
+**Contexto:** padrão que já existia no builder anterior do Osmar, vale
+reaproveitar. Ainda não está no wireframe atual — entra quando chegar a
+hora de detalhar o wizard visualmente.
+
+## UI — tooltip em texto sublinhado / pill com ícone "i" (a implementar)
+
+**Decisão (adiada, só registrada por ora):** qualquer termo com descrição
+própria (talento, magia, truque) aparece sublinhado; tocar abre popup com
+a descrição, sem trocar de tela. Quando o termo é uma opção selecionável
+em formato de pill, o mesmo comportamento vem de um ícone "i" ao lado em
+vez do sublinhado.
+
+**Contexto:** mesmo padrão do builder anterior. Ainda não está no
+wireframe atual.

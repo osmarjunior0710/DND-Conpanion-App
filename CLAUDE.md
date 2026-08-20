@@ -8,6 +8,9 @@
 > frequência. Decisões de design que evoluem com o tempo ficam em
 > `DECISOES-DESIGN.md` — leia esse arquivo também, e **atualize-o** sempre
 > que tomar ou aprender algo sobre uma decisão de design (ver seção 7).
+> Coisas adiadas de propósito (ainda não resolvidas) ficam em
+> `PENDENCIAS.md` — leia esse também, e **atualize-o** sempre que adiar
+> algo ou resolver algo que estava lá (ver seção 11).
 
 ## 1. Quem está do outro lado
 
@@ -117,3 +120,18 @@ v{AAAA}{MM}_{HHmm}
 - Motivo: o Osmar usa esse carimbo pra confirmar rapidamente, no celular,
   se o navegador carregou a versão nova ou se ainda está servindo cache
   antigo — sem precisar adivinhar.
+
+## 11. Regra de atualização do PENDENCIAS.md
+
+Sempre que uma entrega adiar algo de propósito — um dado que a planilha
+não tem completo ainda, uma UI que precisa de mais desenho antes de
+implementar, uma exceção estrutural que apareceu mas não trava a entrega
+atual — registre em `PENDENCIAS.md` o que é, por que foi adiado, e o que
+falta pra resolver. Isso vale tanto pra dados (ex: uma origem/classe que
+precisa de uma seleção que ainda não tem tela) quanto pra decisões de
+arquitetura deixadas em aberto (ex: multiclasse). Quando algo da lista for
+resolvido, mova a entrada pra `DECISOES-DESIGN.md` (como decisão tomada)
+e remova de `PENDENCIAS.md` — não deixe as duas listas com a mesma coisa.
+Antes de propor uma entrega nova que toque em dado de regra (origens,
+classes, espécies, talentos, magias), **consulte esse arquivo primeiro**
+pra não reabrir uma pendência que já tinha contexto registrado.
