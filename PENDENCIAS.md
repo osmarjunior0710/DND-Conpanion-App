@@ -13,6 +13,36 @@
 
 ---
 
+## Osmar vai padronizar colunas de descrição na planilha (short + completa)
+
+**O que é:** Osmar pretende passar pela planilha mestra e adicionar, de
+propósito, colunas de **descrição curta** e **descrição completa** nas
+abas que ainda não têm — resolvendo de raiz o problema de descrição
+inconsistente entre abas (algumas têm campo de texto corrido pronto,
+outras só têm colunas mecânicas, outras não têm nada). Ele comentou isso
+espontaneamente, incomodado com a inconsistência atual.
+
+**Por que isso importa pra mim (Claude) quando a planilha nova chegar:**
+quando ela for reenviada, reimportar **todas** as abas que ganharem essas
+colunas novas, não só a que motivou o pedido — em especial:
+- **Armas** e **Armaduras** (item acima, ainda sem popup de descrição).
+- **Talentos de Origem** (`talentos.ts`) — hoje usa a coluna
+  `beneficios` corrida como descrição; se ganhar uma versão "curta"
+  separada, dá pra usar a curta no InfoChip e manter a completa em algum
+  lugar de mais detalhe.
+- **Antecedentes** (`origens.ts`) — se ganhar coluna de descrição
+  narrativa própria, `descricoesOrigens.ts` (hoje uma exceção manual
+  transcrita do livro) pode ser aposentado e o campo migrado pra dentro
+  do gerador normal a partir da planilha. Ver decisão registrada em
+  `DECISOES-DESIGN.md`.
+- Qualquer outra aba nova que ganhar as colunas (Espécies, Classes, etc.
+  quando chegar a vez delas).
+
+**Estado atual:** nada a fazer ainda — é só um aviso de intenção, a
+planilha ainda não foi atualizada. Quando o Osmar reenviar o arquivo,
+reler a estrutura de todas as abas antes de reimportar (não assumir que
+só a aba mencionada mudou).
+
 ## Popup de descrição só falta pra Armas e Armaduras (Equipamento de Aventura já resolvido)
 
 **O que é:** o popup de descrição tocável (nome sublinhado → popup com
