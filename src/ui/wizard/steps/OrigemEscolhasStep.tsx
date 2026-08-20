@@ -4,6 +4,7 @@ import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
 import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
 import { pericias } from '../../../data/rulesets/dnd2024/pericias';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
+import { buscarDescricaoFerramenta } from '../../../data/rulesets/dnd2024/buscarDescricaoFerramenta';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoChip from '../../components/InfoChip';
 import type { StepProps } from './StepProps';
@@ -37,19 +38,36 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
       </div>
 
       <div className="section-title">Concedido pela origem</div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+        <span className="label">Talento:</span>
         <InfoChip
           nome={nomeTalentoCompleto}
           descricao={talento?.beneficios ?? '⚠️ Talento não encontrado nos dados importados — avise o Osmar.'}
         />
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
+        <span className="label">Perícias</span>
         <InfoChip nome={origem.pericias[0]} descricao={descricaoPericia(origem.pericias[0])} />
         <InfoChip nome={origem.pericias[1]} descricao={descricaoPericia(origem.pericias[1])} />
       </div>
 
-      <div className="section-title">Ferramenta</div>
-      {origem.ferramenta.categoria === 'fixa' ? (
-        <div style={{ fontSize: 12 }}>{origem.ferramenta.nome}</div>
-      ) : (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+        <span className="label">Per. com Ferramentas:</span>
+        {origem.ferramenta.categoria === 'fixa' ? (
+          <InfoChip nome={origem.ferramenta.nome} descricao={buscarDescricaoFerramenta(origem.ferramenta.nome)} />
+        ) : selection.ferramentaOrigemEscolhida ? (
+          <InfoChip
+            nome={selection.ferramentaOrigemEscolhida}
+            descricao={buscarDescricaoFerramenta(selection.ferramentaOrigemEscolhida)}
+          />
+        ) : (
+          <span className="label">(escolha abaixo)</span>
+        )}
+      </div>
+
+      {origem.ferramenta.categoria === 'escolha' && (
         <>
           <div className="label" style={{ marginBottom: 8 }}>
             Escolha 1 de {origem.ferramenta.grupo}:

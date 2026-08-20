@@ -619,3 +619,44 @@ Escolhas da Origem (parágrafo logo abaixo do nome, antes da seção
 "Concedido pela origem").
 
 **Data/origem:** 2026-08, mesmo dia da correção acima.
+
+## "Concedido pela origem" — 3 linhas rotuladas (Talento / Perícias / Per. com Ferramentas)
+
+**Decisão:** a seção "Concedido pela origem" da tela de Escolhas da
+Origem virou 3 linhas separadas, cada uma com um rótulo de texto
+seguido do(s) botão(ões) tonal(is) InfoChip:
+- `Talento: {chip}`
+- `Perícias {chip} {chip}`
+- `Per. com Ferramentas: {chip}` (ou `(escolha abaixo)` em texto simples
+  quando a origem usa ferramenta de categoria "escolha" e o jogador
+  ainda não escolheu nenhuma opção na lista abaixo)
+
+**Contexto:** o Osmar pediu pra devolver o talento (que tinha ficado só
+com perícias na mesma linha) e organizar em linhas rotuladas, além de
+unificar a ferramenta nessa mesma seção-resumo — antes ela tinha um
+bloco "Ferramenta" separado, sem descrição nenhuma.
+
+**Ferramenta agora tem descrição:** a aba "Ferramentas" da planilha já
+tinha a coluna "Uso (ação Usar Objeto)" — foi importada como campo
+`descricao` em `ferramentas.ts` (pros grupos de escolha: Instrumento
+Musical, Kit de Jogos, Ferramentas de Artesão) e num novo mapa
+`descricaoFerramentaFixa` (pras ferramentas fixas que não pertencem a
+nenhum grupo: Suprimentos de Calígrafo, Ferramentas de Ladrão, Kit de
+Falsificação, Kit de Herbalismo, Ferramentas de Carpinteiro, Ferramentas
+de Cartógrafo, Ferramentas de Navegador, Kit de Disfarce, Kit de
+Veneno). Um novo `buscarDescricaoFerramenta.ts` (mesmo padrão de
+`buscarDescricaoItem.ts`) faz a busca por nome pras duas fontes.
+
+**Nota sobre Instrumento Musical e Kit de Jogos:** a planilha só tem 1
+linha de "Uso" por grupo (não por instrumento/jogo individual) — por
+isso, ex: Alaúde e Tambor mostram a mesma descrição genérica de
+"Instrumento Musical" no popup. Isso é fiel à planilha, não uma
+simplificação nossa.
+
+**Bloco de seleção da ferramenta (categoria "escolha"):** continua
+existindo abaixo do resumo, com a lista de opções clicáveis — só perdeu
+o título "Ferramenta" (virou redundante já que o resumo já mostra
+"Per. com Ferramentas:").
+
+**Data/origem:** 2026-08, mesmo dia da entrega das descrições
+narrativas de origem.
