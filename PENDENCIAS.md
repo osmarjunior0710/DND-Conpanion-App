@@ -195,23 +195,22 @@ motivou o pedido.
   `DECISOES-DESIGN.md`.
 - Aba nova **"Proficiências de Classe"** — arma/armadura por classe,
   importada.
+- **Espécies** — a coluna "Descrição Curta (auto, revisar)" já está em
+  uso no card da lista (`introducaoCurta`), a pedido do Osmar, mesmo
+  sendo gerada automaticamente e ainda sem revisão manual linha a linha.
+  A tela de detalhe continua com o texto completo. Ver decisão em
+  `DECISOES-DESIGN.md`.
 
 **Ainda pendente:**
-- **Espécies** ganhou uma coluna "Descrição Curta (auto, revisar)" —
-  mas é **gerada automaticamente** (corta na frase mais próxima de ~350
-  caracteres), ainda **não revisada manualmente** pelo Osmar. Não trocar
-  o texto que aparece no card da lista de Espécie/`introducao` por essa
-  coluna ainda — só quando ele confirmar que revisou de verdade (mesmo
-  padrão de cautela já usado com a coluna "Tipo de Ação (auto, revisar)"
-  de Talentos/Características, que também é ponto de partida, não fonte
-  de verdade).
 - **Talentos de Origem** (`talentos.ts`) e **Antecedentes**
   (`origens.ts`) ainda não ganharam coluna curta/narrativa própria —
   `descricoesOrigens.ts` continua sendo a exceção manual transcrita do
   livro até a planilha ganhar isso.
 - Características de Classe/Subclasses/Opções de Classe/Glossário de
-  Regras também ganharam "Descrição Curta (auto, revisar)" — mesma
-  ressalva: não usar até confirmado como revisado.
+  Regras também ganharam "Descrição Curta (auto, revisar)" — ainda não
+  usadas em tela nenhuma (essas classes/subclasses nem foram importadas
+  ainda, exceto Guerreiro nível 1, que já está limpo). Aplicar o mesmo
+  tratamento de Espécies quando fizer sentido pra tela em questão.
 
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 

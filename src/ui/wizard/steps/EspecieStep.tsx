@@ -18,7 +18,7 @@ export default function EspecieStep({ selection, update }: StepProps) {
                 {e.nome}
                 {!e.disponivel && <span className="tag" style={{ marginLeft: 6 }}>(em breve)</span>}
               </div>
-              <div className="opt-card-desc">{e.introducao}</div>
+              <div className="opt-card-desc">{e.introducaoCurta}</div>
             </div>
           </div>
         </div>

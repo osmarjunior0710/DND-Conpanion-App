@@ -1090,3 +1090,24 @@ usado com Origens primeiro, Classes depois. Nunca importar uma dessas
 células "como está".
 
 **Data/origem:** 2026-08, mesma revisão de planilha do Osmar.
+
+## Descrição curta de Espécies usada na lista, mesmo sendo "auto, revisar"
+
+**Decisão:** o card da lista de Espécies (`EspecieStep.tsx`) agora
+mostra `introducaoCurta` (coluna "Descrição Curta (auto, revisar)" da
+planilha, ~250-350 caracteres) em vez do parágrafo de introdução
+completo (~700-900 caracteres). A tela de detalhe/escolhas
+(`EspecieEscolhasStep.tsx`) continua mostrando o texto completo
+(`introducao`) — a curta é só pra lista, não substitui a completa em
+lugar nenhum.
+
+**Contexto:** pedido explícito do Osmar pra usar a versão curta em
+Espécies também, mesmo essa coluna sendo gerada automaticamente (corte
+na frase mais próxima de ~350 caracteres) e ainda sem revisão manual
+linha a linha — mesmo tratamento de "ponto de partida, não fonte de
+verdade final" que outras colunas auto/revisar já têm no projeto (ex:
+"Tipo de Ação (auto, revisar)"). Se o Osmar revisar essas 10 frases
+manualmente depois, é só atualizar o texto na planilha e reimportar —
+não muda a estrutura, só o conteúdo do campo.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
