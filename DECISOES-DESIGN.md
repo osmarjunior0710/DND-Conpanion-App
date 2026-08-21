@@ -983,3 +983,55 @@ têm — pendência já conhecida).
 
 **Data/origem:** 2026-08, mesmo dia da confirmação do schema de
 Classes.
+
+## Idiomas — "2 à escolha" é regra fixa, não varia por Origem/Espécie
+
+**Decisão:** confirmado que nem a aba Antecedentes nem a aba Espécies
+da planilha têm coluna de idioma nenhuma — logo, o número de idiomas
+concedidos por origem/espécie **não varia** (o campo simplesmente não
+existe pra variar). A regra "Comum obrigatório + 2 à escolha", já
+implementada na tela de Línguas, está correta e não precisa de ajuste.
+
+**Contexto:** dúvida levantada numa auditoria de criação de personagem
+feita com apoio do Claude (chat separado). Resolvida checando as duas
+abas diretamente na planilha, não por memória.
+
+**Data/origem:** 2026-08, durante revisão da auditoria de criação de
+personagem.
+
+## Cálculo de CA — Bárbaro e Monge têm regra própria (única exceção do núcleo)
+
+**Decisão:** quando o motor de cálculo de CA for construído (Entrega A
+da Ficha real), ele precisa checar, antes da fórmula padrão, se a
+classe tem uma regra própria de "Defesa sem Armadura". Só duas das 12
+classes têm isso como característica de classe base:
+- **Bárbaro:** `10 + mod. Destreza + mod. Constituição`, mantém o
+  benefício mesmo empunhando Escudo.
+- **Monge:** `10 + mod. Destreza + mod. Sabedoria`, **perde** o
+  benefício se usar Escudo ou vestir qualquer armadura.
+
+Nenhuma das outras 10 classes tem regra de CA sem armadura própria.
+
+**Achado relacionado, NÃO é uma 3ª exceção de núcleo:** a subclasse
+Bardo — Colégio da Dança (nível 3, "Ginga Fascinante") também ganha
+`10 + Destreza + Carisma` sem armadura, mas é característica de
+**subclasse**, não de toda a classe Bardo — não deve entrar na função
+central de cálculo de CA por classe, fica resolvida como característica
+normal de subclasse (Camada 3) quando subclasses forem importadas.
+
+**Recomendação de implementação:** função de cálculo de CA centralizada
+que recebe (classe, atributos, armadura equipada, escudo equipado) e
+resolve nessa ordem: 1) a classe tem regra própria sem armadura? 2) o
+personagem está de fato sem armadura equipada? 3) aplica a regra
+especial; senão, aplica a fórmula padrão por categoria de armadura
+(Leve: base + Destreza sem limite; Média: base + Destreza até +2;
+Pesada: base, sem Destreza) + Escudo (+2, se aplicável e permitido).
+Nunca espalhar `if classe === "Bárbaro"` pelo código — uma função só.
+
+**Contexto:** achado numa auditoria de criação de personagem feita com
+apoio do Claude (chat separado), a partir de uma lembrança do Osmar
+conferida campo a campo nas 12 classes.
+
+**Data/origem:** 2026-08, durante revisão da auditoria de criação de
+personagem — ainda não implementado (motor de CA não existe ainda),
+registrado aqui pra já nascer certo quando for construído.
