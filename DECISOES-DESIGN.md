@@ -861,3 +861,22 @@ visual de "atraso" no overlay durante o scroll por inércia).
 
 **Data/origem:** 2026-08, reportado num Samsung Android real, mesmo dia
 da entrega de Idiomas.
+
+## Prioridade: fechar fluxo completo wizard → ficha antes de polir tela isolada
+
+**Decisão:** a partir de agora, a prioridade é fechar um caminho
+completo de construção de personagem até a ficha final navegável — cada
+nova peça de dado (Classe, Talentos e Perícias de classe, etc.) deve
+nascer já conectada de ponta a ponta (wizard → ficha), criando o
+caminho de regressão junto, em vez de ficar só na tela isolada do
+wizard. Ajustes de design fino em telas isoladas (ex: "Escolhas da
+Espécie" ainda estranha — ver PENDENCIAS.md) ficam pra depois desse
+fluxo estar de pé.
+
+**Contexto:** pedido explícito do Osmar — ele quer validar cada entrega
+nova olhando a ficha final resultante, não só a tela do wizard isolada.
+Isso também evita retrabalho de polir uma tela isolada antes do
+contexto ao redor dela (o resto do fluxo) estar decidido.
+
+**Data/origem:** 2026-08, mesmo dia da pendência de design da tela de
+Espécie.

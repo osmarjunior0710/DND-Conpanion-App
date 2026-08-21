@@ -13,6 +13,27 @@
 
 ---
 
+## Design da tela "Escolhas da Espécie" ainda tá estranho
+
+**O que é:** o Osmar notou que o layout da tela "3b. Escolhas da
+Espécie" (tamanho/deslocamento/tipo de criatura em summary-row + traços
+em InfoChip embaixo) ainda não está bom visualmente — não deu pra
+apontar exatamente o quê, só que "tá estranho".
+
+**Por que foi adiado de propósito:** prioridade agora é fechar um fluxo
+completo de construção → ficha (todas as etapas do wizard levando a uma
+ficha final navegável), pra cada entrega nova (Classe, Talentos,
+Perícias de classe, etc.) já nascer com validação visual de ponta a
+ponta — o Osmar quer conseguir olhar a ficha final e comparar, não só a
+tela isolada do wizard. Polir o design de uma tela isolada antes disso
+significa retrabalho quando o fluxo completo mudar o contexto ao redor
+dela.
+
+**O que falta pra resolver:** quando o fluxo completo (wizard → ficha)
+estiver de pé, revisar a tela de Escolhas da Espécie com o Osmar,
+pedindo pra ele apontar especificamente o que incomoda (espaçamento?
+hierarquia? os InfoChips amontoados?) antes de redesenhar.
+
 ## Outros overlays fixos podem ter o mesmo bug de scroll vazando atrás
 
 **O que é:** o popup de InfoChip/ItemComDescricao tinha um bug de scroll
