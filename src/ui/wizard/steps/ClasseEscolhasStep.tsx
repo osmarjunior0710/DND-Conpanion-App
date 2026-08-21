@@ -2,6 +2,7 @@ import { classes } from '../../../data/rulesets/dnd2024/classes';
 import { caracteristicasClasse } from '../../../data/rulesets/dnd2024/caracteristicasClasse';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/classesProficienciasIniciais';
+import { proficienciasArmaArmaduraClasse } from '../../../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoChip from '../../components/InfoChip';
@@ -22,6 +23,7 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
   }
 
   const proficiencias = proficienciasIniciaisClasse[classe.id];
+  const profArmaArmadura = proficienciasArmaArmaduraClasse.find((p) => p.classe === classe.nome);
   const caracteristicasNivel1 = caracteristicasClasse.filter((c) => c.classe === classe.nome && c.nivel === 1);
 
   function toggleEstiloDeLuta(nome: string) {
@@ -52,15 +54,15 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
         <span>Salvaguardas</span>
         <span>{classe.salvaguardas.join(' e ')}</span>
       </div>
-      {proficiencias && (
+      {profArmaArmadura && (
         <>
           <div className="summary-row">
             <span>Proficiência com Armas</span>
-            <span>{proficiencias.proficienciaArmas}</span>
+            <span>{profArmaArmadura.proficienciaArmas}</span>
           </div>
           <div className="summary-row">
             <span>Treinamento com Armadura</span>
-            <span>{proficiencias.proficienciaArmadura}</span>
+            <span>{profArmaArmadura.treinamentoArmadura}</span>
           </div>
         </>
       )}

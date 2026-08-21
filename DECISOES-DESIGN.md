@@ -1035,3 +1035,58 @@ conferida campo a campo nas 12 classes.
 **Data/origem:** 2026-08, durante revisão da auditoria de criação de
 personagem — ainda não implementado (motor de CA não existe ainda),
 registrado aqui pra já nascer certo quando for construído.
+
+## Planilha mestra — Armas, Armaduras e Proficiências de Classe resolvidas
+
+**Decisão:** o Osmar revisou a planilha mestra por conta própria e
+resolveu 3 buracos de dado de uma vez:
+1. **Aba "Proficiências de Classe" (nova)** — Classe / Proficiência com
+   Armas / Treinamento com Armadura, extraída do Cap. 3 pras 12 classes.
+   Importada em `proficienciasArmaArmaduraClasse.ts` — substitui a parte
+   de arma/armadura que estava em `classesProficienciasIniciais.ts`
+   (exceção transcrita do livro); essa última ficou só com perícias à
+   escolha e equipamento inicial, que a planilha ainda não tem.
+2. **Armas (38) e Armaduras (13) ganharam coluna "Descrição"** —
+   síntese ilustrativa gerada a partir dos próprios campos estruturados
+   já existentes (Dano/Propriedades/Maestria pra armas;
+   CA/Força mínima/Furtividade pra armaduras), não é extração de texto
+   livre do livro. Importadas em `armas.ts`/`armaduras.ts` e ligadas em
+   `buscarDescricaoItem.ts` — resolve a pendência antiga de popup de
+   descrição faltando pra essas duas categorias (agora as 4 categorias
+   de item — Equipamento de Aventura, Montarias/Veículos, Armas,
+   Armaduras — têm popup).
+
+**Confirmado ao importar:** o item "Couro Batido" (armadura da Opção B
+de equipamento do Guerreiro) estava nomeado "Armadura de Couro Batido"
+em `classesProficienciasIniciais.ts` (peguei esse nome do PDF) — a
+planilha usa só "Couro Batido" (a categoria "Armadura Leve" já vem
+separada, no cabeçalho da seção). Corrigido pra bater com a planilha e
+o popup funcionar.
+
+**Data/origem:** 2026-08, planilha revisada pelo Osmar por conta
+própria, reimportada no mesmo dia.
+
+## Planilha mestra — duplicidade de conteúdo em características de nível alto
+
+**Achado (não é uma decisão de design, é um problema de dado real):** ao
+gerar resumos automáticos de "Descrição Curta", o Osmar descobriu que
+~24 células de "Descrição Completa" (Características de Classe e
+Subclasses) têm, coladas dentro da mesma célula, o dump inteiro de uma
+lista de opções que já existe corretamente em outra aba (Opções de
+Classe) — não é texto longo, é dado duplicado por engano na extração
+original do PDF pra planilha. Padrão comum: características de
+"Conjuração" carregam a lista de magias da classe inteira coladas
+dentro; características de nível 14+ carregam listas de
+invocações/manobras/formas.
+
+**Nenhuma célula do Guerreiro (classe base, níveis 1-20) tem esse
+problema** — já confirmado, `caracteristicasClasse.ts` está limpo. Só
+as subclasses dele (Cavaleiro Místico nível 3, Mestre da Batalha nível
+18) estão na lista de pendentes, e essas ainda não foram importadas.
+
+**Ação combinada:** resolver célula por célula sob demanda, conforme
+cada classe/subclasse for sendo importada de verdade — mesmo ritmo já
+usado com Origens primeiro, Classes depois. Nunca importar uma dessas
+células "como está".
+
+**Data/origem:** 2026-08, mesma revisão de planilha do Osmar.

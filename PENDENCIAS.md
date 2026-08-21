@@ -185,58 +185,33 @@ outras só têm colunas mecânicas, outras não têm nada). Ele comentou isso
 espontaneamente, incomodado com a inconsistência atual.
 
 **Por que isso importa pra mim (Claude) quando a planilha nova chegar:**
-quando ela for reenviada, reimportar **todas** as abas que ganharem essas
-colunas novas, não só a que motivou o pedido — em especial:
-- **Armas** e **Armaduras** (item acima, ainda sem popup de descrição).
-- **Talentos de Origem** (`talentos.ts`) — hoje usa a coluna
-  `beneficios` corrida como descrição; se ganhar uma versão "curta"
-  separada, dá pra usar a curta no InfoChip e manter a completa em algum
-  lugar de mais detalhe.
-- **Antecedentes** (`origens.ts`) — se ganhar coluna de descrição
-  narrativa própria, `descricoesOrigens.ts` (hoje uma exceção manual
-  transcrita do livro) pode ser aposentado e o campo migrado pra dentro
-  do gerador normal a partir da planilha. Ver decisão registrada em
+reimportar **todas** as abas que ganharem colunas novas, não só a que
+motivou o pedido.
+
+**Já resolvido nesta rodada (2ª planilha revisada pelo Osmar):**
+- **Armas** e **Armaduras** ganharam coluna "Descrição" — curta e
+  ilustrativa por design (não é a regra completa, é resumo de leitura
+  rápida). Importada e ligada no popup. Ver decisão em
   `DECISOES-DESIGN.md`.
-- Qualquer outra aba nova que ganhar as colunas (Espécies, Classes, etc.
-  quando chegar a vez delas).
+- Aba nova **"Proficiências de Classe"** — arma/armadura por classe,
+  importada.
 
-**Estado atual:** Osmar confirmou que vai revisar os textos pra ter uma
-versão "short description" de verdade (não é só intenção mais, ele já
-está fazendo). Motivo concreto discutido: em ~390px, texto acima de uns
-400-500 caracteres já vira parede de texto e empurra o resto da tela pra
-baixo — os parágrafos de introdução de Origem/Espécie (700-900
-caracteres hoje) são o pior caso disso. Quando a planilha nova chegar,
-reler a estrutura de todas as abas antes de reimportar (não assumir que
-só a aba mencionada mudou), e usar a versão curta nos lugares onde hoje
-o texto completo aparece "cru" na tela sem popup (ex: card da lista de
-Origem/Espécie, que hoje mostra `descricoesOrigens[id]`/`introducao`
-inteiro) — a versão completa continua reservada pro popup/tela de
-detalhe.
-
-## Popup de descrição só falta pra Armas e Armaduras (Equipamento de Aventura já resolvido)
-
-**O que é:** o popup de descrição tocável (nome sublinhado → popup com
-nome + texto) já funciona pra **Equipamento de Aventura** (98 itens,
-Osmar atualizou a planilha com a coluna Descrição) e **Montarias e
-Veículos** (19 itens, só 2 com descrição real — Sela Militar e Sela
-Exótica, o resto é só capacidade/custo mesmo). Itens de arma/armadura
-(Adaga, Armadura de Couro...) ainda aparecem como texto simples, sem
-popup, porque **Armas** e **Armaduras** ainda não foram importadas da
-planilha (essas abas têm colunas mecânicas — dano, propriedades, CA,
-força mínima — em vez de um campo de texto corrido; dá pra virar
-descrição, mas ainda não foi feito).
-
-**O que falta pra resolver:**
-1. Importar `Armas` e `Armaduras` da planilha, montando uma frase de
-   descrição a partir das colunas mecânicas de cada uma.
-2. Ligar esses itens no mesmo índice de busca por nome que já existe em
-   `data/rulesets/dnd2024/buscarDescricaoItem.ts` (hoje só cobre
-   Equipamento de Aventura + Montarias/Veículos).
-3. `Kits — Conteúdo` e `Bugigangas` continuam sem coluna de descrição
-   própria na planilha — não é falha de importação, é como a planilha
-   está (Bugigangas é tabela de sabor narrativo, o próprio texto já é
-   a "descrição"; Kits são só listas cruas de itens que remetem aos
-   itens individuais, que aí sim têm descrição pelo caminho normal).
+**Ainda pendente:**
+- **Espécies** ganhou uma coluna "Descrição Curta (auto, revisar)" —
+  mas é **gerada automaticamente** (corta na frase mais próxima de ~350
+  caracteres), ainda **não revisada manualmente** pelo Osmar. Não trocar
+  o texto que aparece no card da lista de Espécie/`introducao` por essa
+  coluna ainda — só quando ele confirmar que revisou de verdade (mesmo
+  padrão de cautela já usado com a coluna "Tipo de Ação (auto, revisar)"
+  de Talentos/Características, que também é ponto de partida, não fonte
+  de verdade).
+- **Talentos de Origem** (`talentos.ts`) e **Antecedentes**
+  (`origens.ts`) ainda não ganharam coluna curta/narrativa própria —
+  `descricoesOrigens.ts` continua sendo a exceção manual transcrita do
+  livro até a planilha ganhar isso.
+- Características de Classe/Subclasses/Opções de Classe/Glossário de
+  Regras também ganharam "Descrição Curta (auto, revisar)" — mesma
+  ressalva: não usar até confirmado como revisado.
 
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 

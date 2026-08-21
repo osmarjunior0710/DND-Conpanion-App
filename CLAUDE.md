@@ -98,13 +98,32 @@ primeiro** pra não repetir uma decisão que já foi tomada e revertida antes.
 Estas informações ainda não foram extraídas dos livros. Se uma entrega
 depender de uma delas, avise o Osmar especificamente qual — ele resolve
 sob demanda:
-- Tabela de XP necessário por nível
 - Fórmula exata de capacidade de carga (Força × multiplicador)
 - Auditoria de Ação Bônus/Reação nas 337 linhas de Subclasses da planilha
 - Talentos com ativação em combate (quais concedem Ação Bônus/Reação)
+- Confirmar se número de idiomas concedidos é sempre 2 ou varia por
+  Origem/Espécie — **resolvido:** não varia, planilha não tem coluna de
+  idioma em Origem/Espécie. Ver `DECISOES-DESIGN.md`.
+- **~24 células de "Descrição Completa" (Características de Classe e
+  Subclasses) têm conteúdo duplicado de outra aba colado dentro** — ver
+  `auditoria-planilha-mestra.md` (arquivo do Osmar, não faz parte do
+  repositório) pra lista completa. NÃO usar essas células como estão;
+  extrair só a descrição própria da característica antes de importar,
+  do mesmo jeito que já foi feito com Bruxo/Mestre Místico (referência
+  de correção no mesmo arquivo). Nenhuma célula do Guerreiro (nível 1-20
+  na classe base) está nessa lista — só afeta subclasses dele
+  (Cavaleiro Místico nível 3, Mestre da Batalha nível 18), que ainda não
+  foram importadas.
 
 ~~Bônus de Proficiência por nível~~ — já estava na planilha mestra (aba
 Progressão de Classe), removido.
+~~Tabela de XP por nível~~ — já existe na planilha (aba Evolução do
+Personagem), removido.
+~~Proficiências de arma/armadura/escudo por classe~~ — extraída dos
+livros pelo Osmar, nova aba "Proficiências de Classe" na planilha,
+removido. Ver `DECISOES-DESIGN.md`.
+~~Popup de descrição de Armas e Armaduras~~ — planilha ganhou coluna
+"Descrição" nas duas abas, importado e ligado. Removido.
 ~~Progressão de círculo dos meio-conjuradores (Guardião/Paladino)~~ —
 confirmada linha a linha, idêntica entre as duas classes, removido. Ver
 `DECISOES-DESIGN.md`.
