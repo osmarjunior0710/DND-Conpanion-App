@@ -1,20 +1,6 @@
 // Dados FIXOS pra Fase 0 (esqueleto navegável) — iguais aos do wireframe.
 // Substituídos pela planilha mestra na Fase 1 (data/rulesets/dnd2024/).
 
-export interface ClasseFixture {
-  nome: string;
-  desc: string;
-  dadoVida: string;
-  complexidade: string;
-}
-
-export const classesFixture: ClasseFixture[] = [
-  { nome: 'Bárbaro', desc: 'Batalha e fúria primitiva.', dadoVida: 'd12', complexidade: 'Média' },
-  { nome: 'Bruxo', desc: 'Poder através de um pacto com uma entidade.', dadoVida: 'd8', complexidade: 'Alta' },
-  { nome: 'Guerreiro', desc: 'Mestre de armas e táticas de combate.', dadoVida: 'd10', complexidade: 'Baixa' },
-  { nome: 'Mago', desc: 'Magia através de estudo e livros arcanos.', dadoVida: 'd6', complexidade: 'Média' },
-];
-
 export const alinhamentos = [
   'Leal e Bom',
   'Neutro e Bom',

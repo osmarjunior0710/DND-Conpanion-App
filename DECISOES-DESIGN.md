@@ -947,3 +947,39 @@ precisa ser importada como tabela de valores, não calculada.
 meio-conjuradores" não é mais lacuna, está confirmada.
 
 **Data/origem:** 2026-08, antes de começar a importação de Classes.
+
+## Guerreiro importado — piloto de Classes, proficiências/equipamento vindos do livro
+
+**Decisão:** Guerreiro é a primeira classe selecionável de verdade no
+wizard (as outras 11 ficam "(em breve)"). Dados vindos de 3 fontes:
+- `classes.ts` — núcleo (atributo primário, dado de vida, salvaguardas,
+  recursos por nível, progressão 1-20) direto da planilha (aba
+  "Progressão de Classe").
+- `caracteristicasClasse.ts` — texto de cada característica por nível,
+  direto da planilha (aba "Características de Classe").
+- `estilosDeLuta.ts` — os 10 talentos de Estilo de Luta, direto da
+  planilha (aba Talentos, categoria "Estilo de Luta").
+- `classesProficienciasIniciais.ts` — **exceção documentada** (mesmo
+  padrão de `descricoesOrigens.ts`): proficiência de armadura/arma,
+  perícias à escolha e equipamento inicial de classe, transcritos da
+  tabela "Traços Básicos de Guerreiro" no Livro do Jogador (Cap. 3, pág.
+  127) — a planilha não tem essas colunas pra Classe (só pra Origem).
+  Osmar enviou o PDF do capítulo com autorização explícita.
+
+**Limpeza de dado feita na importação:** as descrições dos níveis 2, 5
+e 20 de Guerreiro em "Características de Classe" vinham com a tabela
+"Características de Guerreiro" colada dentro do texto (erro de extração
+da planilha) — removido o trecho colado, mantendo o parágrafo de regra
+intacto e idêntico ao original. Registrado em PENDENCIAS.md pra revisão
+futura das outras classes.
+
+**Tela "1b. Escolhas da Classe":** segue o mesmo padrão visual de
+Escolhas da Origem — resumo do núcleo em `summary-row`, características
+de nível 1 como InfoChip (exceto Estilo de Luta, que é uma escolha, não
+só informação), lista de Estilo de Luta como opt-cards de escolha única,
+perícias como checkboxes (máx. 2), equipamento inicial como opt-cards
+A/B/C com itens tocáveis quando têm descrição (armas/armaduras ainda não
+têm — pendência já conhecida).
+
+**Data/origem:** 2026-08, mesmo dia da confirmação do schema de
+Classes.

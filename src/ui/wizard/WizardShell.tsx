@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  alinhamentos,
-  arrayPadrao,
-  atributosOrdem,
-  classesFixture,
-  type Atributo,
-} from '../../data/wizardFixtures';
+import { alinhamentos, arrayPadrao, atributosOrdem, type Atributo } from '../../data/wizardFixtures';
 import { origens } from '../../data/rulesets/dnd2024/origens';
 import { especies } from '../../data/rulesets/dnd2024/especies';
 import { idiomas } from '../../data/rulesets/dnd2024/idiomas';
+import { classes } from '../../data/rulesets/dnd2024/classes';
+import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
+import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
 import { criarSelecaoInicial, type WizardSelection } from './types';
 import styles from './WizardShell.module.css';
@@ -65,8 +62,26 @@ export default function WizardShell() {
   }
 
   function randomizarClasse() {
-    const c = classesFixture[Math.floor(Math.random() * classesFixture.length)];
+    const disponiveis = classes.filter((c) => c.disponivel);
+    const c = disponiveis[Math.floor(Math.random() * disponiveis.length)];
     update({ classe: c.nome });
+  }
+  function randomizarEscolhasClasse() {
+    const classeSelecionada = classes.find((c) => c.nome === selection.classe);
+    if (!classeSelecionada) return;
+    const proficiencias = proficienciasIniciaisClasse[classeSelecionada.id];
+    const patch: Partial<WizardSelection> = {
+      estiloDeLutaEscolhido: estilosDeLuta[Math.floor(Math.random() * estilosDeLuta.length)].nome,
+    };
+    if (proficiencias) {
+      patch.periciasClasseEscolhidas = embaralhar(proficiencias.periciasEscolha.opcoes).slice(
+        0,
+        proficiencias.periciasEscolha.quantidade,
+      );
+      const opcoes = proficiencias.equipamentoInicial;
+      patch.equipamentoClasseEscolhido = opcoes[Math.floor(Math.random() * opcoes.length)].rotulo as 'A' | 'B' | 'C';
+    }
+    update(patch);
   }
   function randomizarOrigem() {
     const disponiveis = origens.filter((o) => o.disponivel);
@@ -123,7 +138,21 @@ export default function WizardShell() {
       mensagemInvalida: 'Escolha uma classe antes de avançar.',
       randomize: randomizarClasse,
     },
-    { name: '1b. Escolhas da Classe', render: (p) => <ClasseEscolhasStep {...p} />, isValid: () => true },
+    {
+      name: '1b. Escolhas da Classe',
+      render: (p) => <ClasseEscolhasStep {...p} />,
+      isValid: (s) => {
+        const classeSelecionada = classes.find((c) => c.nome === s.classe);
+        if (!classeSelecionada) return true;
+        const proficiencias = proficienciasIniciaisClasse[classeSelecionada.id];
+        if (s.estiloDeLutaEscolhido === null) return false;
+        if (!proficiencias) return true;
+        if (s.periciasClasseEscolhidas.length !== proficiencias.periciasEscolha.quantidade) return false;
+        return s.equipamentoClasseEscolhido !== null;
+      },
+      mensagemInvalida: 'Escolha o Estilo de Luta, as perícias e o equipamento antes de avançar.',
+      randomize: randomizarEscolhasClasse,
+    },
     {
       name: '2. Origem',
       render: (p) => <OrigemStep {...p} />,

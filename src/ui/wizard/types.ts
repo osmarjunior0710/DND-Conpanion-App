@@ -2,6 +2,9 @@ import type { Atributo } from '../../data/wizardFixtures';
 
 export interface WizardSelection {
   classe: string | null;
+  estiloDeLutaEscolhido: string | null;
+  periciasClasseEscolhidas: string[];
+  equipamentoClasseEscolhido: 'A' | 'B' | 'C' | null;
   origem: string | null;
   ferramentaOrigemEscolhida: string | null;
   equipamentoOrigemEscolhido: 'A' | 'B' | null;
@@ -22,6 +25,9 @@ export interface WizardSelection {
 export function criarSelecaoInicial(): WizardSelection {
   return {
     classe: null,
+    estiloDeLutaEscolhido: null,
+    periciasClasseEscolhidas: [],
+    equipamentoClasseEscolhido: null,
     origem: null,
     ferramentaOrigemEscolhida: null,
     equipamentoOrigemEscolhido: null,

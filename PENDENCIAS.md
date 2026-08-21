@@ -13,6 +13,63 @@
 
 ---
 
+## Faltam 11 classes (só Guerreiro importado)
+
+**O que é:** Guerreiro foi a classe-piloto (mais simples: sem magia,
+sem subclasse até nível 3). As outras 11 (Bárbaro, Bardo, Bruxo,
+Clérigo, Druida, Feiticeiro, Guardião, Ladino, Mago, Monge, Paladino)
+ficam "(em breve)" na lista de Classe do wizard.
+
+**O que falta pra resolver:** pra cada classe nova, repetir o mesmo
+processo do Guerreiro — 1) importar núcleo + progressão da planilha
+(`classes.ts`), 2) importar características por nível da planilha
+(`caracteristicasClasse.ts`), 3) conferir se a planilha já tem tudo que
+a classe precisa (verificar se sub-recursos tipo "Fúrias" do Bárbaro
+seguem o mesmo formato de "Bônus de X: N" na coluna "Recursos da
+Classe"), 4) pedir/usar o PDF do Cap. 3 pra proficiências e equipamento
+inicial de classe (mesma exceção documentada usada no Guerreiro).
+Guardião e Paladino compartilham a tabela de conjuração (ver
+DECISOES-DESIGN.md) — importar uma vez só quando chegar a vez delas.
+
+## Características de Guerreiro nos níveis 2, 5, 20 tiveram texto de tabela removido na importação
+
+**O que é:** na planilha, as descrições de "Mente Tática" (nível 2),
+"Ataque Extra" (nível 5) e "Três Ataques Extras" (nível 20) vêm com a
+tabela "Características de Guerreiro" colada dentro do texto da célula
+(problema de extração do PDF pra planilha). Removi o trecho colado ao
+importar pra `caracteristicasClasse.ts`, mantendo só o parágrafo de
+regra — não afeta a ficha nível 1 (nenhuma dessas é nível 1), mas é
+bom checar se o mesmo tipo de vazamento aparece em outras classes
+quando forem importadas.
+
+**O que falta pra resolver:** nada urgente — só ficar atento ao mesmo
+padrão de vazamento de tabela ao importar as próximas 11 classes, e
+avisar o Osmar se a aba "Características de Classe" tiver esse problema
+espalhado (pode valer a pena ele corrigir a extração original do PDF
+pra planilha, em vez de eu limpar célula por célula).
+
+## Estilo de Luta escolhido ainda não aparece na Ficha/Combat
+
+**O que é:** o jogador escolhe o Estilo de Luta no wizard (nível 1 do
+Guerreiro), mas isso ainda não é lido em nenhum lugar da Ficha (nem no
+resumo, nem na aba Combat). Igual equipamento/perícias de classe — a
+ficha final ainda não consome os campos novos do wizard
+(`estiloDeLutaEscolhido`, `periciasClasseEscolhidas`,
+`equipamentoClasseEscolhido`).
+
+**Por que foi adiado:** essa entrega focou em ter a **coleta** do dado
+funcionando no wizard; conectar isso na Ficha (perícias marcadas,
+equipamento na Mochila, Estilo de Luta na aba Combat) é o próximo passo
+do "fluxo completo" que o Osmar pediu pra priorizar.
+
+**O que falta pra resolver:** ligar `periciasClasseEscolhidas` +
+perícias de Origem na aba Perfil da Ficha; itens de
+`equipamentoClasseEscolhido` na Mochila (junto com os de Origem, que já
+têm o mesmo problema — ver decisão "Itens de origem/classe já nascem no
+formato de Mochila", ainda não conectada de verdade); Estilo de Luta
+como uma característica visível (provavelmente InfoChip) na aba Combat
+ou Perfil.
+
 ## Design da tela "Escolhas da Espécie" ainda tá estranho
 
 **O que é:** o Osmar notou que o layout da tela "3b. Escolhas da

@@ -1,40 +1,126 @@
+import { classes } from '../../../data/rulesets/dnd2024/classes';
+import { caracteristicasClasse } from '../../../data/rulesets/dnd2024/caracteristicasClasse';
+import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
+import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/classesProficienciasIniciais';
+import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
+import ItemComDescricao from '../../components/ItemComDescricao';
+import InfoChip from '../../components/InfoChip';
 import type { StepProps } from './StepProps';
 
-export default function ClasseEscolhasStep({ selection }: StepProps) {
-  if (!selection.classe) {
+const MAX_PERICIAS = 2;
+
+function rotuloItem(it: { nome: string; quantidade: number; unidade: string | null }): string {
+  if (it.quantidade <= 1) return it.nome;
+  return it.unidade ? `${it.nome} (${it.quantidade} ${it.unidade})` : `${it.quantidade}× ${it.nome}`;
+}
+
+export default function ClasseEscolhasStep({ selection, update }: StepProps) {
+  const classe = classes.find((c) => c.nome === selection.classe);
+
+  if (!classe) {
     return <div className="label">Volte e selecione uma classe primeiro.</div>;
+  }
+
+  const proficiencias = proficienciasIniciaisClasse[classe.id];
+  const caracteristicasNivel1 = caracteristicasClasse.filter((c) => c.classe === classe.nome && c.nivel === 1);
+
+  function toggleEstiloDeLuta(nome: string) {
+    update({ estiloDeLutaEscolhido: selection.estiloDeLutaEscolhido === nome ? null : nome });
+  }
+
+  function togglePericia(nome: string) {
+    const i = selection.periciasClasseEscolhidas.indexOf(nome);
+    if (i > -1) {
+      update({ periciasClasseEscolhidas: selection.periciasClasseEscolhidas.filter((x) => x !== nome) });
+    } else if (selection.periciasClasseEscolhidas.length < MAX_PERICIAS) {
+      update({ periciasClasseEscolhidas: [...selection.periciasClasseEscolhidas, nome] });
+    }
   }
 
   return (
     <>
-      <div className="section-title">{selection.classe} — habilidades recebidas</div>
+      <div className="section-title">{classe.nome}</div>
       <div className="summary-row">
-        <span>Defesa sem Armadura</span>
-        <span>Nível 1</span>
+        <span>Atributo Primário</span>
+        <span>{classe.atributoPrimario}</span>
       </div>
       <div className="summary-row">
-        <span>Recurso de classe (ex: Fúria)</span>
-        <span>Nível 1</span>
+        <span>Dado de Vida</span>
+        <span>{classe.dadoDeVida}</span>
       </div>
-      <div className="section-title">Seleções da classe</div>
-      <div className="check-row">
-        <div className="check-box checked" />
-        <span className="check-label">Perícia: Sobrevivência</span>
+      <div className="summary-row">
+        <span>Salvaguardas</span>
+        <span>{classe.salvaguardas.join(' e ')}</span>
       </div>
-      <div className="check-row">
-        <div className="check-box" />
-        <span className="check-label">Perícia: Intimidação</span>
-      </div>
-      <div className="section-title">Kit inicial</div>
-      <div className="opt-card" style={{ cursor: 'default' }}>
-        <div className="opt-card-row">
-          <div className="opt-card-img">🖼</div>
-          <div className="opt-card-info">
-            <div className="opt-card-name">Kit padrão</div>
-            <div className="opt-card-desc">Arma + armadura + itens de aventura pré-definidos</div>
+      {proficiencias && (
+        <>
+          <div className="summary-row">
+            <span>Proficiência com Armas</span>
+            <span>{proficiencias.proficienciaArmas}</span>
           </div>
-        </div>
+          <div className="summary-row">
+            <span>Treinamento com Armadura</span>
+            <span>{proficiencias.proficienciaArmadura}</span>
+          </div>
+        </>
+      )}
+
+      <div className="section-title">Características de nível 1</div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+        {caracteristicasNivel1
+          .filter((c) => c.nome !== 'Estilo de Luta')
+          .map((c) => (
+            <InfoChip key={c.nome} nome={c.nome} descricao={c.descricao} />
+          ))}
       </div>
+
+      <div className="section-title">Estilo de Luta — escolha 1</div>
+      {estilosDeLuta.map((e) => (
+        <div
+          key={e.id}
+          className={`opt-card ${selection.estiloDeLutaEscolhido === e.nome ? 'selected' : ''}`}
+          style={{ padding: '10px 12px' }}
+          onClick={() => toggleEstiloDeLuta(e.nome)}
+        >
+          <div className="opt-card-name">{e.nome}</div>
+          <div className="opt-card-desc">{e.beneficios}</div>
+        </div>
+      ))}
+
+      {proficiencias && (
+        <>
+          <div className="section-title">
+            Perícias — escolha {MAX_PERICIAS} ({selection.periciasClasseEscolhidas.length}/{MAX_PERICIAS})
+          </div>
+          {proficiencias.periciasEscolha.opcoes.map((nome) => (
+            <div key={nome} className="check-row" onClick={() => togglePericia(nome)}>
+              <div className={`check-box ${selection.periciasClasseEscolhidas.includes(nome) ? 'checked' : ''}`} />
+              <span className="check-label">{nome}</span>
+            </div>
+          ))}
+
+          <div className="section-title">Equipamento inicial — escolha uma opção</div>
+          {proficiencias.equipamentoInicial.map((opcao) => (
+            <div
+              key={opcao.rotulo}
+              className={`opt-card ${selection.equipamentoClasseEscolhido === opcao.rotulo ? 'selected' : ''}`}
+              onClick={() => update({ equipamentoClasseEscolhido: opcao.rotulo as 'A' | 'B' | 'C' })}
+            >
+              <div className="opt-card-name">Opção {opcao.rotulo}</div>
+              <div className="opt-card-desc">
+                {opcao.itens.map((it, i) => (
+                  <span key={it.nome}>
+                    {i > 0 && ', '}
+                    <ItemComDescricao nome={it.nome} descricao={buscarDescricaoItem(it.nome)} rotulo={rotuloItem(it)} />
+                  </span>
+                ))}
+                {opcao.itens.length > 0 && opcao.ouro > 0 && `, ${opcao.ouro} PO restantes`}
+                {opcao.itens.length === 0 && `${opcao.ouro} PO pra gastar como quiser na Loja`}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </>
   );
 }
