@@ -5,7 +5,7 @@
 .cargaRow {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-faint);
 }
 
@@ -33,10 +33,10 @@
 }
 
 .itemName {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .itemWeight {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-faint);
 }

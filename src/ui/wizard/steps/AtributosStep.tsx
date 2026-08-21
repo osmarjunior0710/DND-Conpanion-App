@@ -42,7 +42,7 @@ export default function AtributosStep({ selection, update, valorSelecionado, set
   return (
     <>
       <div className="section-title">Array padrão — toque num valor, depois num atributo</div>
-      <div className="box" style={{ padding: 8, marginBottom: 10, fontSize: 10, color: 'var(--text-faint)', lineHeight: 1.5 }}>
+      <div className="box" style={{ padding: 8, marginBottom: 10, fontSize: 12, color: 'var(--text-faint)', lineHeight: 1.5 }}>
         ⚠️ Protótipo: só o "Conjunto Padrão" está implementado aqui. O livro também permite{' '}
         <b>Geração Aleatória</b> (4d6, descarta o menor, 6x) e <b>Custo de Pontos</b> (27 pontos, tabela de custo por
         valor) — ficam pra fazer depois, quando isso virar código de verdade.
@@ -79,7 +79,7 @@ export default function AtributosStep({ selection, update, valorSelecionado, set
       {todosPreenchidos && (
         <>
           <div className="section-title">Ajuste do Antecedente ({selection.origem || '— selecione uma origem antes —'})</div>
-          <div className="box" style={{ padding: 8, marginBottom: 10, fontSize: 10, color: 'var(--text-faint)', lineHeight: 1.5 }}>
+          <div className="box" style={{ padding: 8, marginBottom: 10, fontSize: 12, color: 'var(--text-faint)', lineHeight: 1.5 }}>
             ⚠️ Protótipo: por regra, o antecedente indica 3 atributos específicos pra receber o ajuste (+2/+1 num par,
             ou +1/+1/+1 nos três). Aqui só o modo <b>+1/+1/+1</b> está funcional, e você escolhe livremente quais 3
             atributos recebem — isso precisa ser travado nos 3 atributos corretos do antecedente quando virar código

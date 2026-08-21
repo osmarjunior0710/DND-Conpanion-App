@@ -767,3 +767,30 @@ globalmente no estilo compartilhado — não afeta os outros usos de
 valores curtos sem quebra de linha.
 
 **Data/origem:** 2026-08, mesmo dia da decisão de schema acima.
+
+## Passada de legibilidade — fontes maiores e cinzas mais escuros
+
+**Decisão:** todo `font-size` de texto pequeno/médio (≤20px) no app
+subiu +2px, de forma global — 77 declarações em CSS + inline `style`
+espalhadas pelas telas. Além disso, os dois tons de cinza secundário
+ficaram mais escuros: `--text-dim` de `#55565b` pra `#45464b`, e
+`--text-faint` de `#86878c` pra `#6b6c72` (esse último quase sem
+contraste contra o fundo `#f5f5f2`/branco antes da mudança).
+
+**Contexto:** pedido explícito do Osmar — "muito ruim de ler", "mal dá
+pra ver o cinza no branco", "os textos são minúsculos". Fontes de
+14px+ (títulos, números grandes) não foram tocadas, só as pequenas.
+
+**Como foi feito:** script único fazendo a troca em todos os arquivos
+`.css`/`.module.css` e nos `style={{ fontSize: N }}` inline dos
+componentes React, não editado tela por tela — garante consistência e
+evita esquecer algum componente.
+
+**Pendência de fundo, não resolvida agora:** o projeto ainda não tem
+tokens de escala tipográfica (tipo `--font-size-xs/sm/md`) — cada
+componente guarda seu próprio valor em px. Esse ajuste manteve o
+padrão atual (valores soltos), só que maiores. Migrar pra tokens de
+escala é um passo de arquitetura CSS separado, não necessário agora.
+
+**Data/origem:** 2026-08, pedido direto após revisar a entrega de
+Espécies.

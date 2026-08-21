@@ -12,7 +12,7 @@ export default function EspecieEscolhasStep({ selection }: StepProps) {
   return (
     <>
       <div className="section-title">{especie.nome}</div>
-      <div style={{ fontSize: 11, lineHeight: 1.6, color: 'var(--text-dim)', marginBottom: 4 }}>
+      <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-dim)', marginBottom: 4 }}>
         {especie.introducao}
       </div>
 

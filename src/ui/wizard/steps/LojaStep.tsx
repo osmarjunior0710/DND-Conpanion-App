@@ -25,8 +25,8 @@ export default function LojaStep({ selection, update }: StepProps) {
           }}
         >
           <div>
-            <div style={{ fontSize: 12 }}>{it.nome}</div>
-            <div style={{ fontSize: 10, color: 'var(--text-faint)' }}>{it.preco}</div>
+            <div style={{ fontSize: 14 }}>{it.nome}</div>
+            <div style={{ fontSize: 12, color: 'var(--text-faint)' }}>{it.preco}</div>
           </div>
           <div
             style={{
@@ -37,7 +37,7 @@ export default function LojaStep({ selection, update }: StepProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 14,
+              fontSize: 16,
               cursor: 'pointer',
             }}
             onClick={() => addItem(it.nome)}

@@ -2,7 +2,7 @@
   position: fixed;
   top: 4px;
   right: 6px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--text-faint);
   opacity: 0.6;
   pointer-events: none;

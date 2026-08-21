@@ -20,7 +20,7 @@
 }
 
 .stepName {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .progress {
@@ -82,7 +82,7 @@
   bottom: 78px;
   background: var(--warn);
   color: #fff;
-  font-size: 11px;
+  font-size: 13px;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--shape-md);
   text-align: center;

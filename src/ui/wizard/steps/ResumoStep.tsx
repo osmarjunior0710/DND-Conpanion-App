@@ -63,7 +63,7 @@ export default function ResumoStep({ selection, update }: StepProps) {
       <div className="section-title">Nome do personagem</div>
       <input
         className="box"
-        style={{ width: '100%', padding: 10, background: 'transparent', color: 'var(--text)', fontFamily: 'inherit', fontSize: 12 }}
+        style={{ width: '100%', padding: 10, background: 'transparent', color: 'var(--text)', fontFamily: 'inherit', fontSize: 14 }}
         placeholder="digite o nome..."
         value={selection.nome}
         onChange={(e) => update({ nome: e.target.value })}
@@ -72,7 +72,7 @@ export default function ResumoStep({ selection, update }: StepProps) {
       <div className="section-title">Aparência</div>
       <textarea
         className="box"
-        style={{ width: '100%', padding: 10, background: 'transparent', color: 'var(--text)', fontFamily: 'inherit', fontSize: 11, minHeight: 50 }}
+        style={{ width: '100%', padding: 10, background: 'transparent', color: 'var(--text)', fontFamily: 'inherit', fontSize: 13, minHeight: 50 }}
         placeholder="como seu personagem se parece?"
         value={selection.aparencia}
         onChange={(e) => update({ aparencia: e.target.value })}
@@ -81,7 +81,7 @@ export default function ResumoStep({ selection, update }: StepProps) {
       <div className="section-title">Personalidade</div>
       <textarea
         className="box"
-        style={{ width: '100%', padding: 10, background: 'transparent', color: 'var(--text)', fontFamily: 'inherit', fontSize: 11, minHeight: 50 }}
+        style={{ width: '100%', padding: 10, background: 'transparent', color: 'var(--text)', fontFamily: 'inherit', fontSize: 13, minHeight: 50 }}
         placeholder="traços de personalidade, ideais, vínculos, defeitos"
         value={selection.personalidade}
         onChange={(e) => update({ personalidade: e.target.value })}
@@ -92,7 +92,7 @@ export default function ResumoStep({ selection, update }: StepProps) {
       </div>
 
       <div className="section-title">Avatar</div>
-      <div className="box" style={{ padding: 16, textAlign: 'center', color: 'var(--text-faint)', fontSize: 11 }}>
+      <div className="box" style={{ padding: 16, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
         ＋ enviar imagem (opcional)
       </div>
     </>

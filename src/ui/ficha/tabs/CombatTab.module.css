@@ -24,7 +24,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   transition: background var(--motion-standard) var(--ease-standard);
 }
 
@@ -76,16 +76,16 @@
 }
 
 .sbIcon {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .sbLabel {
-  font-size: 10px;
+  font-size: 12px;
   margin-top: var(--space-1);
 }
 
 .sbState {
-  font-size: 8px;
+  font-size: 10px;
   color: var(--text-faint);
   margin-top: 2px;
   text-transform: uppercase;
@@ -98,7 +98,7 @@
   border: 1px dashed var(--line);
   border-radius: var(--shape-sm);
   cursor: pointer;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-dim);
   margin-bottom: var(--space-3);
   min-height: var(--touch-target-min);
@@ -110,7 +110,7 @@
 }
 
 .feedback {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--accent);
   padding: var(--space-3);
   margin-top: var(--space-2);

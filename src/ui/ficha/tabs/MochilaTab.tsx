@@ -28,7 +28,7 @@ export default function MochilaTab() {
       <div className="section-title">Itens comprados na loja</div>
       <div className="label">nenhum item comprado no wizard ainda vem parar aqui — isso liga o wizard à ficha na Fase 1, quando o salvamento de verdade entrar.</div>
 
-      <div className="box" style={{ textAlign: 'center', padding: 12, marginTop: 12, fontSize: 11, color: 'var(--text-faint)' }}>
+      <div className="box" style={{ textAlign: 'center', padding: 12, marginTop: 12, fontSize: 13, color: 'var(--text-faint)' }}>
         ＋ adicionar item (chega quando o salvamento de personagem existir de verdade)
       </div>
     </>

@@ -228,7 +228,7 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
               </>
             )}
             {asiModo === 'talento' && (
-              <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 11 }}>
+              <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
                 ＋ lista de talentos entra na Fase 1
               </div>
             )}
