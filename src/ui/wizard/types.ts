@@ -25,7 +25,7 @@ export function criarSelecaoInicial(): WizardSelection {
     ferramentaOrigemEscolhida: null,
     equipamentoOrigemEscolhido: null,
     especie: null,
-    linguas: [],
+    linguas: ['Comum'],
     alinhamento: null,
     itens: [],
     atributos: { FOR: null, DES: null, CON: null, INT: null, SAB: null, CAR: null },

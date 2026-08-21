@@ -15,8 +15,6 @@ export const classesFixture: ClasseFixture[] = [
   { nome: 'Mago', desc: 'Magia através de estudo e livros arcanos.', dadoVida: 'd6', complexidade: 'Média' },
 ];
 
-export const linguasDisponiveis = ['Comum', 'Élfico', 'Anão', 'Infernal', 'Celestial', 'Abissal'];
-
 export const alinhamentos = [
   'Leal e Bom',
   'Neutro e Bom',

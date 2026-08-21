@@ -5,11 +5,11 @@ import {
   arrayPadrao,
   atributosOrdem,
   classesFixture,
-  linguasDisponiveis,
   type Atributo,
 } from '../../data/wizardFixtures';
 import { origens } from '../../data/rulesets/dnd2024/origens';
 import { especies } from '../../data/rulesets/dnd2024/especies';
+import { idiomas } from '../../data/rulesets/dnd2024/idiomas';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
 import { criarSelecaoInicial, type WizardSelection } from './types';
 import styles from './WizardShell.module.css';
@@ -103,7 +103,8 @@ export default function WizardShell() {
     update({ atributos, bonusModo: '111', bonusEscolhas });
   }
   function randomizarLinguas() {
-    update({ linguas: embaralhar(linguasDisponiveis).slice(0, 2) });
+    const outrosIdiomas = idiomas.filter((i) => i.nome !== 'Comum').map((i) => i.nome);
+    update({ linguas: ['Comum', ...embaralhar(outrosIdiomas).slice(0, 2)] });
   }
   function randomizarAlinhamento() {
     const a = alinhamentos[Math.floor(Math.random() * alinhamentos.length)];
@@ -160,7 +161,13 @@ export default function WizardShell() {
       mensagemInvalida: 'Distribua os 6 atributos e aplique o ajuste de antecedente (+1/+1/+1) antes de avançar.',
       randomize: randomizarAtributos,
     },
-    { name: '4. Línguas', render: (p) => <LinguasStep {...p} />, isValid: () => true, randomize: randomizarLinguas },
+    {
+      name: '4. Línguas',
+      render: (p) => <LinguasStep {...p} />,
+      isValid: (s) => s.linguas.filter((l) => l !== 'Comum').length === 2,
+      mensagemInvalida: 'Escolha mais 2 idiomas além de Comum antes de avançar.',
+      randomize: randomizarLinguas,
+    },
     {
       name: '5. Alinhamento',
       render: (p) => <AlinhamentoStep {...p} />,

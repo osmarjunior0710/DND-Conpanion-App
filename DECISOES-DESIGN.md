@@ -794,3 +794,21 @@ escala é um passo de arquitetura CSS separado, não necessário agora.
 
 **Data/origem:** 2026-08, pedido direto após revisar a entrega de
 Espécies.
+
+## Idiomas — Comum obrigatório + 2 à escolha entre Comuns e Raros juntos
+
+**Decisão:** as 19 entradas da aba Idiomas da planilha (10 Comuns + 9
+Raros) foram importadas pra `data/rulesets/dnd2024/idiomas.ts`. Na tela
+"4. Línguas", Comum vem pré-marcado e travado (não dá pra desmarcar), e
+o jogador escolhe mais exatamente 2 idiomas — **sem restringir a
+categoria**: Raros aparecem liberados na mesma tela, junto dos Comuns,
+não escondidos atrás de alguma trava de regra.
+
+**Contexto:** pedido explícito do Osmar — a regra formal do livro exige
+uma "boa justificativa de história" pra escolher um idioma Raro (ex: um
+Tiferino sabendo Infernal, um Druida sabendo Druídico), mas isso é uma
+validação de **narrativa**, não uma trava mecânica que o app deveria
+impor. A tela mostra esse aviso como texto informativo, não como
+bloqueio de seleção.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
