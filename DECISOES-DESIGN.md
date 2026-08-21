@@ -880,3 +880,70 @@ contexto ao redor dela (o resto do fluxo) estar decidido.
 
 **Data/origem:** 2026-08, mesmo dia da pendência de design da tela de
 Espécie.
+
+## Dados — Classes têm núcleo comum em 3 camadas, não 1
+
+**Decisão:** schema de Classe usa 3 camadas: (1) núcleo 100% universal —
+atributo primário, dado de vida, 2 salvaguardas, nível de subclasse
+(sempre 3, confirmado nas 12), Bônus de Proficiência e níveis de ASI
+(globais, compartilhados, não repetidos por classe); (2) array de
+`recursos` — toda classe tem ao menos 1, mas o número e formato variam
+(conjurador completo, conjurador parcial, recurso não-mágico, ou só
+bônus crescente sem "banco"); (3) características específicas por nível,
+que não generalizam e continuam como lista solta (já cobertas pela aba
+Características de Classe).
+
+**Contexto:** diferente de Origens (uma camada só bastava), Classes têm
+variação real de estrutura — forçar tudo numa tabela só geraria colunas
+vazias sem sentido (ex: Espaços de Magia vazio pra classes que não
+conjuram). Análise feita com apoio do Claude (chat separado, fora deste
+ambiente de código) a pedido do Osmar, revisada e adotada aqui.
+
+**Precedente que se repete:** nível de subclasse é sempre 3 nas 12
+classes — mesmo padrão de "achar uniformidade real antes de assumir
+variação" que já valeu pra Origens e Espécies. Bônus de Proficiência (uma
+das lacunas de dados listadas no `CLAUDE.md`) já estava na planilha o
+tempo todo, na aba Progressão de Classe — removido da lista.
+
+**As 4 famílias de recurso encontradas nas 12 classes** (referência pra
+quando cada classe for importada):
+- **Conjurador completo** (Bardo, Clérigo, Druida, Feiticeiro, Mago):
+  truques + magias preparadas + espaços por círculo (1º-9º), recupera no
+  Descanso Longo.
+- **Conjurador parcial/meio-conjurador** (Guardião, Paladino): mesma
+  estrutura, só até 5º círculo, progressão mais lenta — ver decisão
+  abaixo sobre a tabela ser compartilhada entre as duas.
+- **Conjurador com regra própria** (Bruxo): Magia de Pacto, recupera no
+  Descanso **Curto** (já registrado antes nesta mesma lista, seção
+  "Combate — espaços de magia").
+- **Recurso não-mágico próprio** (Bárbaro: Fúrias; Guerreiro: Recuperar
+  Fôlego; Monge: Pontos de Foco; Feiticeiro tem Pontos de Feitiçaria
+  além da magia).
+- **Sem "banco" de recurso, só bônus crescente** (Ladino: Ataque
+  Furtivo; Monge: Artes Marciais) — não é "gasta e recupera", é só um
+  valor que sobe com o nível.
+
+**Guerreiro (piloto, nível 1) usa a família mais simples:** só Recuperar
+Fôlego como recurso com banco (2 usos no nível 1) — sem conjuração, sem
+subclasse até nível 3. Por isso foi escolhido como primeira classe a
+importar.
+
+## Confirmado: Guardião e Paladino compartilham progressão idêntica de conjuração
+
+**Decisão:** a tabela de conjuração (Magias Preparadas + Espaços de Magia
+por círculo, níveis 1-20) de Guardião e Paladino é idêntica número por
+número — conferido linha a linha direto na planilha (aba Progressão de
+Classe), não só na análise do outro chat. Quando essas duas classes
+forem importadas, a tabela entra num arquivo compartilhado
+(`progressao-meio-conjurador.ts`), e as duas referenciam a mesma fonte em
+vez de duplicar.
+
+**Contexto:** confirma também que "Magias Preparadas" não é fórmula
+simples (não é "nível/2 + mod") — é progressão irregular da tabela
+oficial (ex: 6→6 nos níveis 5-6 mas 12→14 nos níveis 16-17), então
+precisa ser importada como tabela de valores, não calculada.
+
+**Pendência removida do CLAUDE.md** — "progressão exata de círculo dos
+meio-conjuradores" não é mais lacuna, está confirmada.
+
+**Data/origem:** 2026-08, antes de começar a importação de Classes.

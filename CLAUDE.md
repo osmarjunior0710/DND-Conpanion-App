@@ -99,10 +99,15 @@ Estas informações ainda não foram extraídas dos livros. Se uma entrega
 depender de uma delas, avise o Osmar especificamente qual — ele resolve
 sob demanda:
 - Tabela de XP necessário por nível
-- Bônus de Proficiência por nível (tabela de escala)
 - Fórmula exata de capacidade de carga (Força × multiplicador)
 - Auditoria de Ação Bônus/Reação nas 337 linhas de Subclasses da planilha
 - Talentos com ativação em combate (quais concedem Ação Bônus/Reação)
+
+~~Bônus de Proficiência por nível~~ — já estava na planilha mestra (aba
+Progressão de Classe), removido.
+~~Progressão de círculo dos meio-conjuradores (Guardião/Paladino)~~ —
+confirmada linha a linha, idêntica entre as duas classes, removido. Ver
+`DECISOES-DESIGN.md`.
 
 ## 9. Escopo do produto (não expandir sem confirmar)
 
