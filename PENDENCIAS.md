@@ -13,6 +13,27 @@
 
 ---
 
+## Outros overlays fixos podem ter o mesmo bug de scroll vazando atrás
+
+**O que é:** o popup de InfoChip/ItemComDescricao tinha um bug de scroll
+vazando pra trás do modal em mobile — corrigido com o hook
+`useLockBodyScroll` (ver DECISOES-DESIGN.md). Só apliquei esse hook nesses
+dois componentes, que foram os reportados. O app tem outros overlays de
+tela cheia com `position: fixed` que **podem** ter o mesmo problema, mas
+ainda não foram testados/reportados: `RollOverlay`, `LevelUpShell` (o
+overlay de Level Up), e os painéis `SidePanel` da aba Combat
+(Ação/Ação Bônus/Reação).
+
+**Por que não apliquei já:** esses três só aparecem dentro da Ficha, que
+ainda não foi tão testada em celular real quanto o wizard — não quero
+aplicar uma correção "no escuro" sem confirmar que o bug realmente
+acontece lá também (o `useLockBodyScroll` é seguro de aplicar, mas cada
+aplicação merece um teste rápido).
+
+**O que falta pra resolver:** se o Osmar notar o mesmo sintoma (fundo
+"deslocando" ou tela de trás rolando) em algum desses três, aplicar o
+mesmo `useLockBodyScroll(aberto)` no componente correspondente.
+
 ## Osmar vai padronizar colunas de descrição na planilha (short + completa)
 
 **O que é:** Osmar pretende passar pela planilha mestra e adicionar, de

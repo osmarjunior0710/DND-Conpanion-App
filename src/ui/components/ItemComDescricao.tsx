@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import styles from './ItemComDescricao.module.css';
 
 interface ItemComDescricaoProps {
@@ -13,6 +14,7 @@ interface ItemComDescricaoProps {
  * sublinhado"). Se não houver descrição, renderiza só texto simples. */
 export default function ItemComDescricao({ nome, descricao, rotulo }: ItemComDescricaoProps) {
   const [aberto, setAberto] = useState(false);
+  useLockBodyScroll(aberto);
 
   if (!descricao) return <>{rotulo ?? nome}</>;
 

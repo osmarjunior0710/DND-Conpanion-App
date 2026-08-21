@@ -812,3 +812,29 @@ impor. A tela mostra esse aviso como texto informativo, não como
 bloqueio de seleção.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Popups (InfoChip/ItemComDescricao) travam o scroll da página de trás
+
+**Decisão:** os dois componentes de popup (`InfoChip`, `ItemComDescricao`)
+agora usam um hook novo, `ui/hooks/useLockBodyScroll.ts`, que trava o
+scroll da `body` enquanto o popup está aberto e devolve a posição exata
+de scroll ao fechar. A trava usa `position: fixed` na `body` (não só
+`overflow: hidden`) porque é o único jeito confiável de bloquear scroll
+de verdade em navegador mobile — `overflow: hidden` sozinho não impede o
+dedo de arrastar o conteúdo de trás em iOS/Android. O `.overlay` dos dois
+componentes também ganhou `overscroll-behavior: contain` e
+`touch-action: none`, e o `.card` ganhou `max-height: 80vh` +
+`overflow-y: auto` (segurança pra descrição muito longa não estourar a
+tela em celular baixo).
+
+**Contexto:** o Osmar reportou dois sintomas do mesmo bug, num celular
+Android real: o fundo preto do popup "deslocava" com o scroll (subia
+quando rolava pra baixo, descia quando rolava pra cima), e a tela de
+trás rolava mesmo com o dedo em cima do popup. Isso é o clássico bug de
+"scroll vaza atrás do modal" no mobile — o `position: fixed` do overlay
+continua correto, mas sem travar a `body`, o navegador deixa a página de
+trás rolar por baixo (e em Android/Chrome isso pode gerar um artefato
+visual de "atraso" no overlay durante o scroll por inércia).
+
+**Data/origem:** 2026-08, reportado num Samsung Android real, mesmo dia
+da entrega de Idiomas.

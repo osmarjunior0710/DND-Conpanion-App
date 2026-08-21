@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import styles from './InfoChip.module.css';
 
 interface InfoChipProps {
@@ -14,6 +15,7 @@ interface InfoChipProps {
  * "garantidas" numa lista curta, não itens dentro de um parágrafo). */
 export default function InfoChip({ nome, descricao }: InfoChipProps) {
   const [aberto, setAberto] = useState(false);
+  useLockBodyScroll(aberto);
 
   return (
     <>
