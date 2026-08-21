@@ -200,10 +200,18 @@ colunas novas, não só a que motivou o pedido — em especial:
 - Qualquer outra aba nova que ganhar as colunas (Espécies, Classes, etc.
   quando chegar a vez delas).
 
-**Estado atual:** nada a fazer ainda — é só um aviso de intenção, a
-planilha ainda não foi atualizada. Quando o Osmar reenviar o arquivo,
+**Estado atual:** Osmar confirmou que vai revisar os textos pra ter uma
+versão "short description" de verdade (não é só intenção mais, ele já
+está fazendo). Motivo concreto discutido: em ~390px, texto acima de uns
+400-500 caracteres já vira parede de texto e empurra o resto da tela pra
+baixo — os parágrafos de introdução de Origem/Espécie (700-900
+caracteres hoje) são o pior caso disso. Quando a planilha nova chegar,
 reler a estrutura de todas as abas antes de reimportar (não assumir que
-só a aba mencionada mudou).
+só a aba mencionada mudou), e usar a versão curta nos lugares onde hoje
+o texto completo aparece "cru" na tela sem popup (ex: card da lista de
+Origem/Espécie, que hoje mostra `descricoesOrigens[id]`/`introducao`
+inteiro) — a versão completa continua reservada pro popup/tela de
+detalhe.
 
 ## Popup de descrição só falta pra Armas e Armaduras (Equipamento de Aventura já resolvido)
 
