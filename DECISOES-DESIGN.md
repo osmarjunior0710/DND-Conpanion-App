@@ -249,10 +249,33 @@ ainda não implementado).
 isso — o ajuste é conceitualmente parte da "distribuição final" dos
 atributos, não uma etapa independente.
 
-**Pendência conhecida:** hoje o jogador escolhe livremente quais 3
-atributos recebem o ajuste. Por regra, deveria travar nos 3 atributos que
-o antecedente específico indica — isso ainda não está ligado ao dado real
-de antecedente.
+**Atualização:** a trava nos 3 atributos do antecedente foi implementada
+— ver "Atributos — travados nos 3 elegíveis do antecedente, com opção de
+desbloqueio" abaixo. Essa pendência específica está resolvida.
+
+## Atributos — travados nos 3 elegíveis do antecedente, com opção de desbloqueio
+
+**Decisão:** na tela de Atributos, os 3 atributos elegíveis da origem
+escolhida (`origem.atributosElegiveis`, já importado junto com Origens)
+vêm liberados pra receber o ajuste +1/+1/+1; os outros 3 ficam com
+visual bloqueado (`btn-disabled`, `pointer-events: none`) e a função de
+toggle também recusa a mudança mesmo se o clique acontecer por outro
+caminho — dupla trava (CSS + lógica), não só visual.
+
+Um checkbox **"Desbloquear atributos"** (novo campo
+`desbloquearAtributos: boolean` no `WizardSelection`) libera os 6
+atributos pra escolha livre, ignorando a regra do antecedente. Ao
+desmarcar o checkbox de novo, qualquer atributo fora dos 3 elegíveis que
+tivesse recebido o ajuste é removido automaticamente (evita ficar um
+ajuste "ilegal" preso depois de destravar e retravar).
+
+**Contexto:** pedido direto do Osmar — a regra é clara sobre quais 3
+atributos cada antecedente permite, então dava pra travar isso sem
+esperar UI mais elaborada. O checkbox de escape existe porque o jogador
+pode ter uma razão de mesa pra fugir da regra (ex: variante de regra da
+campanha, personagem feito sem seguir antecedente à risca).
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
 
 ## Ficha — trava de edição por XP
 

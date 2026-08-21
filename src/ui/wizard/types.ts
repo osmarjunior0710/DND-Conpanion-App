@@ -12,6 +12,7 @@ export interface WizardSelection {
   atributos: Record<Atributo, number | null>;
   bonusModo: '111' | null;
   bonusEscolhas: Atributo[];
+  desbloquearAtributos: boolean;
   xp: number;
   nome: string;
   aparencia: string;
@@ -31,6 +32,7 @@ export function criarSelecaoInicial(): WizardSelection {
     atributos: { FOR: null, DES: null, CON: null, INT: null, SAB: null, CAR: null },
     bonusModo: null,
     bonusEscolhas: [],
+    desbloquearAtributos: false,
     xp: 0,
     nome: '',
     aparencia: '',
