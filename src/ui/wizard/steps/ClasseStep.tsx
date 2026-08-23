@@ -1,5 +1,6 @@
 import { classes } from '../../../data/rulesets/dnd2024/classes';
 import type { StepProps } from './StepProps';
+import barbaroBanner from '../../../assets/icones-classes/barbaro-banner.png';
 
 const iconeModulos = import.meta.glob('../../../assets/icones-classes/*.png', {
   eager: true,
@@ -57,13 +58,17 @@ export default function ClasseStep({ selection, update }: StepProps) {
       {CLASSES_EM_BREVE.map((classe) => (
         <div key={classe.id} className="opt-card btn-disabled">
           <div className="opt-card-row">
-            <div className="opt-card-img">
-              {iconeClasse(classe.id) ? (
-                <img src={iconeClasse(classe.id)} alt="" />
-              ) : (
-                '🖼'
-              )}
-            </div>
+            {classe.id === 'barbaro' ? (
+              <img src={barbaroBanner} alt="" className="opt-card-img-banner" />
+            ) : (
+              <div className="opt-card-img">
+                {iconeClasse(classe.id) ? (
+                  <img src={iconeClasse(classe.id)} alt="" />
+                ) : (
+                  '🖼'
+                )}
+              </div>
+            )}
             <div className="opt-card-info">
               <div className="opt-card-name">
                 {classe.nome}
