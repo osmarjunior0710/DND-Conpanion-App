@@ -179,7 +179,7 @@ button {
 
 .opt-card-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .opt-card-img {
@@ -195,6 +195,10 @@ button {
   flex-shrink: 0;
   margin-right: var(--space-3);
   overflow: hidden;
+}
+
+.opt-card-img:has(img) {
+  border: none;
 }
 
 .opt-card-img img {
