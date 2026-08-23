@@ -1141,3 +1141,35 @@ pra lista de Classe já ficar com a cara final antes mesmo das outras
 
 **Data/origem:** 2026-08, pedido direto do Osmar (upload de
 `iconesclasses512.zip`).
+
+## Ícones de Classe — evoluiu pra banner retangular (estandarte), não mais só o losango quadrado
+
+**Decisão:** o emblema em losango quadrado (decisão acima) foi
+substituído, classe por classe, por um banner/estandarte retangular
+(proporção ~1:2, retrato) conforme o Osmar for entregando a arte de
+cada classe. `ClasseStep.tsx` decide sozinho qual formato usar por
+classe: se existe um arquivo `{id}-banner.png` em
+`src/assets/icones-classes/`, usa ele sem a caixa quadrada, só a
+imagem alinhada ao centro vertical do card (classe CSS
+`.opt-card-img-banner`, altura fixa 96px, largura livre pela proporção
+original); senão cai de volta pro emblema quadrado antigo
+(`.opt-card-img`, 56×56px) ou, na ausência de qualquer arquivo, no
+placeholder 🖼. Isso permite migrar classe por classe sem quebrar as
+que ainda não têm banner.
+
+Master de origem: 887×1774px PNG com alpha, redimensionado pra
+256×512px antes de entrar no repositório (mesma lógica de
+compressão do emblema quadrado). Guerreiro, Bárbaro, Bardo e Bruxo já
+têm banner — o emblema quadrado antigo desses 4 foi **apagado** do
+repositório (ficou sem uso, só pesava à toa). As outras 8 classes
+continuam com o emblema quadrado até o Osmar mandar o banner de cada
+uma.
+
+**Contexto:** o Osmar pediu pra testar o formato banner isolado no
+Bárbaro primeiro ("quero ver como fica"), aprovou o resultado, e
+decidiu expandir pra todas as classes conforme for reunindo as artes
+— não é uma entrega de uma vez só, é incremental.
+
+**Data/origem:** 2026-08, pedido direto do Osmar (upload de
+`emblemasclasses512.zip`, depois `barbaro-emblema` avulso pra teste, e
+banners de Guerreiro/Bruxo/Bardo em seguida).

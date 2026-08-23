@@ -1,6 +1,5 @@
 import { classes } from '../../../data/rulesets/dnd2024/classes';
 import type { StepProps } from './StepProps';
-import barbaroBanner from '../../../assets/icones-classes/barbaro-banner.png';
 
 const iconeModulos = import.meta.glob('../../../assets/icones-classes/*.png', {
   eager: true,
@@ -10,6 +9,21 @@ const iconeModulos = import.meta.glob('../../../assets/icones-classes/*.png', {
 function iconeClasse(id: string): string | undefined {
   const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}.png`));
   return entrada?.[1];
+}
+
+function bannerClasse(id: string): string | undefined {
+  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}-banner.png`));
+  return entrada?.[1];
+}
+
+function IconeClasse({ id }: { id: string }) {
+  const banner = bannerClasse(id);
+  if (banner) return <img src={banner} alt="" className="opt-card-img-banner" />;
+  return (
+    <div className="opt-card-img">
+      {iconeClasse(id) ? <img src={iconeClasse(id)} alt="" /> : '🖼'}
+    </div>
+  );
 }
 
 const CLASSES_EM_BREVE = [
@@ -37,13 +51,7 @@ export default function ClasseStep({ selection, update }: StepProps) {
           onClick={() => update({ classe: c.nome })}
         >
           <div className="opt-card-row">
-            <div className="opt-card-img">
-              {iconeClasse(c.id) ? (
-                <img src={iconeClasse(c.id)} alt="" />
-              ) : (
-                '🖼'
-              )}
-            </div>
+            <IconeClasse id={c.id} />
             <div className="opt-card-info">
               <div className="opt-card-name">{c.nome}</div>
               <div className="opt-card-desc">Atributo primário: {c.atributoPrimario}</div>
@@ -58,17 +66,7 @@ export default function ClasseStep({ selection, update }: StepProps) {
       {CLASSES_EM_BREVE.map((classe) => (
         <div key={classe.id} className="opt-card btn-disabled">
           <div className="opt-card-row">
-            {classe.id === 'barbaro' ? (
-              <img src={barbaroBanner} alt="" className="opt-card-img-banner" />
-            ) : (
-              <div className="opt-card-img">
-                {iconeClasse(classe.id) ? (
-                  <img src={iconeClasse(classe.id)} alt="" />
-                ) : (
-                  '🖼'
-                )}
-              </div>
-            )}
+            <IconeClasse id={classe.id} />
             <div className="opt-card-info">
               <div className="opt-card-name">
                 {classe.nome}
