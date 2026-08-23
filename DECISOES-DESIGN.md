@@ -1173,3 +1173,11 @@ decidiu expandir pra todas as classes conforme for reunindo as artes
 **Data/origem:** 2026-08, pedido direto do Osmar (upload de
 `emblemasclasses512.zip`, depois `barbaro-emblema` avulso pra teste, e
 banners de Guerreiro/Bruxo/Bardo em seguida).
+
+**Atualização:** concluído — as 12 classes têm banner agora (Clérigo/
+Druida/Feiticeiro e depois Guardião/Ladino/Mago/Monge/Paladino
+completaram a lista). Nenhum emblema quadrado sobrou no repositório;
+o fallback pro formato quadrado/placeholder em `IconeClasse`
+(`ClasseStep.tsx`) continua no código só como rede de segurança caso
+algum arquivo de banner seja removido por engano — não é mais
+usado na prática.
