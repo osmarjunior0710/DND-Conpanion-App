@@ -429,6 +429,31 @@ vez do sublinhado.
 **Contexto:** mesmo padrão do builder anterior. Ainda não está no
 wireframe atual.
 
+## Técnica de escala pra molduras ornamentadas — 9-slice (border-image)
+
+**Decisão:** painéis, botões e cards com moldura ornamentada (a pele RPG
+que vai por cima da estrutura M3) devem usar a técnica **9-slice**
+(equivalente web do 9-patch/9-slice que o Osmar já usava no Unity) via
+CSS `border-image` — não gerar uma imagem por tamanho de componente.
+
+**O que é:** o asset é dividido numa grade 3x3. Os 4 cantos nunca
+esticam (preservam o entalhe/ornamento); as bordas do meio esticam só
+numa direção; o centro estica nas duas. Implementado via
+`border-image-source` + `border-image-slice` + `border-image-width`, com
+`border-image-repeat: repeat` pra texturas como pedra/tecido (evita
+esticar e borrar) ou `stretch` pra gradientes lisos.
+
+**Contexto:** pergunta direta do Osmar comparando com a técnica que ele
+já usa em Unity para assets de jogo. Confirmado que existe equivalente
+nativo em CSS, sem precisar de biblioteca extra pra DOM comum (só
+necessário considerar solução alternativa tipo `NineSlicePlane` do
+Pixi.js se algum componente futuro for renderizado em canvas/WebGL em vez
+de DOM normal).
+
+**Relevância direta:** os estandartes e emblemas com moldura ornamentada
+já produzidos são candidatos naturais a usar esse padrão quando virarem
+componentes reais (botões, cards) de tamanho variável.
+
 ## Referência de design — Material Design 3 (m3.material.io)
 
 **Decisão:** usar o Material Design 3 do Google como referência de
