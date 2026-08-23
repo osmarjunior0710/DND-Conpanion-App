@@ -1111,3 +1111,33 @@ manualmente depois, é só atualizar o texto na planilha e reimportar —
 não muda a estrutura, só o conteúdo do campo.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Ícones de Classe — tamanho de origem e onde ficam no repositório
+
+**Decisão:** a área do ícone nos cards de opção (`.opt-card-img`, usada
+em Classe/Origem/Espécie) é **56×56px CSS**. A arte-mestra de cada ícone
+é exportada em **512×512px PNG com fundo transparente**, com ~10% de
+margem de respiro nas bordas do quadrado (o card corta em
+`border-radius`, então arte encostada na borda pode ser cortada). Isso
+cobre qualquer densidade de tela (2x/3x) e qualquer tamanho maior que a
+gente queira usar no futuro (tablet/desktop) sem precisar redesenhar.
+
+Antes de entrar no repositório, cada PNG de 512px é redimensionado pra
+**256×256px** e re-otimizado (ainda bem acima do necessário pro box
+atual de 56px, mas ~8x mais leve em disco que o master de 512px) — o
+app carrega isso pela rede do celular do Osmar, então tamanho de
+arquivo importa mesmo sendo uso pessoal. Arquivos ficam em
+`src/assets/icones-classes/{id-da-classe}.png` (nome = id da classe:
+`guerreiro.png`, `mago.png` etc). `ClasseStep.tsx` usa
+`import.meta.glob` pra montar automaticamente o mapa id→arquivo — não
+precisa listar imports um por um nem tocar em código quando uma nova
+classe for importada, só adicionar o PNG com o nome certo.
+
+**Contexto:** os 12 ícones de classe (todas, mesmo as 11 ainda "em
+breve") vieram prontos do Osmar em 2026-08, então já foram conectados
+em todas as classes de uma vez — inclusive nos cards desabilitados —
+pra lista de Classe já ficar com a cara final antes mesmo das outras
+11 classes serem importadas da planilha.
+
+**Data/origem:** 2026-08, pedido direto do Osmar (upload de
+`iconesclasses512.zip`).

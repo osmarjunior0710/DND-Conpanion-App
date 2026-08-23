@@ -1,18 +1,28 @@
 import { classes } from '../../../data/rulesets/dnd2024/classes';
 import type { StepProps } from './StepProps';
 
+const iconeModulos = import.meta.glob('../../../assets/icones-classes/*.png', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+
+function iconeClasse(id: string): string | undefined {
+  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}.png`));
+  return entrada?.[1];
+}
+
 const CLASSES_EM_BREVE = [
-  'Bárbaro',
-  'Bardo',
-  'Bruxo',
-  'Clérigo',
-  'Druida',
-  'Feiticeiro',
-  'Guardião',
-  'Ladino',
-  'Mago',
-  'Monge',
-  'Paladino',
+  { nome: 'Bárbaro', id: 'barbaro' },
+  { nome: 'Bardo', id: 'bardo' },
+  { nome: 'Bruxo', id: 'bruxo' },
+  { nome: 'Clérigo', id: 'clerigo' },
+  { nome: 'Druida', id: 'druida' },
+  { nome: 'Feiticeiro', id: 'feiticeiro' },
+  { nome: 'Guardião', id: 'guardiao' },
+  { nome: 'Ladino', id: 'ladino' },
+  { nome: 'Mago', id: 'mago' },
+  { nome: 'Monge', id: 'monge' },
+  { nome: 'Paladino', id: 'paladino' },
 ];
 
 export default function ClasseStep({ selection, update }: StepProps) {
@@ -26,7 +36,13 @@ export default function ClasseStep({ selection, update }: StepProps) {
           onClick={() => update({ classe: c.nome })}
         >
           <div className="opt-card-row">
-            <div className="opt-card-img">🖼</div>
+            <div className="opt-card-img">
+              {iconeClasse(c.id) ? (
+                <img src={iconeClasse(c.id)} alt="" />
+              ) : (
+                '🖼'
+              )}
+            </div>
             <div className="opt-card-info">
               <div className="opt-card-name">{c.nome}</div>
               <div className="opt-card-desc">Atributo primário: {c.atributoPrimario}</div>
@@ -38,13 +54,19 @@ export default function ClasseStep({ selection, update }: StepProps) {
           </div>
         </div>
       ))}
-      {CLASSES_EM_BREVE.map((nome) => (
-        <div key={nome} className="opt-card btn-disabled">
+      {CLASSES_EM_BREVE.map((classe) => (
+        <div key={classe.id} className="opt-card btn-disabled">
           <div className="opt-card-row">
-            <div className="opt-card-img">🖼</div>
+            <div className="opt-card-img">
+              {iconeClasse(classe.id) ? (
+                <img src={iconeClasse(classe.id)} alt="" />
+              ) : (
+                '🖼'
+              )}
+            </div>
             <div className="opt-card-info">
               <div className="opt-card-name">
-                {nome}
+                {classe.nome}
                 <span className="tag" style={{ marginLeft: 6 }}>(em breve)</span>
               </div>
             </div>
