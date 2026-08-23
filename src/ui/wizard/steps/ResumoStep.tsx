@@ -1,15 +1,11 @@
-import { pvBaseClasse } from '../../../data/wizardFixtures';
-import { valorFinalAtributo } from '../types';
+import { calcularCA, calcularOuroInicial, calcularPercepcaoPassiva, calcularPvMaximoNivel1 } from '../../../core/calculoPersonagem';
 import type { StepProps } from './StepProps';
 
 export default function ResumoStep({ selection, update }: StepProps) {
-  const conValor = valorFinalAtributo(selection, 'CON');
-  const sabValor = valorFinalAtributo(selection, 'SAB');
-  const conMod = conValor !== null ? Math.floor((conValor - 10) / 2) : 0;
-  const sabMod = sabValor !== null ? Math.floor((sabValor - 10) / 2) : 0;
-  const pvBase = selection.classe ? (pvBaseClasse[selection.classe] ?? 8) : null;
-  const pvMax = selection.classe && pvBase !== null ? pvBase + conMod : null;
-  const percepcaoPassiva = 10 + sabMod;
+  const pvMax = calcularPvMaximoNivel1(selection);
+  const ca = calcularCA(selection);
+  const percepcaoPassiva = calcularPercepcaoPassiva(selection);
+  const ouroInicial = calcularOuroInicial(selection);
 
   return (
     <>
@@ -42,22 +38,19 @@ export default function ResumoStep({ selection, update }: StepProps) {
       <div className="section-title">Números calculados automaticamente</div>
       <div className="summary-row">
         <span>Pontos de Vida máximos</span>
-        <span>
-          {pvMax !== null
-            ? `${pvMax} (${pvBase} + mod. CON ${conMod >= 0 ? '+' : ''}${conMod})`
-            : '— (selecione uma classe)'}
-        </span>
+        <span>{pvMax !== null ? pvMax : '— (selecione uma classe)'}</span>
+      </div>
+      <div className="summary-row">
+        <span>Classe de Armadura</span>
+        <span>{ca !== null ? ca : '—'}</span>
       </div>
       <div className="summary-row">
         <span>Percepção Passiva</span>
-        <span>
-          {percepcaoPassiva} (10 + mod. SAB {sabMod >= 0 ? '+' : ''}
-          {sabMod})
-        </span>
+        <span>{percepcaoPassiva !== null ? percepcaoPassiva : '—'}</span>
       </div>
-      <div className="label" style={{ marginTop: 4 }}>
-        ⚠️ Protótipo: Percepção Passiva aqui ainda não soma o Bônus de Proficiência quando o personagem tem
-        proficiência em Percepção — ajustar quando virar código de verdade.
+      <div className="summary-row">
+        <span>Ouro inicial</span>
+        <span>{ouroInicial} PO</span>
       </div>
 
       <div className="section-title">Nome do personagem</div>

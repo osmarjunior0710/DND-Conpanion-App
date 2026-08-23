@@ -13,68 +13,42 @@
 
 ---
 
-## Motor de cálculo da Ficha final ainda não existe (spec pronta pra Entrega A)
+## Fluxo completo wizard → Ficha — Entrega A1 feita (motor de cálculo + salvar), A2-A6 ainda faltam
 
-**O que é:** uma auditoria completa de criação de personagem (feita com
-apoio do Claude, chat separado) comparou passo a passo o que o wizard
-faz hoje contra a regra oficial. Conclusão principal: **quase nada
-disso é "está errado"** — é que a Ficha final ainda não tem motor de
-cálculo nenhum (`core/` não existe, `ResumoStep.tsx` só tem um cálculo
-solto de PV que nem chega a ser salvo em lugar nenhum — ver pendência
-"Motor de cálculo/armazenamento da Ficha" que já discutimos). Esta
-entrada é a especificação do que essa Entrega A precisa cobrir, já
-verificada contra a planilha onde dava pra verificar:
+**O que é:** plano de 6 entregas pequenas pra fechar o fluxo completo
+wizard → Ficha, definido junto com o Osmar. **A1 já está pronta**: existe
+`core/calculoPersonagem.ts` (PV máximo, CA, Percepção Passiva,
+Iniciativa, ouro inicial — fórmulas confirmadas contra a planilha, ver
+DECISOES-DESIGN.md) e `core/armazenamentoPersonagens.ts` (interface
+trocável, localStorage por trás). O fim do wizard agora salva de verdade
+e manda pra `/lista`, que já mostra os personagens reais salvos (nome,
+classe, espécie, nível, PV) acima dos fixtures antigos.
 
-**Já confirmado correto, não precisa mexer:**
-- Ordem: array padrão de atributos é distribuído **antes** do ajuste de
-  origem (+1/+1/+1) — já assim no wizard.
-- Fórmula de modificador `floor((valor - 10) / 2)` — já implementada em
-  `modFmt`/`valorFinalAtributo`.
-- Idiomas: "2 à escolha" é regra fixa (planilha não tem coluna de
-  idioma em Origem/Espécie pra variar) — ver DECISOES-DESIGN.md.
+**O que falta (A2-A6, mesma ordem combinada):**
+- **A2:** Lista de Personagens 100% real — hoje mistura real + fixture
+  (`exampleCharacters.ts` ainda não foi removido), sem estado vazio, sem
+  apagar personagem.
+- **A3:** Ficha (aba Perfil) lendo o personagem salvo pelo `:id` da rota
+  — hoje `FichaShell.tsx` ignora o `id` e sempre mostra
+  `exampleSheet.ts`. Clicar num personagem real na Lista ainda abre a
+  ficha de exemplo.
+- **A4:** Mochila com itens reais de Origem + Classe (tag `origemDoItem`
+  — decisão já registrada, ainda não implementada).
+- **A5:** Loja com ouro/preços reais (hoje `85 PO` fixo e lista de itens
+  fixa — `calcularOuroInicial` já existe em `core/`, só falta a tela
+  usar).
+- **A6:** Combat mostrando Estilo de Luta escolhido; aba Magias
+  refletindo "sem magia" pro Guerreiro (hoje mostra espaços de magia de
+  exemplo, dado de Bruxo).
 
-**Fórmulas que a Entrega A (motor de cálculo) precisa implementar:**
-1. **PV máximo** (nível 1): `dado de vida MÁXIMO da classe + mod. CON`
-   (nunca rola nem faz média no nível 1 — isso só entra a partir do
-   nível 2, no level-up).
-2. **CA:** ver decisão "Cálculo de CA — Bárbaro e Monge têm regra
-   própria" no `DECISOES-DESIGN.md` — função centralizada, checa
-   exceção de classe antes da fórmula padrão por categoria de armadura.
-   Precisa dos dados de Armas/Armaduras (ainda não importados — mesma
-   pendência de popup de descrição já registrada).
-3. **Percepção Passiva:** `10 + mod. SAB + Bônus de Proficiência (SE
-   proficiente em Percepção)` — hoje o protótipo solto só soma mod. SAB,
-   sem checar proficiência.
-4. **Iniciativa:** `mod. DES` (nenhuma das 12 classes dá bônus extra no
-   nível 1, não é exceção a tratar agora).
-5. **Bônus de Ataque de Magia / CD de Magia** (só classes conjuradoras):
-   `mod. do atributo de conjuração + Bônus de Proficiência` (ataque) e
-   `8 + mod. do atributo de conjuração + Bônus de Proficiência` (CD). O
-   atributo de conjuração já está implícito no `atributoPrimario` de
-   cada classe.
-6. **Ouro inicial** (pra tela de Loja): soma do que Classe + Origem
-   concederam — se a opção escolhida foi "só ouro" (Opção B de Origem,
-   Opção C de Classe), soma o valor cheio; se foi opção com itens, soma
-   o campo `ouro` residual daquele pacote (ex: Guerreiro Opção A tem 4
-   PO restantes). Hoje a Loja usa itens fixos de exemplo, não calcula
-   nada disso.
-7. **Itens no inventário:** itens de Origem + Classe + Loja precisam
-   aparecer juntos na Mochila, cada um com a tag `origemDoItem` (decisão
-   já registrada, ainda não implementada de verdade).
+**Não implementado ainda dentro do motor de cálculo (não bloqueia A2-A6
+do Guerreiro):**
+- Bônus de Ataque de Magia / CD de Magia (só relevante quando a primeira
+  classe conjuradora for importada).
+- Itens no inventário com tag `origemDoItem` (isso é a A4 acima).
 
-**Checklist de coisas que só fazem sentido depois de mais classes/dados
-existirem** (não travam a Entrega A, testar quando chegar a vez):
-- Kit inicial de Classe somando ao inventário certo (Guerreiro já dá
-  pra testar assim que a Mochila ligar em dado real).
-- Sub-escolha de Espécie não perguntar de novo no level-up
-  (`linhagem_com_progressao_magica`) nem aparecer no wizard
-  (`escolha_reutilizavel`) — só relevante quando essas espécies forem
-  desbloqueadas (ainda "em breve").
-- Traços vinculados à sub-escolha (ex: dano do Ataque de Sopro do
-  Draconato) resolvidos em tempo de leitura — mesma condição acima.
-
-**Data/origem:** 2026-08, auditoria completa feita antes de começar a
-Entrega A (armazenamento + motor de cálculo).
+**Data/origem:** 2026-08. A1 implementada e testada de ponta a ponta
+(wizard completo → Salvar → aparece na Lista com números reais).
 
 ## Faltam 11 classes (só Guerreiro importado)
 

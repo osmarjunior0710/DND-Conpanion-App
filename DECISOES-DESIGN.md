@@ -1206,3 +1206,31 @@ o fallback pro formato quadrado/placeholder em `IconeClasse`
 (`ClasseStep.tsx`) continua no código só como rede de segurança caso
 algum arquivo de banner seja removido por engano — não é mais
 usado na prática.
+
+## `core/` nasce com `personagem.ts` + `calculoPersonagem.ts` + `armazenamentoPersonagens.ts`
+
+**Decisão:** o `WizardSelection` (forma de dado das escolhas do wizard)
+e as funções puras de atributo (`modificador`, `modFmt`,
+`valorFinalAtributo`) saíram de `ui/wizard/types.ts` e foram pra
+`core/personagem.ts` — é dado de personagem, não componente de tela, e
+o motor de cálculo precisava importar isso de algum lugar dentro de
+`core/`, não de dentro de `ui/`. `core/calculoPersonagem.ts` reúne as
+fórmulas (PV máximo nível 1, CA — já resolve pela armadura escolhida no
+equipamento inicial, com o parser de texto `"N + modificador de Des
+(máx. N)"` da planilha de Armaduras —, Percepção Passiva, Iniciativa,
+ouro inicial). `core/armazenamentoPersonagens.ts` é a interface trocável
+de armazenamento (`ArmazenamentoPersonagens`) com implementação
+`localStorage` por trás — nenhum componente acessa `localStorage`
+direto, só essa camada.
+
+**Contexto:** Entrega A1 do plano de 6 entregas pra fechar o fluxo
+wizard → Ficha (ver PENDENCIAS.md). Testado de ponta a ponta: um
+Guerreiro completo criado no wizard salva de verdade e aparece na Lista
+de Personagens com PV/CA/Percepção Passiva calculados, não mais
+fixture.
+
+**Pendência conhecida:** a exceção de CA de Bárbaro/Monge (ver decisão
+"Cálculo de CA" acima) ainda não tem entrada no motor — nenhuma das
+duas classes está importada ainda. A função foi estruturada pra receber
+esse lookup por `classeId` quando chegar a vez, sem espalhar `if
+classe === "Bárbaro"` pelo código, como já estava recomendado.

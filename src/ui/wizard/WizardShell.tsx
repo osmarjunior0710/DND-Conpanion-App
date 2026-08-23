@@ -8,7 +8,9 @@ import { classes } from '../../data/rulesets/dnd2024/classes';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
-import { criarSelecaoInicial, type WizardSelection } from './types';
+import { criarSelecaoInicial, type WizardSelection } from '../../core/personagem';
+import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
+import { armazenamentoPersonagens, gerarIdPersonagem } from '../../core/armazenamentoPersonagens';
 import styles from './WizardShell.module.css';
 import ClasseStep from './steps/ClasseStep';
 import ClasseEscolhasStep from './steps/ClasseEscolhasStep';
@@ -224,9 +226,19 @@ export default function WizardShell() {
     }
     setAviso(null);
     if (isLast) {
-      // Fase 0: ainda não existe salvamento de verdade — a ficha em si
-      // (Perfil/Mochila/Magias/Combat) chega na entrega 0.5.
-      navigate('/ficha/novo-personagem');
+      const pvMax = calcularPvMaximoNivel1(selection) ?? 0;
+      armazenamentoPersonagens.salvar({
+        id: gerarIdPersonagem(),
+        criadoEm: new Date().toISOString(),
+        nivel: 1,
+        xp: selection.xp,
+        pvAtual: pvMax,
+        selecao: selection,
+      });
+      // A Ficha (Perfil/Mochila/Magias/Combat) ainda não lê o personagem
+      // salvo — isso é a próxima entrega (A3). Por ora volta pra Lista,
+      // que já mostra o personagem recém-criado com os números reais.
+      navigate('/lista');
       return;
     }
     setWizIndex((i) => i + 1);

@@ -1,4 +1,10 @@
-import type { Atributo } from '../../data/wizardFixtures';
+// Forma de dado do personagem em construção (escolhas do wizard) +
+// funções puras de atributo. Fica em core/ (não em ui/wizard/) porque
+// isso é dado de personagem, não componente de tela — o motor de
+// cálculo (calculoPersonagem.ts) e o armazenamento (armazenamentoPersonagens.ts)
+// dependem deste formato.
+
+import type { Atributo } from '../data/wizardFixtures';
 
 export interface WizardSelection {
   classe: string | null;
@@ -46,8 +52,12 @@ export function criarSelecaoInicial(): WizardSelection {
   };
 }
 
+export function modificador(valor: number): number {
+  return Math.floor((valor - 10) / 2);
+}
+
 export function modFmt(valor: number): string {
-  const mod = Math.floor((valor - 10) / 2);
+  const mod = modificador(valor);
   return mod >= 0 ? `+${mod}` : `${mod}`;
 }
 

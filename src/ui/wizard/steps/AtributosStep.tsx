@@ -1,6 +1,6 @@
 import { arrayPadrao, atributosOrdem } from '../../../data/wizardFixtures';
 import { origens } from '../../../data/rulesets/dnd2024/origens';
-import { modFmt, valorFinalAtributo, type WizardSelection } from '../types';
+import { modFmt, valorFinalAtributo, type WizardSelection } from '../../../core/personagem';
 import type { StepProps } from './StepProps';
 
 interface AtributosStepProps extends StepProps {
