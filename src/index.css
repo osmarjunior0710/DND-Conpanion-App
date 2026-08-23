@@ -183,8 +183,8 @@ button {
 }
 
 .opt-card-img {
-  width: 56px;
-  height: 56px;
+  width: clamp(56px, 10vw, 110px);
+  height: clamp(56px, 10vw, 110px);
   border: 1px dashed var(--line-soft);
   border-radius: var(--shape-sm);
   display: flex;
@@ -202,7 +202,7 @@ button {
 }
 
 .opt-card-img-banner {
-  height: 96px;
+  height: clamp(96px, 20vw, 220px);
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
