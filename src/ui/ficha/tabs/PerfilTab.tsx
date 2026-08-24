@@ -1,4 +1,4 @@
-import { atributosExemplo, personagemExemplo } from '../../../data/exampleSheet';
+import type { AtributoFinal, PericiaFinal } from '../../../core/calculoPersonagem';
 import { useRoll } from '../../roll/RollContext';
 import styles from './PerfilTab.module.css';
 
@@ -6,6 +6,11 @@ interface PerfilTabProps {
   nivel: number;
   pvMax: number;
   pvAtual: number;
+  ca: number | null;
+  iniciativa: number | null;
+  percepcaoPassiva: number | null;
+  atributos: AtributoFinal[];
+  pericias: PericiaFinal[];
   xpBloqueado: boolean;
   onDescansoLongo: () => void;
   onDescansoCurto: () => void;
@@ -17,6 +22,11 @@ export default function PerfilTab({
   nivel,
   pvMax,
   pvAtual,
+  ca,
+  iniciativa,
+  percepcaoPassiva,
+  atributos,
+  pericias,
   xpBloqueado,
   onDescansoLongo,
   onDescansoCurto,
@@ -38,13 +48,13 @@ export default function PerfilTab({
       </div>
 
       <div className="stat-grid">
-        {atributosExemplo.map((a) => (
+        {atributos.map((a) => (
           <div
-            key={a.nome}
+            key={a.atributo}
             className="box stat-box"
-            onClick={() => rolarD20({ label: a.nome, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
+            onClick={() => rolarD20({ label: a.atributo, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
           >
-            <div className="stat-name">{a.nome}</div>
+            <div className="stat-name">{a.atributo}</div>
             <div className="stat-mod">
               {a.mod >= 0 ? '+' : ''}
               {a.mod}
@@ -63,31 +73,40 @@ export default function PerfilTab({
         </div>
         <div className={`box ${styles.hpBox}`}>
           <div className="label">CA</div>
-          <div className={styles.hpNum}>{personagemExemplo.ca}</div>
+          <div className={styles.hpNum}>{ca ?? '—'}</div>
         </div>
         <div
           className={`box ${styles.hpBox}`}
           onClick={() =>
-            rolarD20({ label: 'Iniciativa', formula: `1d20 + ${personagemExemplo.iniciativa}`, mod: personagemExemplo.iniciativa })
+            iniciativa !== null && rolarD20({ label: 'Iniciativa', formula: `1d20 + ${iniciativa}`, mod: iniciativa })
           }
         >
           <div className="label">Iniciativa</div>
-          <div className={styles.hpNum}>+{personagemExemplo.iniciativa} 🎲</div>
+          <div className={styles.hpNum}>
+            {iniciativa !== null ? `${iniciativa >= 0 ? '+' : ''}${iniciativa} 🎲` : '—'}
+          </div>
         </div>
       </div>
 
-      <div className="section-title">Perícias (exemplo)</div>
-      <div className={styles.skillRow} onClick={() => rolarD20({ label: 'Enganação', formula: '1d20 + 4', mod: 4 })}>
-        <span>Enganação (CAR) 🎲</span>
-        <span>+4</span>
-      </div>
-      <div className={styles.skillRow} onClick={() => rolarD20({ label: 'Intimidação', formula: '1d20 + 4', mod: 4 })}>
-        <span>Intimidação (CAR) 🎲</span>
-        <span>+4</span>
-      </div>
+      <div className="section-title">Perícias</div>
+      {pericias.map((p) => (
+        <div
+          key={p.nome}
+          className={styles.skillRow}
+          onClick={() => rolarD20({ label: p.nome, formula: `1d20 ${p.mod >= 0 ? '+' : '-'} ${Math.abs(p.mod)}`, mod: p.mod })}
+        >
+          <span>
+            {p.nome} ({p.atributo}) 🎲
+          </span>
+          <span>
+            {p.mod >= 0 ? '+' : ''}
+            {p.mod}
+          </span>
+        </div>
+      ))}
       <div className={styles.skillRow}>
         <span>Percepção Passiva</span>
-        <span>11</span>
+        <span>{percepcaoPassiva ?? '—'}</span>
       </div>
       <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
         toque num atributo, perícia ou iniciativa pra rolar o dado.
@@ -115,11 +134,6 @@ export default function PerfilTab({
         </div>
       </div>
       {restStatus && <div className={styles.restStatus}>{restStatus}</div>}
-      <div className="label">
-        Bruxo é um caso especial de regra: Espaços de Magia (Magia de Pacto) recuperam no Descanso{' '}
-        <b>Curto</b>, diferente da maioria dos conjuradores (que só recuperam no Longo). Veja o contador na aba
-        Magias.
-      </div>
     </>
   );
 }

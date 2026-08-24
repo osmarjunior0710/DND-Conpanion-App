@@ -1234,3 +1234,39 @@ fixture.
 duas classes está importada ainda. A função foi estruturada pra receber
 esse lookup por `classeId` quando chegar a vez, sem espalhar `if
 classe === "Bárbaro"` pelo código, como já estava recomendado.
+
+## Ficha lê o personagem real via componente filho, não via early return antes dos hooks
+
+**Decisão:** `FichaShell.tsx` virou dois componentes: o de fora
+(`FichaShell`) só busca o personagem pelo `:id` da rota e decide entre
+mostrar "personagem não encontrado" ou renderizar
+`FichaConteudo`, que recebe o `PersonagemSalvo` já garantido (não-nulo)
+como prop e só aí chama `useState`/`useRef`.
+
+**Contexto:** colocar o `if (!personagemSalvo) return (...)` **antes**
+dos hooks dentro do mesmo componente quebra a Regra dos Hooks do React
+(hooks precisam rodar sempre na mesma ordem, sem pular condicionalmente)
+— daria bug sutil de estado bagunçado ao trocar de personagem, não um
+erro óbvio na hora. Separar em dois componentes resolve isso de forma
+limpa, sem precisar de valores placeholder feios só pra "hooks
+rodarem mesmo assim".
+
+## Aba Perfil da Ficha lê atributos/PV/CA/Perícias reais desde a Entrega A3
+
+**Decisão:** `PerfilTab.tsx` não importa mais fixture nenhum — recebe
+`atributos`, `pericias`, `ca`, `iniciativa`, `percepcaoPassiva` como
+props, calculados por `core/calculoPersonagem.ts` a partir do
+personagem salvo. Perícias mostradas são a união de Origem (fixas) +
+Classe (escolhidas no wizard), cada uma já com o Bônus de Proficiência
+somado — usa a aba "Perícias" da planilha (`pericias.ts`) pra saber o
+atributo de cada perícia (nome completo do atributo → sigla, mapeado
+localmente em `calculoPersonagem.ts`).
+
+**Contexto:** Entrega A3 do plano de 6 entregas (wizard → Ficha). O
+parágrafo fixo sobre a regra especial de Descanso Curto do Bruxo (Magia
+de Pacto) foi removido do Perfil — não fazia sentido aparecer pra um
+Guerreiro. Mochila/Magias/Combat ainda não foram conectadas (A4/A6).
+
+**Data/origem:** 2026-08, testado de ponta a ponta com um Guerreiro
+real (Pequenino, PV 12, CA 13, Percepção Passiva 12, perícias com
+atributo e bônus corretos).

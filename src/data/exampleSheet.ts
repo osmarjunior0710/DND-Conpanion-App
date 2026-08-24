@@ -1,32 +1,7 @@
-// Ficha de exemplo FIXA pra Fase 0 (esqueleto navegável) — o Bruxo
-// Tiefling do wireframe. Ainda não vem do wizard nem da planilha mestra
-// (isso entra na Fase 1).
-
-export interface AtributoExemplo {
-  nome: string;
-  mod: number;
-  valor: number;
-}
-
-export const atributosExemplo: AtributoExemplo[] = [
-  { nome: 'FOR', mod: -1, valor: 8 },
-  { nome: 'DES', mod: 2, valor: 15 },
-  { nome: 'CON', mod: 2, valor: 15 },
-  { nome: 'INT', mod: 0, valor: 10 },
-  { nome: 'SAB', mod: 1, valor: 12 },
-  { nome: 'CAR', mod: 2, valor: 15 },
-];
-
-export const personagemExemplo = {
-  nome: "osmarmelojunior's Character",
-  especie: 'Tiefling',
-  classe: 'Bruxo',
-  dadoVida: 'd8',
-  nivel: 1,
-  pvMax: 14,
-  ca: 13,
-  iniciativa: 2,
-};
+// Itens de exemplo FIXOS pra Mochila — ainda não vêm do wizard nem da
+// planilha mestra (entra na Entrega A4, itens reais de Origem/Classe/Loja).
+// PV/CA/atributos/nome já vêm do personagem salvo (core/calculoPersonagem)
+// desde a Entrega A3 — só o inventário continua fixo por enquanto.
 
 export interface ItemEquipadoExemplo {
   nome: string;

@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { exampleCharacters } from '../../data/exampleCharacters';
 import { armazenamentoPersonagens } from '../../core/armazenamentoPersonagens';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
 import styles from './CharacterList.module.css';
@@ -7,7 +6,7 @@ import styles from './CharacterList.module.css';
 export default function CharacterList() {
   const navigate = useNavigate();
 
-  const personagensReais = armazenamentoPersonagens.listar().map((p) => ({
+  const personagens = armazenamentoPersonagens.listar().map((p) => ({
     id: p.id,
     nome: p.selecao.nome || '(sem nome)',
     especie: p.selecao.especie ?? '—',
@@ -15,7 +14,6 @@ export default function CharacterList() {
     nivel: p.nivel,
     pvAtual: p.pvAtual,
     pvMax: calcularPvMaximoNivel1(p.selecao) ?? p.pvAtual,
-    faded: false,
   }));
 
   return (
@@ -30,32 +28,17 @@ export default function CharacterList() {
         </div>
       </div>
 
-      {personagensReais.length > 0 && (
-        <div className="label" style={{ marginBottom: 6 }}>
-          criados pelo wizard — a Ficha ainda mostra dado de exemplo ao abrir (entrega seguinte liga isso)
+      {personagens.length === 0 && (
+        <div className="box" style={{ padding: 16, textAlign: 'center' }} onClick={() => navigate('/wizard')}>
+          <div style={{ marginBottom: 6 }}>Você ainda não tem nenhum personagem.</div>
+          <div className="btn btn-primary" style={{ display: 'inline-block' }}>
+            ＋ Criar personagem
+          </div>
         </div>
       )}
-      {personagensReais.map((c) => (
-        <div key={c.id} className={`box ${styles.card}`} onClick={() => navigate(`/ficha/${c.id}`)}>
-          <div className={styles.avatar}>👤</div>
-          <div className={styles.info}>
-            <div className={styles.name}>{c.nome}</div>
-            <div className={styles.meta}>
-              {c.especie} · {c.classe} · Nível {c.nivel}
-            </div>
-          </div>
-          <span className="tag">
-            {c.pvAtual}/{c.pvMax} PV
-          </span>
-        </div>
-      ))}
 
-      {exampleCharacters.map((c) => (
-        <div
-          key={c.id}
-          className={`box ${styles.card} ${c.faded ? styles.cardFaded : ''}`}
-          onClick={() => navigate(`/ficha/${c.id}`)}
-        >
+      {personagens.map((c) => (
+        <div key={c.id} className={`box ${styles.card}`} onClick={() => navigate(`/ficha/${c.id}`)}>
           <div className={styles.avatar}>👤</div>
           <div className={styles.info}>
             <div className={styles.name}>{c.nome}</div>

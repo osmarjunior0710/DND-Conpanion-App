@@ -13,42 +13,54 @@
 
 ---
 
-## Fluxo completo wizard → Ficha — Entrega A1 feita (motor de cálculo + salvar), A2-A6 ainda faltam
+## Fluxo completo wizard → Ficha — A1/A2/A3 feitas, A4-A6 ainda faltam
 
 **O que é:** plano de 6 entregas pequenas pra fechar o fluxo completo
-wizard → Ficha, definido junto com o Osmar. **A1 já está pronta**: existe
-`core/calculoPersonagem.ts` (PV máximo, CA, Percepção Passiva,
-Iniciativa, ouro inicial — fórmulas confirmadas contra a planilha, ver
-DECISOES-DESIGN.md) e `core/armazenamentoPersonagens.ts` (interface
-trocável, localStorage por trás). O fim do wizard agora salva de verdade
-e manda pra `/lista`, que já mostra os personagens reais salvos (nome,
-classe, espécie, nível, PV) acima dos fixtures antigos.
+wizard → Ficha, definido junto com o Osmar.
 
-**O que falta (A2-A6, mesma ordem combinada):**
-- **A2:** Lista de Personagens 100% real — hoje mistura real + fixture
-  (`exampleCharacters.ts` ainda não foi removido), sem estado vazio, sem
-  apagar personagem.
-- **A3:** Ficha (aba Perfil) lendo o personagem salvo pelo `:id` da rota
-  — hoje `FichaShell.tsx` ignora o `id` e sempre mostra
-  `exampleSheet.ts`. Clicar num personagem real na Lista ainda abre a
-  ficha de exemplo.
+**Já feito:**
+- **A1:** `core/calculoPersonagem.ts` (PV máximo, CA, Percepção Passiva,
+  Iniciativa, ouro inicial, atributos finais, perícias com bônus de
+  proficiência) e `core/armazenamentoPersonagens.ts` (interface
+  trocável, localStorage por trás). O fim do wizard salva de verdade.
+- **A2:** Lista de Personagens 100% real — fixtures (`exampleCharacters.ts`)
+  removidos, estado vazio com atalho pra `/wizard` quando não há nenhum
+  personagem salvo ainda. Apagar personagem ainda não existe (não travou
+  a entrega, ver abaixo).
+- **A3:** `FichaShell.tsx` lê o personagem salvo pelo `:id` da rota (com
+  tela de "personagem não encontrado" se o id não existir — ex: link
+  velho, ou salvo em outro navegador). Aba Perfil mostra atributos, PV,
+  CA, Iniciativa, Percepção Passiva e Perícias reais do personagem —
+  nenhum fixture na aba Perfil.
+
+**O que falta (A4-A6, mesma ordem combinada):**
 - **A4:** Mochila com itens reais de Origem + Classe (tag `origemDoItem`
-  — decisão já registrada, ainda não implementada).
+  — decisão já registrada, ainda não implementada; hoje a Mochila ainda
+  usa `itensEquipadosExemplo`/`cargaExemplo` fixos).
 - **A5:** Loja com ouro/preços reais (hoje `85 PO` fixo e lista de itens
   fixa — `calcularOuroInicial` já existe em `core/`, só falta a tela
   usar).
 - **A6:** Combat mostrando Estilo de Luta escolhido; aba Magias
   refletindo "sem magia" pro Guerreiro (hoje mostra espaços de magia de
-  exemplo, dado de Bruxo).
+  exemplo, dado de Bruxo — a nota fixa sobre a regra de Bruxo/Magia de
+  Pacto foi removida do Perfil por não se aplicar ao Guerreiro; volta
+  como texto condicional por classe quando o Bruxo for importado).
 
-**Não implementado ainda dentro do motor de cálculo (não bloqueia A2-A6
-do Guerreiro):**
+**O que falta pra polir (não travou A2/A3, mas ficou pendente):**
+- Apagar personagem da Lista (delete no `armazenamentoPersonagens`).
+- PV atual/nível não são salvos de volta no armazenamento quando você
+  sobe de nível ou toma dano na Ficha — só muda na sessão aberta. Só
+  importa de verdade quando a ficha for algo que se volta a abrir depois
+  de fechar o navegador esperando ver o estado exato de antes.
+
+**Não implementado ainda dentro do motor de cálculo (não bloqueia
+A4-A6 do Guerreiro):**
 - Bônus de Ataque de Magia / CD de Magia (só relevante quando a primeira
   classe conjuradora for importada).
-- Itens no inventário com tag `origemDoItem` (isso é a A4 acima).
 
-**Data/origem:** 2026-08. A1 implementada e testada de ponta a ponta
-(wizard completo → Salvar → aparece na Lista com números reais).
+**Data/origem:** 2026-08. A1-A3 implementadas e testadas de ponta a
+ponta (wizard completo → Salvar → aparece na Lista → abre a Ficha real
+com PV/CA/atributos/perícias calculados, não mais fixture).
 
 ## Faltam 11 classes (só Guerreiro importado)
 

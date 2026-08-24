@@ -1,7 +1,17 @@
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { personagemExemplo } from '../../data/exampleSheet';
+import { useNavigate, useParams } from 'react-router-dom';
 import { espacosMagiaExemplo } from '../../data/exampleCombat';
+import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
+import {
+  calcularAtributosFinais,
+  calcularCA,
+  calcularIniciativa,
+  calcularPercepcaoPassiva,
+  calcularPericias,
+  calcularPvMaximoNivel1,
+  classeDaSelecao,
+} from '../../core/calculoPersonagem';
+import { modificador } from '../../core/personagem';
 import styles from './FichaShell.module.css';
 import PerfilTab from './tabs/PerfilTab';
 import MochilaTab from './tabs/MochilaTab';
@@ -28,21 +38,56 @@ const turnoInicial: Record<RecursoTurno, EstadoRecurso> = {
 
 export default function FichaShell() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const personagemSalvo = id ? armazenamentoPersonagens.buscar(id) : null;
+
+  if (!personagemSalvo) {
+    return (
+      <div className={styles.screen}>
+        <div className={styles.header}>
+          <span className="back" onClick={() => navigate('/lista')}>
+            ←
+          </span>
+          <div className={styles.name}>Personagem não encontrado</div>
+        </div>
+        <div className="label" style={{ padding: 16 }}>
+          Esse personagem não existe (ou foi salvo num navegador diferente — o armazenamento hoje é só local,
+          nuvem entra mais pra frente). Volte pra lista e escolha outro.
+        </div>
+      </div>
+    );
+  }
+
+  return <FichaConteudo personagemSalvo={personagemSalvo} />;
+}
+
+function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }) {
+  const navigate = useNavigate();
+  const selecao = personagemSalvo.selecao;
+  const classe = classeDaSelecao(selecao);
+  const conValor = selecao.atributos.CON;
+
   const [tab, setTab] = useState<TabName>('perfil');
   const [personagem, setPersonagem] = useState<PersonagemNivel>({
-    nivel: personagemExemplo.nivel,
-    pvMax: personagemExemplo.pvMax,
-    dadoVida: personagemExemplo.dadoVida,
-    conMod: 2,
+    nivel: personagemSalvo.nivel,
+    pvMax: calcularPvMaximoNivel1(selecao) ?? personagemSalvo.pvAtual,
+    dadoVida: classe?.dadoDeVida ?? 'd8',
+    conMod: conValor !== null ? modificador(conValor) : 0,
     subclasse: null,
   });
-  const [pvAtual, setPvAtual] = useState(personagemExemplo.pvMax);
+  const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
   const [xpBloqueado, setXpBloqueado] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
   const [espacosGastos, setEspacosGastos] = useState(0);
   const [levelUpAberto, setLevelUpAberto] = useState(false);
   const touchX = useRef(0);
+
+  const ca = calcularCA(selecao);
+  const iniciativa = calcularIniciativa(selecao);
+  const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
+  const atributos = calcularAtributosFinais(selecao);
+  const pericias = calcularPericias(selecao, personagem.nivel);
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -107,11 +152,11 @@ export default function FichaShell() {
           ←
         </span>
         <div>
-          <div className={styles.name}>{personagemExemplo.nome}</div>
+          <div className={styles.name}>{selecao.nome || '(sem nome)'}</div>
           <div className={styles.meta}>
-            {personagemExemplo.especie} {personagemExemplo.classe}
+            {selecao.especie ?? '—'} {selecao.classe ?? '—'}
             {personagem.subclasse ? ` (${personagem.subclasse})` : ''} · Nível {personagem.nivel} · CA{' '}
-            {personagemExemplo.ca}
+            {ca ?? '—'}
           </div>
         </div>
       </div>
@@ -133,6 +178,11 @@ export default function FichaShell() {
             nivel={personagem.nivel}
             pvMax={personagem.pvMax}
             pvAtual={pvAtual}
+            ca={ca}
+            iniciativa={iniciativa}
+            percepcaoPassiva={percepcaoPassiva}
+            atributos={atributos}
+            pericias={pericias}
             xpBloqueado={xpBloqueado}
             onDescansoLongo={descansoLongo}
             onDescansoCurto={descansoCurto}

@@ -2,11 +2,22 @@
 // PENDENCIAS.md ("Motor de cálculo da Ficha final ainda não existe").
 // Zero constante de D&D hardcoded aqui: tudo lido de data/rulesets/.
 
+import { atributosOrdem, type Atributo } from '../data/wizardFixtures';
 import { classes, type Classe } from '../data/rulesets/dnd2024/classes';
 import { origens } from '../data/rulesets/dnd2024/origens';
 import { armaduras } from '../data/rulesets/dnd2024/armaduras';
+import { pericias } from '../data/rulesets/dnd2024/pericias';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { modificador, valorFinalAtributo, type WizardSelection } from './personagem';
+
+const ATRIBUTO_POR_NOME_COMPLETO: Record<string, Atributo> = {
+  Força: 'FOR',
+  Destreza: 'DES',
+  Constituição: 'CON',
+  Inteligência: 'INT',
+  Sabedoria: 'SAB',
+  Carisma: 'CAR',
+};
 
 export function classeDaSelecao(selection: WizardSelection): Classe | null {
   return classes.find((c) => c.nome === selection.classe) ?? null;
@@ -78,12 +89,12 @@ function proficienteEmPericia(selection: WizardSelection, pericia: string): bool
   return selection.periciasClasseEscolhidas.includes(pericia);
 }
 
-export function calcularPercepcaoPassiva(selection: WizardSelection): number | null {
+export function calcularPercepcaoPassiva(selection: WizardSelection, nivel: number = 1): number | null {
   const sabValor = valorFinalAtributo(selection, 'SAB');
   const classe = classeDaSelecao(selection);
   if (sabValor === null || !classe) return null;
   const proficiente = proficienteEmPericia(selection, 'Percepção');
-  const bonus = proficiente ? bonusProficiencia(classe, 1) : 0;
+  const bonus = proficiente ? bonusProficiencia(classe, nivel) : 0;
   return 10 + modificador(sabValor) + bonus;
 }
 
@@ -91,6 +102,45 @@ export function calcularIniciativa(selection: WizardSelection): number | null {
   const desValor = valorFinalAtributo(selection, 'DES');
   if (desValor === null) return null;
   return modificador(desValor);
+}
+
+export interface AtributoFinal {
+  atributo: Atributo;
+  valor: number;
+  mod: number;
+}
+
+export function calcularAtributosFinais(selection: WizardSelection): AtributoFinal[] {
+  return atributosOrdem
+    .map((atributo) => {
+      const valor = valorFinalAtributo(selection, atributo);
+      return valor === null ? null : { atributo, valor, mod: modificador(valor) };
+    })
+    .filter((a): a is AtributoFinal => a !== null);
+}
+
+export interface PericiaFinal {
+  nome: string;
+  atributo: Atributo;
+  mod: number;
+}
+
+/** Perícias de Origem (fixas) + Classe (escolhidas), com o bônus de proficiência já somado. */
+export function calcularPericias(selection: WizardSelection, nivel: number): PericiaFinal[] {
+  const classe = classeDaSelecao(selection);
+  const origem = origens.find((o) => o.nome === selection.origem);
+  if (!classe) return [];
+  const nomes = new Set<string>([...(origem?.pericias ?? []), ...selection.periciasClasseEscolhidas]);
+  const bonus = bonusProficiencia(classe, nivel);
+  const resultado: PericiaFinal[] = [];
+  for (const nome of nomes) {
+    const pericia = pericias.find((p) => p.nome === nome);
+    const atributo = pericia ? ATRIBUTO_POR_NOME_COMPLETO[pericia.atributo] : undefined;
+    const valorAtributo = atributo ? valorFinalAtributo(selection, atributo) : null;
+    if (!atributo || valorAtributo === null) continue;
+    resultado.push({ nome, atributo, mod: modificador(valorAtributo) + bonus });
+  }
+  return resultado;
 }
 
 /** Soma o ouro residual de Origem + Classe pra opção escolhida em cada uma. */
