@@ -1,4 +1,4 @@
-import type { AtributoFinal, PericiaFinal } from '../../../core/calculoPersonagem';
+import type { AtributoFinal, ExplicacaoCalculo, PericiaFinal } from '../../../core/calculoPersonagem';
 import { useRoll } from '../../roll/RollContext';
 import InfoValor from '../../components/InfoValor';
 import styles from './PerfilTab.module.css';
@@ -10,10 +10,10 @@ interface PerfilTabProps {
   ca: number | null;
   iniciativa: number | null;
   percepcaoPassiva: number | null;
-  explicacaoPv: string;
-  explicacaoCa: string;
-  explicacaoIniciativa: string;
-  explicacaoPercepcaoPassiva: string;
+  explicacaoPv: ExplicacaoCalculo;
+  explicacaoCa: ExplicacaoCalculo;
+  explicacaoIniciativa: ExplicacaoCalculo;
+  explicacaoPercepcaoPassiva: ExplicacaoCalculo;
   atributos: AtributoFinal[];
   pericias: PericiaFinal[];
   xpBloqueado: boolean;

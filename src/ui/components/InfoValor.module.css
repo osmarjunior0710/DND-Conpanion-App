@@ -43,10 +43,38 @@
   margin-bottom: var(--space-3);
 }
 
-.desc {
+.tabela {
+  display: flex;
+  flex-direction: column;
+}
+
+.linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: 6px 0;
   font-size: 14px;
-  line-height: 1.6;
+}
+
+.label {
   color: var(--text-dim);
+}
+
+.valor {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.linhaTotal {
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+  padding-top: 10px;
+}
+
+.linhaTotal .label,
+.linhaTotal .valor {
+  color: var(--text);
 }
 
 .close {

@@ -119,11 +119,28 @@ export function calcularAtributosFinais(selection: WizardSelection): AtributoFin
     .filter((a): a is AtributoFinal => a !== null);
 }
 
+export interface LinhaExplicacao {
+  label: string;
+  valor: string;
+}
+
+/** Explicação estruturada pro popup do "ⓘ": cada linha é uma parcela
+ * da conta (efeito à esquerda, valor à direita), `total` é a última
+ * linha, destacada. */
+export interface ExplicacaoCalculo {
+  linhas: LinhaExplicacao[];
+  total: LinhaExplicacao;
+}
+
+function fmtMod(n: number): string {
+  return n >= 0 ? `+${n}` : `${n}`;
+}
+
 export interface PericiaFinal {
   nome: string;
   atributo: Atributo;
   mod: number;
-  explicacao: string;
+  explicacao: ExplicacaoCalculo;
 }
 
 /** Perícias de Origem (fixas) + Classe (escolhidas), com o bônus de proficiência já somado. */
@@ -144,72 +161,114 @@ export function calcularPericias(selection: WizardSelection, nivel: number): Per
       nome,
       atributo,
       mod: atribMod + bonus,
-      explicacao: `mod. ${atributo} (${fmtMod(atribMod)}) + Bônus de Proficiência (${fmtMod(bonus)}, proficiente) = ${fmtMod(atribMod + bonus)}.`,
+      explicacao: {
+        linhas: [
+          { label: `mod. ${atributo}`, valor: fmtMod(atribMod) },
+          { label: 'Bônus de Proficiência (proficiente)', valor: fmtMod(bonus) },
+        ],
+        total: { label: nome, valor: fmtMod(atribMod + bonus) },
+      },
     });
   }
   return resultado;
 }
 
-function fmtMod(n: number): string {
-  return n >= 0 ? `+${n}` : `${n}`;
-}
-
-/** Texto de explicação pro "ⓘ" ao lado de cada número calculado — mesma
- * lógica das funções calcular*, só formatada pra leitura humana. */
-export function explicarPvMaximoNivel1(selection: WizardSelection): string {
+/** Explicação estruturada pro "ⓘ" ao lado de cada número calculado —
+ * mesma lógica das funções calcular*, formatada em linhas pro popup. */
+export function explicarPvMaximoNivel1(selection: WizardSelection): ExplicacaoCalculo {
   const classe = classeDaSelecao(selection);
   const conValor = valorFinalAtributo(selection, 'CON');
-  if (!classe || conValor === null) return 'Selecione classe e Constituição pra calcular.';
+  if (!classe || conValor === null) {
+    return { linhas: [], total: { label: 'Pontos de Vida máximos', valor: '—' } };
+  }
   const dado = parseDadoDeVida(classe.dadoDeVida);
   const conMod = modificador(conValor);
-  return `Dado de Vida máximo da classe (${classe.dadoDeVida} = ${dado}) + mod. Constituição (${fmtMod(conMod)}) = ${dado + conMod}. No nível 1 nunca rola nem tira média — só a partir do nível 2.`;
+  return {
+    linhas: [
+      { label: `Dado de Vida máximo da classe (${classe.dadoDeVida})`, valor: `${dado}` },
+      { label: 'mod. Constituição', valor: fmtMod(conMod) },
+    ],
+    total: { label: 'Pontos de Vida máximos', valor: `${dado + conMod}` },
+  };
 }
 
-export function explicarCA(selection: WizardSelection): string {
+export function explicarCA(selection: WizardSelection): ExplicacaoCalculo {
   const desValor = valorFinalAtributo(selection, 'DES');
-  if (desValor === null) return 'Selecione Destreza pra calcular.';
+  if (desValor === null) return { linhas: [], total: { label: 'Classe de Armadura', valor: '—' } };
   const desMod = modificador(desValor);
   const armadura = armaduraEquipadaInicial(selection);
-  if (!armadura) return `Sem armadura: 10 + mod. Destreza (${fmtMod(desMod)}) = ${10 + desMod}.`;
+  if (!armadura) {
+    return {
+      linhas: [
+        { label: 'Sem armadura (base)', valor: '10' },
+        { label: 'mod. Destreza', valor: fmtMod(desMod) },
+      ],
+      total: { label: 'Classe de Armadura', valor: `${10 + desMod}` },
+    };
+  }
   const ca = caPelaArmadura(armadura.classeArmadura, desMod);
-  return `${armadura.nome} (CA ${armadura.classeArmadura}) com mod. Destreza (${fmtMod(desMod)}) = ${ca}.`;
+  const teto = armadura.classeArmadura.match(/máx\.?\s*(\d+)/i);
+  const baseMatch = armadura.classeArmadura.match(/^(\d+)/);
+  const base = baseMatch ? parseInt(baseMatch[1], 10) : ca - desMod;
+  return {
+    linhas: [
+      { label: `${armadura.nome} (base)`, valor: `${base}` },
+      {
+        label: teto ? `mod. Destreza (máx. ${teto[1]})` : 'mod. Destreza',
+        valor: fmtMod(ca - base),
+      },
+    ],
+    total: { label: 'Classe de Armadura', valor: `${ca}` },
+  };
 }
 
-export function explicarPercepcaoPassiva(selection: WizardSelection, nivel: number = 1): string {
+export function explicarPercepcaoPassiva(selection: WizardSelection, nivel: number = 1): ExplicacaoCalculo {
   const sabValor = valorFinalAtributo(selection, 'SAB');
   const classe = classeDaSelecao(selection);
-  if (sabValor === null || !classe) return 'Selecione classe e Sabedoria pra calcular.';
+  if (sabValor === null || !classe) return { linhas: [], total: { label: 'Percepção Passiva', valor: '—' } };
   const sabMod = modificador(sabValor);
   const proficiente = proficienteEmPericia(selection, 'Percepção');
   const bonus = proficiente ? bonusProficiencia(classe, nivel) : 0;
-  const parteBonus = proficiente
-    ? ` + Bônus de Proficiência (${fmtMod(bonus)}, proficiente em Percepção)`
-    : ' (não proficiente em Percepção, sem Bônus de Proficiência)';
-  return `10 + mod. Sabedoria (${fmtMod(sabMod)})${parteBonus} = ${10 + sabMod + bonus}.`;
+  return {
+    linhas: [
+      { label: 'Base', valor: '10' },
+      { label: 'mod. Sabedoria', valor: fmtMod(sabMod) },
+      {
+        label: proficiente ? 'Bônus de Proficiência (proficiente em Percepção)' : 'Bônus de Proficiência (não proficiente)',
+        valor: fmtMod(bonus),
+      },
+    ],
+    total: { label: 'Percepção Passiva', valor: `${10 + sabMod + bonus}` },
+  };
 }
 
-export function explicarIniciativa(selection: WizardSelection): string {
+export function explicarIniciativa(selection: WizardSelection): ExplicacaoCalculo {
   const desValor = valorFinalAtributo(selection, 'DES');
-  if (desValor === null) return 'Selecione Destreza pra calcular.';
-  return `mod. Destreza (${fmtMod(modificador(desValor))}). Nenhuma das 12 classes dá bônus extra de Iniciativa no nível 1.`;
+  if (desValor === null) return { linhas: [], total: { label: 'Iniciativa', valor: '—' } };
+  const mod = modificador(desValor);
+  return {
+    linhas: [{ label: 'mod. Destreza', valor: fmtMod(mod) }],
+    total: { label: 'Iniciativa', valor: fmtMod(mod) },
+  };
 }
 
-export function explicarOuroInicial(selection: WizardSelection): string {
-  const partes: string[] = [];
+export function explicarOuroInicial(selection: WizardSelection): ExplicacaoCalculo {
+  const linhas: LinhaExplicacao[] = [];
   const origem = origens.find((o) => o.nome === selection.origem);
   if (origem && selection.equipamentoOrigemEscolhido) {
     const ouro =
       selection.equipamentoOrigemEscolhido === 'A' ? origem.equipamentoOpcaoA.ouro : origem.equipamentoOpcaoB.ouro;
-    partes.push(`Origem (${origem.nome}, opção ${selection.equipamentoOrigemEscolhido}): ${ouro} PO`);
+    linhas.push({ label: `Origem (${origem.nome}, opção ${selection.equipamentoOrigemEscolhido})`, valor: `${ouro} PO` });
   }
   const classe = classeDaSelecao(selection);
   if (classe && selection.equipamentoClasseEscolhido) {
     const proficiencias = proficienciasIniciaisClasse[classe.id];
     const opcao = proficiencias?.equipamentoInicial.find((o) => o.rotulo === selection.equipamentoClasseEscolhido);
-    if (opcao) partes.push(`Classe (${classe.nome}, opção ${selection.equipamentoClasseEscolhido}): ${opcao.ouro} PO`);
+    if (opcao) {
+      linhas.push({ label: `Classe (${classe.nome}, opção ${selection.equipamentoClasseEscolhido})`, valor: `${opcao.ouro} PO` });
+    }
   }
-  if (partes.length === 0) return 'Selecione origem e classe pra calcular.';
-  return `${partes.join(' + ')} = ${calcularOuroInicial(selection)} PO.`;
+  return { linhas, total: { label: 'Ouro inicial', valor: `${calcularOuroInicial(selection)} PO` } };
 }
 
 /** Soma o ouro residual de Origem + Classe pra opção escolhida em cada uma. */

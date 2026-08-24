@@ -1275,26 +1275,45 @@ atributo e bônus corretos).
 
 **Decisão:** qualquer valor gerado pelo motor de cálculo (PV máximo, CA,
 Percepção Passiva, Iniciativa, Ouro inicial, cada Perícia) mostra um
-"ⓘ" tocável logo ao lado — abre um popup com a conta por extenso (ex:
-"Dado de Vida máximo da classe (d10 = 10) + mod. Constituição (+2) =
-12"). Aplicado tanto na tela "7. Resumo" do wizard quanto na aba Perfil
-da Ficha — os mesmos números aparecem nos dois lugares.
+"ⓘ" tocável logo ao lado — abre um popup com a conta em formato de
+**tabela** (efeito à esquerda, valor à direita, alinhado em colunas
+invisíveis; a última linha é o total, separada por uma linha divisória
+e destacada). Aplicado tanto na tela "7. Resumo" do wizard quanto na
+aba Perfil da Ficha — os mesmos números aparecem nos dois lugares.
+Texto tipo "no nível 1 nunca rola nem tira média" foi tirado — é
+contexto de regra, não parte da conta em si, e poluía o popup.
 
 **Componente novo:** `ui/components/InfoValor.tsx` — mesmo padrão
 visual de popup de `InfoChip`/`ItemComDescricao` (overlay + card
 central), mas o gatilho é só o ícone "ⓘ" solto, não um chip nem texto
-sublinhado, porque aqui a coisa clicável é um número, não um termo de
-regra. `core/calculoPersonagem.ts` ganhou uma função `explicar*` pra
-cada `calcular*` (`explicarPvMaximoNivel1`, `explicarCA`,
-`explicarPercepcaoPassiva`, `explicarIniciativa`,
-`explicarOuroInicial`), e `PericiaFinal` ganhou um campo `explicacao`
-calculado junto (não uma função separada, pra não duplicar a lógica de
-mod + bônus de proficiência).
+sublinhado. `core/calculoPersonagem.ts` ganhou o tipo
+`ExplicacaoCalculo` (`{ linhas: {label, valor}[], total: {label,
+valor} }`) e uma função `explicar*` pra cada `calcular*` que devolve
+isso já estruturado — nunca uma string solta, exatamente pra caber na
+tabela sem parsing.
+
+**Bug corrigido (clique vazava pra linha de baixo):** o popup do
+`InfoValor` é renderizado *dentro* da linha clicável que mostra o
+número (ex: linha de Perícia que rola dado ao toque). Mesmo com
+`position: fixed` cobrindo a tela toda visualmente, no DOM o overlay
+continua sendo filho dessa linha — então, sem `stopPropagation`, tocar
+pra fechar o popup borbulhava pro `onClick` da linha por baixo e
+disparava uma rolagem de dado sem querer. Corrigido com
+`e.stopPropagation()` em todo clique dentro do overlay (fechar tocando
+fora do card, e no botão "fechar"), não só no ícone que abre. Vale
+como lição geral: **qualquer popup `position: fixed` renderizado
+dentro de um elemento clicável precisa desse cuidado**, não só o
+`InfoValor` — `InfoChip`/`ItemComDescricao` têm o mesmo risco latente
+se algum dia forem usados dentro de uma linha com `onClick` (hoje não
+são, por isso não deu bug neles ainda).
 
 **Contexto:** pedido direto do Osmar — "olhando só o número, eu não sei
-dizer se está certo ou não". Motivo real: ele não programa, não pode
+dizer se está certo ou não", mais 2 bugs reportados no formato de texto
+livre (nível 1 sem sentido, clique vazando pra rolar dado sem querer
+na Ficha). Motivo real do pedido original: ele não programa, não pode
 abrir o código pra conferir a fórmula, e cada número novo que aparece
 precisa de alguma forma de verificação **na tela**, não só confiar que
 "deve estar certo" (regra 1 do `CLAUDE.md`).
 
-**Data/origem:** 2026-08, pedido direto do Osmar.
+**Data/origem:** 2026-08, pedido direto do Osmar (texto livre + versão
+com tabela).
