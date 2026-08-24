@@ -1407,3 +1407,69 @@ estado local do componente por ora, registrado em `PENDENCIAS.md` caso
 o Osmar queira que isso seja lembrado de verdade depois.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Kits de Equipamento de Aventura desagregam nos itens de dentro, na Mochila
+
+**Decisão:** itens do tipo "Kit de X" (ex: "Kit de Explorador de
+Masmorras") não aparecem como 1 linha na Mochila — a `core/mochila.ts`
+já desagrega no momento de montar a lista, cada componente virando o
+próprio item real (Caixa para Fogo, Cantil, Corda, 10× Tocha, etc.),
+cada um com seu peso e descrição próprios. O jogador consome cada
+componente separado durante o jogo (a Tocha acaba, a Rações se come um
+dia de cada vez) — faz sentido pra Mochila já entregar isso "pronto pra
+jogar", não como uma caixa fechada.
+
+**Como foi feito:** tabela `DESAGREGACAO_KITS` em `core/mochila.ts`,
+verificada à mão contra o texto oficial "Contém: ..." de cada kit na
+planilha (aba Equipamento de Aventura) — não é regex/parser automático
+do texto livre, porque os nomes dentro da descrição às vezes não batem
+exatamente com o nome do item de verdade (ex: a descrição do kit diz
+"Cantil", mas o item de verdade se chama "Cantil (cheio)"; teria dado
+nome errado/peso não encontrado se eu tivesse tentado parsear
+automático). Só **Kit de Explorador de Masmorras** está verificado —
+é o único que o Guerreiro usa.
+
+**Pendência:** os outros 6 kits com "Contém:" na planilha (Kit de
+Artista/Assaltante/Aventureiro/Diplomata/Erudito/Sacerdote) ainda não
+foram desagregados — entram conforme as classes/origens que os usam
+forem sendo importadas, sempre verificando nome a nome contra
+`equipamentoAventura.ts`, não advinhando. Kit de Curandeiro e Kit de
+Escalada NÃO se desagregam — são item único de uso próprio (10 usos, ou
+uma ferramenta de escalada), não um saco de itens soltos.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Ficha não distingue mais "editável sem XP" vs "travada com XP"
+
+**Decisão:** removido o banner "🔒 Ficha com XP — edição travada" /
+"✏️ Edição livre" e o botão "simular +XP" (`xpBloqueado` em todo lugar:
+`FichaShell.tsx`, `PerfilTab.tsx`). A regra simplificou: depois que o
+jogador salva a ficha, nada é editável livremente — não existe mais
+uma janela de "rascunho pré-XP" com edição solta. Não há hoje nenhum
+campo de texto/número editável de verdade na Ficha (tudo é calculado a
+partir da seleção do wizard), então essa remoção foi só limpar um aviso
+que já não correspondia à regra real do produto.
+
+**Contexto:** pedido direto do Osmar, simplificando uma regra que
+tinha ficado mais complicada do que precisava no protótipo inicial
+(Fase 0, antes do wizard/Ficha estarem ligados de verdade).
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Apagar personagem — confirmação por texto digitado, não só um "tem certeza?"
+
+**Decisão:** cada card na Lista de Personagens ganhou um ícone de
+lixeira (🗑️, cor `--danger` — nova cor semântica no design system,
+`#b3261e`, junto de `--danger-dim` pro estado `:active`). Tocando nele
+abre um popup pedindo pra digitar a palavra "apagar" — o botão
+"Apagar" só destrava (`btn-disabled` sai) quando o texto bate
+exatamente (case-insensitive). `armazenamentoPersonagens` ganhou
+`apagar(id)`.
+
+**Contexto:** apagar personagem é uma ação destrutiva e permanente
+(armazenamento local, sem lixeira/desfazer) — um simples "tem certeza?
+sim/não" é fácil de confirmar sem querer no automático. Digitar a
+palavra dá o peso de "isso é sério" sem precisar de um sistema de
+autenticação ou de um segundo passo complexo.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

@@ -82,7 +82,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     subclasse: null,
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
-  const [xpBloqueado, setXpBloqueado] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
   const [espacosGastos, setEspacosGastos] = useState(0);
@@ -139,7 +138,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       subclasse: resultado.subclasseEscolhida ?? prev.subclasse,
     }));
     setPvAtual((v) => v + resultado.pvGanho);
-    setXpBloqueado(true);
     setLevelUpAberto(false);
   }
 
@@ -174,17 +172,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         <AvatarMenu itensDetalhados={itensDetalhados} onToggleItensDetalhados={() => setItensDetalhados((v) => !v)} />
       </div>
 
-      <div className={`${styles.editBanner} ${xpBloqueado ? styles.editBannerLocked : ''}`}>
-        <span>
-          {xpBloqueado
-            ? '🔒 Ficha com XP — edição de valores base travada (level-up ainda libera mudanças)'
-            : '✏️ Edição livre — sem XP registrado ainda'}
-        </span>
-        <span className={styles.editToggle} onClick={() => setXpBloqueado((v) => !v)}>
-          simular +XP
-        </span>
-      </div>
-
       <div className={styles.tabContent} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {tab === 'perfil' && (
           <PerfilTab
@@ -200,7 +187,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             explicacaoPercepcaoPassiva={explicacaoPercepcaoPassiva}
             atributos={atributos}
             pericias={pericias}
-            xpBloqueado={xpBloqueado}
             onDescansoLongo={descansoLongo}
             onDescansoCurto={descansoCurto}
             restStatus={restStatus}

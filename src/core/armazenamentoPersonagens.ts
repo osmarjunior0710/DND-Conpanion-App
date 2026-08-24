@@ -17,6 +17,7 @@ export interface ArmazenamentoPersonagens {
   listar(): PersonagemSalvo[];
   buscar(id: string): PersonagemSalvo | null;
   salvar(personagem: PersonagemSalvo): void;
+  apagar(id: string): void;
 }
 
 const CHAVE = 'dnd-companion:personagens';
@@ -38,6 +39,11 @@ class ArmazenamentoLocalStorage implements ArmazenamentoPersonagens {
   salvar(personagem: PersonagemSalvo): void {
     const atuais = this.listar().filter((p) => p.id !== personagem.id);
     localStorage.setItem(CHAVE, JSON.stringify([...atuais, personagem]));
+  }
+
+  apagar(id: string): void {
+    const restantes = this.listar().filter((p) => p.id !== id);
+    localStorage.setItem(CHAVE, JSON.stringify(restantes));
   }
 }
 

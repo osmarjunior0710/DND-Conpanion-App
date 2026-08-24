@@ -16,7 +16,6 @@ interface PerfilTabProps {
   explicacaoPercepcaoPassiva: ExplicacaoCalculo;
   atributos: AtributoFinal[];
   pericias: PericiaFinal[];
-  xpBloqueado: boolean;
   onDescansoLongo: () => void;
   onDescansoCurto: () => void;
   restStatus: string | null;
@@ -36,7 +35,6 @@ export default function PerfilTab({
   explicacaoPercepcaoPassiva,
   atributos,
   pericias,
-  xpBloqueado,
   onDescansoLongo,
   onDescansoCurto,
   restStatus,
@@ -128,16 +126,6 @@ export default function PerfilTab({
       <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
         toque num atributo, perícia ou iniciativa pra rolar o dado.
       </div>
-
-      {!xpBloqueado ? (
-        <div className="label" style={{ marginBottom: 12 }}>
-          Valores estáticos: editáveis normalmente enquanto ficha não tiver XP.
-        </div>
-      ) : (
-        <div className="label" style={{ marginBottom: 12, color: 'var(--warn)' }}>
-          Ficha com XP: valores base travados, exceto via level-up oficial.
-        </div>
-      )}
 
       <div className="section-title">Descanso</div>
       <div className={styles.actionGrid}>

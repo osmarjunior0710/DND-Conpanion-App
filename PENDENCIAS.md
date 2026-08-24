@@ -39,7 +39,11 @@ wizard → Ficha, definido junto com o Osmar.
   ("Instrumento Musical", "Kit de Jogos", "Ferramentas de Artesão") já
   vira o nome real escolhido (`ferramentaOrigemEscolhida`). Carga total
   soma peso × quantidade de verdade. `exampleSheet.ts` apagado
-  (fixture morto).
+  (fixture morto). Depois: kits (ex: "Kit de Explorador de Masmorras")
+  desagregam nos itens de dentro (ver DECISOES-DESIGN.md), peso por
+  linha mostra o total já multiplicado, menu do avatar com "Itens
+  detalhados" (descrição inline vs. popup com ⓘ), apagar personagem na
+  Lista com confirmação por texto, banner de XP-trava removido.
 
 **O que falta (A5/A6, mesma ordem combinada):**
 - **A5:** Loja com ouro/preços reais (hoje `85 PO` fixo e lista de itens
@@ -53,7 +57,6 @@ wizard → Ficha, definido junto com o Osmar.
 
 **O que falta pra polir (não travou nenhuma das entregas, mas ficou
 pendente):**
-- Apagar personagem da Lista (delete no `armazenamentoPersonagens`).
 - PV atual/nível não são salvos de volta no armazenamento quando você
   sobe de nível ou toma dano na Ficha — só muda na sessão aberta. Só
   importa de verdade quando a ficha for algo que se volta a abrir depois

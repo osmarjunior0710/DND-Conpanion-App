@@ -23,37 +23,6 @@
   margin-top: 2px;
 }
 
-.editBanner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-2) var(--space-4);
-  background: var(--panel2);
-  font-size: 12px;
-  color: var(--text-dim);
-  border-bottom: 1px dashed var(--line-soft);
-  gap: var(--space-2);
-}
-
-.editBannerLocked {
-  color: var(--warn);
-}
-
-.editToggle {
-  border: 1px solid var(--line);
-  border-radius: var(--shape-sm);
-  padding: var(--space-2) var(--space-3);
-  cursor: pointer;
-  font-size: 11px;
-  flex-shrink: 0;
-  min-height: 36px;
-  transition: background var(--motion-standard) var(--ease-standard);
-}
-
-.editToggle:active {
-  background: var(--accent-dim);
-}
-
 .tabContent {
   flex: 1;
   overflow-y: auto;

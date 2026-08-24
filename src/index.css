@@ -11,6 +11,8 @@
   --accent-dim: #dde1fb;
   --good: #2f8f52;
   --warn: #a3690f;
+  --danger: #b3261e;
+  --danger-dim: #f9e0de;
 
   /* ===== Tokens Material Design 3 (m3.material.io) =====
      Estrutura/comportamento segue M3; a pele visual RPG (paleta,

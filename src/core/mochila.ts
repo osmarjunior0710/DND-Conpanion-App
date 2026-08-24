@@ -19,6 +19,54 @@ export interface ItemMochila {
  * virar o nome real escolhido no wizard. */
 const PLACEHOLDERS_FERRAMENTA = ['Instrumento Musical', 'Ferramentas de Artesão', 'Kit de Jogos'];
 
+/**
+ * Kits de Equipamento de Aventura (ex: "Kit de Explorador de
+ * Masmorras") vêm como 1 item na planilha, mas o texto "Contém: ..."
+ * da própria descrição lista os itens de verdade que estão dentro —
+ * o jogador consome cada um separado (a Tocha acaba, a Corda pode ser
+ * cortada), não faz sentido a Mochila mostrar "1× Kit" depois que a
+ * compra já foi feita. Desagregado à mão, verificado item a item
+ * contra o nome exato de cada um em equipamentoAventura.ts (alguns têm
+ * nome diferente do texto da descrição, ex: "Cantil" na descrição é
+ * "Cantil (cheio)" como item de verdade).
+ *
+ * Só "Kit de Explorador de Masmorras" está verificado (é o único que o
+ * Guerreiro usa). Os outros 6 kits com "Contém:" na planilha
+ * (Artista/Assaltante/Aventureiro/Diplomata/Erudito/Sacerdote) ainda
+ * não foram desagregados — ver PENDENCIAS.md. Kit de Curandeiro e Kit
+ * de Escalada NÃO são desagregáveis (são item único de uso próprio,
+ * não um saco de itens).
+ */
+const DESAGREGACAO_KITS: Record<string, { nome: string; quantidade: number }[]> = {
+  'Kit de Explorador de Masmorras': [
+    { nome: 'Caixa para Fogo', quantidade: 1 },
+    { nome: 'Cantil (cheio)', quantidade: 1 },
+    { nome: 'Corda', quantidade: 1 },
+    { nome: 'Estrepes', quantidade: 1 },
+    { nome: 'Mochila', quantidade: 1 },
+    { nome: 'Óleo', quantidade: 2 },
+    { nome: 'Pé de Cabra', quantidade: 1 },
+    { nome: 'Rações', quantidade: 10 },
+    { nome: 'Tocha', quantidade: 10 },
+  ],
+};
+
+function adicionarItem(itens: ItemMochila[], nome: string, quantidade: number, origemDoItem: 'Origem' | 'Classe') {
+  const componentes = DESAGREGACAO_KITS[nome];
+  if (componentes) {
+    for (const c of componentes) {
+      itens.push({
+        nome: c.nome,
+        quantidade: c.quantidade * quantidade,
+        peso: buscarPesoItem(c.nome),
+        origemDoItem,
+      });
+    }
+    return;
+  }
+  itens.push({ nome, quantidade, peso: buscarPesoItem(nome), origemDoItem });
+}
+
 export function calcularItensIniciais(selection: WizardSelection): ItemMochila[] {
   const itens: ItemMochila[] = [];
 
@@ -29,7 +77,7 @@ export function calcularItensIniciais(selection: WizardSelection): ItemMochila[]
         PLACEHOLDERS_FERRAMENTA.includes(item.nome) && selection.ferramentaOrigemEscolhida
           ? selection.ferramentaOrigemEscolhida
           : item.nome;
-      itens.push({ nome, quantidade: item.quantidade, peso: buscarPesoItem(nome), origemDoItem: 'Origem' });
+      adicionarItem(itens, nome, item.quantidade, 'Origem');
     }
   }
 
@@ -39,7 +87,7 @@ export function calcularItensIniciais(selection: WizardSelection): ItemMochila[]
     const opcao = proficiencias?.equipamentoInicial.find((o) => o.rotulo === selection.equipamentoClasseEscolhido);
     if (opcao) {
       for (const item of opcao.itens) {
-        itens.push({ nome: item.nome, quantidade: item.quantidade, peso: buscarPesoItem(item.nome), origemDoItem: 'Classe' });
+        adicionarItem(itens, item.nome, item.quantidade, 'Classe');
       }
     }
   }
