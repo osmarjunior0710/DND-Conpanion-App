@@ -338,3 +338,22 @@ antes de implementar, regra 6 do `CLAUDE.md`) e aplicar de forma
 sistemática — provavelmente melhor de fazer depois que o fluxo
 wizard→ficha estiver fechado (prioridade atual registrada em
 `DECISOES-DESIGN.md`), já que mexe em CSS espalhado pelo app inteiro.
+
+## Preferência "Itens detalhados" (menu do avatar) não persiste entre sessões
+
+**O que é:** o toggle "Itens detalhados" no menu do avatar
+(`AvatarMenu.tsx`, ver DECISOES-DESIGN.md) reseta pro padrão
+"desligado" toda vez que a página recarrega — é estado local do
+componente, não salvo em lugar nenhum.
+
+**Por que foi adiado:** a entrega focou em ter o comportamento
+funcionando (ligar/desligar, popup vs. descrição inline). Persistir é
+uma decisão pequena mas que precisa de lugar pra morar — provavelmente
+`localStorage` direto (preferência de exibição, não dado de
+personagem, não precisa entrar no `armazenamentoPersonagens`).
+
+**O que falta pra resolver:** se o Osmar sentir falta (toda vez que
+abrir a Ficha o toggle volta pro padrão), decidir se vale a pena
+persistir por personagem ou globalmente pro app inteiro, e implementar
+com uma chave de `localStorage` — não precisa de interface trocável
+como o armazenamento de personagem, é só preferência de UI.

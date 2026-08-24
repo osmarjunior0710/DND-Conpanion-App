@@ -1,23 +1,35 @@
-import { calcularCargaTotal, type ItemMochila } from '../../../core/mochila';
+import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
+import { calcularCargaTotal, pesoDaLinha, type ItemMochila } from '../../../core/mochila';
+import ItemComDescricao from '../../components/ItemComDescricao';
 import styles from './MochilaTab.module.css';
 
 interface MochilaTabProps {
   itens: ItemMochila[];
+  itensDetalhados: boolean;
 }
 
-function linhaItem(it: ItemMochila, i: number) {
+function Linha({ item, itensDetalhados }: { item: ItemMochila; itensDetalhados: boolean }) {
+  const descricao = buscarDescricaoItem(item.nome);
+  const rotulo = item.quantidade > 1 ? `${item.quantidade}× ${item.nome}` : item.nome;
+
   return (
-    <div key={`${it.nome}-${i}`} className={styles.itemRow}>
-      <span className={styles.itemName}>
-        {it.quantidade > 1 ? `${it.quantidade}× ` : ''}
-        {it.nome}
-      </span>
-      <span className={styles.itemWeight}>{it.peso ?? '— (sem peso cadastrado)'}</span>
+    <div className={styles.itemRow}>
+      <div className={styles.itemInfo}>
+        <span className={styles.itemName}>
+          {itensDetalhados ? (
+            rotulo
+          ) : (
+            <ItemComDescricao nome={item.nome} descricao={descricao} rotulo={rotulo} variante="icone" />
+          )}
+        </span>
+        {itensDetalhados && descricao && <div className={styles.itemDesc}>{descricao}</div>}
+      </div>
+      <span className={styles.itemWeight}>{pesoDaLinha(item)}</span>
     </div>
   );
 }
 
-export default function MochilaTab({ itens }: MochilaTabProps) {
+export default function MochilaTab({ itens, itensDetalhados }: MochilaTabProps) {
   const carga = calcularCargaTotal(itens);
   const itensOrigem = itens.filter((i) => i.origemDoItem === 'Origem');
   const itensClasse = itens.filter((i) => i.origemDoItem === 'Classe');
@@ -43,11 +55,15 @@ export default function MochilaTab({ itens }: MochilaTabProps) {
 
       <div className="section-title">Equipado (Origem)</div>
       {itensOrigem.length === 0 && <div className="label">Nenhum item — opção "só ouro" escolhida na Origem.</div>}
-      {itensOrigem.map(linhaItem)}
+      {itensOrigem.map((it, i) => (
+        <Linha key={`${it.nome}-${i}`} item={it} itensDetalhados={itensDetalhados} />
+      ))}
 
       <div className="section-title">Equipado (Classe)</div>
       {itensClasse.length === 0 && <div className="label">Nenhum item — opção "só ouro" escolhida na Classe.</div>}
-      {itensClasse.map(linhaItem)}
+      {itensClasse.map((it, i) => (
+        <Linha key={`${it.nome}-${i}`} item={it} itensDetalhados={itensDetalhados} />
+      ))}
 
       <div className="section-title">Itens comprados na loja</div>
       <div className="label">

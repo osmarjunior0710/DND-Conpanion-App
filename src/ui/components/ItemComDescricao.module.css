@@ -5,6 +5,20 @@
   text-decoration-color: var(--text-faint);
 }
 
+.icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: bold;
+  padding: var(--space-2);
+  margin: calc(var(--space-2) * -1);
+  min-width: 32px;
+  min-height: 32px;
+}
+
 .overlay {
   position: fixed;
   inset: 0;

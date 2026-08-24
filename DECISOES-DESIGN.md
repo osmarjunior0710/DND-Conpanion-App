@@ -1351,3 +1351,59 @@ sem avisar.
 **Data/origem:** 2026-08, testado de ponta a ponta com um Guerreiro
 real (itens de Origem + Classe juntos, 70,5 kg somados, 1 item sem
 peso avisado corretamente).
+
+## Peso por linha da Mochila mostra o total (unitário × quantidade), não só o unitário
+
+**Decisão:** cada linha de item na Mochila mostra `pesoDaLinha()` —
+peso unitário × quantidade já multiplicado (ex: "8× Azagaia" a 1 kg
+cada mostra "8 kg" na linha, não "1 kg"). O total de Carga no topo
+sempre bateu certo (já somava multiplicado desde a A4), mas mostrar só
+o peso unitário por linha parecia "não calcular nada" pra quem está
+olhando de fora sem saber que o total de cima já soma direito.
+
+**Contexto:** Osmar reportou "não está calculando o peso" depois da
+Entrega A4. Investigação: o cálculo em si estava certo (testado e
+confirmado), o problema era só a exibição por linha não deixar isso
+óbvio.
+
+**Data/origem:** 2026-08, feedback direto do Osmar.
+
+## Avatar no canto superior direito da Ficha abre menu de preferências (1ª entrada: Mochila detalhada)
+
+**Decisão:** novo componente `ui/ficha/AvatarMenu.tsx` — ícone 👤 no
+canto superior direito do cabeçalho da Ficha (`FichaShell.tsx`), toque
+abre um dropdown M3 (card flutuante, backdrop transparente pra fechar
+tocando fora) com uma switch "Itens detalhados". Ligado: cada item da
+Mochila mostra a descrição (quando existe) direto abaixo do nome,
+sempre visível, sem precisar tocar em nada. Desligado (padrão): volta
+pro "ⓘ" ao lado do nome, tocando abre popup — mesmo padrão dos outros
+popups do app.
+
+**Componente estendido, não duplicado:** `ItemComDescricao.tsx` ganhou
+uma prop `variante?: 'sublinhado' | 'icone'` — a variante `'icone'`
+deixa o nome do item como texto normal (sem sublinhado) e acrescenta um
+"ⓘ" separado ao lado, porque sublinhar o nome do item na Mochila
+mudaria a aparência da lista sem necessidade (a variante padrão
+`'sublinhado'`, usada no wizard, continua igual). Zero componente de
+popup novo — reaproveita a mesma implementação, só muda o gatilho
+visual.
+
+**Bug latente corrigido de passagem:** `InfoChip.tsx` e
+`ItemComDescricao.tsx` tinham o mesmo problema de clique vazando já
+documentado e corrigido no `InfoValor.tsx` (overlay `position: fixed`
+renderizado dentro de um elemento clicável, sem `stopPropagation` no
+clique de fechar) — não tinha sido reportado ainda nesses dois porque
+nenhum uso deles até agora estava dentro de uma linha com `onClick`
+próprio, mas a Mochila mudou isso (linha de item ganhou o ícone). Os
+três componentes agora seguem o mesmo cuidado.
+
+**Menu pensado pra crescer:** o menu já nasce como "Preferências" (não
+"Mochila") — outras preferências de exibição futuras entram na mesma
+lista, sem precisar de outro ponto de entrada na tela.
+
+**Pendência conhecida:** a preferência não persiste entre sessões
+(reseta pro padrão "desligado" ao recarregar a página) — fica como
+estado local do componente por ora, registrado em `PENDENCIAS.md` caso
+o Osmar queira que isso seja lembrado de verdade depois.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

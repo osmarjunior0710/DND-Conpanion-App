@@ -56,6 +56,17 @@ function parseKg(peso: string): number | null {
   return parseFloat(match[1].replace(',', '.'));
 }
 
+/** Peso da LINHA (peso unitário × quantidade), formatado — ex: "1×" em
+ * "8× Azagaia" a 1 kg cada mostrava só "1 kg" antes, o que parecia
+ * "não calcular nada"; agora mostra "8 kg" (o total daquela linha). */
+export function pesoDaLinha(item: ItemMochila): string {
+  if (!item.peso) return '— (sem peso cadastrado)';
+  const valor = parseKg(item.peso);
+  if (valor === null) return '— (sem peso cadastrado)';
+  const total = Math.round(valor * item.quantidade * 100) / 100;
+  return `${total.toString().replace('.', ',')} kg`;
+}
+
 export interface CargaTotal {
   kg: number;
   itensSemPeso: number;

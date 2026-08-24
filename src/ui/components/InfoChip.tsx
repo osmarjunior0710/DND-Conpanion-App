@@ -21,17 +21,33 @@ export default function InfoChip({ nome, descricao }: InfoChipProps) {
     <>
       <span
         className={`${styles.chip} ${descricao ? styles.chipClicavel : ''}`}
-        onClick={() => descricao && setAberto(true)}
+        onClick={(e) => {
+          if (!descricao) return;
+          e.stopPropagation();
+          setAberto(true);
+        }}
       >
         {nome}
         {descricao && <span className={styles.infoIcon}>ⓘ</span>}
       </span>
       {aberto && (
-        <div className={styles.overlay} onClick={() => setAberto(false)}>
+        <div
+          className={styles.overlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            setAberto(false);
+          }}
+        >
           <div className={styles.card} onClick={(e) => e.stopPropagation()}>
             <div className={styles.title}>{nome}</div>
             <div className={styles.desc}>{descricao}</div>
-            <div className={styles.close} onClick={() => setAberto(false)}>
+            <div
+              className={styles.close}
+              onClick={(e) => {
+                e.stopPropagation();
+                setAberto(false);
+              }}
+            >
               fechar
             </div>
           </div>

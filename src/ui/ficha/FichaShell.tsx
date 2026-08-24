@@ -17,6 +17,7 @@ import {
 } from '../../core/calculoPersonagem';
 import { modificador } from '../../core/personagem';
 import { calcularItensIniciais } from '../../core/mochila';
+import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
 import PerfilTab from './tabs/PerfilTab';
 import MochilaTab from './tabs/MochilaTab';
@@ -86,6 +87,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
   const [espacosGastos, setEspacosGastos] = useState(0);
   const [levelUpAberto, setLevelUpAberto] = useState(false);
+  const [itensDetalhados, setItensDetalhados] = useState(false);
   const touchX = useRef(0);
 
   const ca = calcularCA(selecao);
@@ -169,6 +171,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             {ca ?? '—'}
           </div>
         </div>
+        <AvatarMenu itensDetalhados={itensDetalhados} onToggleItensDetalhados={() => setItensDetalhados((v) => !v)} />
       </div>
 
       <div className={`${styles.editBanner} ${xpBloqueado ? styles.editBannerLocked : ''}`}>
@@ -204,7 +207,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onAbrirLevelUp={() => setLevelUpAberto(true)}
           />
         )}
-        {tab === 'mochila' && <MochilaTab itens={itensMochila} />}
+        {tab === 'mochila' && <MochilaTab itens={itensMochila} itensDetalhados={itensDetalhados} />}
         {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} />}
         {tab === 'combat' && (
           <CombatTab
