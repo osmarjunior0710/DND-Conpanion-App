@@ -13,7 +13,7 @@
 
 ---
 
-## Fluxo completo wizard → Ficha — A1/A2/A3 feitas, A4-A6 ainda faltam
+## Fluxo completo wizard → Ficha — A1-A4 feitas, A5/A6 ainda faltam
 
 **O que é:** plano de 6 entregas pequenas pra fechar o fluxo completo
 wizard → Ficha, definido junto com o Osmar.
@@ -32,11 +32,16 @@ wizard → Ficha, definido junto com o Osmar.
   velho, ou salvo em outro navegador). Aba Perfil mostra atributos, PV,
   CA, Iniciativa, Percepção Passiva e Perícias reais do personagem —
   nenhum fixture na aba Perfil.
+- **A4:** `core/mochila.ts` junta os itens de Origem (opção A) + Classe
+  escolhidos no wizard, com peso real (novo `buscarPesoItem` em
+  `buscarDescricaoItem.ts`, cobrindo Armas/Armaduras/Equipamento de
+  Aventura/Ferramentas). Placeholder de ferramenta de grupo
+  ("Instrumento Musical", "Kit de Jogos", "Ferramentas de Artesão") já
+  vira o nome real escolhido (`ferramentaOrigemEscolhida`). Carga total
+  soma peso × quantidade de verdade. `exampleSheet.ts` apagado
+  (fixture morto).
 
-**O que falta (A4-A6, mesma ordem combinada):**
-- **A4:** Mochila com itens reais de Origem + Classe (tag `origemDoItem`
-  — decisão já registrada, ainda não implementada; hoje a Mochila ainda
-  usa `itensEquipadosExemplo`/`cargaExemplo` fixos).
+**O que falta (A5/A6, mesma ordem combinada):**
 - **A5:** Loja com ouro/preços reais (hoje `85 PO` fixo e lista de itens
   fixa — `calcularOuroInicial` já existe em `core/`, só falta a tela
   usar).
@@ -46,21 +51,33 @@ wizard → Ficha, definido junto com o Osmar.
   Pacto foi removida do Perfil por não se aplicar ao Guerreiro; volta
   como texto condicional por classe quando o Bruxo for importado).
 
-**O que falta pra polir (não travou A2/A3, mas ficou pendente):**
+**O que falta pra polir (não travou nenhuma das entregas, mas ficou
+pendente):**
 - Apagar personagem da Lista (delete no `armazenamentoPersonagens`).
 - PV atual/nível não são salvos de volta no armazenamento quando você
   sobe de nível ou toma dano na Ficha — só muda na sessão aberta. Só
   importa de verdade quando a ficha for algo que se volta a abrir depois
   de fechar o navegador esperando ver o estado exato de antes.
+- **Peso de item faltando na planilha em alguns casos** (ex: "Flecha"
+  avulsa — só "Aljava" e "Flechas (20, Aljava)" têm peso cadastrado, não
+  o item "Flecha" isolado que o wizard usa; "Roupas de Viagem" também
+  não tem peso). A Mochila já trata isso sem quebrar (mostra "sem peso
+  cadastrado" e avisa quantos itens ficaram de fora da soma de carga),
+  mas o número de carga fica sub-contado até o Osmar completar essas
+  linhas na planilha.
+- Capacidade MÁXIMA de carga não é mostrada — depende da fórmula Força ×
+  multiplicador, que é lacuna de dado conhecida (`CLAUDE.md` seção 8).
+  Hoje a Mochila só mostra o peso carregado, sem "X/Y kg".
 
 **Não implementado ainda dentro do motor de cálculo (não bloqueia
-A4-A6 do Guerreiro):**
+A5/A6 do Guerreiro):**
 - Bônus de Ataque de Magia / CD de Magia (só relevante quando a primeira
   classe conjuradora for importada).
 
-**Data/origem:** 2026-08. A1-A3 implementadas e testadas de ponta a
+**Data/origem:** 2026-08. A1-A4 implementadas e testadas de ponta a
 ponta (wizard completo → Salvar → aparece na Lista → abre a Ficha real
-com PV/CA/atributos/perícias calculados, não mais fixture).
+com PV/CA/atributos/perícias/itens da Mochila calculados, não mais
+fixture).
 
 ## Faltam 11 classes (só Guerreiro importado)
 

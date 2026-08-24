@@ -1,35 +1,60 @@
-import { cargaExemplo, itensEquipadosExemplo } from '../../../data/exampleSheet';
+import { calcularCargaTotal, type ItemMochila } from '../../../core/mochila';
 import styles from './MochilaTab.module.css';
 
-export default function MochilaTab() {
-  const percentual = Math.min(100, Math.round((cargaExemplo.atual / cargaExemplo.maxima) * 100));
+interface MochilaTabProps {
+  itens: ItemMochila[];
+}
+
+function linhaItem(it: ItemMochila, i: number) {
+  return (
+    <div key={`${it.nome}-${i}`} className={styles.itemRow}>
+      <span className={styles.itemName}>
+        {it.quantidade > 1 ? `${it.quantidade}× ` : ''}
+        {it.nome}
+      </span>
+      <span className={styles.itemWeight}>{it.peso ?? '— (sem peso cadastrado)'}</span>
+    </div>
+  );
+}
+
+export default function MochilaTab({ itens }: MochilaTabProps) {
+  const carga = calcularCargaTotal(itens);
+  const itensOrigem = itens.filter((i) => i.origemDoItem === 'Origem');
+  const itensClasse = itens.filter((i) => i.origemDoItem === 'Classe');
 
   return (
     <>
       <div className="section-title">Carga</div>
       <div className={`box ${styles.cargaBox}`}>
         <div className={styles.cargaRow}>
-          <span>{cargaExemplo.atual.toString().replace('.', ',')} kg carregados</span>
-          <span>máx. {cargaExemplo.maxima} kg</span>
-        </div>
-        <div className={styles.weightBarOuter}>
-          <div className={styles.weightBarInner} style={{ width: `${percentual}%` }} />
+          <span>{carga.kg.toString().replace('.', ',')} kg carregados</span>
         </div>
       </div>
-
-      <div className="section-title">Equipado (kit da classe)</div>
-      {itensEquipadosExemplo.map((it) => (
-        <div key={it.nome} className={styles.itemRow}>
-          <span className={styles.itemName}>{it.nome}</span>
-          <span className={styles.itemWeight}>{it.peso}</span>
+      {carga.itensSemPeso > 0 && (
+        <div className="label" style={{ marginTop: 4 }}>
+          {carga.itensSemPeso} {carga.itensSemPeso === 1 ? 'item não entra' : 'itens não entram'} nessa soma —
+          sem peso cadastrado na planilha ainda.
         </div>
-      ))}
+      )}
+      <div className="label" style={{ marginTop: 4 }}>
+        Capacidade máxima de carga ainda não é calculada — a fórmula (Força × multiplicador) é uma lacuna de
+        dado conhecida, ver <code>CLAUDE.md</code>.
+      </div>
+
+      <div className="section-title">Equipado (Origem)</div>
+      {itensOrigem.length === 0 && <div className="label">Nenhum item — opção "só ouro" escolhida na Origem.</div>}
+      {itensOrigem.map(linhaItem)}
+
+      <div className="section-title">Equipado (Classe)</div>
+      {itensClasse.length === 0 && <div className="label">Nenhum item — opção "só ouro" escolhida na Classe.</div>}
+      {itensClasse.map(linhaItem)}
 
       <div className="section-title">Itens comprados na loja</div>
-      <div className="label">nenhum item comprado no wizard ainda vem parar aqui — isso liga o wizard à ficha na Fase 1, quando o salvamento de verdade entrar.</div>
-
+      <div className="label">
+        a Loja ainda usa itens de exemplo, não o que você comprou de verdade — liga na próxima entrega (A5).
+      </div>
       <div className="box" style={{ textAlign: 'center', padding: 12, marginTop: 12, fontSize: 13, color: 'var(--text-faint)' }}>
-        ＋ adicionar item (chega quando o salvamento de personagem existir de verdade)
+        ＋ adicionar item (chega na entrega da Loja)
       </div>
     </>
   );

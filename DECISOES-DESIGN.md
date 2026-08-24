@@ -1317,3 +1317,37 @@ precisa de alguma forma de verificação **na tela**, não só confiar que
 
 **Data/origem:** 2026-08, pedido direto do Osmar (texto livre + versão
 com tabela).
+
+## Mochila real (Entrega A4) — peso desconhecido vira aviso, nunca 0 silencioso
+
+**Decisão:** `core/mochila.ts` junta os itens de Origem (só quando a
+opção A — com itens — foi escolhida; opção B é só ouro) + Classe
+escolhidos no wizard, cada um com peso buscado num índice novo
+(`buscarPesoItem`, em `buscarDescricaoItem.ts`) que cobre Armas,
+Armaduras, Equipamento de Aventura e Ferramentas (grupos de escolha).
+Quando um item não tem peso cadastrado na planilha pra aquele nome
+exato (ex: "Flecha" avulsa, "Roupas de Viagem"), a Mochila **não
+finge que pesa 0 kg** — mostra "sem peso cadastrado" na linha do item e
+soma quantos itens ficaram de fora do total de carga, num aviso visível
+("N itens não entram nessa soma"). Carga MÁXIMA (só o peso carregado,
+sem o "/Y kg" de capacidade) não é mostrada — depende da fórmula Força
+× multiplicador, que é lacuna de dado conhecida (`CLAUDE.md` seção 8).
+
+**Placeholder de ferramenta de grupo:** quando a origem tem `ferramenta.
+categoria === 'escolha'` (Instrumento Musical, Kit de Jogos, Ferramentas
+de Artesão), o item genérico com o nome do grupo dentro de
+`equipamentoOpcaoA.itens` (ex: `"Instrumento Musical"`) é substituído
+pelo nome real que o jogador escolheu no wizard
+(`ferramentaOrigemEscolhida`) antes de entrar na Mochila e de buscar o
+peso — senão a busca de peso falharia (o grupo não é um item com peso
+próprio, cada variante é).
+
+**Contexto:** Entrega A4 do plano de 6 entregas (wizard → Ficha). Regra
+geral do projeto (nunca inventar dado que a planilha não tem) aplicada
+também dentro do motor de cálculo, não só na importação — melhor um
+aviso honesto de "não sei o peso disso" do que uma carga total errada
+sem avisar.
+
+**Data/origem:** 2026-08, testado de ponta a ponta com um Guerreiro
+real (itens de Origem + Classe juntos, 70,5 kg somados, 1 item sem
+peso avisado corretamente).

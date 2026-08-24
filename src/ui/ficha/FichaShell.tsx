@@ -16,6 +16,7 @@ import {
   explicarPvMaximoNivel1,
 } from '../../core/calculoPersonagem';
 import { modificador } from '../../core/personagem';
+import { calcularItensIniciais } from '../../core/mochila';
 import styles from './FichaShell.module.css';
 import PerfilTab from './tabs/PerfilTab';
 import MochilaTab from './tabs/MochilaTab';
@@ -92,6 +93,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
   const pericias = calcularPericias(selecao, personagem.nivel);
+  const itensMochila = calcularItensIniciais(selecao);
   const explicacaoPv = explicarPvMaximoNivel1(selecao);
   const explicacaoCa = explicarCA(selecao);
   const explicacaoIniciativa = explicarIniciativa(selecao);
@@ -202,7 +204,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onAbrirLevelUp={() => setLevelUpAberto(true)}
           />
         )}
-        {tab === 'mochila' && <MochilaTab />}
+        {tab === 'mochila' && <MochilaTab itens={itensMochila} />}
         {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} />}
         {tab === 'combat' && (
           <CombatTab
