@@ -123,6 +123,7 @@ export interface PericiaFinal {
   nome: string;
   atributo: Atributo;
   mod: number;
+  explicacao: string;
 }
 
 /** Perícias de Origem (fixas) + Classe (escolhidas), com o bônus de proficiência já somado. */
@@ -138,9 +139,77 @@ export function calcularPericias(selection: WizardSelection, nivel: number): Per
     const atributo = pericia ? ATRIBUTO_POR_NOME_COMPLETO[pericia.atributo] : undefined;
     const valorAtributo = atributo ? valorFinalAtributo(selection, atributo) : null;
     if (!atributo || valorAtributo === null) continue;
-    resultado.push({ nome, atributo, mod: modificador(valorAtributo) + bonus });
+    const atribMod = modificador(valorAtributo);
+    resultado.push({
+      nome,
+      atributo,
+      mod: atribMod + bonus,
+      explicacao: `mod. ${atributo} (${fmtMod(atribMod)}) + Bônus de Proficiência (${fmtMod(bonus)}, proficiente) = ${fmtMod(atribMod + bonus)}.`,
+    });
   }
   return resultado;
+}
+
+function fmtMod(n: number): string {
+  return n >= 0 ? `+${n}` : `${n}`;
+}
+
+/** Texto de explicação pro "ⓘ" ao lado de cada número calculado — mesma
+ * lógica das funções calcular*, só formatada pra leitura humana. */
+export function explicarPvMaximoNivel1(selection: WizardSelection): string {
+  const classe = classeDaSelecao(selection);
+  const conValor = valorFinalAtributo(selection, 'CON');
+  if (!classe || conValor === null) return 'Selecione classe e Constituição pra calcular.';
+  const dado = parseDadoDeVida(classe.dadoDeVida);
+  const conMod = modificador(conValor);
+  return `Dado de Vida máximo da classe (${classe.dadoDeVida} = ${dado}) + mod. Constituição (${fmtMod(conMod)}) = ${dado + conMod}. No nível 1 nunca rola nem tira média — só a partir do nível 2.`;
+}
+
+export function explicarCA(selection: WizardSelection): string {
+  const desValor = valorFinalAtributo(selection, 'DES');
+  if (desValor === null) return 'Selecione Destreza pra calcular.';
+  const desMod = modificador(desValor);
+  const armadura = armaduraEquipadaInicial(selection);
+  if (!armadura) return `Sem armadura: 10 + mod. Destreza (${fmtMod(desMod)}) = ${10 + desMod}.`;
+  const ca = caPelaArmadura(armadura.classeArmadura, desMod);
+  return `${armadura.nome} (CA ${armadura.classeArmadura}) com mod. Destreza (${fmtMod(desMod)}) = ${ca}.`;
+}
+
+export function explicarPercepcaoPassiva(selection: WizardSelection, nivel: number = 1): string {
+  const sabValor = valorFinalAtributo(selection, 'SAB');
+  const classe = classeDaSelecao(selection);
+  if (sabValor === null || !classe) return 'Selecione classe e Sabedoria pra calcular.';
+  const sabMod = modificador(sabValor);
+  const proficiente = proficienteEmPericia(selection, 'Percepção');
+  const bonus = proficiente ? bonusProficiencia(classe, nivel) : 0;
+  const parteBonus = proficiente
+    ? ` + Bônus de Proficiência (${fmtMod(bonus)}, proficiente em Percepção)`
+    : ' (não proficiente em Percepção, sem Bônus de Proficiência)';
+  return `10 + mod. Sabedoria (${fmtMod(sabMod)})${parteBonus} = ${10 + sabMod + bonus}.`;
+}
+
+export function explicarIniciativa(selection: WizardSelection): string {
+  const desValor = valorFinalAtributo(selection, 'DES');
+  if (desValor === null) return 'Selecione Destreza pra calcular.';
+  return `mod. Destreza (${fmtMod(modificador(desValor))}). Nenhuma das 12 classes dá bônus extra de Iniciativa no nível 1.`;
+}
+
+export function explicarOuroInicial(selection: WizardSelection): string {
+  const partes: string[] = [];
+  const origem = origens.find((o) => o.nome === selection.origem);
+  if (origem && selection.equipamentoOrigemEscolhido) {
+    const ouro =
+      selection.equipamentoOrigemEscolhido === 'A' ? origem.equipamentoOpcaoA.ouro : origem.equipamentoOpcaoB.ouro;
+    partes.push(`Origem (${origem.nome}, opção ${selection.equipamentoOrigemEscolhido}): ${ouro} PO`);
+  }
+  const classe = classeDaSelecao(selection);
+  if (classe && selection.equipamentoClasseEscolhido) {
+    const proficiencias = proficienciasIniciaisClasse[classe.id];
+    const opcao = proficiencias?.equipamentoInicial.find((o) => o.rotulo === selection.equipamentoClasseEscolhido);
+    if (opcao) partes.push(`Classe (${classe.nome}, opção ${selection.equipamentoClasseEscolhido}): ${opcao.ouro} PO`);
+  }
+  if (partes.length === 0) return 'Selecione origem e classe pra calcular.';
+  return `${partes.join(' + ')} = ${calcularOuroInicial(selection)} PO.`;
 }
 
 /** Soma o ouro residual de Origem + Classe pra opção escolhida em cada uma. */

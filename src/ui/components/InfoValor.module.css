@@ -1,0 +1,63 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: bold;
+  padding: var(--space-2);
+  margin: calc(var(--space-2) * -1);
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 55;
+  padding: var(--space-5);
+  overscroll-behavior: contain;
+  touch-action: none;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: var(--shape-lg);
+  padding: var(--space-5);
+  box-shadow: var(--elevation-3);
+  max-width: 340px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: var(--space-3);
+}
+
+.desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.close {
+  margin-top: var(--space-4);
+  font-size: 12px;
+  color: var(--accent);
+  text-align: center;
+  cursor: pointer;
+  padding: var(--space-2);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

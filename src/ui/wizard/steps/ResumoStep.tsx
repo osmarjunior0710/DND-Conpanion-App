@@ -1,4 +1,14 @@
-import { calcularCA, calcularOuroInicial, calcularPercepcaoPassiva, calcularPvMaximoNivel1 } from '../../../core/calculoPersonagem';
+import {
+  calcularCA,
+  calcularOuroInicial,
+  calcularPercepcaoPassiva,
+  calcularPvMaximoNivel1,
+  explicarCA,
+  explicarOuroInicial,
+  explicarPercepcaoPassiva,
+  explicarPvMaximoNivel1,
+} from '../../../core/calculoPersonagem';
+import InfoValor from '../../components/InfoValor';
 import type { StepProps } from './StepProps';
 
 export default function ResumoStep({ selection, update }: StepProps) {
@@ -38,19 +48,33 @@ export default function ResumoStep({ selection, update }: StepProps) {
       <div className="section-title">Números calculados automaticamente</div>
       <div className="summary-row">
         <span>Pontos de Vida máximos</span>
-        <span>{pvMax !== null ? pvMax : '— (selecione uma classe)'}</span>
+        <span>
+          {pvMax !== null ? pvMax : '— (selecione uma classe)'}
+          {pvMax !== null && <InfoValor titulo="Pontos de Vida máximos" explicacao={explicarPvMaximoNivel1(selection)} />}
+        </span>
       </div>
       <div className="summary-row">
         <span>Classe de Armadura</span>
-        <span>{ca !== null ? ca : '—'}</span>
+        <span>
+          {ca !== null ? ca : '—'}
+          {ca !== null && <InfoValor titulo="Classe de Armadura" explicacao={explicarCA(selection)} />}
+        </span>
       </div>
       <div className="summary-row">
         <span>Percepção Passiva</span>
-        <span>{percepcaoPassiva !== null ? percepcaoPassiva : '—'}</span>
+        <span>
+          {percepcaoPassiva !== null ? percepcaoPassiva : '—'}
+          {percepcaoPassiva !== null && (
+            <InfoValor titulo="Percepção Passiva" explicacao={explicarPercepcaoPassiva(selection)} />
+          )}
+        </span>
       </div>
       <div className="summary-row">
         <span>Ouro inicial</span>
-        <span>{ouroInicial} PO</span>
+        <span>
+          {ouroInicial} PO
+          <InfoValor titulo="Ouro inicial" explicacao={explicarOuroInicial(selection)} />
+        </span>
       </div>
 
       <div className="section-title">Nome do personagem</div>

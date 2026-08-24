@@ -1,5 +1,6 @@
 import type { AtributoFinal, PericiaFinal } from '../../../core/calculoPersonagem';
 import { useRoll } from '../../roll/RollContext';
+import InfoValor from '../../components/InfoValor';
 import styles from './PerfilTab.module.css';
 
 interface PerfilTabProps {
@@ -9,6 +10,10 @@ interface PerfilTabProps {
   ca: number | null;
   iniciativa: number | null;
   percepcaoPassiva: number | null;
+  explicacaoPv: string;
+  explicacaoCa: string;
+  explicacaoIniciativa: string;
+  explicacaoPercepcaoPassiva: string;
   atributos: AtributoFinal[];
   pericias: PericiaFinal[];
   xpBloqueado: boolean;
@@ -25,6 +30,10 @@ export default function PerfilTab({
   ca,
   iniciativa,
   percepcaoPassiva,
+  explicacaoPv,
+  explicacaoCa,
+  explicacaoIniciativa,
+  explicacaoPercepcaoPassiva,
   atributos,
   pericias,
   xpBloqueado,
@@ -66,13 +75,17 @@ export default function PerfilTab({
 
       <div className={styles.hpRow}>
         <div className={`box ${styles.hpBox}`}>
-          <div className="label">PV</div>
+          <div className="label">
+            PV <InfoValor titulo="Pontos de Vida máximos" explicacao={explicacaoPv} />
+          </div>
           <div className={styles.hpNum}>
             {pvAtual}/{pvMax}
           </div>
         </div>
         <div className={`box ${styles.hpBox}`}>
-          <div className="label">CA</div>
+          <div className="label">
+            CA <InfoValor titulo="Classe de Armadura" explicacao={explicacaoCa} />
+          </div>
           <div className={styles.hpNum}>{ca ?? '—'}</div>
         </div>
         <div
@@ -81,7 +94,9 @@ export default function PerfilTab({
             iniciativa !== null && rolarD20({ label: 'Iniciativa', formula: `1d20 + ${iniciativa}`, mod: iniciativa })
           }
         >
-          <div className="label">Iniciativa</div>
+          <div className="label">
+            Iniciativa <InfoValor titulo="Iniciativa" explicacao={explicacaoIniciativa} />
+          </div>
           <div className={styles.hpNum}>
             {iniciativa !== null ? `${iniciativa >= 0 ? '+' : ''}${iniciativa} 🎲` : '—'}
           </div>
@@ -96,7 +111,7 @@ export default function PerfilTab({
           onClick={() => rolarD20({ label: p.nome, formula: `1d20 ${p.mod >= 0 ? '+' : '-'} ${Math.abs(p.mod)}`, mod: p.mod })}
         >
           <span>
-            {p.nome} ({p.atributo}) 🎲
+            {p.nome} ({p.atributo}) 🎲 <InfoValor titulo={p.nome} explicacao={p.explicacao} />
           </span>
           <span>
             {p.mod >= 0 ? '+' : ''}
@@ -105,7 +120,9 @@ export default function PerfilTab({
         </div>
       ))}
       <div className={styles.skillRow}>
-        <span>Percepção Passiva</span>
+        <span>
+          Percepção Passiva <InfoValor titulo="Percepção Passiva" explicacao={explicacaoPercepcaoPassiva} />
+        </span>
         <span>{percepcaoPassiva ?? '—'}</span>
       </div>
       <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>

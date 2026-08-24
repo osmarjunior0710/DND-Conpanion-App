@@ -10,6 +10,10 @@ import {
   calcularPericias,
   calcularPvMaximoNivel1,
   classeDaSelecao,
+  explicarCA,
+  explicarIniciativa,
+  explicarPercepcaoPassiva,
+  explicarPvMaximoNivel1,
 } from '../../core/calculoPersonagem';
 import { modificador } from '../../core/personagem';
 import styles from './FichaShell.module.css';
@@ -88,6 +92,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
   const pericias = calcularPericias(selecao, personagem.nivel);
+  const explicacaoPv = explicarPvMaximoNivel1(selecao);
+  const explicacaoCa = explicarCA(selecao);
+  const explicacaoIniciativa = explicarIniciativa(selecao);
+  const explicacaoPercepcaoPassiva = explicarPercepcaoPassiva(selecao, personagem.nivel);
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -181,6 +189,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             ca={ca}
             iniciativa={iniciativa}
             percepcaoPassiva={percepcaoPassiva}
+            explicacaoPv={explicacaoPv}
+            explicacaoCa={explicacaoCa}
+            explicacaoIniciativa={explicacaoIniciativa}
+            explicacaoPercepcaoPassiva={explicacaoPercepcaoPassiva}
             atributos={atributos}
             pericias={pericias}
             xpBloqueado={xpBloqueado}

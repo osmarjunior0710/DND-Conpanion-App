@@ -1270,3 +1270,31 @@ Guerreiro. Mochila/Magias/Combat ainda não foram conectadas (A4/A6).
 **Data/origem:** 2026-08, testado de ponta a ponta com um Guerreiro
 real (Pequenino, PV 12, CA 13, Percepção Passiva 12, perícias com
 atributo e bônus corretos).
+
+## Todo número calculado tem um "ⓘ" explicando a conta
+
+**Decisão:** qualquer valor gerado pelo motor de cálculo (PV máximo, CA,
+Percepção Passiva, Iniciativa, Ouro inicial, cada Perícia) mostra um
+"ⓘ" tocável logo ao lado — abre um popup com a conta por extenso (ex:
+"Dado de Vida máximo da classe (d10 = 10) + mod. Constituição (+2) =
+12"). Aplicado tanto na tela "7. Resumo" do wizard quanto na aba Perfil
+da Ficha — os mesmos números aparecem nos dois lugares.
+
+**Componente novo:** `ui/components/InfoValor.tsx` — mesmo padrão
+visual de popup de `InfoChip`/`ItemComDescricao` (overlay + card
+central), mas o gatilho é só o ícone "ⓘ" solto, não um chip nem texto
+sublinhado, porque aqui a coisa clicável é um número, não um termo de
+regra. `core/calculoPersonagem.ts` ganhou uma função `explicar*` pra
+cada `calcular*` (`explicarPvMaximoNivel1`, `explicarCA`,
+`explicarPercepcaoPassiva`, `explicarIniciativa`,
+`explicarOuroInicial`), e `PericiaFinal` ganhou um campo `explicacao`
+calculado junto (não uma função separada, pra não duplicar a lógica de
+mod + bônus de proficiência).
+
+**Contexto:** pedido direto do Osmar — "olhando só o número, eu não sei
+dizer se está certo ou não". Motivo real: ele não programa, não pode
+abrir o código pra conferir a fórmula, e cada número novo que aparece
+precisa de alguma forma de verificação **na tela**, não só confiar que
+"deve estar certo" (regra 1 do `CLAUDE.md`).
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
