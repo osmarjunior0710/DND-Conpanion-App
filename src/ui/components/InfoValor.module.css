@@ -51,7 +51,7 @@
 .linha {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
   padding: 6px 0;
   font-size: 14px;
