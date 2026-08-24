@@ -5,8 +5,38 @@
 import { origens } from '../data/rulesets/dnd2024/origens';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { buscarPesoItem } from '../data/rulesets/dnd2024/buscarDescricaoItem';
-import { classeDaSelecao } from './calculoPersonagem';
-import type { WizardSelection } from './personagem';
+import { classeDaSelecao, type ExplicacaoCalculo } from './calculoPersonagem';
+import { valorFinalAtributo, type WizardSelection } from './personagem';
+
+/**
+ * Capacidade máxima de carga — EXCEÇÃO DOCUMENTADA (mesmo padrão de
+ * `classesProficienciasIniciais.ts`): a planilha não tem essa coluna
+ * (lacuna listada no CLAUDE.md seção 8), então usamos a regra oficial
+ * do Livro do Jogador (D&D 5e 2024) direto: capacidade = Força × 15
+ * libras. O projeto já converte todo peso pra kg usando libra × 0,5
+ * (visível nos pesos importados da planilha, ex: Cantil 5 lb → 2,5 kg),
+ * então aplicamos a mesma conversão aqui pra ficar consistente:
+ * Força × 15 × 0,5 = Força × 7,5 kg.
+ */
+const KG_POR_PONTO_DE_FORCA = 7.5;
+
+export function calcularCapacidadeMaxima(selection: WizardSelection): number | null {
+  const forValor = valorFinalAtributo(selection, 'FOR');
+  if (forValor === null) return null;
+  return Math.round(forValor * KG_POR_PONTO_DE_FORCA);
+}
+
+export function explicarCapacidadeMaxima(selection: WizardSelection): ExplicacaoCalculo {
+  const forValor = valorFinalAtributo(selection, 'FOR');
+  if (forValor === null) return { linhas: [], total: { label: 'Capacidade máxima de carga', valor: '—' } };
+  return {
+    linhas: [
+      { label: 'Força', valor: `${forValor}` },
+      { label: `× ${KG_POR_PONTO_DE_FORCA} kg (regra oficial: Força × 15 libras)`, valor: '' },
+    ],
+    total: { label: 'Capacidade máxima de carga', valor: `${calcularCapacidadeMaxima(selection)} kg` },
+  };
+}
 
 export interface ItemMochila {
   nome: string;

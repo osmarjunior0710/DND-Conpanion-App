@@ -16,7 +16,7 @@ import {
   explicarPvMaximoNivel1,
 } from '../../core/calculoPersonagem';
 import { modificador } from '../../core/personagem';
-import { calcularItensIniciais } from '../../core/mochila';
+import { calcularCapacidadeMaxima, calcularItensIniciais, explicarCapacidadeMaxima } from '../../core/mochila';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
 import PerfilTab from './tabs/PerfilTab';
@@ -87,6 +87,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [espacosGastos, setEspacosGastos] = useState(0);
   const [levelUpAberto, setLevelUpAberto] = useState(false);
   const [itensDetalhados, setItensDetalhados] = useState(false);
+  const [pesoAtivo, setPesoAtivo] = useState(true);
   const touchX = useRef(0);
 
   const ca = calcularCA(selecao);
@@ -95,6 +96,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const atributos = calcularAtributosFinais(selecao);
   const pericias = calcularPericias(selecao, personagem.nivel);
   const itensMochila = calcularItensIniciais(selecao);
+  const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
+  const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
   const explicacaoPv = explicarPvMaximoNivel1(selecao);
   const explicacaoCa = explicarCA(selecao);
   const explicacaoIniciativa = explicarIniciativa(selecao);
@@ -169,7 +172,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             {ca ?? '—'}
           </div>
         </div>
-        <AvatarMenu itensDetalhados={itensDetalhados} onToggleItensDetalhados={() => setItensDetalhados((v) => !v)} />
+        <AvatarMenu
+          itensDetalhados={itensDetalhados}
+          onToggleItensDetalhados={() => setItensDetalhados((v) => !v)}
+          pesoAtivo={pesoAtivo}
+          onTogglePeso={() => setPesoAtivo((v) => !v)}
+        />
       </div>
 
       <div className={styles.tabContent} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
@@ -193,7 +201,15 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onAbrirLevelUp={() => setLevelUpAberto(true)}
           />
         )}
-        {tab === 'mochila' && <MochilaTab itens={itensMochila} itensDetalhados={itensDetalhados} />}
+        {tab === 'mochila' && (
+          <MochilaTab
+            itens={itensMochila}
+            itensDetalhados={itensDetalhados}
+            pesoAtivo={pesoAtivo}
+            capacidadeMaxima={capacidadeMaxima}
+            explicacaoCapacidadeMaxima={explicacaoCapacidadeMaxima}
+          />
+        )}
         {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} />}
         {tab === 'combat' && (
           <CombatTab

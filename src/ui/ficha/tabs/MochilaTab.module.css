@@ -5,8 +5,28 @@
 .cargaRow {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 12px;
   color: var(--text-faint);
+}
+
+.weightBarOuter {
+  height: 8px;
+  background: var(--line-soft);
+  border-radius: var(--shape-full);
+  overflow: hidden;
+  margin-top: var(--space-2);
+}
+
+.weightBarInner {
+  height: 100%;
+  background: var(--good);
+  border-radius: var(--shape-full);
+  transition: width var(--motion-emphasized) var(--ease-standard), background var(--motion-standard) var(--ease-standard);
+}
+
+.weightBarOver {
+  background: var(--danger);
 }
 
 .itemRow {

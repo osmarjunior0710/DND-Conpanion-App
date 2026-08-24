@@ -68,9 +68,6 @@ pendente):**
   cadastrado" e avisa quantos itens ficaram de fora da soma de carga),
   mas o número de carga fica sub-contado até o Osmar completar essas
   linhas na planilha.
-- Capacidade MÁXIMA de carga não é mostrada — depende da fórmula Força ×
-  multiplicador, que é lacuna de dado conhecida (`CLAUDE.md` seção 8).
-  Hoje a Mochila só mostra o peso carregado, sem "X/Y kg".
 
 **Não implementado ainda dentro do motor de cálculo (não bloqueia
 A5/A6 do Guerreiro):**

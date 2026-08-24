@@ -98,7 +98,6 @@ primeiro** pra não repetir uma decisão que já foi tomada e revertida antes.
 Estas informações ainda não foram extraídas dos livros. Se uma entrega
 depender de uma delas, avise o Osmar especificamente qual — ele resolve
 sob demanda:
-- Fórmula exata de capacidade de carga (Força × multiplicador)
 - Auditoria de Ação Bônus/Reação nas 337 linhas de Subclasses da planilha
 - Talentos com ativação em combate (quais concedem Ação Bônus/Reação)
 - Confirmar se número de idiomas concedidos é sempre 2 ou varia por
@@ -122,6 +121,10 @@ Personagem), removido.
 ~~Proficiências de arma/armadura/escudo por classe~~ — extraída dos
 livros pelo Osmar, nova aba "Proficiências de Classe" na planilha,
 removido. Ver `DECISOES-DESIGN.md`.
+~~Fórmula exata de capacidade de carga (Força × multiplicador)~~ —
+resolvida usando a regra oficial do livro (Força × 15 libras = Força ×
+7,5 kg na conversão do projeto), sem esperar a planilha ganhar essa
+coluna — decisão explícita do Osmar. Ver `DECISOES-DESIGN.md`.
 ~~Popup de descrição de Armas e Armaduras~~ — planilha ganhou coluna
 "Descrição" nas duas abas, importado e ligado. Removido.
 ~~Progressão de círculo dos meio-conjuradores (Guardião/Paladino)~~ —

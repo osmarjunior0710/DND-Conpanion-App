@@ -1473,3 +1473,41 @@ palavra dá o peso de "isso é sério" sem precisar de um sistema de
 autenticação ou de um segundo passo complexo.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Capacidade máxima de carga — exceção documentada, Força × 7,5 kg
+
+**Decisão:** a lacuna de dado "fórmula exata de capacidade de carga"
+(`CLAUDE.md` seção 8) foi resolvida usando a regra oficial do Livro do
+Jogador (D&D 5e 2024) direto, sem esperar a planilha ganhar essa
+coluna: **capacidade = Força × 15 libras**. Como o projeto já converte
+todo peso da planilha pra kg usando libra × 0,5 (visível nos itens
+importados, ex: Cantil 5 lb → 2,5 kg), aplicamos a mesma conversão
+aqui pra ficar consistente: Força × 15 × 0,5 = **Força × 7,5 kg**.
+Implementado em `core/mochila.ts` (`calcularCapacidadeMaxima`,
+`explicarCapacidadeMaxima`), com o mesmo padrão de "exceção
+documentada" já usado em `classesProficienciasIniciais.ts`.
+
+**Contexto:** pedido direto do Osmar pra fazer a barra de peso da
+Mochila — perguntei se preferia esperar a planilha ganhar a coluna ou
+usar a fórmula oficial que eu já sabia de cor, e ele escolheu usar a
+fórmula agora. Deixa de ser lacuna de dado a partir desta entrega —
+próximo passo é atualizar o `CLAUDE.md` seção 8 removendo esse item da
+lista de lacunas conhecidas.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Mochila ganha 2º toggle no menu do avatar — "Peso da Mochila" (barra de progresso)
+
+**Decisão:** `AvatarMenu.tsx` ganhou uma segunda switch, "Peso da
+Mochila", generalizando a estrutura do menu pra uma lista de
+`preferencias` (era código duplicado pra 1 switch só, virou `.map()`).
+Ligado (padrão): mostra a caixa "Carga" com barra de progresso M3
+(verde até a capacidade máxima, vira `--danger` se ultrapassar) e o
+peso em cada linha de item. Desligado: some a caixa "Carga" inteira
+**e** a coluna de peso de cada item — não é só esconder o total, o
+Osmar pediu explicitamente que os dois desaparecessem juntos.
+
+**Contexto:** parte do mesmo pedido da fórmula de capacidade máxima —
+"mesmo toggle dos itens detalhados, fazer um pra peso de mochila".
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
