@@ -59,11 +59,16 @@
 
 .label {
   color: var(--text-dim);
+  text-align: left;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .valor {
   font-weight: bold;
   white-space: nowrap;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .linhaTotal {
