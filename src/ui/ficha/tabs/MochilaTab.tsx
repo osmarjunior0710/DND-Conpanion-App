@@ -3,6 +3,7 @@ import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescri
 import { calcularCargaTotal, pesoDaLinha, type ItemMochila } from '../../../core/mochila';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoValor from '../../components/InfoValor';
+import { corDaCarga } from '../../utils/corCarga';
 import styles from './MochilaTab.module.css';
 
 interface MochilaTabProps {
@@ -39,7 +40,7 @@ export default function MochilaTab({ itens, itensDetalhados, pesoAtivo, capacida
   const itensOrigem = itens.filter((i) => i.origemDoItem === 'Origem');
   const itensClasse = itens.filter((i) => i.origemDoItem === 'Classe');
   const itensLoja = itens.filter((i) => i.origemDoItem === 'Loja');
-  const percentual = capacidadeMaxima ? Math.min(100, Math.round((carga.kg / capacidadeMaxima) * 100)) : 0;
+  const percentual = capacidadeMaxima ? Math.round((carga.kg / capacidadeMaxima) * 100) : 0;
   const sobrecarregado = capacidadeMaxima !== null && carga.kg > capacidadeMaxima;
 
   return (
@@ -57,8 +58,8 @@ export default function MochilaTab({ itens, itensDetalhados, pesoAtivo, capacida
             </div>
             <div className={styles.weightBarOuter}>
               <div
-                className={`${styles.weightBarInner} ${sobrecarregado ? styles.weightBarOver : ''}`}
-                style={{ width: `${percentual}%` }}
+                className={styles.weightBarInner}
+                style={{ width: `${Math.min(100, percentual)}%`, background: corDaCarga(percentual) }}
               />
             </div>
           </div>

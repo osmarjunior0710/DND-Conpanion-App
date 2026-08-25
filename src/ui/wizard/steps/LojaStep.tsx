@@ -12,6 +12,7 @@ import { calcularOuroInicial } from '../../../core/calculoPersonagem';
 import { calcularCapacidadeMaxima, calcularCargaTotal, calcularItensIniciais, pesoDaLinha, type ItemMochila } from '../../../core/mochila';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import ItemComDescricao from '../../components/ItemComDescricao';
+import { corDaCarga } from '../../utils/corCarga';
 import type { StepProps } from './StepProps';
 import styles from './LojaStep.module.css';
 
@@ -30,17 +31,6 @@ const catalogo = construirCatalogoLoja();
 
 function quantidadeNoCarrinho(selection: StepProps['selection'], nome: string): number {
   return selection.itens.find((i) => i.nome === nome)?.quantidade ?? 0;
-}
-
-/** Azul (até 25%) → Verde (50%) → Amarelo (75%) → Laranja (90%) →
- * Vermelho (acima de 90%) — mesma ideia da barra de Carga da Ficha,
- * só que com degradê em vez de só "normal/sobrecarregado". */
-function corDaCarga(percentual: number): string {
-  if (percentual <= 25) return '#4a5fd9';
-  if (percentual <= 50) return '#2f8f52';
-  if (percentual <= 75) return '#c9a227';
-  if (percentual <= 90) return '#c9711f';
-  return 'var(--danger)';
 }
 
 function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; selection: StepProps['selection']; update: StepProps['update']; ouroRestante: number }) {
@@ -218,7 +208,7 @@ export default function LojaStep({ selection, update }: StepProps) {
   const itensMochila = calcularItensIniciais(selection);
   const carga = calcularCargaTotal(itensMochila);
   const capacidadeMaxima = calcularCapacidadeMaxima(selection);
-  const percentualCarga = capacidadeMaxima ? Math.min(100, Math.round((carga.kg / capacidadeMaxima) * 100)) : 0;
+  const percentualCarga = capacidadeMaxima ? Math.round((carga.kg / capacidadeMaxima) * 100) : 0;
   const itensOrigem = itensMochila.filter((i) => i.origemDoItem === 'Origem');
   const itensClasse = itensMochila.filter((i) => i.origemDoItem === 'Classe');
 
@@ -237,7 +227,7 @@ export default function LojaStep({ selection, update }: StepProps) {
         </div>
         <div className={styles.cargaRow}>
           <div className={styles.cargaBarOuter}>
-            <div className={styles.cargaBarInner} style={{ width: `${percentualCarga}%`, background: corDaCarga(percentualCarga) }} />
+            <div className={styles.cargaBarInner} style={{ width: `${Math.min(100, percentualCarga)}%`, background: corDaCarga(percentualCarga) }} />
           </div>
           <span className={styles.cargaIcone}>🎒</span>
         </div>

@@ -1782,3 +1782,27 @@ tinham peso "perdido" antes desse fix.
 de peso da Loja/Mochila.
 
 **Data/origem:** 2026-08, achado direto pelo Osmar.
+
+## Faixas de cor da barra de Carga unificadas (Loja + Mochila da Ficha)
+
+**Decisão:** nova função única `corDaCarga` (`ui/utils/corCarga.ts`),
+usada pelas duas barras de peso do app (`LojaStep` e `MochilaTab`, que
+antes tinham cada uma sua própria lógica de cor — a da Loja com
+degradê de 5 cores incluindo azul, a da Mochila só verde/vermelho
+binário). Faixas novas, pedidas pelo Osmar:
+- até 75% — verde
+- até 85% — amarelo
+- até 95% — laranja
+- até 100% — vermelho
+- acima de 100% — vermelho escuro (bem mais escuro que o vermelho
+  normal, pra "estourou o limite" ficar visualmente óbvio)
+
+**Detalhe técnico:** o percentual usado pra decidir a COR não é mais
+limitado a 100 (precisa saber se passou de 100 pra escolher vermelho
+escuro) — só a LARGURA da barra continua limitada a 100% (`Math.min`),
+senão a barra vazaria pra fora da caixa visualmente.
+
+**Contexto:** pedido direto do Osmar, com as faixas exatas já definidas
+por ele.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

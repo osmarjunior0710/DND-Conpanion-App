@@ -20,13 +20,8 @@
 
 .weightBarInner {
   height: 100%;
-  background: var(--good);
   border-radius: var(--shape-full);
   transition: width var(--motion-emphasized) var(--ease-standard), background var(--motion-standard) var(--ease-standard);
-}
-
-.weightBarOver {
-  background: var(--danger);
 }
 
 .itemRow {
