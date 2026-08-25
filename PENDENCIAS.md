@@ -365,7 +365,7 @@ exceção, só depois desenhar schema). O Guerreiro (ver pendência
 variação — quando terminar, revisitar essa entrada com o que
 generalizou de verdade pras outras 11 classes.
 
-## Guerreiro 1-20 completo + 4 subclasses — plano definido, implementação não começou
+## Guerreiro 1-20 completo + 4 subclasses — B1 feita, B2-B5 + subclasses faltam
 
 **O que é:** em vez de continuar entregando pedaços soltos (Estilo de
 Luta, Magias...), o Osmar quer o Guerreiro resolvido de ponta a ponta
@@ -374,19 +374,41 @@ Combatente Psíquico, Mestre da Batalha) antes de partir pras outras 11
 classes. Decupagem nível a nível já feita e verificada — ver decisão
 "Guerreiro — plano de implementação completa nível 1-20 + 4
 subclasses" no `DECISOES-DESIGN.md` pra achados de regra e ordem de
-implementação recomendada.
+implementação recomendada. Quebrado em 5 entregas pequenas (B1-B5) pro
+"Guerreiro base" (sem subclasse), antes de partir pras 4 subclasses.
 
-**Por que foi adiado (ainda):** nada foi implementado desta decupagem
-ainda — é só o plano. Cada peça (motor de Level Up com as novas
-categorias de escolha, painel Combat "nível-consciente", cada
-subclasse) precisa virar uma entrega pequena própria, uma de cada vez,
-seguindo a ordem recomendada (base → Campeão → Mestre da Batalha →
-Combatente Psíquico → Cavaleiro Místico).
+**Já feito:**
+- **B1 — Motor de Level Up ganha as 3 categorias novas de escolha.**
+  Descoberta importante ao implementar: o Guerreiro já tinha a
+  progressão 1-20 completa importada em `classes.ts` (não só nível 1)
+  e `caracteristicasClasse.ts` já tinha as descrições reais de 15
+  características — não precisou criar dado novo, só **conectar** o
+  que já existia. Novo `core/levelUp.ts`: `niveisComASI(classe)`
+  deriva os níveis de ASI direto da progressão real (não mais uma
+  constante fixa `[4,8,12,16,19]` — Guerreiro corretamente aparece com
+  6 níveis agora); `temEstiloDeLutaTrocavel` e `niveisComDadivaEpica`
+  idem. `LevelUpShell.tsx` ganhou os passos "Estilo de Luta" (aparece
+  em todo level-up, deixa trocar) e "Dádiva Épica" (nível 19,
+  placeholder por ora); passo "Novas Características" agora mostra a
+  descrição real de cada característica, não mais texto de exemplo.
+  `data/levelUpFixtures.ts` reduzido só ao que sobrou de fixture de
+  verdade (conversão dado-de-vida → média). Testado de ponta a ponta
+  até nível 4 (features reais, Estilo de Luta trocável em todo nível,
+  placeholder de Subclasse no nível 3 sem travar o avanço, ASI
+  aparecendo no nível certo).
 
-**O que falta pra resolver:** tudo — este é só o registro do plano.
-Próximo passo é o Osmar confirmar a primeira entrega pequena (Guerreiro
-base, níveis que faltam do fluxo de Level Up) antes de qualquer código
-ser escrito.
+**Falta:**
+- **B2** — Maestria em Arma: escolha de 3 armas no wizard (nível 1,
+  ainda não existe) + trocar 1 arma no botão de Descanso Longo da aba
+  Perfil (regra é por Descanso Longo, não por Level Up).
+- **B3** — Recuperar Fôlego + Mente Tática na aba Combat (Ação Bônus
+  real, recurso com 2 formas de uso compartilhando o mesmo "banco").
+- **B4** — Surto de Ação, Indomável, Ataque Extra e o resto das
+  características automáticas/numéricas (níveis 2, 5, 9, 11, 13, 17,
+  20).
+- **B5** — revisão geral do Guerreiro base 1-20 antes de partir pras 4
+  subclasses (ordem: base → Campeão → Mestre da Batalha → Combatente
+  Psíquico → Cavaleiro Místico).
 
 ## Personagem multiclasse — schema da ficha ainda assume 1 classe só
 

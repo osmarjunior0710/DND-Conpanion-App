@@ -1914,3 +1914,60 @@ feita numa auditoria em chat separado com apoio do Claude, conferida
 contra o PDF oficial antes de aceitar.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Guerreiro B1 — motor de Level Up genérico, derivado da progressão real (sem constante hardcoded)
+
+**Decisão:** primeira entrega do plano "Guerreiro 1-20" (ver decisão
+acima). Novo `core/levelUp.ts` com 4 funções que leem a progressão
+real da classe (`classes.ts`) em vez de assumir regra fixa:
+`niveisComASI(classe)`, `niveisComDadivaEpica(classe)`,
+`temEstiloDeLutaTrocavel(classe, nivelAtual)`,
+`caracteristicasDoNivel(classe, nivel)` (junta o nome da característica
+— sempre presente em `classes.ts` — com a descrição real, quando já
+importada em `caracteristicasClasse.ts`).
+
+**Achado que mudou o escopo da entrega pra menor do que o esperado:**
+ao investigar pra implementar, `classes.ts` já tinha a progressão
+completa 1-20 do Guerreiro importada (não só nível 1) e
+`caracteristicasClasse.ts` já tinha 15 características com descrição
+real (incluindo o texto exato "Sempre que atinge um nível de
+Guerreiro, você pode substituir..." de Estilo de Luta, e a tabela de
+ASI nos níveis certos). B1 acabou sendo **conectar dado que já
+existia** na UI de Level Up, não criar dado novo.
+
+**`LevelUpShell.tsx` ganhou 2 passos novos:**
+- **"Estilo de Luta"** — aparece em **todo** level-up (não só quando é
+  concedido pela primeira vez), deixa trocar por outro. Generalizado
+  por nome de característica (`temEstiloDeLutaTrocavel` procura
+  "Estilo de Luta" na progressão até o nível atual) — quando
+  Guardião/Paladino forem importados, funciona sem mudar código,
+  porque eles também têm essa característica (nível 2 deles).
+- **"Dádiva Épica"** — só nível 19 (`niveisComDadivaEpica`), por ora
+  um placeholder informativo (a lista de Dádivas do Cap. 5 ainda não
+  foi importada).
+
+O passo "Novas Características" trocou o texto de exemplo
+(`featuresPorNivel` fixture) pela descrição real de
+`caracteristicasClasse.ts` quando existir, ou um aviso "descrição
+ainda não importada pra esse nível" quando não (níveis sem detalhe
+próprio, ex: repetições de "Aumento no Valor de Atributo").
+
+**Passo "Subclasse" temporariamente sem escolha real** — nenhuma
+subclasse de Guerreiro foi importada ainda (isso é a Fase 2+ do plano:
+Campeão primeiro). Por ora mostra um aviso e **não trava o avanço**
+(a validação antiga que exigia escolher subclasse antes de avançar foi
+removida — travaria o Level Up pra sempre no nível 3, já que não há
+opção nenhuma pra escolher). Volta a validar quando a primeira
+subclasse existir.
+
+**`data/levelUpFixtures.ts` reduzido** — só sobrou `dadoVidaValor`
+(conversão dado-de-vida → média, genérico, não é dado de classe
+específico). `featuresPorNivel`, `niveisComSubclasse` (agora lido de
+`classe.nivelSubclasse`, já existia no schema) e `niveisComASI`
+(fixture, virou a função derivada) foram removidos por não terem mais
+uso.
+
+**Contexto:** primeira entrega do plano "Guerreiro 1-20" aprovado pelo
+Osmar ("vamos!").
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

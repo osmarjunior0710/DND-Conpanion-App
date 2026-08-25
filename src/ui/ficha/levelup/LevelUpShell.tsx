@@ -1,11 +1,8 @@
 import { useState } from 'react';
-import {
-  dadoVidaValor,
-  featuresPorNivel,
-  niveisComASI,
-  niveisComSubclasse,
-  subclassesBruxoExemplo,
-} from '../../../data/levelUpFixtures';
+import { dadoVidaValor } from '../../../data/levelUpFixtures';
+import type { Classe } from '../../../data/rulesets/dnd2024/classes';
+import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
+import { caracteristicasDoNivel, niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel } from '../../../core/levelUp';
 import { useRoll } from '../../roll/RollContext';
 import styles from './LevelUpShell.module.css';
 
@@ -15,31 +12,45 @@ export interface PersonagemNivel {
   dadoVida: string;
   conMod: number;
   subclasse: string | null;
+  estiloDeLuta: string | null;
 }
 
 interface LevelUpShellProps {
   personagem: PersonagemNivel;
+  classe: Classe;
   onFechar: () => void;
-  onConfirmar: (resultado: { novoNivel: number; pvGanho: number; subclasseEscolhida: string | null }) => void;
+  onConfirmar: (resultado: {
+    novoNivel: number;
+    pvGanho: number;
+    subclasseEscolhida: string | null;
+    estiloDeLutaEscolhido: string | null;
+  }) => void;
 }
 
-type LuStep = 'pv' | 'features' | 'subclasse' | 'asi' | 'resumo';
+type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'asi' | 'dadivaEpica' | 'resumo';
 
 const NOMES_ATRIBUTOS = ['FOR', 'DES', 'CON', 'INT', 'SAB', 'CAR'];
 
-export default function LevelUpShell({ personagem, onFechar, onConfirmar }: LevelUpShellProps) {
+export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar }: LevelUpShellProps) {
   const { rolarDados } = useRoll();
   const novoNivel = personagem.nivel + 1;
 
   const luSteps: LuStep[] = ['pv', 'features'];
-  if (niveisComSubclasse.includes(novoNivel) && !personagem.subclasse) luSteps.push('subclasse');
-  if (niveisComASI.includes(novoNivel)) luSteps.push('asi');
+  if (classe.nivelSubclasse === novoNivel && !personagem.subclasse) luSteps.push('subclasse');
+  if (temEstiloDeLutaTrocavel(classe, novoNivel)) luSteps.push('estiloDeLuta');
+  if (niveisComASI(classe).includes(novoNivel)) luSteps.push('asi');
+  if (niveisComDadivaEpica(classe).includes(novoNivel)) luSteps.push('dadivaEpica');
   luSteps.push('resumo');
 
   const [luIndex, setLuIndex] = useState(0);
   const [hpModo, setHpModo] = useState<'media' | 'rolar' | null>(null);
   const [hpRolado, setHpRolado] = useState<number | null>(null);
-  const [subclasseEscolhida, setSubclasseEscolhida] = useState<string | null>(null);
+  // Escolha de subclasse ainda não tem UI própria (nenhuma subclasse
+  // foi importada ainda — ver PENDENCIAS.md, plano "Guerreiro 1-20").
+  // Fica null até essa entrega existir; a etapa "subclasse" só mostra
+  // um aviso, sem travar o avanço.
+  const subclasseEscolhida: string | null = null;
+  const [estiloDeLutaEscolhido, setEstiloDeLutaEscolhido] = useState<string | null>(personagem.estiloDeLuta);
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
   const [asiEscolhas, setAsiEscolhas] = useState<string[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -75,7 +86,9 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
     pv: 'Pontos de Vida',
     features: 'Novas Características',
     subclasse: 'Escolha de Subclasse',
+    estiloDeLuta: 'Estilo de Luta',
     asi: 'Atributo ou Talento',
+    dadivaEpica: 'Dádiva Épica',
     resumo: 'Resumo',
   };
 
@@ -84,13 +97,9 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
       setAviso('Escolha um método de PV antes de avançar.');
       return;
     }
-    if (step === 'subclasse' && !subclasseEscolhida) {
-      setAviso('Escolha uma subclasse antes de avançar.');
-      return;
-    }
     setAviso(null);
     if (step === 'resumo') {
-      onConfirmar({ novoNivel, pvGanho: pvGanho ?? 0, subclasseEscolhida });
+      onConfirmar({ novoNivel, pvGanho: pvGanho ?? 0, subclasseEscolhida, estiloDeLutaEscolhido });
       return;
     }
     setLuIndex((i) => i + 1);
@@ -104,6 +113,9 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
     }
     setLuIndex((i) => i - 1);
   }
+
+  const features = caracteristicasDoNivel(classe, novoNivel);
+  const dadivaEpica = caracteristicasDoNivel(classe, novoNivel).find((f) => f.nome === 'Dádiva Épica');
 
   return (
     <div className={styles.screen}>
@@ -166,35 +178,52 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
         {step === 'features' && (
           <>
             <div className="section-title">Características desbloqueadas no nível {novoNivel}</div>
-            {(featuresPorNivel[novoNivel] ?? ['(exemplo) nenhuma característica nova mapeada pra esse nível ainda']).map((f) => (
-              <div key={f} className="opt-card" style={{ cursor: 'default' }}>
-                <div className="opt-card-name">{f}</div>
+            {features.length === 0 && (
+              <div className="label">Nenhuma característica nova nesse nível.</div>
+            )}
+            {features.map((f) => (
+              <div key={f.nome} className="opt-card" style={{ cursor: 'default' }}>
+                <div className="opt-card-name">{f.nome}</div>
+                {f.descricao ? (
+                  <div className="opt-card-desc">{f.descricao}</div>
+                ) : (
+                  <div className="opt-card-desc" style={{ color: 'var(--text-faint)' }}>
+                    Descrição detalhada ainda não importada pra esse nível/característica.
+                  </div>
+                )}
               </div>
             ))}
-            <div className="label" style={{ marginTop: 8 }}>
-              ⚠️ Protótipo: essa lista deveria vir de "Características de Classe" por classe/nível (já mapeado na
-              planilha mestra) — aqui só temos exemplos ilustrativos.
-            </div>
           </>
         )}
 
         {step === 'subclasse' && (
           <>
             <div className="section-title">Escolha sua subclasse</div>
-            {subclassesBruxoExemplo.map((s) => (
-              <div key={s} className={`opt-card ${subclasseEscolhida === s ? 'selected' : ''}`} onClick={() => setSubclasseEscolhida(s)}>
-                <div className="opt-card-row">
-                  <div className="opt-card-img">🖼</div>
-                  <div className="opt-card-info">
-                    <div className="opt-card-name">{s}</div>
-                    <div className="opt-card-desc">Exemplo — descrição completa entra na Fase 1</div>
-                  </div>
-                </div>
+            <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
+              ＋ subclasses de {classe.nome} ainda não foram importadas — entra numa próxima entrega (ver
+              PENDENCIAS.md, plano "Guerreiro 1-20").
+            </div>
+          </>
+        )}
+
+        {step === 'estiloDeLuta' && (
+          <>
+            <div className="section-title">Manter ou trocar seu Estilo de Luta</div>
+            <div className="label" style={{ marginBottom: 8 }}>
+              Regra oficial: a cada nível de {classe.nome}, você pode substituir o Estilo de Luta escolhido por
+              outro — não precisa manter o mesmo.
+            </div>
+            {estilosDeLuta.map((e) => (
+              <div
+                key={e.id}
+                className={`opt-card ${estiloDeLutaEscolhido === e.nome ? 'selected' : ''}`}
+                style={{ padding: '10px 12px' }}
+                onClick={() => setEstiloDeLutaEscolhido(e.nome)}
+              >
+                <div className="opt-card-name">{e.nome}</div>
+                <div className="opt-card-desc">{e.beneficios}</div>
               </div>
             ))}
-            <div className="label" style={{ marginTop: 6 }}>
-              Escolha única e (por regra) definitiva.
-            </div>
           </>
         )}
 
@@ -207,7 +236,7 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
             </div>
             <div className={`opt-card ${asiModo === 'talento' ? 'selected' : ''}`} onClick={() => { setAsiModo('talento'); setAsiEscolhas([]); }}>
               <div className="opt-card-name">Escolher um Talento</div>
-              <div className="opt-card-desc">Lista completa de talentos (Cap. 5) entra na Fase 1</div>
+              <div className="opt-card-desc">Lista completa de talentos (Cap. 5) entra numa próxima entrega</div>
             </div>
             {asiModo === 'atributo' && (
               <>
@@ -226,9 +255,19 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
             )}
             {asiModo === 'talento' && (
               <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
-                ＋ lista de talentos entra na Fase 1
+                ＋ lista de talentos entra numa próxima entrega
               </div>
             )}
+          </>
+        )}
+
+        {step === 'dadivaEpica' && (
+          <>
+            <div className="section-title">Dádiva Épica</div>
+            {dadivaEpica?.descricao && <div className="label" style={{ marginBottom: 10 }}>{dadivaEpica.descricao}</div>}
+            <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
+              ＋ lista de Dádivas Épicas (Cap. 5) entra numa próxima entrega
+            </div>
           </>
         )}
 
@@ -253,6 +292,12 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
                 <span>{subclasseEscolhida}</span>
               </div>
             )}
+            {luSteps.includes('estiloDeLuta') && (
+              <div className="summary-row">
+                <span>Estilo de Luta</span>
+                <span>{estiloDeLutaEscolhido ?? 'nenhum escolhido'}</span>
+              </div>
+            )}
             {asiModo === 'atributo' && (
               <div className="summary-row">
                 <span>Atributos</span>
@@ -262,7 +307,7 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
             {asiModo === 'talento' && (
               <div className="summary-row">
                 <span>Talento</span>
-                <span>(a definir na Fase 1)</span>
+                <span>(a definir numa próxima entrega)</span>
               </div>
             )}
             <div className="label" style={{ marginTop: 10 }}>

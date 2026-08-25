@@ -81,6 +81,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     dadoVida: classe?.dadoDeVida ?? 'd8',
     conMod: conValor !== null ? modificador(conValor) : 0,
     subclasse: null,
+    estiloDeLuta: selecao.estiloDeLutaEscolhido,
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
   const [restStatus, setRestStatus] = useState<string | null>(null);
@@ -103,7 +104,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const explicacaoCa = explicarCA(selecao);
   const explicacaoIniciativa = explicarIniciativa(selecao);
   const explicacaoPercepcaoPassiva = explicarPercepcaoPassiva(selecao, personagem.nivel);
-  const estiloDeLuta = estilosDeLuta.find((e) => e.nome === selecao.estiloDeLutaEscolhido) ?? null;
+  const estiloDeLuta = estilosDeLuta.find((e) => e.nome === personagem.estiloDeLuta) ?? null;
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -135,12 +136,18 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setRestStatus('Descanso Curto: Espaços de Magia (Magia de Pacto) recuperados. PV não recupera automaticamente por descanso curto.');
   }
 
-  function confirmarLevelUp(resultado: { novoNivel: number; pvGanho: number; subclasseEscolhida: string | null }) {
+  function confirmarLevelUp(resultado: {
+    novoNivel: number;
+    pvGanho: number;
+    subclasseEscolhida: string | null;
+    estiloDeLutaEscolhido: string | null;
+  }) {
     setPersonagem((prev) => ({
       ...prev,
       nivel: resultado.novoNivel,
       pvMax: prev.pvMax + resultado.pvGanho,
       subclasse: resultado.subclasseEscolhida ?? prev.subclasse,
+      estiloDeLuta: resultado.estiloDeLutaEscolhido ?? prev.estiloDeLuta,
     }));
     setPvAtual((v) => v + resultado.pvGanho);
     setLevelUpAberto(false);
@@ -156,8 +163,15 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (dx > 50 && idx > 0) setTab(ORDEM_ABAS[idx - 1]);
   }
 
-  if (levelUpAberto) {
-    return <LevelUpShell personagem={personagem} onFechar={() => setLevelUpAberto(false)} onConfirmar={confirmarLevelUp} />;
+  if (levelUpAberto && classe) {
+    return (
+      <LevelUpShell
+        personagem={personagem}
+        classe={classe}
+        onFechar={() => setLevelUpAberto(false)}
+        onConfirmar={confirmarLevelUp}
+      />
+    );
   }
 
   return (
