@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { espacosMagiaExemplo } from '../../../data/exampleCombat';
+import type { EstiloDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { useRoll } from '../../roll/RollContext';
+import InfoChip from '../../components/InfoChip';
 import SidePanel from '../combat/SidePanel';
 import AcaoPanelContent, { type DanoPendente } from '../combat/AcaoPanelContent';
 import BonusPanelContent from '../combat/BonusPanelContent';
@@ -19,6 +21,7 @@ interface CombatTabProps {
   onFimDoTurno: () => void;
   espacosGastos: number;
   onGastarSlot: () => boolean;
+  estiloDeLuta: EstiloDeLuta | null;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -36,6 +39,7 @@ export default function CombatTab({
   onFimDoTurno,
   espacosGastos,
   onGastarSlot,
+  estiloDeLuta,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -99,6 +103,13 @@ export default function CombatTab({
         ⚠️ Protótipo: cada toque muda 1 PV por vez. Um campo pra digitar quantidade de dano/cura fica pra quando o
         motor de cálculo (`core/`) entrar de verdade.
       </div>
+
+      {estiloDeLuta && (
+        <>
+          <div className="section-title">Estilo de Luta</div>
+          <InfoChip nome={estiloDeLuta.nome} descricao={estiloDeLuta.beneficios} />
+        </>
+      )}
 
       <div className="section-title">Ação · Ação Bônus · Reação — estado do turno</div>
       <div className={styles.splitBtns}>

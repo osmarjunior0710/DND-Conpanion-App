@@ -17,6 +17,7 @@ import {
 } from '../../core/calculoPersonagem';
 import { modificador } from '../../core/personagem';
 import { calcularCapacidadeMaxima, calcularItensIniciais, explicarCapacidadeMaxima } from '../../core/mochila';
+import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
 import PerfilTab from './tabs/PerfilTab';
@@ -102,6 +103,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const explicacaoCa = explicarCA(selecao);
   const explicacaoIniciativa = explicarIniciativa(selecao);
   const explicacaoPercepcaoPassiva = explicarPercepcaoPassiva(selecao, personagem.nivel);
+  const estiloDeLuta = estilosDeLuta.find((e) => e.nome === selecao.estiloDeLutaEscolhido) ?? null;
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -221,6 +223,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onFimDoTurno={fimDoTurno}
             espacosGastos={espacosGastos}
             onGastarSlot={gastarSlot}
+            estiloDeLuta={estiloDeLuta}
           />
         )}
       </div>

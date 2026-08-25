@@ -1806,3 +1806,31 @@ senão a barra vazaria pra fora da caixa visualmente.
 por ele.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Perícias de Classe, itens de Equipamento de Classe e Estilo de Luta conectados na Ficha final
+
+**Decisão:** fechando a pendência "Estilo de Luta escolhido ainda não
+aparece na Ficha/Combat" registrada depois da Entrega A4. Ao revisar
+pra resolver, descobri que **2 dos 3 pontos já estavam conectados**
+desde entregas anteriores, só não tinham sido riscados da lista:
+- **Perícias de Classe** (`periciasClasseEscolhidas`) — já eram somadas
+  com as de Origem em `calcularPericias` (`core/calculoPersonagem.ts`)
+  desde a Entrega A1/A3, e a aba Perfil da Ficha já lê isso direto
+  (`pericias = calcularPericias(selecao, personagem.nivel)` em
+  `FichaShell.tsx`). Nada pra fazer aqui.
+- **Itens de Equipamento de Classe** (`equipamentoClasseEscolhido`) —
+  já entravam na Mochila desde a Entrega A4
+  (`calcularItensIniciais` em `core/mochila.ts` já junta Origem +
+  Classe + Loja). Nada pra fazer aqui.
+- **Estilo de Luta** (`estiloDeLutaEscolhido`) — esse sim estava
+  faltando de verdade. Adicionado: `FichaShell.tsx` procura o
+  `EstiloDeLuta` escolhido em `estilosDeLuta.ts` pelo nome e passa pra
+  `CombatTab`, que mostra um `InfoChip` (nome + benefício mecânico
+  real, ex: "Defensivo — +1 CA enquanto usa armadura Leve, Média ou
+  Pesada") logo abaixo do aviso de protótipo dos PV, antes do painel
+  Ação/Ação Bônus/Reação.
+
+**Contexto:** pedido do Osmar pra fechar essa pendência de vez ("pra
+não sobrar pendências").
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

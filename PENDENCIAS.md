@@ -53,9 +53,11 @@ wizard → Ficha, definido junto com o Osmar.
   100PC) e Mod. de Ataque por arma (considerando proficiência da
   classe). Filtro "só o que a classe usa bem" pra Armas/Armaduras. Ver
   DECISOES-DESIGN.md.
-- **A6:** Combat mostrando Estilo de Luta escolhido; aba Magias
-  refletindo "sem magia" pro Guerreiro (hoje mostra espaços de magia de
-  exemplo, dado de Bruxo — a nota fixa sobre a regra de Bruxo/Magia de
+- **A6 (parcial):** Estilo de Luta, Perícias de Classe e itens de
+  Equipamento de Classe já estavam/ficaram conectados na Ficha real —
+  ver decisão em DECISOES-DESIGN.md. Falta só a aba Magias: hoje mostra
+  espaços de magia de exemplo, dado de Bruxo, em vez de refletir "sem
+  magia" pro Guerreiro (a nota fixa sobre a regra de Bruxo/Magia de
   Pacto foi removida do Perfil por não se aplicar ao Guerreiro; volta
   como texto condicional por classe quando o Bruxo for importado).
 
@@ -187,28 +189,6 @@ padrão de vazamento de tabela ao importar as próximas 11 classes, e
 avisar o Osmar se a aba "Características de Classe" tiver esse problema
 espalhado (pode valer a pena ele corrigir a extração original do PDF
 pra planilha, em vez de eu limpar célula por célula).
-
-## Estilo de Luta escolhido ainda não aparece na Ficha/Combat
-
-**O que é:** o jogador escolhe o Estilo de Luta no wizard (nível 1 do
-Guerreiro), mas isso ainda não é lido em nenhum lugar da Ficha (nem no
-resumo, nem na aba Combat). Igual equipamento/perícias de classe — a
-ficha final ainda não consome os campos novos do wizard
-(`estiloDeLutaEscolhido`, `periciasClasseEscolhidas`,
-`equipamentoClasseEscolhido`).
-
-**Por que foi adiado:** essa entrega focou em ter a **coleta** do dado
-funcionando no wizard; conectar isso na Ficha (perícias marcadas,
-equipamento na Mochila, Estilo de Luta na aba Combat) é o próximo passo
-do "fluxo completo" que o Osmar pediu pra priorizar.
-
-**O que falta pra resolver:** ligar `periciasClasseEscolhidas` +
-perícias de Origem na aba Perfil da Ficha; itens de
-`equipamentoClasseEscolhido` na Mochila (junto com os de Origem, que já
-têm o mesmo problema — ver decisão "Itens de origem/classe já nascem no
-formato de Mochila", ainda não conectada de verdade); Estilo de Luta
-como uma característica visível (provavelmente InfoChip) na aba Combat
-ou Perfil.
 
 ## Design da tela "Escolhas da Espécie" ainda tá estranho
 
