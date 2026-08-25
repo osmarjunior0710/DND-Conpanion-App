@@ -45,7 +45,7 @@ export interface ItemMochila {
   nome: string;
   quantidade: number;
   peso: string | null;
-  origemDoItem: 'Origem' | 'Classe';
+  origemDoItem: 'Origem' | 'Classe' | 'Loja';
 }
 
 /** Placeholders de grupo de ferramenta (ver origens.ts) que precisam
@@ -151,7 +151,7 @@ const DESAGREGACAO_KITS: Record<string, { nome: string; quantidade: number }[]> 
   ],
 };
 
-function adicionarItem(itens: ItemMochila[], nome: string, quantidade: number, origemDoItem: 'Origem' | 'Classe') {
+function adicionarItem(itens: ItemMochila[], nome: string, quantidade: number, origemDoItem: 'Origem' | 'Classe' | 'Loja') {
   const componentes = DESAGREGACAO_KITS[nome];
   if (componentes) {
     for (const c of componentes) {
@@ -190,6 +190,10 @@ export function calcularItensIniciais(selection: WizardSelection): ItemMochila[]
         adicionarItem(itens, item.nome, item.quantidade, 'Classe');
       }
     }
+  }
+
+  for (const item of selection.itens) {
+    adicionarItem(itens, item.nome, item.quantidade, 'Loja');
   }
 
   return itens;

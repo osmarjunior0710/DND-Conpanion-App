@@ -1,9 +1,12 @@
 // Gerado a partir de dnd-master-referencia.xlsx, aba "Equipamento de
-// Aventura". Linhas de cabeçalho de seção (ex: "— Foco Arcano —") foram
-// filtradas na importação. Não editar valores à mão.
+// Aventura". Campo `categoria` reconstruído a partir dos cabeçalhos de
+// seção da planilha ("— Equipamento Geral —", "— Foco Arcano —", etc.),
+// que tinham sido descartados na importação original — usado agora pra
+// agrupar a Loja por categoria. Não editar valores à mão.
 
 export interface ItemEquipamentoAventura {
   id: string;
+  categoria: string;
   nome: string;
   peso: string | null;
   custo: string | null;
@@ -14,6 +17,7 @@ export interface ItemEquipamentoAventura {
 export const equipamentoAventura: ItemEquipamentoAventura[] = [
   {
     id: "acido",
+    categoria: "Equipamento Geral",
     nome: "Ácido",
     peso: "0,5 kg",
     custo: "25 PO",
@@ -22,6 +26,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "agua-benta",
+    categoria: "Equipamento Geral",
     nome: "Água Benta",
     peso: "0,5 kg",
     custo: "25 PO",
@@ -30,6 +35,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "algibeira",
+    categoria: "Equipamento Geral",
     nome: "Algibeira",
     peso: "0,5 kg",
     custo: "5 PP",
@@ -38,6 +44,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "aljava",
+    categoria: "Equipamento Geral",
     nome: "Aljava",
     peso: "0,5 kg",
     custo: "1 PO",
@@ -46,6 +53,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "antitoxina",
+    categoria: "Equipamento Geral",
     nome: "Antitoxina",
     peso: "—",
     custo: "50 PO",
@@ -54,6 +62,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "apito-sinalizador",
+    categoria: "Equipamento Geral",
     nome: "Apito Sinalizador",
     peso: "—",
     custo: "5 PC",
@@ -62,6 +71,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "ariete-portavel",
+    categoria: "Equipamento Geral",
     nome: "Aríete Portável",
     peso: "16,5 kg",
     custo: "4 PO",
@@ -70,6 +80,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "armadilha-de-caca",
+    categoria: "Equipamento Geral",
     nome: "Armadilha de Caça",
     peso: "12,5 kg",
     custo: "5 PO",
@@ -78,6 +89,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "arpeu",
+    categoria: "Equipamento Geral",
     nome: "Arpéu",
     peso: "2 kg",
     custo: "2 PO",
@@ -86,6 +98,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "balde",
+    categoria: "Equipamento Geral",
     nome: "Balde",
     peso: "1 kg",
     custo: "5 PC",
@@ -94,6 +107,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "baliza",
+    categoria: "Equipamento Geral",
     nome: "Baliza",
     peso: "3,5 kg",
     custo: "5 PC",
@@ -102,6 +116,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "barril",
+    categoria: "Equipamento Geral",
     nome: "Barril",
     peso: "35 kg",
     custo: "2 PO",
@@ -110,6 +125,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "bau",
+    categoria: "Equipamento Geral",
     nome: "Baú",
     peso: "12,5 kg",
     custo: "5 PO",
@@ -118,6 +134,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "bolsa-de-componentes",
+    categoria: "Equipamento Geral",
     nome: "Bolsa de Componentes",
     peso: "1 kg",
     custo: "25 PO",
@@ -126,6 +143,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cadeado",
+    categoria: "Equipamento Geral",
     nome: "Cadeado",
     peso: "0,5 kg",
     custo: "10 PO",
@@ -134,6 +152,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "caixa-para-fogo",
+    categoria: "Equipamento Geral",
     nome: "Caixa para Fogo",
     peso: "0,5 kg",
     custo: "5 PP",
@@ -142,6 +161,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "caneta-tinteiro",
+    categoria: "Equipamento Geral",
     nome: "Caneta Tinteiro",
     peso: "—",
     custo: "2 PC",
@@ -150,6 +170,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cantil-cheio",
+    categoria: "Equipamento Geral",
     nome: "Cantil (cheio)",
     peso: "2,5 kg",
     custo: "2 PP",
@@ -158,6 +179,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cesta",
+    categoria: "Equipamento Geral",
     nome: "Cesta",
     peso: "1 kg",
     custo: "4 PP",
@@ -166,6 +188,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cobertor",
+    categoria: "Equipamento Geral",
     nome: "Cobertor",
     peso: "1,5 kg",
     custo: "5 PP",
@@ -174,6 +197,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "corda",
+    categoria: "Equipamento Geral",
     nome: "Corda",
     peso: "2,5 kg",
     custo: "1 PO",
@@ -182,6 +206,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cordao",
+    categoria: "Equipamento Geral",
     nome: "Cordão",
     peso: "—",
     custo: "1 PP",
@@ -190,6 +215,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "corrente",
+    categoria: "Equipamento Geral",
     nome: "Corrente",
     peso: "5 kg",
     custo: "5 PO",
@@ -198,6 +224,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "escada",
+    categoria: "Equipamento Geral",
     nome: "Escada",
     peso: "12,5 kg",
     custo: "1 PP",
@@ -206,6 +233,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "esferas-de-metal",
+    categoria: "Equipamento Geral",
     nome: "Esferas de Metal",
     peso: "1 kg (saco)",
     custo: "1 PO",
@@ -214,6 +242,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "espelho",
+    categoria: "Equipamento Geral",
     nome: "Espelho",
     peso: "250 g",
     custo: "5 PO",
@@ -222,6 +251,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "estacas-de-ferro",
+    categoria: "Equipamento Geral",
     nome: "Estacas de Ferro",
     peso: "2,5 kg",
     custo: "1 PO",
@@ -230,6 +260,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "estojo-mapa-ou-pergaminho",
+    categoria: "Equipamento Geral",
     nome: "Estojo, Mapa ou Pergaminho",
     peso: "0,5 kg",
     custo: "1 PO",
@@ -238,6 +269,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "estojo-virote-de-besta",
+    categoria: "Equipamento Geral",
     nome: "Estojo, Virote de Besta",
     peso: "0,5 kg",
     custo: "1 PO",
@@ -246,6 +278,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "estrepes",
+    categoria: "Equipamento Geral",
     nome: "Estrepes",
     peso: "1 kg (saco)",
     custo: "1 PO",
@@ -254,6 +287,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "foco-arcano",
+    categoria: "Equipamento Geral",
     nome: "Foco Arcano",
     peso: "Varia",
     custo: "Varia",
@@ -262,6 +296,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "foco-druidico",
+    categoria: "Equipamento Geral",
     nome: "Foco Druídico",
     peso: "Varia",
     custo: "Varia",
@@ -270,6 +305,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "fogo-alquimico",
+    categoria: "Equipamento Geral",
     nome: "Fogo Alquímico",
     peso: "0,5 kg",
     custo: "50 PO",
@@ -278,6 +314,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "frasco",
+    categoria: "Equipamento Geral",
     nome: "Frasco",
     peso: "—",
     custo: "1 PO",
@@ -286,6 +323,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "garrafa-de-vidro-1-litro",
+    categoria: "Equipamento Geral",
     nome: "Garrafa de Vidro (1 litro)",
     peso: "1 kg",
     custo: "2 PO",
@@ -294,6 +332,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "grilhoes",
+    categoria: "Equipamento Geral",
     nome: "Grilhões",
     peso: "3 kg",
     custo: "2 PO",
@@ -302,6 +341,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "jarro-4-litros",
+    categoria: "Equipamento Geral",
     nome: "Jarro (4 litros)",
     peso: "2 kg",
     custo: "2 PC",
@@ -310,6 +350,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-artista",
+    categoria: "Equipamento Geral",
     nome: "Kit de Artista",
     peso: "29 kg",
     custo: "40 PO",
@@ -318,6 +359,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-assaltante",
+    categoria: "Equipamento Geral",
     nome: "Kit de Assaltante",
     peso: "21 kg",
     custo: "16 PO",
@@ -326,6 +368,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-aventureiro",
+    categoria: "Equipamento Geral",
     nome: "Kit de Aventureiro",
     peso: "27,5 kg",
     custo: "10 PO",
@@ -334,6 +377,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-curandeiro",
+    categoria: "Equipamento Geral",
     nome: "Kit de Curandeiro",
     peso: "1,5 kg",
     custo: "5 PO",
@@ -342,6 +386,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-diplomata",
+    categoria: "Equipamento Geral",
     nome: "Kit de Diplomata",
     peso: "19,5 kg",
     custo: "39 PO",
@@ -350,6 +395,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-erudito",
+    categoria: "Equipamento Geral",
     nome: "Kit de Erudito",
     peso: "11 kg",
     custo: "40 PO",
@@ -358,6 +404,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-escalada",
+    categoria: "Equipamento Geral",
     nome: "Kit de Escalada",
     peso: "6 kg",
     custo: "25 PO",
@@ -366,6 +413,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-explorador-de-masmorras",
+    categoria: "Equipamento Geral",
     nome: "Kit de Explorador de Masmorras",
     peso: "27,5 kg",
     custo: "12 PO",
@@ -374,6 +422,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "kit-de-sacerdote",
+    categoria: "Equipamento Geral",
     nome: "Kit de Sacerdote",
     peso: "14,5 kg",
     custo: "33 PO",
@@ -382,6 +431,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "lampada",
+    categoria: "Equipamento Geral",
     nome: "Lâmpada",
     peso: "0,5 kg",
     custo: "5 PP",
@@ -390,6 +440,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "lanterna-coberta",
+    categoria: "Equipamento Geral",
     nome: "Lanterna Coberta",
     peso: "1 kg",
     custo: "5 PO",
@@ -398,6 +449,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "lanterna-foca-facho",
+    categoria: "Equipamento Geral",
     nome: "Lanterna Foca-facho",
     peso: "1 kg",
     custo: "10 PO",
@@ -406,6 +458,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "livro",
+    categoria: "Equipamento Geral",
     nome: "Livro",
     peso: "2,5 kg",
     custo: "25 PO",
@@ -414,6 +467,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "luneta",
+    categoria: "Equipamento Geral",
     nome: "Luneta",
     peso: "0,5 kg",
     custo: "1.000 PO",
@@ -422,6 +476,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "lupa",
+    categoria: "Equipamento Geral",
     nome: "Lupa",
     peso: "—",
     custo: "100 PO",
@@ -430,6 +485,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "mapa",
+    categoria: "Equipamento Geral",
     nome: "Mapa",
     peso: "—",
     custo: "1 PO",
@@ -438,6 +494,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "mochila",
+    categoria: "Equipamento Geral",
     nome: "Mochila",
     peso: "2,5 kg",
     custo: "2 PO",
@@ -446,6 +503,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "municao",
+    categoria: "Equipamento Geral",
     nome: "Munição",
     peso: "Varia",
     custo: "Varia",
@@ -454,6 +512,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "oleo",
+    categoria: "Equipamento Geral",
     nome: "Óleo",
     peso: "0,5 kg",
     custo: "1 PP",
@@ -462,6 +521,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pa",
+    categoria: "Equipamento Geral",
     nome: "Pá",
     peso: "2,5 kg",
     custo: "2 PO",
@@ -470,6 +530,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "papel",
+    categoria: "Equipamento Geral",
     nome: "Papel",
     peso: "—",
     custo: "2 PP",
@@ -478,6 +539,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pe-de-cabra",
+    categoria: "Equipamento Geral",
     nome: "Pé de Cabra",
     peso: "2,5 kg",
     custo: "2 PO",
@@ -486,6 +548,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "perfume",
+    categoria: "Equipamento Geral",
     nome: "Perfume",
     peso: "—",
     custo: "5 PO",
@@ -494,6 +557,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pergaminho",
+    categoria: "Equipamento Geral",
     nome: "Pergaminho",
     peso: "—",
     custo: "1 PP",
@@ -502,6 +566,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pergaminho-magico-1o-circulo",
+    categoria: "Equipamento Geral",
     nome: "Pergaminho Mágico (1º Círculo)",
     peso: "—",
     custo: "50 PO",
@@ -510,6 +575,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pergaminho-magico-truque",
+    categoria: "Equipamento Geral",
     nome: "Pergaminho Mágico (Truque)",
     peso: "—",
     custo: "30 PO",
@@ -518,6 +584,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pocao-de-cura",
+    categoria: "Equipamento Geral",
     nome: "Poção de Cura",
     peso: "250 g",
     custo: "50 PO",
@@ -526,6 +593,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pote",
+    categoria: "Equipamento Geral",
     nome: "Pote",
     peso: "0,5 kg",
     custo: "2 PC",
@@ -534,6 +602,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "pote-ferro",
+    categoria: "Equipamento Geral",
     nome: "Pote, Ferro",
     peso: "5 kg",
     custo: "2 PO",
@@ -542,6 +611,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "racoes",
+    categoria: "Equipamento Geral",
     nome: "Rações",
     peso: "1 kg",
     custo: "5 PP",
@@ -550,6 +620,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "rede",
+    categoria: "Equipamento Geral",
     nome: "Rede",
     peso: "1,5 kg",
     custo: "1 PO",
@@ -558,6 +629,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "roldana-e-polias",
+    categoria: "Equipamento Geral",
     nome: "Roldana e Polias",
     peso: "2,5 kg",
     custo: "1 PO",
@@ -566,6 +638,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "roupas-fantasia",
+    categoria: "Equipamento Geral",
     nome: "Roupas, Fantasia",
     peso: "2 kg",
     custo: "5 PO",
@@ -574,6 +647,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "roupas-finas",
+    categoria: "Equipamento Geral",
     nome: "Roupas, Finas",
     peso: "3 kg",
     custo: "15 PO",
@@ -582,6 +656,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "roupas-viagem",
+    categoria: "Equipamento Geral",
     nome: "Roupas, Viagem",
     peso: "2 kg",
     custo: "2 PO",
@@ -590,6 +665,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "saca",
+    categoria: "Equipamento Geral",
     nome: "Saca",
     peso: "250 g",
     custo: "1 PC",
@@ -598,6 +674,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "saco-de-dormir",
+    categoria: "Equipamento Geral",
     nome: "Saco de Dormir",
     peso: "3,5 kg",
     custo: "1 PO",
@@ -606,6 +683,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "simbolo-sagrado",
+    categoria: "Equipamento Geral",
     nome: "Símbolo Sagrado",
     peso: "Varia",
     custo: "Varia",
@@ -614,6 +692,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "sino",
+    categoria: "Equipamento Geral",
     nome: "Sino",
     peso: "—",
     custo: "1 PO",
@@ -622,6 +701,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "tenda",
+    categoria: "Equipamento Geral",
     nome: "Tenda",
     peso: "10 kg",
     custo: "2 PO",
@@ -630,6 +710,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "tinta",
+    categoria: "Equipamento Geral",
     nome: "Tinta",
     peso: "—",
     custo: "10 PO",
@@ -638,6 +719,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "tocha",
+    categoria: "Equipamento Geral",
     nome: "Tocha",
     peso: "0,5 kg",
     custo: "1 PC",
@@ -646,6 +728,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "vela",
+    categoria: "Equipamento Geral",
     nome: "Vela",
     peso: "—",
     custo: "1 PC",
@@ -654,6 +737,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "tunica",
+    categoria: "Equipamento Geral",
     nome: "Túnica",
     peso: "2 kg",
     custo: "1 PO",
@@ -662,6 +746,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "veneno-basico",
+    categoria: "Equipamento Geral",
     nome: "Veneno Básico",
     peso: "—",
     custo: "100 PO",
@@ -670,6 +755,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cajado-tambem-um-bastao",
+    categoria: "Foco Arcano",
     nome: "Cajado (também um Bastão)",
     peso: "2 kg",
     custo: "5 PO",
@@ -678,6 +764,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cetro",
+    categoria: "Foco Arcano",
     nome: "Cetro",
     peso: "1 kg",
     custo: "10 PO",
@@ -686,6 +773,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cristal",
+    categoria: "Foco Arcano",
     nome: "Cristal",
     peso: "0,5 kg",
     custo: "10 PO",
@@ -694,6 +782,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "orbe",
+    categoria: "Foco Arcano",
     nome: "Orbe",
     peso: "1,5 kg",
     custo: "20 PO",
@@ -702,6 +791,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "varinha",
+    categoria: "Foco Arcano",
     nome: "Varinha",
     peso: "0,5 kg",
     custo: "10 PO",
@@ -710,6 +800,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "cajado-de-madeira-tambem-um-bastao",
+    categoria: "Foco Druídico",
     nome: "Cajado de madeira (também um Bastão)",
     peso: "2 kg",
     custo: "5 PO",
@@ -718,6 +809,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "ramo-de-visco",
+    categoria: "Foco Druídico",
     nome: "Ramo de visco",
     peso: "—",
     custo: "1 PO",
@@ -726,6 +818,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "varinha-de-teixo",
+    categoria: "Foco Druídico",
     nome: "Varinha de teixo",
     peso: "0,5 kg",
     custo: "10 PO",
@@ -734,6 +827,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "agulhas-50-algibeira",
+    categoria: "Munição",
     nome: "Agulhas (50, Algibeira)",
     peso: "0,5 kg",
     custo: "1 PO",
@@ -742,6 +836,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "balas-arma-de-fogo-10-algibeira",
+    categoria: "Munição",
     nome: "Balas, Arma de Fogo (10, Algibeira)",
     peso: "1 kg",
     custo: "3 PO",
@@ -750,6 +845,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "balas-funda-20-algibeira",
+    categoria: "Munição",
     nome: "Balas, Funda (20, Algibeira)",
     peso: "750 g",
     custo: "4 PC",
@@ -758,6 +854,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "flechas-20-aljava",
+    categoria: "Munição",
     nome: "Flechas (20, Aljava)",
     peso: "0,5 kg",
     custo: "1 PO",
@@ -766,6 +863,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "virotes-20-estojo",
+    categoria: "Munição",
     nome: "Virotes (20, Estojo)",
     peso: "750 g",
     custo: "1 PO",
@@ -774,6 +872,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "amuleto-usado-ou-segurado",
+    categoria: "Símbolo Sagrado",
     nome: "Amuleto (usado ou segurado)",
     peso: "0,5 kg",
     custo: "5 PO",
@@ -782,6 +881,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "emblema-exibido-em-tecido-ou-em-um-escudo",
+    categoria: "Símbolo Sagrado",
     nome: "Emblema (exibido em tecido ou em um Escudo)",
     peso: "—",
     custo: "5 PO",
@@ -790,6 +890,7 @@ export const equipamentoAventura: ItemEquipamentoAventura[] = [
   },
   {
     id: "relicario-segurado",
+    categoria: "Símbolo Sagrado",
     nome: "Relicário (segurado)",
     peso: "1 kg",
     custo: "5 PO",

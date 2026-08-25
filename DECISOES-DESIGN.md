@@ -1532,3 +1532,75 @@ Osmar pediu explicitamente que os dois desaparecessem juntos.
 "mesmo toggle dos itens detalhados, fazer um pra peso de mochila".
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Loja (Entrega A5) — catálogo real agrupado por categoria, com estepper e Mod. de Ataque
+
+**Decisão:** a Loja do wizard trocou o catálogo fixo (4 itens de
+exemplo, "85 PO" fixo) por um catálogo real construído em
+`core/loja.ts` (`construirCatalogoLoja`), organizado nas mesmas
+categorias que o Osmar já tinha desenhado num protótipo anterior
+(prints trazidos por ele): Armas Simples/Marciais × Corpo a
+Corpo/À Distância, Armadura Leve/Média/Pesada, Escudos, Ferramentas,
+Instrumentos Musicais, Focos e Símbolos, Munição, Equipamento de
+Aventura — cada categoria em um acordeão colapsável (fechado por
+padrão), cada item com o layout de campos que faz sentido pra ele
+(arma mostra Dano/Propriedades/Mod. de Ataque; armadura mostra
+CA/Furtividade; ferramenta mostra Atributo; equipamento geral mostra
+Efeito).
+
+**Comprar/vender com estepper:** cada item tem um controle "− qtd +"
+— não é mais só "clicar pra adicionar". O carrinho
+(`WizardSelection.itens`) mudou de `string[]` (empurrava um nome por
+clique, sem jeito de tirar) pra `ItemCarrinho[]` (`{nome, quantidade}`),
+suportando aumentar/diminuir livremente. Botão "+" desabilita quando
+o ouro restante não cobre mais uma unidade.
+
+**Ouro em tempo real:** "restante" = `calcularOuroInicial(selection)`
+menos o custo de tudo no carrinho, recalculado a cada render — corrige
+o bug relatado pelo Osmar no protótipo antigo ("a build atual não está
+subtraindo o dinheiro"). Moeda: planilha não tem tabela de conversão
+(checado no Glossário de Regras) — usa a regra padrão oficial
+confirmada com o Osmar: 1 PO = 10 PP = 100 PC (`parseCustoPO` em
+`core/loja.ts`).
+
+**Mod. de Ataque por arma:** calculado de verdade (`calcularModAtaque`)
+— usa o maior entre mod. de Força/Destreza se a arma tiver a
+propriedade Acuidade, senão Destreza pra armas À Distância e Força pra
+Corpo a Corpo sem Acuidade; soma +2 de bônus de proficiência (nível 1)
+se a classe do personagem for proficiente na categoria (Simples/
+Marcial), usando `proficienciasArmaArmaduraClasse.ts` (dado real da
+planilha, já existia). O texto "(sem proficiência)" aparece quando não
+é. O checkbox "Filtrar por proficiência" usa a mesma fonte pra esconder
+armas/armaduras que a classe não é treinada a usar.
+
+**Duas coisas do protótipo antigo ficaram de fora por decisão
+explícita do Osmar** (ver PENDENCIAS.md): o desconto de Talento
+Artifista (20%) e o corte de itens acima de 205 PO.
+
+**Lacunas de dado fechadas pra viabilizar isso:**
+- `equipamentoAventura.ts` ganhou o campo `categoria`, reconstruído a
+  partir dos cabeçalhos de seção da planilha ("— Equipamento Geral —",
+  "— Foco Arcano —", "— Foco Druídico —", "— Munição —", "— Símbolo
+  Sagrado —") que tinham sido descartados na importação original.
+  Nenhum dado foi inventado — os cabeçalhos estavam na planilha o tempo
+  todo, só não tinham sido capturados.
+- `ferramentas.ts` ganhou preço/peso reais pra 5 itens "avulsos" que só
+  tinham descrição antes (Ferramentas de Ladrão, Kit de Disfarce, Kit
+  de Falsificação, Kit de Herbalismo, Kit de Veneno) — a planilha
+  sempre teve essas colunas preenchidas pra eles, só não tinham sido
+  importadas porque na época só serviam pro InfoChip da tela de
+  Línguas/Origem, não pra uma loja. Também ganhou o campo `atributo`
+  (Força/Destreza/etc.) em toda ferramenta, pro card "Atributo: X".
+  Itens genéricos "Varia" (ex: placeholder "Foco Arcano" que aponta pra
+  Cajado/Cetro/Cristal/Orbe/Varinha) não entram no catálogo vendável —
+  só as variantes concretas com preço próprio entram.
+
+**Contexto:** o Osmar mostrou prints de uma versão anterior da Loja
+(protótipo HTML separado) como referência de organização — a mesma
+sessão que trouxe a correção da capacidade de carga (achados de uma
+auditoria em chat separado). Antes de implementar, respondi com análise
+de viabilidade + perguntas (regra 6 do CLAUDE.md) sobre os 2 recursos
+fora do MVP e sobre sequenciar em partes — o Osmar escolheu fazer tudo
+de uma vez, sem os 2 recursos extras.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

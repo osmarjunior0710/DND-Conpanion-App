@@ -5,6 +5,7 @@
 // dependem deste formato.
 
 import type { Atributo } from '../data/wizardFixtures';
+import type { ItemCarrinho } from './loja';
 
 export interface WizardSelection {
   classe: string | null;
@@ -17,7 +18,7 @@ export interface WizardSelection {
   especie: string | null;
   linguas: string[];
   alinhamento: string | null;
-  itens: string[];
+  itens: ItemCarrinho[];
   atributos: Record<Atributo, number | null>;
   bonusModo: '111' | null;
   bonusEscolhas: Atributo[];

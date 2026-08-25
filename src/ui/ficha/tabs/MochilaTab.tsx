@@ -38,6 +38,7 @@ export default function MochilaTab({ itens, itensDetalhados, pesoAtivo, capacida
   const carga = calcularCargaTotal(itens);
   const itensOrigem = itens.filter((i) => i.origemDoItem === 'Origem');
   const itensClasse = itens.filter((i) => i.origemDoItem === 'Classe');
+  const itensLoja = itens.filter((i) => i.origemDoItem === 'Loja');
   const percentual = capacidadeMaxima ? Math.min(100, Math.round((carga.kg / capacidadeMaxima) * 100)) : 0;
   const sobrecarregado = capacidadeMaxima !== null && carga.kg > capacidadeMaxima;
 
@@ -88,12 +89,10 @@ export default function MochilaTab({ itens, itensDetalhados, pesoAtivo, capacida
       ))}
 
       <div className="section-title">Itens comprados na loja</div>
-      <div className="label">
-        a Loja ainda usa itens de exemplo, não o que você comprou de verdade — liga na próxima entrega (A5).
-      </div>
-      <div className="box" style={{ textAlign: 'center', padding: 12, marginTop: 12, fontSize: 13, color: 'var(--text-faint)' }}>
-        ＋ adicionar item (chega na entrega da Loja)
-      </div>
+      {itensLoja.length === 0 && <div className="label">Nenhum item comprado no wizard.</div>}
+      {itensLoja.map((it, i) => (
+        <Linha key={`${it.nome}-${i}`} item={it} itensDetalhados={itensDetalhados} pesoAtivo={pesoAtivo} />
+      ))}
     </>
   );
 }

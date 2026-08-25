@@ -45,15 +45,39 @@ wizard → Ficha, definido junto com o Osmar.
   detalhados" (descrição inline vs. popup com ⓘ), apagar personagem na
   Lista com confirmação por texto, banner de XP-trava removido.
 
-**O que falta (A5/A6, mesma ordem combinada):**
-- **A5:** Loja com ouro/preços reais (hoje `85 PO` fixo e lista de itens
-  fixa — `calcularOuroInicial` já existe em `core/`, só falta a tela
-  usar).
+**O que falta (A6, mesma ordem combinada):**
+- **A5 (feita):** Loja com catálogo real (Armas, Armaduras, Escudos,
+  Ferramentas, Instrumentos Musicais, Focos e Símbolos, Munição,
+  Equipamento de Aventura), agrupada por categoria em acordeão, com
+  estepper comprar/vender, ouro restante calculado de verdade (PO=10PP=
+  100PC) e Mod. de Ataque por arma (considerando proficiência da
+  classe). Filtro "só o que a classe usa bem" pra Armas/Armaduras. Ver
+  DECISOES-DESIGN.md.
 - **A6:** Combat mostrando Estilo de Luta escolhido; aba Magias
   refletindo "sem magia" pro Guerreiro (hoje mostra espaços de magia de
   exemplo, dado de Bruxo — a nota fixa sobre a regra de Bruxo/Magia de
   Pacto foi removida do Perfil por não se aplicar ao Guerreiro; volta
   como texto condicional por classe quando o Bruxo for importado).
+
+## Loja — 2 recursos adiados de propósito na Entrega A5
+
+**O que é:** ao planejar a Loja com o Osmar, dois recursos de uma versão
+anterior (protótipo separado) ficaram de fora por decisão explícita:
+- **Desconto de Talento (ex: Artífice, 20% em item não-mágico):**
+  depende de seleção de Talentos no wizard, que ainda não existe.
+- **Corte de itens acima de 205 PO** (máximo possível de ouro inicial,
+  somando Origem + Classe): a Loja hoje mostra o catálogo completo
+  sempre, sem esconder itens caros demais pra comprar na criação.
+
+**Por que foi adiado:** o primeiro depende de uma feature que não
+existe ainda (Talentos); o segundo é um "nice to have" que o ouro
+restante já cobre na prática (não dá pra comprar mesmo, só não some da
+lista).
+
+**O que falta pra resolver:** revisitar quando Talentos entrarem no
+wizard (desconto) ou se o Osmar sentir falta do corte por preço
+(filtro adicional, fácil de adicionar depois — só falta calcular o
+teto de ouro por Origem+Classe).
 
 **O que falta pra polir (não travou nenhuma das entregas, mas ficou
 pendente):**

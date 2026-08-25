@@ -1,0 +1,128 @@
+.ouroBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.ouroLabelCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ouroValor {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.ouroValorZerado {
+  color: var(--danger);
+}
+
+.filtroRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  margin-bottom: var(--space-3);
+}
+
+.filtroRow input {
+  width: 20px;
+  height: 20px;
+}
+
+.grupoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  min-height: var(--touch-target-min);
+}
+
+.grupoTitulo {
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.grupoContagem {
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+.itemCard {
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.itemNome {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: var(--space-2);
+}
+
+.itemLinha {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 3px 0;
+  font-size: 12px;
+  gap: var(--space-3);
+}
+
+.itemLinhaLabel {
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.itemLinhaValor {
+  text-align: right;
+}
+
+.modProficiente {
+  color: var(--good);
+}
+
+.modSemProficiencia {
+  color: var(--text-faint);
+}
+
+.stepperRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.stepperBtn {
+  width: 32px;
+  height: 32px;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--shape-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  background: var(--panel2);
+}
+
+.stepperBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.stepperQtd {
+  min-width: 32px;
+  text-align: center;
+  font-size: 15px;
+}
