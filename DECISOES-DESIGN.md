@@ -1720,3 +1720,49 @@ direto no chat; correção de escopo do próprio Osmar na mensagem
 seguinte.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Passagem de design geral: apertando o espaço em branco (escala de espaçamento + seta duplicada)
+
+**Decisão:** o Osmar achou que o app estava com margem/espaçamento
+grande demais no geral (screenshot da Loja como exemplo), fazendo o
+fluxo "parecer mil vezes maior" do que precisava. Dois ajustes, os
+dois valendo pra tudo (não só uma tela):
+- **Escala de espaçamento (`--space-4/5/6` no `index.css`)** apertada:
+  16→12px / 20→16px / 24→20px. `--space-1/2/3` (4/8/12px) ficaram como
+  estavam — já eram os valores mais finos, o excesso estava nos
+  maiores (padding de tela inteira, cabeçalho, cards). Como a maioria
+  dos componentes já usa os tokens em vez de pixel fixo, essa mudança
+  sozinha aperta a tela inteira (Home, Lista, Loja, Ficha etc.) sem
+  precisar editar arquivo por arquivo.
+- **Seta de voltar duplicada removida** — `WizardShell` e
+  `LevelUpShell` tinham `←` no cabeçalho **e** o pill "← Voltar" no
+  rodapé fazendo a mesma coisa. Removida a seta do cabeçalho nos dois,
+  mantido só o pill (mesmo padrão do "Avançar →" ao lado). `FichaShell`
+  e `CharacterList` não tinham essa duplicação (não têm pill de Voltar
+  no rodapé) — não mexidos.
+- **Cabeçalhos das 3 "shells" (Wizard/Ficha/LevelUp)** ganharam padding
+  mais apertado além do que a escala de tokens já dava sozinha
+  (`var(--space-3) var(--space-4) var(--space-2)` no lugar de
+  `var(--space-4) var(--space-5) var(--space-3)`), e o corpo rolável
+  (`.body`/`.tabContent`) foi de `var(--space-4) var(--space-5)` pra
+  `var(--space-3) var(--space-4)`.
+
+**Detalhe técnico que quase quebrou:** o cabeçalho flutuante da Loja
+(`.ouroBox`, `position: sticky`) usa um truque de margem negativa pra
+cobrir de ponta a ponta por cima do padding do `.body` — o valor da
+margem negativa precisa bater exatamente com o padding real do
+`.body`. Como o padding do `.body` mudou nesta entrega, a margem
+negativa do `.ouroBox` teve que ser atualizada junto (senão sobrava
+uma faixa sem cobrir nas bordas). Deixei um comentário no CSS
+avisando que os dois precisam mudar juntos se algum dos dois for
+mexido de novo.
+
+**Não mexido:** `--touch-target-min` (48px) ficou intocado — a
+economia de espaço é só em margem/padding visual, nenhuma área de
+toque encolheu.
+
+**Contexto:** pedido direto do Osmar depois de ver a Loja no celular;
+confirmado "faz pra tudo" quando perguntei se era só o wizard ou o
+app inteiro.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

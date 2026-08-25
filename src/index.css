@@ -26,13 +26,17 @@
   --shape-lg: 16px;
   --shape-full: 999px;
 
-  /* Spacing scale (grid de 4dp) */
+  /* Spacing scale (grid de 4dp) — space-4/5/6 apertados numa passagem
+     de design geral (pedido do Osmar: "tá tudo muito apertado [de
+     margem], isso deixa o fluxo parecendo mil vezes maior"). space-1/2/3
+     ficaram como estavam — já eram os valores mais finos, o excesso de
+     espaço em branco estava nos maiores (padding de tela/cabeçalho). */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
 
   /* Motion (duração + easing) */
   --motion-fast: 100ms;

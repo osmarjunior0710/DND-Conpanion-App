@@ -6,7 +6,7 @@
 }
 
 .header {
-  padding: var(--space-4) var(--space-5) var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-2);
   border-bottom: 1px dashed var(--line-soft);
   display: flex;
   align-items: center;
@@ -27,7 +27,7 @@
   flex: 1;
   overflow-y: auto;
   /* espaço pra pill flutuante de abas não tapar o fim do conteúdo */
-  padding: var(--space-4) var(--space-5) 92px;
+  padding: var(--space-3) var(--space-4) 84px;
 }
 
 /* Camada fixa no viewport, mesmo padrão das pills do wizard (ver

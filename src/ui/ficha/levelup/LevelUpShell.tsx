@@ -109,9 +109,6 @@ export default function LevelUpShell({ personagem, onFechar, onConfirmar }: Leve
     <div className={styles.screen}>
       <div className={styles.header}>
         <div className={styles.titleRow}>
-          <span className="back" onClick={voltar}>
-            ←
-          </span>
           <div className={styles.stepName}>
             Nível {novoNivel} — {nomesStep[step]}
           </div>

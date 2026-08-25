@@ -6,7 +6,7 @@
 }
 
 .header {
-  padding: var(--space-4) var(--space-5) var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-2);
   border-bottom: 1px dashed var(--line-soft);
 }
 
@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
 }
 
 .stepName {
@@ -45,9 +45,9 @@
 .body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-4);
   /* espaço pras pills flutuantes não taparem o fim do conteúdo */
-  padding-bottom: 96px;
+  padding-bottom: 88px;
   min-height: 0;
 }
 

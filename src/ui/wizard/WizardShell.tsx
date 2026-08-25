@@ -257,9 +257,6 @@ export default function WizardShell() {
     <div className={styles.screen}>
       <div className={styles.header}>
         <div className={styles.titleRow}>
-          <span className="back" onClick={wizPrev}>
-            ←
-          </span>
           <div className={styles.stepName}>{step.name}</div>
         </div>
         <div className={styles.progress}>
