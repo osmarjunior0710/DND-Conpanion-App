@@ -1971,3 +1971,40 @@ uso.
 Osmar ("vamos!").
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Cuidado de import — nome repetido na progressão não é característica nova (Indomável, Surto de Ação)
+
+**Decisão:** o livro sinaliza que um recurso escala com o nível de 3
+jeitos diferentes, inconsistentes entre si — importante pra qualquer
+classe futura, não só Guerreiro:
+1. **Repete o mesmo nome** em cada nível que muda (Indomável nos
+   níveis 9/13/17; Surto de Ação nos níveis 2/17) — o texto de regra
+   completo vive inteiro no nível mais baixo onde aparece; os níveis
+   seguintes só significam "+1 uso" ou "regra adicional", não uma
+   descrição nova.
+2. **Muda de nome a cada salto** (Ataque Extra → Dois Ataques Extras →
+   Três Ataques Extras) — são entradas de tabela distintas, mas ainda
+   é a mesma mecânica de base escalando.
+3. **Não aparece na coluna de Características, escala numa coluna
+   própria** (Recuperar Fôlego e Maestria em Arma têm colunas
+   numéricas dedicadas — a característica em si só é listada 1 vez).
+
+**Bug real causado por isso (corrigido):** `caracteristicasDoNivel`
+(`core/levelUp.ts`) exigia igualdade exata de nível contra
+`caracteristicasClasse.ts`, que só tem 1 entrada de descrição por
+característica (no nível em que ela aparece pela 1ª vez, padrão 1
+acima). Resultado: níveis 13/17 de Indomável mostravam "descrição
+ainda não importada" — reportado pelo Osmar ao testar B1. Corrigido
+pra buscar a entrada de **maior nível ≤ nível atual** com o mesmo
+nome, em vez de igualdade exata — resolve Indomável e qualquer outra
+característica no padrão 1 (inclusive Surto de Ação, que ainda não
+tem passo próprio no Level Up — entra na B4).
+
+**Recomendação de implementação (pra quando outras classes forem
+importadas):** ao ler a coluna "Características" da progressão, nunca
+tratar reaparição do mesmo nome como característica nova — o texto
+real de regra só existe 1 vez, no nível mais baixo.
+
+**Data/origem:** 2026-08, achado repassado pelo Osmar (registrado
+antes na decupagem do Guerreiro feita num chat paralelo) + bug real
+confirmado no teste do Osmar pós-B1.
