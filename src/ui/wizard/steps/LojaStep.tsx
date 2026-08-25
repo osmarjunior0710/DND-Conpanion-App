@@ -67,11 +67,11 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
       ? calcularModAtaque(selection, { grupo: item.grupo, propriedades: item.propriedades })
       : null;
 
+  const ehKit = item.grupo === 'kits';
+
   return (
     <div className={`box ${styles.itemCard} ${qtd > 0 ? styles.itemCardComprado : ''}`}>
-      <div className={styles.itemNome}>
-        <ItemComDescricao nome={item.nome} descricao={item.efeito ?? null} />
-      </div>
+      <div className={styles.itemNome}>{ehKit ? <ItemComDescricao nome={item.nome} descricao={item.efeito ?? null} /> : item.nome}</div>
 
       {item.dano && (
         <div className={styles.itemLinha}>
@@ -120,6 +120,7 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
         <span className={styles.itemLinhaLabel}>Custo</span>
         <span className={styles.itemLinhaValor}>{item.custoTexto}</span>
       </div>
+      {!ehKit && item.efeito && <div className={styles.itemEfeitoTexto}>{item.efeito}</div>}
 
       <div className={styles.stepperRow}>
         <button type="button" className={styles.stepperBtn} onClick={() => mudarQuantidade(-1)} disabled={qtd === 0}>

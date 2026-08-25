@@ -1705,14 +1705,18 @@ antes de qualquer compra) sem explicar o porquê:
   grupo genérico "Equipamento de Aventura" e ganham categoria própria
   na Loja, já que são um tipo de item bem diferente (um "combo" de
   vários itens dentro, não um item avulso).
-- **Nome do item ficou clicável em toda a Loja** (não só nesses dois
-  pontos novos) — trocado o parágrafo de descrição sempre visível
-  (`itemEfeitoTexto`, que só durou uma entrega) pelo mesmo padrão
-  sublinhado+popup do resto do app, via `ItemComDescricao`. Mais
-  consistente, e resolve outro pedido antigo (evitar texto grudado
-  perto de campos técnicos densos como Dano/Propriedades).
+- ~~Nome do item ficou clicável em toda a Loja~~ — **corrigido logo em
+  seguida**: o Osmar avisou que passou a informação errada. O
+  sublinhado+popup (`ItemComDescricao`) é só pro grupo **Kits** (ex:
+  "Kit de Aventureiro") — em todo o resto (Armas, Armaduras, Escudos,
+  Ferramentas, Instrumentos Musicais, Focos e Símbolos, Munição,
+  Equipamento de Aventura), o nome volta a ser texto simples e a
+  descrição volta a aparecer direto no card (`itemEfeitoTexto`), do
+  jeito que já estava antes desta rodada. `ItemCard` decide isso
+  checando `item.grupo === 'kits'`.
 
 **Contexto:** 2 prints do protótipo antigo mostrando a ideia + pedido
-direto no chat.
+direto no chat; correção de escopo do próprio Osmar na mensagem
+seguinte.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
