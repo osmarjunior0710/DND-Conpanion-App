@@ -1,7 +1,9 @@
 import type { AtributoFinal, ExplicacaoCalculo, PericiaFinal } from '../../../core/calculoPersonagem';
 import type { Arma } from '../../../data/rulesets/dnd2024/armas';
+import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { useRoll } from '../../roll/RollContext';
 import InfoValor from '../../components/InfoValor';
+import ItemComDescricao from '../../components/ItemComDescricao';
 import TrocarArmaMaestria from '../../components/TrocarArmaMaestria';
 import styles from './PerfilTab.module.css';
 
@@ -141,21 +143,22 @@ export default function PerfilTab({
           {maestriaArma.map((nome) => {
             const arma = armasParaMaestria.find((a) => a.nome === nome);
             return (
-              <div key={nome} className={styles.skillRow} style={{ cursor: 'default' }}>
-                <span>
-                  {nome}
-                  {arma && (
-                    <span className="label" style={{ marginLeft: 6 }}>
-                      ({arma.dano} · {arma.maestria})
-                    </span>
-                  )}
-                </span>
-                <TrocarArmaMaestria
-                  armaAtual={nome}
-                  todasAsArmas={armasParaMaestria}
-                  jaEscolhidas={maestriaArma}
-                  onTrocar={(nova) => onTrocarArmaMaestria(nome, nova)}
-                />
+              <div key={nome} className={styles.maestriaRow}>
+                <div className={styles.maestriaTop}>
+                  <span>{nome}</span>
+                  <TrocarArmaMaestria
+                    armaAtual={nome}
+                    todasAsArmas={armasParaMaestria}
+                    jaEscolhidas={maestriaArma}
+                    onTrocar={(nova) => onTrocarArmaMaestria(nome, nova)}
+                  />
+                </div>
+                {arma && (
+                  <div className={styles.maestriaDetalhe}>
+                    {arma.dano} ·{' '}
+                    <ItemComDescricao nome={arma.maestria} descricao={buscarDescricaoMaestria(arma.maestria)} />
+                  </div>
+                )}
               </div>
             );
           })}

@@ -2048,3 +2048,25 @@ não um componente do zero.
 pelo Osmar ("vamos seguir").
 
 **Data/origem:** 2026-08.
+
+## Guerreiro B2 (ajuste) — linha de Maestria em Arma quebrada em 2 + popup na propriedade
+
+**Decisão:** cada arma na seção "Maestria em Arma" (aba Perfil) agora
+mostra o nome numa linha e "dano · maestria" numa linha abaixo — antes
+vinha tudo junto na mesma linha. A própria palavra da propriedade de
+maestria (Ágil, Derrubar, Drenar...) virou termo sublinhado clicável
+(`ItemComDescricao`, padrão já usado no resto do app) que abre popup
+com o efeito completo da propriedade.
+
+**Novo dado:** `data/rulesets/dnd2024/propriedadesMaestria.ts`,
+importado da aba "Propriedades de Maestria" da planilha mestra (8
+propriedades: Afligir, Derrubar, Drenar, Empurrar, Garantido,
+Lentidão, Trespassar, Ágil — texto de regra completo de cada uma).
+Essa aba já existia na planilha desde antes, só não tinha sido
+importada ainda porque nada no app precisava dela até esse popup.
+
+**Contexto:** pedido direto do Osmar depois de ver a seção de B2 na
+Ficha — queria a hierarquia visual mais clara e a explicação da
+maestria acessível sem precisar decorar o que cada termo significa.
+
+**Data/origem:** 2026-08.
