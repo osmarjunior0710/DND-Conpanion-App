@@ -1420,24 +1420,25 @@ dia de cada vez) — faz sentido pra Mochila já entregar isso "pronto pra
 jogar", não como uma caixa fechada.
 
 **Como foi feito:** tabela `DESAGREGACAO_KITS` em `core/mochila.ts`,
-verificada à mão contra o texto oficial "Contém: ..." de cada kit na
-planilha (aba Equipamento de Aventura) — não é regex/parser automático
-do texto livre, porque os nomes dentro da descrição às vezes não batem
-exatamente com o nome do item de verdade (ex: a descrição do kit diz
-"Cantil", mas o item de verdade se chama "Cantil (cheio)"; teria dado
-nome errado/peso não encontrado se eu tivesse tentado parsear
-automático). Só **Kit de Explorador de Masmorras** está verificado —
-é o único que o Guerreiro usa.
+verificada à mão contra a aba **"Kits — Conteúdo"** da planilha mestra
+(lista oficial por kit, coluna "Itens Incluídos" — mais confiável que
+o texto livre "Contém:" que aparecia solto em outras abas), e contra o
+nome exato de cada item em `equipamentoAventura.ts` (alguns nomes não
+batem, ex: a lista da planilha diz "Cantil", mas o item de verdade se
+chama "Cantil (cheio)"; "Fantasias"/"Roupas Finas" viram "Roupas,
+Fantasia"/"Roupas, Finas").
 
-**Pendência:** os outros 6 kits com "Contém:" na planilha (Kit de
-Artista/Assaltante/Aventureiro/Diplomata/Erudito/Sacerdote) ainda não
-foram desagregados — entram conforme as classes/origens que os usam
-forem sendo importadas, sempre verificando nome a nome contra
-`equipamentoAventura.ts`, não advinhando. Kit de Curandeiro e Kit de
-Escalada NÃO se desagregam — são item único de uso próprio (10 usos, ou
-uma ferramenta de escalada), não um saco de itens soltos.
+Todos os **7 kits que têm lista de itens** na aba "Kits — Conteúdo"
+estão desagregados: Explorador de Masmorras, Artista, Assaltante,
+Aventureiro, Diplomata, Erudito, Sacerdote. Kit de Curandeiro e Kit de
+Escalada NÃO se desagregam — confirmado pela mesma aba, que não lista
+itens pra eles (são item único de uso próprio: 10 usos, ou uma
+ferramenta de escalada, não um saco de itens soltos).
 
-**Data/origem:** 2026-08, pedido direto do Osmar.
+**Data/origem:** 2026-08, pedido direto do Osmar. Atualizado 2026-08,
+os 6 kits restantes desagregados após localizar a aba "Kits — Conteúdo"
+na planilha mestra (achado de uma auditoria em chat separado com apoio
+do Claude, verificado direto na planilha antes de confiar).
 
 ## Ficha não distingue mais "editável sem XP" vs "travada com XP"
 
@@ -1474,27 +1475,47 @@ autenticação ou de um segundo passo complexo.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
 
-## Capacidade máxima de carga — exceção documentada, Força × 7,5 kg
+## Capacidade máxima de carga — confirmada na planilha, Força × 7 kg (Pequeno/Médio)
 
 **Decisão:** a lacuna de dado "fórmula exata de capacidade de carga"
-(`CLAUDE.md` seção 8) foi resolvida usando a regra oficial do Livro do
-Jogador (D&D 5e 2024) direto, sem esperar a planilha ganhar essa
-coluna: **capacidade = Força × 15 libras**. Como o projeto já converte
-todo peso da planilha pra kg usando libra × 0,5 (visível nos itens
-importados, ex: Cantil 5 lb → 2,5 kg), aplicamos a mesma conversão
-aqui pra ficar consistente: Força × 15 × 0,5 = **Força × 7,5 kg**.
-Implementado em `core/mochila.ts` (`calcularCapacidadeMaxima`,
-`explicarCapacidadeMaxima`), com o mesmo padrão de "exceção
-documentada" já usado em `classesProficienciasIniciais.ts`.
+(`CLAUDE.md` seção 8) foi resolvida em duas etapas. Primeiro, usei a
+regra oficial de memória (Força × 15 libras → Força × 7,5 kg na
+conversão do projeto) com aprovação do Osmar, sem esperar a planilha —
+mas depois localizei a fórmula de verdade na própria planilha mestra,
+aba **"Glossário de Regras"**, termo "Capacidade de Carga", que tem a
+tabela completa oficial (Livro do Jogador D&D 5e 2024):
 
-**Contexto:** pedido direto do Osmar pra fazer a barra de peso da
-Mochila — perguntei se preferia esperar a planilha ganhar a coluna ou
-usar a fórmula oficial que eu já sabia de cor, e ele escolheu usar a
-fórmula agora. Deixa de ser lacuna de dado a partir desta entrega —
-próximo passo é atualizar o `CLAUDE.md` seção 8 removendo esse item da
-lista de lacunas conhecidas.
+| Tamanho | Carregar | Arrastar/Empurrar/Levantar |
+|---|---|---|
+| Minúsculo | For × 3,5 kg | For × 7 kg |
+| Pequeno/Médio | For × 7 kg | For × 13,5 kg |
+| Grande | For × 13,5 kg | For × 27 kg |
+| Enorme | For × 27 kg | For × 54,5 kg |
+| Colossal | For × 54,5 kg | For × 109 kg |
 
-**Data/origem:** 2026-08, pedido direto do Osmar.
+O multiplicador varia por **Tamanho da criatura**, não só Força — meu
+valor de memória (×7,5) estava errado (era ×7 pra Pequeno/Médio).
+Corrigido em `core/mochila.ts`
+(`KG_POR_PONTO_DE_FORCA_PEQUENO_MEDIO = 7`).
+
+**Por que não lê o Tamanho de verdade (ainda):** toda espécie jogável
+hoje (`data/rulesets/dnd2024/especies.ts`) é Pequeno ou Médio, e as
+duas linhas da tabela têm o mesmo multiplicador — então o código não
+precisa ler o campo Tamanho da espécie pra dar a resposta certa. Só
+vai precisar se uma espécie Grande for suportada, ou pelo traço "Porte
+Poderoso" (Golias — conta um tamanho a mais pra capacidade de carga,
+visto na aba Espécies mas ainda não implementado, é uma exceção de
+personagem específico, não a regra geral). Registrado como pendência
+menor, não trava nada hoje.
+
+**Contexto:** o valor ×7,5 tinha sido aprovado pelo Osmar como "fórmula
+que eu já sei de cor" antes de eu checar a planilha — corrigido depois
+de localizar o Glossário oficial numa auditoria em chat separado
+(achado trazido pelo Osmar), sempre reconferido direto na planilha
+antes de confiar, nunca só copiado do chat paralelo.
+
+**Data/origem:** 2026-08, pedido direto do Osmar (primeira versão) e
+correção 2026-08 após checar a planilha.
 
 ## Mochila ganha 2º toggle no menu do avatar — "Peso da Mochila" (barra de progresso)
 

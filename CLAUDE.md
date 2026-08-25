@@ -103,6 +103,12 @@ sob demanda:
 - Confirmar se número de idiomas concedidos é sempre 2 ou varia por
   Origem/Espécie — **resolvido:** não varia, planilha não tem coluna de
   idioma em Origem/Espécie. Ver `DECISOES-DESIGN.md`.
+- Idioma extra concedido por característica de Classe nível 1 (além dos
+  2+Comum da Origem): confirmado que Druida (Druídico, fixo) e Ladino
+  (Gíria dos Ladrões + 1 à escolha) concedem — ainda não implementado
+  na Ficha/wizard (só a tela de Línguas da Origem existe hoje). As
+  outras 10 classes ainda não foram auditadas linha a linha na aba
+  "Características de Classe". Ver `PENDENCIAS.md`.
 - **~24 células de "Descrição Completa" (Características de Classe e
   Subclasses) têm conteúdo duplicado de outra aba colado dentro** — ver
   `auditoria-planilha-mestra.md` (arquivo do Osmar, não faz parte do
@@ -122,9 +128,11 @@ Personagem), removido.
 livros pelo Osmar, nova aba "Proficiências de Classe" na planilha,
 removido. Ver `DECISOES-DESIGN.md`.
 ~~Fórmula exata de capacidade de carga (Força × multiplicador)~~ —
-resolvida usando a regra oficial do livro (Força × 15 libras = Força ×
-7,5 kg na conversão do projeto), sem esperar a planilha ganhar essa
-coluna — decisão explícita do Osmar. Ver `DECISOES-DESIGN.md`.
+confirmada na planilha mestra, aba "Glossário de Regras" (termo
+"Capacidade de Carga"): Força × 7 kg pra Tamanho Pequeno/Médio (única
+combinação usada pelas espécies jogáveis do projeto hoje). Corrige o
+valor anterior (Força × 7,5 kg), que tinha sido estimado de memória
+antes da planilha ser conferida. Ver `DECISOES-DESIGN.md`.
 ~~Popup de descrição de Armas e Armaduras~~ — planilha ganhou coluna
 "Descrição" nas duas abas, importado e ligado. Removido.
 ~~Progressão de círculo dos meio-conjuradores (Guardião/Paladino)~~ —

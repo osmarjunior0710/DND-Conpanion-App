@@ -9,21 +9,24 @@ import { classeDaSelecao, type ExplicacaoCalculo } from './calculoPersonagem';
 import { valorFinalAtributo, type WizardSelection } from './personagem';
 
 /**
- * Capacidade máxima de carga — EXCEÇÃO DOCUMENTADA (mesmo padrão de
- * `classesProficienciasIniciais.ts`): a planilha não tem essa coluna
- * (lacuna listada no CLAUDE.md seção 8), então usamos a regra oficial
- * do Livro do Jogador (D&D 5e 2024) direto: capacidade = Força × 15
- * libras. O projeto já converte todo peso pra kg usando libra × 0,5
- * (visível nos pesos importados da planilha, ex: Cantil 5 lb → 2,5 kg),
- * então aplicamos a mesma conversão aqui pra ficar consistente:
- * Força × 15 × 0,5 = Força × 7,5 kg.
+ * Capacidade máxima de carga — confirmada na planilha mestra, aba
+ * "Glossário de Regras", termo "Capacidade de Carga": a tabela oficial
+ * (Livro do Jogador D&D 5e 2024) varia o multiplicador por Tamanho da
+ * criatura — Minúsculo For×3,5kg; Pequeno/Médio For×7kg; Grande
+ * For×13,5kg; Enorme For×27kg; Colossal For×54,5kg. Toda espécie
+ * jogável deste projeto (`data/rulesets/dnd2024/especies.ts`) é
+ * Pequeno ou Médio, e as duas usam o mesmo multiplicador (×7), então
+ * a fórmula abaixo não precisa ler o Tamanho da espécie ainda — só
+ * precisará se uma espécie Grande (ou o traço "Porte Poderoso", que
+ * conta um tamanho a mais) for suportada no futuro. Ver
+ * DECISOES-DESIGN.md.
  */
-const KG_POR_PONTO_DE_FORCA = 7.5;
+const KG_POR_PONTO_DE_FORCA_PEQUENO_MEDIO = 7;
 
 export function calcularCapacidadeMaxima(selection: WizardSelection): number | null {
   const forValor = valorFinalAtributo(selection, 'FOR');
   if (forValor === null) return null;
-  return Math.round(forValor * KG_POR_PONTO_DE_FORCA);
+  return Math.round(forValor * KG_POR_PONTO_DE_FORCA_PEQUENO_MEDIO);
 }
 
 export function explicarCapacidadeMaxima(selection: WizardSelection): ExplicacaoCalculo {
@@ -32,7 +35,7 @@ export function explicarCapacidadeMaxima(selection: WizardSelection): Explicacao
   return {
     linhas: [
       { label: 'Força', valor: `${forValor}` },
-      { label: `× ${KG_POR_PONTO_DE_FORCA} kg (regra oficial: Força × 15 libras)`, valor: '' },
+      { label: `× ${KG_POR_PONTO_DE_FORCA_PEQUENO_MEDIO} kg (Tamanho Pequeno/Médio, tabela oficial)`, valor: '' },
     ],
     total: { label: 'Capacidade máxima de carga', valor: `${calcularCapacidadeMaxima(selection)} kg` },
   };
@@ -51,21 +54,21 @@ const PLACEHOLDERS_FERRAMENTA = ['Instrumento Musical', 'Ferramentas de Artesão
 
 /**
  * Kits de Equipamento de Aventura (ex: "Kit de Explorador de
- * Masmorras") vêm como 1 item na planilha, mas o texto "Contém: ..."
- * da própria descrição lista os itens de verdade que estão dentro —
- * o jogador consome cada um separado (a Tocha acaba, a Corda pode ser
- * cortada), não faz sentido a Mochila mostrar "1× Kit" depois que a
- * compra já foi feita. Desagregado à mão, verificado item a item
- * contra o nome exato de cada um em equipamentoAventura.ts (alguns têm
- * nome diferente do texto da descrição, ex: "Cantil" na descrição é
- * "Cantil (cheio)" como item de verdade).
+ * Masmorras") vêm como 1 item na planilha, mas na verdade são um saco
+ * de itens de verdade — o jogador consome cada um separado (a Tocha
+ * acaba, a Corda pode ser cortada), não faz sentido a Mochila mostrar
+ * "1× Kit" depois que a compra já foi feita. Desagregado item a item
+ * contra a aba "Kits — Conteúdo" da planilha mestra (lista oficial,
+ * não o texto solto de "Contém:" de outras abas) e contra o nome exato
+ * de cada item em equipamentoAventura.ts (alguns têm nome diferente do
+ * texto da planilha, ex: "Cantil" na lista é "Cantil (cheio)" como
+ * item de verdade, "Fantasias"/"Roupas Finas" são "Roupas, Fantasia"/
+ * "Roupas, Finas").
  *
- * Só "Kit de Explorador de Masmorras" está verificado (é o único que o
- * Guerreiro usa). Os outros 6 kits com "Contém:" na planilha
- * (Artista/Assaltante/Aventureiro/Diplomata/Erudito/Sacerdote) ainda
- * não foram desagregados — ver PENDENCIAS.md. Kit de Curandeiro e Kit
- * de Escalada NÃO são desagregáveis (são item único de uso próprio,
- * não um saco de itens).
+ * Todos os 7 kits com lista de itens na aba "Kits — Conteúdo" estão
+ * verificados. Kit de Curandeiro e Kit de Escalada NÃO são
+ * desagregáveis (são item único de uso próprio, não um saco de itens)
+ * — confirmado pela mesma aba, que não lista itens pra eles.
  */
 const DESAGREGACAO_KITS: Record<string, { nome: string; quantidade: number }[]> = {
   'Kit de Explorador de Masmorras': [
@@ -78,6 +81,73 @@ const DESAGREGACAO_KITS: Record<string, { nome: string; quantidade: number }[]> 
     { nome: 'Pé de Cabra', quantidade: 1 },
     { nome: 'Rações', quantidade: 10 },
     { nome: 'Tocha', quantidade: 10 },
+  ],
+  'Kit de Artista': [
+    { nome: 'Caixa para Fogo', quantidade: 1 },
+    { nome: 'Cantil (cheio)', quantidade: 1 },
+    { nome: 'Espelho', quantidade: 1 },
+    { nome: 'Roupas, Fantasia', quantidade: 3 },
+    { nome: 'Lanterna Foca-facho', quantidade: 1 },
+    { nome: 'Mochila', quantidade: 1 },
+    { nome: 'Óleo', quantidade: 8 },
+    { nome: 'Rações', quantidade: 9 },
+    { nome: 'Saco de Dormir', quantidade: 1 },
+    { nome: 'Sino', quantidade: 1 },
+  ],
+  'Kit de Assaltante': [
+    { nome: 'Caixa para Fogo', quantidade: 1 },
+    { nome: 'Cantil (cheio)', quantidade: 1 },
+    { nome: 'Corda', quantidade: 1 },
+    { nome: 'Esferas de Metal', quantidade: 1 },
+    { nome: 'Lanterna Coberta', quantidade: 1 },
+    { nome: 'Mochila', quantidade: 1 },
+    { nome: 'Óleo', quantidade: 7 },
+    { nome: 'Pé de Cabra', quantidade: 1 },
+    { nome: 'Rações', quantidade: 5 },
+    { nome: 'Sino', quantidade: 1 },
+    { nome: 'Vela', quantidade: 10 },
+  ],
+  'Kit de Aventureiro': [
+    { nome: 'Caixa para Fogo', quantidade: 1 },
+    { nome: 'Cantil (cheio)', quantidade: 1 },
+    { nome: 'Corda', quantidade: 1 },
+    { nome: 'Mochila', quantidade: 1 },
+    { nome: 'Óleo', quantidade: 2 },
+    { nome: 'Rações', quantidade: 10 },
+    { nome: 'Saco de Dormir', quantidade: 1 },
+    { nome: 'Tocha', quantidade: 10 },
+  ],
+  'Kit de Diplomata': [
+    { nome: 'Baú', quantidade: 1 },
+    { nome: 'Caixa para Fogo', quantidade: 1 },
+    { nome: 'Caneta Tinteiro', quantidade: 5 },
+    { nome: 'Estojo, Mapa ou Pergaminho', quantidade: 2 },
+    { nome: 'Lâmpada', quantidade: 1 },
+    { nome: 'Óleo', quantidade: 4 },
+    { nome: 'Perfume', quantidade: 1 },
+    { nome: 'Papel', quantidade: 5 },
+    { nome: 'Pergaminho', quantidade: 5 },
+    { nome: 'Roupas, Finas', quantidade: 1 },
+    { nome: 'Tinta', quantidade: 1 },
+  ],
+  'Kit de Erudito': [
+    { nome: 'Caixa para Fogo', quantidade: 1 },
+    { nome: 'Caneta Tinteiro', quantidade: 1 },
+    { nome: 'Lâmpada', quantidade: 1 },
+    { nome: 'Livro', quantidade: 1 },
+    { nome: 'Mochila', quantidade: 1 },
+    { nome: 'Óleo', quantidade: 10 },
+    { nome: 'Pergaminho', quantidade: 10 },
+    { nome: 'Tinta', quantidade: 1 },
+  ],
+  'Kit de Sacerdote': [
+    { nome: 'Água Benta', quantidade: 1 },
+    { nome: 'Caixa para Fogo', quantidade: 1 },
+    { nome: 'Cobertor', quantidade: 1 },
+    { nome: 'Lâmpada', quantidade: 1 },
+    { nome: 'Mochila', quantidade: 1 },
+    { nome: 'Rações', quantidade: 7 },
+    { nome: 'Túnica', quantidade: 1 },
   ],
 };
 

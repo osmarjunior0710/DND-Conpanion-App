@@ -357,3 +357,32 @@ abrir a Ficha o toggle volta pro padrão), decidir se vale a pena
 persistir por personagem ou globalmente pro app inteiro, e implementar
 com uma chave de `localStorage` — não precisa de interface trocável
 como o armazenamento de personagem, é só preferência de UI.
+
+## Idioma extra concedido por característica de Classe nível 1 — não implementado
+
+**O que é:** além do "Comum + 2 à escolha" da tela de Línguas (vem da
+Origem, já implementado e correto, ver `DECISOES-DESIGN.md`), algumas
+classes concedem idioma extra por característica de nível 1. Confirmado
+direto na aba "Características de Classe" da planilha mestra:
+- **Druida:** característica "Idioma Druídico" — sempre concede
+  Druídico (fixo, sem escolha).
+- **Ladino:** característica "Gíria do Ladrão" — concede Gíria dos
+  Ladrões (fixo) + 1 idioma à escolha do jogador.
+
+As outras 10 classes (Bárbaro, Bardo, Bruxo, Clérigo, Feiticeiro,
+Guardião, Guerreiro, Mago, Monge, Paladino) ainda não foram auditadas
+linha a linha pra confirmar se concedem algo parecido — é a mesma
+auditoria pendente já listada no `CLAUDE.md` seção 8.
+
+**Por que foi adiado:** achado numa auditoria em chat separado com
+apoio do Claude, verificado direto na planilha antes de confiar (não
+copiado do chat paralelo às cegas). Ainda não afeta o Guerreiro (classe
+piloto do fluxo wizard→Ficha) — Guerreiro não tem característica desse
+tipo em nível 1 — então não trava a entrega atual.
+
+**O que falta pra resolver:** auditar as outras 10 classes na aba
+"Características de Classe" (nível 1 de cada), e decidir onde esse
+idioma extra aparece na Ficha/wizard (soma na mesma lista de idiomas da
+Origem? aparece separado, ligado à característica de classe?) — é uma
+decisão de UI pequena, mas precisa de confirmação do Osmar antes de
+implementar (regra 6 do `CLAUDE.md`).
