@@ -9,7 +9,9 @@ import {
   type LojaItem,
 } from '../../../core/loja';
 import { calcularOuroInicial } from '../../../core/calculoPersonagem';
-import { calcularCapacidadeMaxima, calcularCargaTotal, calcularItensIniciais } from '../../../core/mochila';
+import { calcularCapacidadeMaxima, calcularCargaTotal, calcularItensIniciais, pesoDaLinha, type ItemMochila } from '../../../core/mochila';
+import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
+import ItemComDescricao from '../../components/ItemComDescricao';
 import type { StepProps } from './StepProps';
 import styles from './LojaStep.module.css';
 
@@ -67,7 +69,9 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
 
   return (
     <div className={`box ${styles.itemCard} ${qtd > 0 ? styles.itemCardComprado : ''}`}>
-      <div className={styles.itemNome}>{item.nome}</div>
+      <div className={styles.itemNome}>
+        <ItemComDescricao nome={item.nome} descricao={item.efeito ?? null} />
+      </div>
 
       {item.dano && (
         <div className={styles.itemLinha}>
@@ -116,9 +120,6 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
         <span className={styles.itemLinhaLabel}>Custo</span>
         <span className={styles.itemLinhaValor}>{item.custoTexto}</span>
       </div>
-      {item.efeito && (
-        <div className={styles.itemEfeitoTexto}>{item.efeito}</div>
-      )}
 
       <div className={styles.stepperRow}>
         <button type="button" className={styles.stepperBtn} onClick={() => mudarQuantidade(-1)} disabled={qtd === 0}>
@@ -129,6 +130,39 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
           +
         </button>
       </div>
+    </div>
+  );
+}
+
+/** Resumo do que a Origem/Classe já concedeu de graça (antes de
+ * comprar qualquer coisa na Loja) — pra explicar por que a barra de
+ * peso do topo já não começa vazia. Só aparece se tiver item (some
+ * sozinho se o jogador escolheu "só ouro" na Origem/Classe). */
+function EquipadoResumo({ titulo, itens }: { titulo: string; itens: ItemMochila[] }) {
+  const [aberto, setAberto] = useState(false);
+  if (itens.length === 0) return null;
+
+  return (
+    <div className="box-solid" style={{ marginBottom: 8 }}>
+      <div className={styles.grupoHeader} onClick={() => setAberto(!aberto)}>
+        <span className={styles.grupoTitulo}>{titulo}</span>
+        <span className={styles.grupoContagem}>
+          ({itens.length} {itens.length === 1 ? 'item' : 'itens'}) {aberto ? '▾' : '▸'}
+        </span>
+      </div>
+      {aberto &&
+        itens.map((it, i) => {
+          const descricao = buscarDescricaoItem(it.nome);
+          const rotulo = it.quantidade > 1 ? `${it.quantidade}× ${it.nome}` : it.nome;
+          return (
+            <div key={`${it.nome}-${i}`} className={styles.equipadoLinha}>
+              <span>
+                <ItemComDescricao nome={it.nome} descricao={descricao} rotulo={rotulo} />
+              </span>
+              <span className={styles.equipadoPeso}>{pesoDaLinha(it)}</span>
+            </div>
+          );
+        })}
     </div>
   );
 }
@@ -184,6 +218,8 @@ export default function LojaStep({ selection, update }: StepProps) {
   const carga = calcularCargaTotal(itensMochila);
   const capacidadeMaxima = calcularCapacidadeMaxima(selection);
   const percentualCarga = capacidadeMaxima ? Math.min(100, Math.round((carga.kg / capacidadeMaxima) * 100)) : 0;
+  const itensOrigem = itensMochila.filter((i) => i.origemDoItem === 'Origem');
+  const itensClasse = itensMochila.filter((i) => i.origemDoItem === 'Classe');
 
   return (
     <>
@@ -213,6 +249,14 @@ export default function LojaStep({ selection, update }: StepProps) {
         <input type="checkbox" checked={soProficiente} onChange={(e) => setSoProficiente(e.target.checked)} />
         <span style={{ fontSize: 13 }}>Filtrar por proficiência (mostra só armas e armaduras que sua classe usa bem)</span>
       </label>
+
+      {(itensOrigem.length > 0 || itensClasse.length > 0) && (
+        <>
+          <div className="section-title">Você já está levando</div>
+          <EquipadoResumo titulo="Equipado (Origem)" itens={itensOrigem} />
+          <EquipadoResumo titulo="Equipado (Classe)" itens={itensClasse} />
+        </>
+      )}
 
       <div className="section-title">Itens à venda</div>
       {catalogo.map((grupo) => (

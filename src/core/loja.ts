@@ -32,6 +32,7 @@ export type LojaGrupoId =
   | 'instrumentos-musicais'
   | 'focos-simbolos'
   | 'municao'
+  | 'kits'
   | 'equipamento-aventura';
 
 export interface LojaItem {
@@ -89,9 +90,10 @@ function grupoArmadura(categoria: string): LojaGrupoId | null {
   return null;
 }
 
-function grupoEquipamentoAventura(categoria: string): LojaGrupoId {
+function grupoEquipamentoAventura(categoria: string, nome: string): LojaGrupoId {
   if (categoria === 'Munição') return 'municao';
   if (categoria === 'Foco Arcano' || categoria === 'Foco Druídico' || categoria === 'Símbolo Sagrado') return 'focos-simbolos';
+  if (nome.startsWith('Kit de ')) return 'kits';
   return 'equipamento-aventura';
 }
 
@@ -108,6 +110,7 @@ export const GRUPOS_LOJA: { id: LojaGrupoId; titulo: string }[] = [
   { id: 'instrumentos-musicais', titulo: 'Instrumentos Musicais' },
   { id: 'focos-simbolos', titulo: 'Focos e Símbolos' },
   { id: 'municao', titulo: 'Munição' },
+  { id: 'kits', titulo: 'Kits' },
   { id: 'equipamento-aventura', titulo: 'Equipamento de Aventura' },
 ];
 
@@ -152,7 +155,7 @@ export function construirCatalogoLoja(): GrupoLoja[] {
   }
 
   for (const it of equipamentoAventura) {
-    const grupo = grupoEquipamentoAventura(it.categoria);
+    const grupo = grupoEquipamentoAventura(it.categoria, it.nome);
     add(grupo, {
       nome: it.nome,
       grupo,

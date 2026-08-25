@@ -1684,3 +1684,35 @@ mudei o dado — reportado pro Osmar decidir se é erro da planilha (pra
 ele corrigir lá) ou se o print antigo é que estava errado.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Loja — terceira rodada: "Você já está levando" (Origem/Classe) e grupo Kits com popup
+
+**Decisão:** dois ajustes pedidos depois do Osmar notar que a barra de
+peso do topo já não começava vazia (Origem+Classe já concedem itens
+antes de qualquer compra) sem explicar o porquê:
+- **"Você já está levando"** — duas caixas em acordeão, "Equipado
+  (Origem)" e "Equipado (Classe)", logo abaixo do checkbox de filtro e
+  antes de "Itens à venda". Reaproveita `calcularItensIniciais(selection)`
+  (já filtra por `origemDoItem`) — mesma fonte de dado que já monta a
+  barra de peso do topo e a Mochila da Ficha, nada duplicado. Cada
+  caixa só aparece se tiver item (some sozinha se a Origem/Classe
+  escolheu "só ouro"). Itens com descrição na planilha ficam
+  sublinhados e clicáveis (mesmo componente `ItemComDescricao` já
+  usado na Mochila).
+- **Grupo "Kits"** — itens cujo nome começa com "Kit de " (Kit de
+  Artista, Assaltante, Aventureiro, Curandeiro, Diplomata, Erudito,
+  Escalada, Explorador de Masmorras, Sacerdote — 9 no total) saem do
+  grupo genérico "Equipamento de Aventura" e ganham categoria própria
+  na Loja, já que são um tipo de item bem diferente (um "combo" de
+  vários itens dentro, não um item avulso).
+- **Nome do item ficou clicável em toda a Loja** (não só nesses dois
+  pontos novos) — trocado o parágrafo de descrição sempre visível
+  (`itemEfeitoTexto`, que só durou uma entrega) pelo mesmo padrão
+  sublinhado+popup do resto do app, via `ItemComDescricao`. Mais
+  consistente, e resolve outro pedido antigo (evitar texto grudado
+  perto de campos técnicos densos como Dano/Propriedades).
+
+**Contexto:** 2 prints do protótipo antigo mostrando a ideia + pedido
+direto no chat.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.
