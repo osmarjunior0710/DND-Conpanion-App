@@ -85,13 +85,63 @@ pendente):**
   sobe de nível ou toma dano na Ficha — só muda na sessão aberta. Só
   importa de verdade quando a ficha for algo que se volta a abrir depois
   de fechar o navegador esperando ver o estado exato de antes.
-- **Peso de item faltando na planilha em alguns casos** (ex: "Flecha"
-  avulsa — só "Aljava" e "Flechas (20, Aljava)" têm peso cadastrado, não
-  o item "Flecha" isolado que o wizard usa; "Roupas de Viagem" também
-  não tem peso). A Mochila já trata isso sem quebrar (mostra "sem peso
-  cadastrado" e avisa quantos itens ficaram de fora da soma de carga),
-  mas o número de carga fica sub-contado até o Osmar completar essas
-  linhas na planilha.
+## Itens "sem peso cadastrado" na Mochila/Loja — auditoria completa (2026-08)
+
+**O que é:** o Osmar notou "Balde de Ferro" sem peso na Mochila e pediu
+uma varredura completa de todo item que a Mochila/Loja possam mostrar
+"sem peso cadastrado" — feita rodando um script contra os dados reais
+do app (`buscarPesoItem` + todos os catálogos). Achado: a maioria **não
+é lacuna da planilha** — é nome digitado diferente entre
+`origens.ts`/`classesProficienciasIniciais.ts` (onde o item foi
+concedido) e o nome exato do item no catálogo (`equipamentoAventura.ts`
+etc.), que é quem tem o peso cadastrado. A busca de peso é por nome
+exato (case-insensitive), então um nome levemente diferente já falha
+silenciosamente — a Mochila trata isso sem quebrar (mostra "sem peso
+cadastrado" e avisa quantos itens ficaram de fora da soma), mas o
+número de carga fica sub-contado até corrigir.
+
+**Prováveis bugs de nome (o catálogo TEM o peso, só o nome não bate) —
+corrigir o nome usado em `origens.ts`/`classesProficienciasIniciais.ts`
+pro nome exato do catálogo, não mexer na planilha:**
+- `"Balde de Ferro"` → catálogo tem só `"Balde"` (1 kg). Usado na
+  Origem Fazendeiro.
+- `"Fantasia"` → catálogo tem `"Roupas, Fantasia"` (2 kg). Usado na
+  Origem Artista (2×) e Charlatão (1×).
+- `"Roupas Finas"` → catálogo tem `"Roupas, Finas"` (3 kg). Usado nas
+  Origens Charlatão, Escriba e Nobre.
+- `"Roupas de Viagem"` → catálogo tem `"Roupas, Viagem"` (2 kg). É o
+  nome mais repetido no arquivo (aparece em quase toda Origem) —
+  provavelmente o de maior impacto no peso sub-contado hoje.
+- `"Livro (filosofia)"` (Origem Eremita), `"Livro (história)"` (Origem
+  Sábio), `"Livro (orações)"` (Origem Acólito) → catálogo tem só
+  `"Livro"` (2,5 kg), sem variantes temáticas. Decidir: usar o nome
+  genérico "Livro" nesses 3 lugares (perde o sabor do texto, ganha o
+  peso certo), ou o Osmar decide se vale criar entradas próprias no
+  catálogo pra cada variante.
+
+**Possível lacuna real de planilha (ou decisão de dado a tomar, não é
+só digitar o nome certo):**
+- `"Flecha"` (avulsa, quantidade 20 — Origens Guia e Soldado, e
+  também no equipamento inicial nível 1 do Guerreiro) e `"Virote"`
+  (avulso, quantidade 20 — Origem Guarda) → o catálogo só tem os itens
+  embalados `"Flechas (20, Aljava)"` e `"Virotes (20, Estojo)"`, que JÁ
+  incluem o recipiente — não é o mesmo item que "20 Flechas soltas" que
+  a Origem concede sem o recipiente junto (o recipiente é concedido à
+  parte, como item "Aljava"/"Estojo" separado nessas mesmas Origens).
+  Precisa decidir: usar o peso do item embalado como aproximação, ou
+  pedir pro Osmar uma linha própria "20 Flechas" (sem aljava) na
+  planilha.
+
+**Item do catálogo com peso genuinamente ausente na planilha (não é
+erro de nome, é `null` mesmo):**
+- `"Dados"`, `"Xadrez-do-Dragão"`, `"Baralho"`, `"Conjunto do Jogo dos
+  Três Dragões"` (Kit de Jogos, aba Ferramentas da planilha) — nenhuma
+  variante de Kit de Jogos tem peso cadastrado. Baixo impacto (são
+  itens muito leves), mas fica registrado.
+
+**O que falta pra resolver:** revisar essa lista com calma (o Osmar
+pediu pra deixar aqui e olhar depois, não é urgente) — a maior parte é
+corrigir o texto do nome em 2 arquivos, não uma tarefa de planilha.
 
 **Não implementado ainda dentro do motor de cálculo (não bloqueia
 A5/A6 do Guerreiro):**
