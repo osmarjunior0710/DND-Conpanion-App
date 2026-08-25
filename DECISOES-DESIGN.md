@@ -1604,3 +1604,83 @@ fora do MVP e sobre sequenciar em partes — o Osmar escolheu fazer tudo
 de uma vez, sem os 2 recursos extras.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Bug estrutural corrigido: `#root` usava `min-height`, deveria ser `height`
+
+**Decisão:** `#root` (em `index.css`) trocou `min-height: 100vh/100dvh`
+por `height: 100vh/100dvh`. Antes disso, a página inteira crescia junto
+com o conteúdo e quem rolava era o documento/janela — os containers
+internos com `overflow-y: auto` (`.body` do `WizardShell`/`FichaShell`/
+`LevelUpShell`, todos já desenhados assumindo que rolariam por conta
+própria) nunca chegavam a ficar menores que o próprio conteúdo, então
+o `overflow-y: auto` deles nunca entrava em ação de verdade — sem
+efeito prático, mas também sem quebrar nada, porque não havia nada que
+dependesse disso rolar "por dentro" em vez de rolar a página toda.
+
+**Por que isso importa agora:** o cabeçalho flutuante de ouro/peso da
+Loja (pedido do Osmar) usa `position: sticky`, que só funciona de
+verdade quando o elemento tem um container-pai que realmente rola
+(`overflow-y: auto` com altura finita) — com a página inteira rolando
+em vez do `.body`, o sticky não tinha "onde" grudar e sumia da tela ao
+rolar. A correção faz `.body` (e equivalentes) virarem o scroll de
+verdade, do jeito que a estrutura já tinha sido desenhada pra
+funcionar.
+
+**Verificado que não quebra nada:** telas sem scroll interno próprio
+(Home, Lista de Personagens) continuam rolando pela página normalmente
+— `#root` não ganhou `overflow: hidden`, só um `height` fixo, então
+conteúdo que ultrapassar a tela nessas telas ainda tem como aparecer
+via rolagem do documento, igual antes. Testado nas 5 telas principais
+(Home, Lista, Loja com scroll, Ficha Perfil/Mochila/Combat) sem
+regressão visual.
+
+**Data/origem:** 2026-08, achado ao implementar o cabeçalho flutuante
+da Loja (pedido do Osmar).
+
+## Loja — segunda rodada de ajustes (destaque, resumo ao colapsar, peso, cabeçalho flutuante)
+
+**Decisão:** depois do Osmar testar a primeira versão da Loja (Entrega
+A5) contra os prints do protótipo antigo, vieram os seguintes ajustes:
+- **Item comprado fica destacado** — `ItemCard` ganha a classe
+  `itemCardComprado` (borda + fundo `--accent-dim`) quando a
+  quantidade no carrinho é maior que 0, pra identificar mais fácil sem
+  precisar ler o número.
+- **Resumo do grupo colapsado** — quando uma categoria está fechada e
+  tem item comprado dentro, aparece uma caixa "Comprado" logo abaixo
+  do cabeçalho da categoria, listando nome×quantidade e preço — não
+  precisa abrir a categoria de novo só pra lembrar o que já comprou
+  ali.
+- **Peso de cada item** — linha "Peso" adicionada no card (fonte:
+  mesmo campo já usado no resto do app, `item.peso`).
+- **Bug de "EFEITO" duplicado corrigido** — ferramentas/instrumentos
+  tinham DOIS rótulos "Efeito" (um pro atributo, outro pra descrição
+  longa), e a descrição longa espremida numa coluna estreita à direita
+  quebrava linha em lugar feio (ex: "(CD" numa linha, "10)" sozinho na
+  próxima). Corrigido: "Atributo: X" vira uma linha de estatística
+  compacta rotulada "Atributo" (sem duplicar "Efeito"), e a descrição
+  longa vira um parágrafo de largura cheia abaixo dos outros campos
+  (`itemEfeitoTexto`) — quebra de linha natural, sem precisar espremer.
+- **Cabeçalho flutuante (ouro + peso)** — a caixa "ouro inicial /
+  restante" agora usa `position: sticky` (ver correção do bug de
+  `#root` acima) pra ficar sempre visível ao rolar a lista de itens,
+  igual ao protótipo antigo do Osmar. Ganhou uma barra de peso
+  carregado (Origem + Classe + carrinho da Loja, via
+  `calcularItensIniciais`/`calcularCargaTotal`/`calcularCapacidadeMaxima`
+  já existentes em `core/mochila.ts` — reaproveitado, não duplicado)
+  com degradê de cor por faixa de percentual: azul até 25%, verde até
+  50%, amarelo até 75%, laranja até 90%, vermelho acima disso —
+  terminando com um ícone 🎒, como pedido.
+
+**Contexto:** o Osmar mandou 4 prints do protótipo antigo comentando o
+que queria replicar/ajustar depois de testar a primeira versão da Loja
+no celular.
+
+**Pendência aberta (não é uma decisão, é uma dúvida pro Osmar):** ele
+apontou que "quem tem Desvantagem em Furtividade é a Couro Batido", mas
+a planilha mestra (aba Armaduras) diz o contrário — é a **Acolchoada**
+que tem Desvantagem, e Couro/Couro Batido não têm nenhuma. Como
+`CLAUDE.md` seção 3 manda usar só a planilha como fonte de regra, não
+mudei o dado — reportado pro Osmar decidir se é erro da planilha (pra
+ele corrigir lá) ou se o print antigo é que estava errado.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

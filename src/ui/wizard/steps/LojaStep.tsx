@@ -9,6 +9,7 @@ import {
   type LojaItem,
 } from '../../../core/loja';
 import { calcularOuroInicial } from '../../../core/calculoPersonagem';
+import { calcularCapacidadeMaxima, calcularCargaTotal, calcularItensIniciais } from '../../../core/mochila';
 import type { StepProps } from './StepProps';
 import styles from './LojaStep.module.css';
 
@@ -27,6 +28,17 @@ const catalogo = construirCatalogoLoja();
 
 function quantidadeNoCarrinho(selection: StepProps['selection'], nome: string): number {
   return selection.itens.find((i) => i.nome === nome)?.quantidade ?? 0;
+}
+
+/** Azul (até 25%) → Verde (50%) → Amarelo (75%) → Laranja (90%) →
+ * Vermelho (acima de 90%) — mesma ideia da barra de Carga da Ficha,
+ * só que com degradê em vez de só "normal/sobrecarregado". */
+function corDaCarga(percentual: number): string {
+  if (percentual <= 25) return '#4a5fd9';
+  if (percentual <= 50) return '#2f8f52';
+  if (percentual <= 75) return '#c9a227';
+  if (percentual <= 90) return '#c9711f';
+  return 'var(--danger)';
 }
 
 function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; selection: StepProps['selection']; update: StepProps['update']; ouroRestante: number }) {
@@ -54,7 +66,7 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
       : null;
 
   return (
-    <div className={`box ${styles.itemCard}`}>
+    <div className={`box ${styles.itemCard} ${qtd > 0 ? styles.itemCardComprado : ''}`}>
       <div className={styles.itemNome}>{item.nome}</div>
 
       {item.dano && (
@@ -81,7 +93,7 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
           <span className={styles.itemLinhaValor}>Desvantagem em Furtividade</span>
         </div>
       )}
-      {modAtaqueVisivel(item) && modAtaque && (
+      {item.dano !== undefined && modAtaque && (
         <div className={styles.itemLinha}>
           <span className={styles.itemLinhaLabel}>Mod. de Ataque</span>
           <span className={`${styles.itemLinhaValor} ${modAtaque.proficiente ? styles.modProficiente : styles.modSemProficiencia}`}>
@@ -92,20 +104,21 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
       )}
       {item.atributo && (
         <div className={styles.itemLinha}>
-          <span className={styles.itemLinhaLabel}>Efeito</span>
-          <span className={styles.itemLinhaValor}>Atributo: {item.atributo}</span>
+          <span className={styles.itemLinhaLabel}>Atributo</span>
+          <span className={styles.itemLinhaValor}>{item.atributo}</span>
         </div>
       )}
-      {item.efeito && !item.dano && !item.classeArmadura && (
-        <div className={styles.itemLinha}>
-          <span className={styles.itemLinhaLabel}>Efeito</span>
-          <span className={styles.itemLinhaValor}>{item.efeito}</span>
-        </div>
-      )}
+      <div className={styles.itemLinha}>
+        <span className={styles.itemLinhaLabel}>Peso</span>
+        <span className={styles.itemLinhaValor}>{item.peso ?? '— (sem peso cadastrado)'}</span>
+      </div>
       <div className={styles.itemLinha}>
         <span className={styles.itemLinhaLabel}>Custo</span>
         <span className={styles.itemLinhaValor}>{item.custoTexto}</span>
       </div>
+      {item.efeito && (
+        <div className={styles.itemEfeitoTexto}>{item.efeito}</div>
+      )}
 
       <div className={styles.stepperRow}>
         <button type="button" className={styles.stepperBtn} onClick={() => mudarQuantidade(-1)} disabled={qtd === 0}>
@@ -120,15 +133,15 @@ function ItemCard({ item, selection, update, ouroRestante }: { item: LojaItem; s
   );
 }
 
-function modAtaqueVisivel(item: LojaItem): boolean {
-  return item.dano !== undefined;
-}
-
 function Grupo({ grupo, selection, update, ouroRestante, soProficiente }: { grupo: GrupoLoja; selection: StepProps['selection']; update: StepProps['update']; ouroRestante: number; soProficiente: boolean }) {
   const [aberto, setAberto] = useState(false);
   const itensVisiveis = soProficiente && GRUPOS_ARMA_ARMADURA.has(grupo.id) ? grupo.itens.filter((it) => classeEhProficiente(selection, it)) : grupo.itens;
 
   if (itensVisiveis.length === 0) return null;
+
+  const comprados = itensVisiveis
+    .map((item) => ({ item, qtd: quantidadeNoCarrinho(selection, item.nome) }))
+    .filter((x) => x.qtd > 0);
 
   return (
     <div className="box-solid" style={{ marginBottom: 8 }}>
@@ -138,6 +151,21 @@ function Grupo({ grupo, selection, update, ouroRestante, soProficiente }: { grup
           ({itensVisiveis.length} {itensVisiveis.length === 1 ? 'item' : 'itens'}) {aberto ? '▾' : '▸'}
         </span>
       </div>
+
+      {!aberto && comprados.length > 0 && (
+        <div className={styles.compradoResumo}>
+          <div className={styles.compradoTitulo}>Comprado</div>
+          {comprados.map(({ item, qtd }) => (
+            <div key={item.nome} className={styles.compradoLinha}>
+              <span>
+                {item.nome} ×{qtd}
+              </span>
+              <span>{item.custoPO !== null ? formatarPO(item.custoPO * qtd) : '—'}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {aberto &&
         itensVisiveis.map((item) => (
           <ItemCard key={item.nome} item={item} selection={selection} update={update} ouroRestante={ouroRestante} />
@@ -152,16 +180,32 @@ export default function LojaStep({ selection, update }: StepProps) {
   const custoCarrinho = calcularCustoCarrinho(selection.itens, catalogo);
   const ouroRestante = Math.round((ouroInicial - custoCarrinho) * 100) / 100;
 
+  const itensMochila = calcularItensIniciais(selection);
+  const carga = calcularCargaTotal(itensMochila);
+  const capacidadeMaxima = calcularCapacidadeMaxima(selection);
+  const percentualCarga = capacidadeMaxima ? Math.min(100, Math.round((carga.kg / capacidadeMaxima) * 100)) : 0;
+
   return (
     <>
       <div className={`box-solid ${styles.ouroBox}`}>
-        <div className={styles.ouroLabelCol}>
-          <span className="label">ouro inicial</span>
-          <span>{ouroInicial} PO</span>
+        <div className={styles.ouroBoxTopo}>
+          <div className={styles.ouroLabelCol}>
+            <span className="label">ouro inicial</span>
+            <span>{ouroInicial} PO</span>
+          </div>
+          <div className={styles.ouroLabelCol} style={{ alignItems: 'flex-end' }}>
+            <span className="label">restante</span>
+            <span className={`${styles.ouroValor} ${ouroRestante <= 0 ? styles.ouroValorZerado : ''}`}>{formatarPO(ouroRestante)}</span>
+          </div>
         </div>
-        <div className={styles.ouroLabelCol} style={{ alignItems: 'flex-end' }}>
-          <span className="label">restante</span>
-          <span className={`${styles.ouroValor} ${ouroRestante <= 0 ? styles.ouroValorZerado : ''}`}>{formatarPO(ouroRestante)}</span>
+        <div className={styles.cargaRow}>
+          <div className={styles.cargaBarOuter}>
+            <div className={styles.cargaBarInner} style={{ width: `${percentualCarga}%`, background: corDaCarga(percentualCarga) }} />
+          </div>
+          <span className={styles.cargaIcone}>🎒</span>
+        </div>
+        <div className={styles.cargaTexto}>
+          {carga.kg.toString().replace('.', ',')} kg / máx. {capacidadeMaxima ?? '—'} kg
         </div>
       </div>
 

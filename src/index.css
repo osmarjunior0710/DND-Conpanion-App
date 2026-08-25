@@ -69,8 +69,15 @@ body {
 }
 
 #root {
-  min-height: 100vh;
-  min-height: 100dvh;
+  /* Antes era min-height — deixava a página inteira crescer e rolar
+     junto com o conteúdo, então nenhum container interno com
+     "overflow-y: auto" (ex: .body do WizardShell) realmente rolava
+     por conta própria; virava tudo rolagem do documento. Trocado pra
+     height fixo (trava em 1 tela) pra esses containers internos
+     virarem a rolagem de verdade — necessário pro cabeçalho fixo
+     (position: sticky) da Loja funcionar. */
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
