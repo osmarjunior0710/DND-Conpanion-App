@@ -1834,3 +1834,83 @@ desde entregas anteriores, só não tinham sido riscados da lista:
 não sobrar pendências").
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Guerreiro — plano de implementação completa nível 1-20 + 4 subclasses
+
+**Decisão:** em vez de continuar entregando pedaços soltos do Guerreiro
+(A6 só cobria Estilo de Luta/Magias), o Osmar pediu uma decupagem
+nível a nível completa (1-20, incluindo as 4 subclasses: Campeão,
+Cavaleiro Místico, Combatente Psíquico, Mestre da Batalha), feita numa
+auditoria em chat separado, pra implementar de ponta a ponta. Achados
+verificados direto no PDF do Cap. 3 (`04b__Cap_3_..._Guardiao_a_Paladino.pdf`,
+já autorizado antes — mesma exceção documentada de
+`classesProficienciasIniciais.ts`) antes de aceitar, não copiado às
+cegas:
+
+- **Estilo de Luta é escolha trocável a cada level-up, não fixa desde
+  o nível 1** — confirmado no texto oficial: "Sempre que atinge um
+  nível de Guerreiro, você pode substituir o talento que escolheu por
+  um talento diferente de Estilo de Luta." No nível 7, subclasse
+  Campeão ganha um **2º** Estilo de Luta simultâneo (não troca, some
+  aos dois). Isso é uma categoria de escolha de level-up nova, além de
+  Subclasse (fixa, nível 3) e ASI/Talento — precisa reaparecer em
+  **todo** level-up de Guerreiro (e provavelmente Guardião/Paladino,
+  que também têm essa característica — texto de troca dessas duas
+  ainda não conferido).
+- **Maestria em Arma troca por Descanso Longo, não por Level Up** —
+  confirmado: "Sempre que completar um Descanso Longo, você pode
+  praticar movimentos com armas e alterar uma dessas escolhas de
+  armas." Mecanismo de troca diferente do Estilo de Luta — deveria
+  aparecer como opção no botão de Descanso Longo (aba Perfil), não no
+  fluxo de Level Up.
+- **Guerreiro tem ASI em 6 níveis (4, 6, 8, 12, 14, 16), não 5** —
+  confirmado na tabela "Características de Guerreiro" do livro. A
+  regra geral assumida antes (4/8/12/16/19) vale pra maioria das
+  classes, mas não pra Guerreiro — o motor de Level Up precisa de uma
+  tabela de níveis-de-ASI **por classe**, não uma constante global.
+- **Novas categorias de "coisa de level-up" que o motor genérico
+  precisa suportar** (além de Subclasse única/ASI-Talento já
+  cobertos): escolha trocável a cada level-up (Estilo de Luta),
+  escolha trocável por Descanso Longo — não por level-up (Maestria em
+  Arma), escolha exclusiva de nível único (Dádiva Épica, só nível 19).
+- **Novas categorias de "coisa de Combat" que o painel Ação/Ação
+  Bônus/Reação precisa suportar** (além do modelo atual de
+  ativo/usada simples): recurso limitado com 2 formas de gasto
+  compartilhando o mesmo "banco" (Recuperar Fôlego cura PV OU ativa
+  Mente Tática), ação extra que não ocupa o slot normal (Surto de
+  Ação), botão contextual pós-rolagem (Indomável após falhar
+  salvaguarda), escolha situacional dentro do próprio ataque (Mestre
+  Tático), estado a rastrear por inimigo (Ataques Estudados — Vantagem
+  condicional contra quem errou por último), recurso com limite duplo
+  simultâneo (Surto de Ação nível 17: limite por descanso E só 1x por
+  turno). Confirma que o Layout C (painel Ação/Bônus/Reação, ver
+  decisão "Combate — economia de ação") foi desenhado certo pra
+  suportar isso — só o **conteúdo** disponível cresce com o nível, a
+  estrutura do painel não muda.
+- **Cavaleiro Místico prova que classe não-conjuradora pode ganhar
+  conjuração completa via subclasse** — motor de magia não pode
+  assumir que só classes conjuradoras na base vão precisar dele.
+
+**Ordem de implementação recomendada** (mais simples → mais complexo,
+pra não travar tentando tudo de uma vez):
+1. Guerreiro base sem subclasse (níveis 1-2, 4-6, 8-9 parcial, 11-14,
+   16-17, 19-20) — já jogável do 1 ao 2, completo do 4 ao 20 exceto
+   pelos "buracos" de característica de subclasse.
+2. Campeão — mais simples das 4 (só características passivas/
+   automáticas, zero recurso novo).
+3. Mestre da Batalha — recurso (Dados de Superioridade) + biblioteca
+   de 16 manobras pequenas e isoladas, cada uma simples de testar
+   separada.
+4. Combatente Psíquico — recurso central (Dados de Energia Psiônica)
+   alimentando ~7 poderes de categorias de ação diferentes.
+5. Cavaleiro Místico por último — só subclasse que exige sistema de
+   conjuração completo; melhor reaproveitar o motor de magia depois
+   dele já validado numa classe conjuradora de verdade (Mago,
+   Clérigo).
+
+**Contexto:** pedido direto do Osmar — "o plano é resolver guerreiro
+de 1 a 20 e depois a gente vem arrumando as especializações", decupagem
+feita numa auditoria em chat separado com apoio do Claude, conferida
+contra o PDF oficial antes de aceitar.
+
+**Data/origem:** 2026-08, pedido direto do Osmar.

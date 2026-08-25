@@ -360,7 +360,33 @@ Espécies estarem resolvidas.
 **O que falta pra resolver:** tudo — ainda não começou a análise
 campo-a-campo de Classes. Quando chegar a vez, repetir o mesmo processo
 usado em Origens (ler a planilha primeiro, confirmar o que é uniforme vs.
-exceção, só depois desenhar schema).
+exceção, só depois desenhar schema). O Guerreiro (ver pendência
+"Guerreiro 1-20 completo" abaixo) é o primeiro caso de teste real dessa
+variação — quando terminar, revisitar essa entrada com o que
+generalizou de verdade pras outras 11 classes.
+
+## Guerreiro 1-20 completo + 4 subclasses — plano definido, implementação não começou
+
+**O que é:** em vez de continuar entregando pedaços soltos (Estilo de
+Luta, Magias...), o Osmar quer o Guerreiro resolvido de ponta a ponta
+(nível 1 ao 20, incluindo as 4 subclasses: Campeão, Cavaleiro Místico,
+Combatente Psíquico, Mestre da Batalha) antes de partir pras outras 11
+classes. Decupagem nível a nível já feita e verificada — ver decisão
+"Guerreiro — plano de implementação completa nível 1-20 + 4
+subclasses" no `DECISOES-DESIGN.md` pra achados de regra e ordem de
+implementação recomendada.
+
+**Por que foi adiado (ainda):** nada foi implementado desta decupagem
+ainda — é só o plano. Cada peça (motor de Level Up com as novas
+categorias de escolha, painel Combat "nível-consciente", cada
+subclasse) precisa virar uma entrega pequena própria, uma de cada vez,
+seguindo a ordem recomendada (base → Campeão → Mestre da Batalha →
+Combatente Psíquico → Cavaleiro Místico).
+
+**O que falta pra resolver:** tudo — este é só o registro do plano.
+Próximo passo é o Osmar confirmar a primeira entrega pequena (Guerreiro
+base, níveis que faltam do fluxo de Level Up) antes de qualquer código
+ser escrito.
 
 ## Personagem multiclasse — schema da ficha ainda assume 1 classe só
 
