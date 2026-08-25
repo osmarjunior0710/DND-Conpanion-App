@@ -87,6 +87,17 @@ pendente):**
   sobe de nível ou toma dano na Ficha — só muda na sessão aberta. Só
   importa de verdade quando a ficha for algo que se volta a abrir depois
   de fechar o navegador esperando ver o estado exato de antes.
+- **Estilo de Luta é só informativo, não entra nos cálculos** — o chip
+  na aba Combat mostra o texto do efeito, mas `calcularCA` (CA) e
+  `calcularModAtaque` (Loja, Mod. de Ataque) não somam o bônus
+  mecânico de nenhum dos 10 estilos ainda. Achado do Osmar ao perguntar
+  se o efeito era considerado na Ficha — não era. Os que afetam número
+  calculado hoje na Ficha: "Defensivo" (+1 CA com armadura equipada) e
+  "Arquearia" (+2 no ataque à distância). Os outros 8 (Duelismo, Combate
+  com Armas Grandes, etc.) afetam dano ou têm mecânica própria de
+  combate (Interceptação, Protetivo) — esses só fazem sentido quando o
+  motor de dano/ataque de verdade existir na aba Combat (ainda não
+  existe, é fixture).
 ## Itens "sem peso cadastrado" na Mochila/Loja — auditoria completa (2026-08)
 
 **O que é:** o Osmar notou "Balde de Ferro" sem peso na Mochila e pediu
