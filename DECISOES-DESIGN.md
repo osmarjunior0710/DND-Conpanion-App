@@ -1766,3 +1766,19 @@ confirmado "faz pra tudo" quando perguntei se era só o wizard ou o
 app inteiro.
 
 **Data/origem:** 2026-08, pedido direto do Osmar.
+
+## Bug corrigido: peso em gramas não contava na carga total
+
+**Decisão:** `parseKg` (`core/mochila.ts`) só reconhecia peso no
+formato "N kg" — itens com peso cadastrado em gramas na planilha (ex:
+"Espelho" = 250 g) caíam silenciosamente em "sem peso cadastrado" e
+não entravam na soma da carga, mesmo tendo peso de verdade. Corrigido:
+`parseKg` agora reconhece "N g" também, convertendo pra kg (÷1000).
+Afeta 6 itens no catálogo hoje: Espelho, Poção de Cura, Saca (250 g
+cada), Dardo (150 g), Balas de Funda e Virotes (750 g cada) — todos
+tinham peso "perdido" antes desse fix.
+
+**Contexto:** o Osmar notou que o Espelho (250 g) não somava na barra
+de peso da Loja/Mochila.
+
+**Data/origem:** 2026-08, achado direto pelo Osmar.

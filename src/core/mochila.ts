@@ -199,13 +199,18 @@ export function calcularItensIniciais(selection: WizardSelection): ItemMochila[]
   return itens;
 }
 
-/** "12,5 kg" → 12.5. "—" (sem peso, item negligenciável) → 0. Peso
+/** "12,5 kg" → 12.5. "250 g" → 0.25 (planilha usa gramas pra itens
+ * leves — bug real: antes só reconhecia "kg", então "Espelho" (250 g)
+ * e outros itens sub-1kg caíam em "sem peso cadastrado" mesmo tendo
+ * peso de verdade). "—" (sem peso, item negligenciável) → 0. Peso
  * desconhecido (não cadastrado na planilha) → null. */
 function parseKg(peso: string): number | null {
   if (peso.trim() === '—') return 0;
-  const match = peso.match(/([\d.,]+)\s*kg/i);
-  if (!match) return null;
-  return parseFloat(match[1].replace(',', '.'));
+  const matchKg = peso.match(/([\d.,]+)\s*kg/i);
+  if (matchKg) return parseFloat(matchKg[1].replace(',', '.'));
+  const matchG = peso.match(/([\d.,]+)\s*g\b/i);
+  if (matchG) return parseFloat(matchG[1].replace(',', '.')) / 1000;
+  return null;
 }
 
 /** Peso da LINHA (peso unitário × quantidade), formatado — ex: "1×" em
