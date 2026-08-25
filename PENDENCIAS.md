@@ -396,6 +396,12 @@ implementação recomendada. Quebrado em 5 entregas pequenas (B1-B5) pro
   até nível 4 (features reais, Estilo de Luta trocável em todo nível,
   placeholder de Subclasse no nível 3 sem travar o avanço, ASI
   aparecendo no nível certo).
+- **Correção pós-B1** — "Indomável" tinha descrição só no nível 9;
+  níveis 13 e 17 (que só ganham um uso extra do mesmo recurso, sem
+  descrição nova na planilha) mostravam "descrição ainda não
+  importada". `caracteristicasDoNivel` agora busca a entrada de maior
+  nível ≤ nível atual em vez de exigir igualdade exata — corrige pra
+  qualquer classe/característica que se repita assim, não só Guerreiro.
 
 **Falta:**
 - **B2** — Maestria em Arma: escolha de 3 armas no wizard (nível 1,
@@ -409,6 +415,59 @@ implementação recomendada. Quebrado em 5 entregas pequenas (B1-B5) pro
 - **B5** — revisão geral do Guerreiro base 1-20 antes de partir pras 4
   subclasses (ordem: base → Campeão → Mestre da Batalha → Combatente
   Psíquico → Cavaleiro Místico).
+
+## Level Up — itens de teste do Osmar (pós-B1) ainda não cobertos pelo plano B2-B5
+
+**O que é:** lista de observações testando o B1, feita pelo Osmar em
+25/08/2026. Alguns itens já são cobertos pelas entregas B2-B5 já
+planejadas acima (Ataque Extra/Dois Ataques Extras/Três Ataques Extras
+→ B4; Ação Bônus aparecer na Combat → B3/B4) e não têm entrada própria
+aqui. Os que **não** têm cobertura no plano atual:
+
+- **PV do Level Up sem "volta atrás".** Hoje o jogador pode ficar
+  trocando entre "pegar metade" e "rolar o dado" livremente. Devia ser
+  uma escolha única e sem arrependimento: jogador escolhe Média OU
+  Dado; se escolher Dado, cobrir a tela (efeito tipo "cortina preta"),
+  rolar, revelar o resultado — e depois disso não dá mais pra voltar
+  nem trocar. Puramente de UX, não depende dos dados do Guerreiro.
+- **Level Up não salva em que passo o jogador parou.** Se o jogador sai
+  no meio (ex: fechou o app depois de escolher PV mas antes de
+  confirmar Estilo de Luta), hoje perde o progresso e recomeça do zero.
+  Precisa persistir o passo atual em algum lugar (mesmo que só em
+  memória da sessão, dependendo de quão longe o app já foi de
+  `armazenamentoPersonagens`).
+- **Escolha de múltiplos Estilos de Luta simultâneos.** Existe pelo
+  menos um caso (subclasse Campeão, nível 7, "Estilo de Luta
+  Adicional") em que o personagem tem 2 estilos ativos ao mesmo tempo,
+  não troca 1 por outro. O motor atual (`temEstiloDeLutaTrocavel`)
+  assume 1 slot só. Isso só vira relevante quando a subclasse Campeão
+  for implementada — registrar aqui pra não esquecer na hora.
+- **Talentos precisam de 2 fases separadas.** Hoje (em todo o app, não
+  só Guerreiro) um Talento é só listado/exibido pro jogador — nunca
+  aplica o efeito mecânico dele em nenhum cálculo (CA, dano, PV,
+  perícia, etc). Isso é maior que o Guerreiro: qualquer classe/origem
+  que conceda Talento (inclusive os já existentes na Loja/Origem) tem
+  esse mesmo buraco. Vira uma entrega própria: Fase 1 = listar/exibir
+  (já existe); Fase 2 = efetivamente aplicar o efeito nos cálculos de
+  `core/`, talento por talento, conforme cada um for auditado.
+- **ASI não permite +2 no mesmo atributo.** O seletor atual
+  (`toggleAsi` em `LevelUpShell.tsx`) só liga/desliga atributos — clicar
+  de novo no mesmo atributo remove o ponto em vez de somar um segundo.
+  Precisa virar um contador +/- por atributo (0, 1 ou 2 pontos,
+  distribuídos livremente entre 1 ou 2 atributos), e bloquear "Avançar"
+  enquanto os 2 pontos do ASI não tiverem sido todos distribuídos.
+- **Pontos de ASI não afetam a ficha.** Mesmo quando o jogador escolhe
+  atributos no passo de ASI, o valor escolhido nunca é aplicado a
+  nenhum atributo real do personagem — não é passado no `onConfirmar`,
+  não é somado em `calcularAtributosFinais` nem em nenhum lugar
+  derivado dele (CA, PV, perícias, mod. de ataque). Depende de resolver
+  o item anterior (o seletor) antes, mas é um segundo bug: mesmo com o
+  seletor corrigido, ainda falta o "encanamento" de aplicar o resultado.
+- **Sem escolha de Dádiva Épica (nível 19).** O passo "Dádiva Épica" do
+  Level Up hoje só mostra a descrição da característica e um
+  placeholder "lista de Dádivas Épicas entra numa próxima entrega" — a
+  lista real de opções (Cap. 5 do livro) ainda não foi importada da
+  planilha nem tem UI de escolha.
 
 ## Personagem multiclasse — schema da ficha ainda assume 1 classe só
 

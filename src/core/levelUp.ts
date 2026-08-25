@@ -43,12 +43,21 @@ export function temEstiloDeLutaTrocavel(classe: Classe, nivelAtual: number): boo
  * já tiver o nível importado) desbloqueadas num nível específico da
  * classe. Níveis sem descrição própria ainda (ex: "Aumento no Valor de
  * Atributo" repetido, "Característica de Subclasse" placeholder) voltam
- * com `descricao: null` — quem renderiza decide o que mostrar nesse caso. */
+ * com `descricao: null` — quem renderiza decide o que mostrar nesse caso.
+ *
+ * Algumas características (ex: "Indomável") são re-listadas em níveis
+ * mais altos na progressão só pra indicar um uso extra do mesmo recurso,
+ * não uma descrição nova — `caracteristicasClasse.ts` só tem UMA entrada
+ * (no nível em que a característica foi introduzida). Por isso a busca
+ * pega a entrada de maior nível ≤ nível atual, não uma igualdade exata. */
 export function caracteristicasDoNivel(classe: Classe, nivel: number): CaracteristicaNivel[] {
   const linha = classe.progressao.find((p) => p.nivel === nivel);
   if (!linha) return [];
   return linha.caracteristicas.map((nome) => {
-    const detalhe = caracteristicasClasse.find((c) => c.classe === classe.nome && c.nivel === nivel && c.nome === nome);
+    const candidatos = caracteristicasClasse.filter(
+      (c) => c.classe === classe.nome && c.nome === nome && c.nivel <= nivel,
+    );
+    const detalhe = candidatos.sort((a, b) => b.nivel - a.nivel)[0];
     return { nome, descricao: detalhe?.descricao ?? null };
   });
 }
