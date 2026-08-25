@@ -403,10 +403,33 @@ implementação recomendada. Quebrado em 5 entregas pequenas (B1-B5) pro
   nível ≤ nível atual em vez de exigir igualdade exata — corrige pra
   qualquer classe/característica que se repita assim, não só Guerreiro.
 
+**Já feito:**
+- **B2 — Maestria em Arma.** Escolha de N armas (3 no nível 1, lido do
+  recurso "Maestria em Arma" da classe, não hardcoded) no wizard
+  (`ClasseEscolhasStep.tsx`, mesma tela de Estilo de Luta) + troca via
+  ícone "🔄" na aba Perfil, dentro da nova seção "Maestria em Arma"
+  (`PerfilTab.tsx` + `TrocarArmaMaestria.tsx`), com popup que já
+  exclui as armas que ocupam os outros slots (não deixa duplicar arma).
+  Novo `core/maestriaArma.ts`: `quantidadeMaestriaEmArma(classe,
+  nivel)` lê o recurso real; `armasParaMaestria(classe)` filtra o
+  catálogo pela proficiência de arma da classe (hoje só cobre "Armas
+  Simples e Marciais" = catálogo inteiro, caso do Guerreiro — outras
+  classes com proficiência restrita entram quando ganharem esse
+  recurso de verdade).
+
+**Simplificação assumida (não é a regra 100% literal):** o ícone de
+troca fica sempre visível na aba Perfil, não é gated a "só aparece
+depois de apertar Descanso Longo de verdade". Fica documentado como
+decisão consciente em `DECISOES-DESIGN.md` — se o Osmar preferir a
+versão mais fiel (só habilita a troca logo depois de descansar), essa
+pendência entra aqui.
+
 **Falta:**
-- **B2** — Maestria em Arma: escolha de 3 armas no wizard (nível 1,
-  ainda não existe) + trocar 1 arma no botão de Descanso Longo da aba
-  Perfil (regra é por Descanso Longo, não por Level Up).
+- **Nº de armas de Maestria crescendo em nível alto (4/10/16)** — hoje
+  só a escolha inicial (nível 1) tem UI; quando o recurso cresce (ex:
+  de 3 pra 4 armas no nível 4), o Level Up ainda não tem um passo pra
+  escolher a arma extra. Fica pra quando B4 (níveis automáticos) for
+  implementado, ou uma entrega própria se não couber lá.
 - **B3** — Recuperar Fôlego + Mente Tática na aba Combat (Ação Bônus
   real, recurso com 2 formas de uso compartilhando o mesmo "banco").
 - **B4** — Surto de Ação, Indomável, Ataque Extra e o resto das

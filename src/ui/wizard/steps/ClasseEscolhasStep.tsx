@@ -4,6 +4,7 @@ import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { proficienciasArmaArmaduraClasse } from '../../../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
+import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../../core/maestriaArma';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoChip from '../../components/InfoChip';
 import type { StepProps } from './StepProps';
@@ -25,9 +26,21 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
   const proficiencias = proficienciasIniciaisClasse[classe.id];
   const profArmaArmadura = proficienciasArmaArmaduraClasse.find((p) => p.classe === classe.nome);
   const caracteristicasNivel1 = caracteristicasClasse.filter((c) => c.classe === classe.nome && c.nivel === 1);
+  const qtdMaestria = quantidadeMaestriaEmArma(classe, 1);
+  const armasMaestria = qtdMaestria > 0 ? armasParaMaestria(classe) : [];
 
   function toggleEstiloDeLuta(nome: string) {
     update({ estiloDeLutaEscolhido: selection.estiloDeLutaEscolhido === nome ? null : nome });
+  }
+
+  function toggleMaestriaArma(nome: string) {
+    const atual = selection.maestriaArmaEscolhida;
+    const i = atual.indexOf(nome);
+    if (i > -1) {
+      update({ maestriaArmaEscolhida: atual.filter((x) => x !== nome) });
+    } else if (atual.length < qtdMaestria) {
+      update({ maestriaArmaEscolhida: [...atual, nome] });
+    }
   }
 
   function togglePericia(nome: string) {
@@ -88,6 +101,25 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
           <div className="opt-card-desc">{e.beneficios}</div>
         </div>
       ))}
+
+      {qtdMaestria > 0 && (
+        <>
+          <div className="section-title">
+            Maestria em Arma — escolha {qtdMaestria} ({selection.maestriaArmaEscolhida.length}/{qtdMaestria})
+          </div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            você troca 1 dessas armas a cada Descanso Longo, direto na aba Perfil.
+          </div>
+          {armasMaestria.map((a) => (
+            <div key={a.id} className="check-row" onClick={() => toggleMaestriaArma(a.nome)}>
+              <div className={`check-box ${selection.maestriaArmaEscolhida.includes(a.nome) ? 'checked' : ''}`} />
+              <span className="check-label">
+                {a.nome} <span className="label">({a.dano} · Maestria: {a.maestria})</span>
+              </span>
+            </div>
+          ))}
+        </>
+      )}
 
       {proficiencias && (
         <>

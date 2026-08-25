@@ -10,6 +10,7 @@ import type { ItemCarrinho } from './loja';
 export interface WizardSelection {
   classe: string | null;
   estiloDeLutaEscolhido: string | null;
+  maestriaArmaEscolhida: string[];
   periciasClasseEscolhidas: string[];
   equipamentoClasseEscolhido: 'A' | 'B' | 'C' | null;
   origem: string | null;
@@ -33,6 +34,7 @@ export function criarSelecaoInicial(): WizardSelection {
   return {
     classe: null,
     estiloDeLutaEscolhido: null,
+    maestriaArmaEscolhida: [],
     periciasClasseEscolhidas: [],
     equipamentoClasseEscolhido: null,
     origem: null,

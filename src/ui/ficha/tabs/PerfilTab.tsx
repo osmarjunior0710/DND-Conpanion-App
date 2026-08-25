@@ -1,6 +1,8 @@
 import type { AtributoFinal, ExplicacaoCalculo, PericiaFinal } from '../../../core/calculoPersonagem';
+import type { Arma } from '../../../data/rulesets/dnd2024/armas';
 import { useRoll } from '../../roll/RollContext';
 import InfoValor from '../../components/InfoValor';
+import TrocarArmaMaestria from '../../components/TrocarArmaMaestria';
 import styles from './PerfilTab.module.css';
 
 interface PerfilTabProps {
@@ -20,6 +22,9 @@ interface PerfilTabProps {
   onDescansoCurto: () => void;
   restStatus: string | null;
   onAbrirLevelUp: () => void;
+  maestriaArma: string[];
+  armasParaMaestria: Arma[];
+  onTrocarArmaMaestria: (armaAntiga: string, armaNova: string) => void;
 }
 
 export default function PerfilTab({
@@ -39,6 +44,9 @@ export default function PerfilTab({
   onDescansoCurto,
   restStatus,
   onAbrirLevelUp,
+  maestriaArma,
+  armasParaMaestria,
+  onTrocarArmaMaestria,
 }: PerfilTabProps) {
   const { rolarD20 } = useRoll();
 
@@ -126,6 +134,36 @@ export default function PerfilTab({
       <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
         toque num atributo, perícia ou iniciativa pra rolar o dado.
       </div>
+
+      {maestriaArma.length > 0 && (
+        <>
+          <div className="section-title">Maestria em Arma</div>
+          {maestriaArma.map((nome) => {
+            const arma = armasParaMaestria.find((a) => a.nome === nome);
+            return (
+              <div key={nome} className={styles.skillRow} style={{ cursor: 'default' }}>
+                <span>
+                  {nome}
+                  {arma && (
+                    <span className="label" style={{ marginLeft: 6 }}>
+                      ({arma.dano} · {arma.maestria})
+                    </span>
+                  )}
+                </span>
+                <TrocarArmaMaestria
+                  armaAtual={nome}
+                  todasAsArmas={armasParaMaestria}
+                  jaEscolhidas={maestriaArma}
+                  onTrocar={(nova) => onTrocarArmaMaestria(nome, nova)}
+                />
+              </div>
+            );
+          })}
+          <div className="label" style={{ marginTop: 2, marginBottom: 12 }}>
+            você pode trocar 1 arma a cada Descanso Longo.
+          </div>
+        </>
+      )}
 
       <div className="section-title">Descanso</div>
       <div className={styles.actionGrid}>

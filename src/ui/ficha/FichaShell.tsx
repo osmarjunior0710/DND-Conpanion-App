@@ -17,6 +17,7 @@ import {
 } from '../../core/calculoPersonagem';
 import { modificador } from '../../core/personagem';
 import { calcularCapacidadeMaxima, calcularItensIniciais, explicarCapacidadeMaxima } from '../../core/mochila';
+import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
@@ -84,6 +85,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     estiloDeLuta: selecao.estiloDeLutaEscolhido,
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
+  const [maestriaArma, setMaestriaArma] = useState<string[]>(selecao.maestriaArmaEscolhida);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
   const [espacosGastos, setEspacosGastos] = useState(0);
@@ -134,6 +136,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function descansoCurto() {
     setEspacosGastos(0);
     setRestStatus('Descanso Curto: Espaços de Magia (Magia de Pacto) recuperados. PV não recupera automaticamente por descanso curto.');
+  }
+
+  function trocarArmaMaestria(armaAntiga: string, armaNova: string) {
+    setMaestriaArma((prev) => prev.map((a) => (a === armaAntiga ? armaNova : a)));
   }
 
   function confirmarLevelUp(resultado: {
@@ -215,6 +221,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onDescansoCurto={descansoCurto}
             restStatus={restStatus}
             onAbrirLevelUp={() => setLevelUpAberto(true)}
+            maestriaArma={maestriaArma}
+            armasParaMaestria={classe ? listarArmasParaMaestria(classe) : []}
+            onTrocarArmaMaestria={trocarArmaMaestria}
           />
         )}
         {tab === 'mochila' && (

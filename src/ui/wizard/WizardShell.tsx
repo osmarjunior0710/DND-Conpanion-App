@@ -10,6 +10,7 @@ import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classes
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
 import { criarSelecaoInicial, type WizardSelection } from '../../core/personagem';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
+import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../core/maestriaArma';
 import { armazenamentoPersonagens, gerarIdPersonagem } from '../../core/armazenamentoPersonagens';
 import styles from './WizardShell.module.css';
 import ClasseStep from './steps/ClasseStep';
@@ -75,6 +76,12 @@ export default function WizardShell() {
     const patch: Partial<WizardSelection> = {
       estiloDeLutaEscolhido: estilosDeLuta[Math.floor(Math.random() * estilosDeLuta.length)].nome,
     };
+    const qtdMaestria = quantidadeMaestriaEmArma(classeSelecionada, 1);
+    if (qtdMaestria > 0) {
+      patch.maestriaArmaEscolhida = embaralhar(armasParaMaestria(classeSelecionada))
+        .slice(0, qtdMaestria)
+        .map((a) => a.nome);
+    }
     if (proficiencias) {
       patch.periciasClasseEscolhidas = embaralhar(proficiencias.periciasEscolha.opcoes).slice(
         0,
@@ -148,11 +155,13 @@ export default function WizardShell() {
         if (!classeSelecionada) return true;
         const proficiencias = proficienciasIniciaisClasse[classeSelecionada.id];
         if (s.estiloDeLutaEscolhido === null) return false;
+        const qtdMaestria = quantidadeMaestriaEmArma(classeSelecionada, 1);
+        if (s.maestriaArmaEscolhida.length !== qtdMaestria) return false;
         if (!proficiencias) return true;
         if (s.periciasClasseEscolhidas.length !== proficiencias.periciasEscolha.quantidade) return false;
         return s.equipamentoClasseEscolhido !== null;
       },
-      mensagemInvalida: 'Escolha o Estilo de Luta, as perícias e o equipamento antes de avançar.',
+      mensagemInvalida: 'Escolha o Estilo de Luta, a Maestria em Arma, as perícias e o equipamento antes de avançar.',
       randomize: randomizarEscolhasClasse,
     },
     {

@@ -2008,3 +2008,43 @@ real de regra só existe 1 vez, no nível mais baixo.
 **Data/origem:** 2026-08, achado repassado pelo Osmar (registrado
 antes na decupagem do Guerreiro feita num chat paralelo) + bug real
 confirmado no teste do Osmar pós-B1.
+
+## Guerreiro B2 — Maestria em Arma (escolha no wizard + troca no Descanso Longo)
+
+**Decisão:** nova tela de escolha no wizard (dentro de
+`ClasseEscolhasStep.tsx`, mesmo passo do Estilo de Luta) — jogador
+escolhe N tipos de arma pra ganhar Maestria, N lido do recurso
+"Maestria em Arma" da classe (`classes.ts`, 3 armas no nível 1 pro
+Guerreiro). Na Ficha, aba Perfil ganhou uma seção "Maestria em Arma"
+listando as armas escolhidas (com dano + tipo de maestria) e um ícone
+"🔄" em cada uma que abre um popup pra trocar por outra arma — a
+lista do popup já exclui as armas que ocupam os outros slots, pra não
+deixar duplicar.
+
+**Novo `core/maestriaArma.ts`:** `quantidadeMaestriaEmArma(classe,
+nivel)` lê o valor real de `recursos` da classe (não hardcoded);
+`armasParaMaestria(classe)` filtra `armas.ts` pela proficiência de
+arma da classe (`proficienciasArmaArmaduraClasse.ts`) — hoje só sabe
+resolver o caso "Armas Simples e Marciais" (= catálogo inteiro, caso
+do Guerreiro); proficiência restrita (ex: Ladino) fica pra quando essa
+classe ganhar o recurso "Maestria em Arma" de verdade.
+
+**Simplificação assumida (fidelidade parcial à regra):** a regra real
+diz que a troca acontece **durante** o Descanso Longo. Implementei o
+ícone de troca como sempre visível na seção "Maestria em Arma" da aba
+Perfil, não escondido/desbloqueado só depois de apertar o botão
+"Descanso Longo". Optei por isso pra manter a entrega pequena e
+testável — gating por evento de descanso exigiria um fluxo de UI novo
+(popup pós-descanso, ou trava temporária) que não parecia valer a
+complexidade extra agora. Registrado em `PENDENCIAS.md` como algo
+revisável se o Osmar quiser a versão mais fiel.
+
+**Novo componente reutilizável:** `TrocarArmaMaestria.tsx` (ícone +
+popup de troca) segue o mesmo padrão visual/estrutural de
+`InfoValor.tsx` (overlay central, `stopPropagation`, card com lista) —
+não um componente do zero.
+
+**Contexto:** segunda entrega do plano "Guerreiro 1-20", aprovado
+pelo Osmar ("vamos seguir").
+
+**Data/origem:** 2026-08.
