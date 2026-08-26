@@ -2089,12 +2089,16 @@ prefixoNome, nivel)` — leitura genérica de qualquer recurso da classe
 por nome+nível. `maestriaArma.ts` (B2) foi refatorado pra usar essa
 função em vez de duplicar a mesma lógica de busca em `recursos`.
 
-**Simplificação assumida:** nem a cura de Recuperar Fôlego nem o
-resultado de Mente Tática são aplicados automaticamente (PV ou teste)
-— o app só rola o dado (`useRoll`), igual o resto do protótipo de
-Combat já avisa ("cada toque muda 1 PV por vez... fica pra quando o
-motor de cálculo entrar de verdade"). Aplicar de verdade fica pra
-quando isso for resolvido de forma geral, não só pra esses dois casos.
+**Simplificação assumida, depois corrigida:** a primeira versão só
+rolava o dado (`useRoll`) e deixava o jogador somar o PV na mão,
+seguindo o mesmo aviso de protótipo já existente no resto da Combat
+("cada toque muda 1 PV por vez"). O Osmar reportou "Recuperar Fôlego
+não cura" — corrigido usando o `onResultado` do `rolarDados` pra
+aplicar o total direto em `onAlterarPv`; a cura agora reflete na barra
+de PV sem passo manual. Mente Tática **continua** manual de propósito
+(só rola 1d10) — diferente da cura, o app não tem como saber qual
+teste de atributo o jogador está tentando salvar, então não tem valor
+certo pra aplicar automaticamente.
 
 **Contexto:** terceira entrega do plano "Guerreiro 1-20", aprovado
 pelo Osmar ("vamos seguir").

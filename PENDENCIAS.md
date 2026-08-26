@@ -433,11 +433,14 @@ pendência entra aqui.
   banco de usos e rola 1d10 pra somar num teste falhado. Novo
   `core/recursosClasse.ts`: `valorRecursoClasse` genérico (usado
   também por `maestriaArma.ts`, refatorado pra não duplicar a mesma
-  lógica de leitura de recurso). **Simplificação assumida:** a
-  rolagem de cura não é aplicada automaticamente ao PV (mesmo
-  protótipo já avisado na aba Combat — "cada toque muda 1 PV por
-  vez"); o jogador rola e ajusta o PV na mão. Idem Mente Tática: o
-  app só rola o 1d10, somar ao teste é manual.
+  lógica de leitura de recurso). **Correção pós-B3:** a primeira
+  versão só rolava o dado e pedia pro jogador somar o PV na mão — o
+  Osmar reportou que "Recuperar Fôlego não cura". Corrigido: a
+  rolagem agora usa `onResultado` do `useRoll` pra aplicar o total
+  direto em `onAlterarPv`, cura de verdade aparece na barra de PV
+  sem passo manual. Mente Tática continua manual (o app só rola o
+  1d10 — somar ao teste de atributo que falhou é decisão de mesa, não
+  dá pra saber qual teste era).
 
 **Falta:**
 - **Nº de armas de Maestria crescendo em nível alto (4/10/16)** — hoje

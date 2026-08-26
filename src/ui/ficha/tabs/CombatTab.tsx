@@ -74,10 +74,17 @@ export default function CombatTab({
 
   function usarRecuperarFolego() {
     if (!onUsarUsoFolego()) return;
-    rolarDados({ label: 'Recuperar Fôlego (cura)', formula: `1d10 + ${nivel}`, quantidade: 1, lados: 10, mod: nivel });
+    rolarDados({
+      label: 'Recuperar Fôlego (cura)',
+      formula: `1d10 + ${nivel}`,
+      quantidade: 1,
+      lados: 10,
+      mod: nivel,
+      onResultado: (total) => onAlterarPv(total),
+    });
     onMarcarUsado('bonus');
     setPainelAberto(null);
-    setFeedback('🩹 Recuperar Fôlego — role o dado e some ao seu PV atual (+ pra cima na barra de PV).');
+    setFeedback('🩹 Recuperar Fôlego — cura aplicada ao seu PV automaticamente.');
   }
 
   function usarMenteTatica() {
