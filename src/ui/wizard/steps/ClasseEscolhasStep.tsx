@@ -4,9 +4,11 @@ import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { proficienciasArmaArmaduraClasse } from '../../../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
+import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../../core/maestriaArma';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoChip from '../../components/InfoChip';
+import styles from './ClasseEscolhasStep.module.css';
 import type { StepProps } from './StepProps';
 
 const MAX_PERICIAS = 2;
@@ -111,11 +113,16 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
             você troca 1 dessas armas a cada Descanso Longo, direto na aba Perfil.
           </div>
           {armasMaestria.map((a) => (
-            <div key={a.id} className="check-row" onClick={() => toggleMaestriaArma(a.nome)}>
-              <div className={`check-box ${selection.maestriaArmaEscolhida.includes(a.nome) ? 'checked' : ''}`} />
-              <span className="check-label">
-                {a.nome} <span className="label">({a.dano} · Maestria: {a.maestria})</span>
-              </span>
+            <div key={a.id} className={styles.maestriaRow} onClick={() => toggleMaestriaArma(a.nome)}>
+              <div
+                className={`check-box ${styles.maestriaCheckBox} ${selection.maestriaArmaEscolhida.includes(a.nome) ? 'checked' : ''}`}
+              />
+              <div className={styles.maestriaText}>
+                <span className={styles.maestriaNome}>{a.nome}</span>
+                <span className={styles.maestriaDetalhe}>
+                  {a.dano} · <ItemComDescricao nome={a.maestria} descricao={buscarDescricaoMaestria(a.maestria)} variante="icone" />
+                </span>
+              </div>
             </div>
           ))}
         </>
