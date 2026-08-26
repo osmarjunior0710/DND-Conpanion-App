@@ -12,30 +12,44 @@ export interface DanoPendente {
 
 interface AcaoPanelContentProps {
   onEscolher: (nome: string, desc: string, dano?: DanoPendente) => void;
+  onAtacar: (nome: string, desc: string, dano: DanoPendente) => void;
   gastarSlot: () => boolean;
   espacosGastos: number;
   espacosMaximo: number;
   conjura: boolean;
+  numAtaques: number;
+  ataquesFeitos: number;
+  surtoMax: number;
+  surtoRestantes: number;
+  surtoUsadoTurno: boolean;
+  onUsarSurto: () => void;
 }
 
 export default function AcaoPanelContent({
   onEscolher,
+  onAtacar,
   gastarSlot,
   espacosGastos,
   espacosMaximo,
   conjura,
+  numAtaques,
+  ataquesFeitos,
+  surtoMax,
+  surtoRestantes,
+  surtoUsadoTurno,
+  onUsarSurto,
 }: AcaoPanelContentProps) {
   const [magiaAberta, setMagiaAberta] = useState(false);
   const [avisoSlot, setAvisoSlot] = useState<string | null>(null);
   const { rolarD20 } = useRoll();
 
-  function rolarAtaque(nome: string, ataque: AtaqueInfo) {
+  function rolarAtaque(nome: string, ataque: AtaqueInfo, finalizar: (nome: string, desc: string, dano: DanoPendente) => void) {
     rolarD20({
       label: `Ataque — ${nome}`,
       formula: `1d20 + ${ataque.modAcerto}`,
       mod: ataque.modAcerto,
     });
-    onEscolher(`🗡 ${nome}`, `Rolagem de acerto feita. Toque "Rolar Dano" pra ver o dano ${ataque.danoTipo}.`, {
+    finalizar(`🗡 ${nome}`, `Rolagem de acerto feita. Toque "Rolar Dano" pra ver o dano ${ataque.danoTipo}.`, {
       label: `Dano — ${nome}`,
       quantidade: ataque.danoQuantidade,
       lados: ataque.danoLados,
@@ -53,18 +67,40 @@ export default function AcaoPanelContent({
     }
     setAvisoSlot(null);
     if (m.ataque) {
-      rolarAtaque(m.nome, m.ataque);
+      rolarAtaque(m.nome, m.ataque, onEscolher);
       return;
     }
     onEscolher(`✨ ${m.nome}`, m.descricao);
   }
 
+  const surtoDesabilitado = surtoRestantes <= 0 || surtoUsadoTurno;
+
   return (
     <>
-      <div className={styles.row} onClick={() => rolarAtaque('Atacar (Adaga)', ataqueArmaExemplo)}>
-        <div className={styles.rowName}>🗡 Atacar</div>
-        <div className={styles.rowDesc}>Ataca com arma ou Ataque Desarmado</div>
+      <div className={styles.row} onClick={() => rolarAtaque('Atacar (Adaga)', ataqueArmaExemplo, onAtacar)}>
+        <div className={styles.rowName}>
+          🗡 Atacar {numAtaques > 1 ? `(ataque ${Math.min(ataquesFeitos + 1, numAtaques)}/${numAtaques})` : ''}
+        </div>
+        <div className={styles.rowDesc}>
+          {numAtaques > 1
+            ? `Ataque Extra: você tem direito a ${numAtaques} ataques nesse turno — toque de novo depois de rolar o dano.`
+            : 'Ataca com arma ou Ataque Desarmado'}
+        </div>
       </div>
+
+      {surtoMax > 0 && (
+        <div
+          className={styles.row}
+          style={surtoDesabilitado ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+          onClick={onUsarSurto}
+        >
+          <div className={styles.rowName}>💥 Surto de Ação</div>
+          <div className={styles.rowDesc}>
+            Ganha uma ação extra nesse turno — não gasta sua Ação normal. {surtoRestantes}/{surtoMax} usos
+            {surtoUsadoTurno ? ' (já usado nesse turno)' : ''}.
+          </div>
+        </div>
+      )}
 
       {conjura && (
         <>

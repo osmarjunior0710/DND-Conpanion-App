@@ -20,6 +20,11 @@ import { calcularCapacidadeMaxima, calcularItensIniciais, explicarCapacidadeMaxi
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
+import {
+  caracteristicaDesbloqueada,
+  contarRepeticoesCaracteristica,
+  numeroDeAtaques,
+} from '../../core/levelUp';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
@@ -89,6 +94,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
   const [maestriaArma, setMaestriaArma] = useState<string[]>(selecao.maestriaArmaEscolhida);
   const [folegoGasto, setFolegoGasto] = useState(0);
+  const [indomavelGasto, setIndomavelGasto] = useState(0);
+  const [surtoGasto, setSurtoGasto] = useState(0);
+  const [surtoUsadoTurno, setSurtoUsadoTurno] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
   const [espacosGastos, setEspacosGastos] = useState(0);
@@ -113,6 +121,13 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
   const conjura = personagemConjura(classe);
+  const numAtaques = classe ? numeroDeAtaques(classe, personagem.nivel) : 1;
+  const indomavelMaximo = classe ? contarRepeticoesCaracteristica(classe, 'Indomável', personagem.nivel) : 0;
+  const indomavelRestantes = Math.max(0, indomavelMaximo - indomavelGasto);
+  const surtoMaximo = classe ? contarRepeticoesCaracteristica(classe, 'Surto de Ação', personagem.nivel) : 0;
+  const surtoRestantes = Math.max(0, surtoMaximo - surtoGasto);
+  const mestreTatico = classe ? caracteristicaDesbloqueada(classe, 'Mestre Tático', personagem.nivel) : null;
+  const ataquesEstudados = classe ? caracteristicaDesbloqueada(classe, 'Ataques Estudados', personagem.nivel) : null;
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -124,6 +139,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function fimDoTurno() {
     setTurnState(turnoInicial);
+    setSurtoUsadoTurno(false);
   }
 
   function gastarSlot(): boolean {
@@ -136,8 +152,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setPvAtual(personagem.pvMax);
     setEspacosGastos(0);
     setFolegoGasto(0);
+    setIndomavelGasto(0);
+    setSurtoGasto(0);
     fimDoTurno();
-    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia e Recuperar Fôlego recuperados.`);
+    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável e Surto de Ação recuperados.`);
   }
 
   function descansoCurto() {
@@ -153,6 +171,19 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function usarUsoFolego(): boolean {
     if (usosFolegoRestantes <= 0) return false;
     setFolegoGasto((v) => v + 1);
+    return true;
+  }
+
+  function usarIndomavel(): boolean {
+    if (indomavelRestantes <= 0) return false;
+    setIndomavelGasto((v) => v + 1);
+    return true;
+  }
+
+  function usarSurto(): boolean {
+    if (surtoRestantes <= 0 || surtoUsadoTurno) return false;
+    setSurtoGasto((v) => v + 1);
+    setSurtoUsadoTurno(true);
     return true;
   }
 
@@ -266,6 +297,16 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             usosFolegoRestantes={usosFolegoRestantes}
             onUsarUsoFolego={usarUsoFolego}
             conjura={conjura}
+            numAtaques={numAtaques}
+            indomavelMaximo={indomavelMaximo}
+            indomavelRestantes={indomavelRestantes}
+            onUsarIndomavel={usarIndomavel}
+            surtoMaximo={surtoMaximo}
+            surtoRestantes={surtoRestantes}
+            surtoUsadoTurno={surtoUsadoTurno}
+            onUsarSurto={usarSurto}
+            mestreTatico={mestreTatico}
+            ataquesEstudados={ataquesEstudados}
           />
         )}
       </div>

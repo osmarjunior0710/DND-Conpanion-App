@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { espacosMagiaExemplo } from '../../../data/exampleCombat';
 import type { EstiloDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
+import type { CaracteristicaNivel } from '../../../core/levelUp';
 import { useRoll } from '../../roll/RollContext';
 import InfoChip from '../../components/InfoChip';
 import SidePanel from '../combat/SidePanel';
@@ -27,6 +28,16 @@ interface CombatTabProps {
   usosFolegoRestantes: number;
   onUsarUsoFolego: () => boolean;
   conjura: boolean;
+  numAtaques: number;
+  indomavelMaximo: number;
+  indomavelRestantes: number;
+  onUsarIndomavel: () => boolean;
+  surtoMaximo: number;
+  surtoRestantes: number;
+  surtoUsadoTurno: boolean;
+  onUsarSurto: () => boolean;
+  mestreTatico: CaracteristicaNivel | null;
+  ataquesEstudados: CaracteristicaNivel | null;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -50,11 +61,22 @@ export default function CombatTab({
   usosFolegoRestantes,
   onUsarUsoFolego,
   conjura,
+  numAtaques,
+  indomavelMaximo,
+  indomavelRestantes,
+  onUsarIndomavel,
+  surtoMaximo,
+  surtoRestantes,
+  surtoUsadoTurno,
+  onUsarSurto,
+  mestreTatico,
+  ataquesEstudados,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [danoPendente, setDanoPendente] = useState<DanoPendente | null>(null);
-  const { rolarDados } = useRoll();
+  const [ataquesFeitos, setAtaquesFeitos] = useState(0);
+  const { rolarD20, rolarDados } = useRoll();
 
   function abrirPainel(categoria: RecursoTurno) {
     if (turnState[categoria] === 'usada') return;
@@ -93,6 +115,28 @@ export default function CombatTab({
     if (!onUsarUsoFolego()) return;
     rolarDados({ label: 'Mente Tática', formula: '1d10', quantidade: 1, lados: 10, mod: 0 });
     setFeedback('🧠 Mente Tática — some o resultado ao teste de atributo que falhou.');
+  }
+
+  function usarIndomavel() {
+    if (!onUsarIndomavel()) return;
+    rolarD20({ label: 'Indomável (nova salvaguarda)', formula: `1d20 + ${nivel}`, mod: nivel });
+    setFeedback('🛡️ Indomável — use esse resultado como sua nova salvaguarda.');
+  }
+
+  function registrarAtaque(nome: string, desc: string, dano: DanoPendente) {
+    const proximo = ataquesFeitos + 1;
+    setAtaquesFeitos(proximo);
+    setFeedback(`${nome} — ${desc}`);
+    setDanoPendente(dano);
+    if (proximo >= numAtaques) {
+      onMarcarUsado('acao');
+      setPainelAberto(null);
+    }
+  }
+
+  function usarSurtoDeAcao() {
+    if (!onUsarSurto()) return;
+    setFeedback('💥 Surto de Ação — você ganhou uma ação extra nesse turno (a Ação normal continua disponível).');
   }
 
   function rolarDanoPendente() {
@@ -135,10 +179,36 @@ export default function CombatTab({
         motor de cálculo (`core/`) entrar de verdade.
       </div>
 
-      {estiloDeLuta && (
+      {(estiloDeLuta || mestreTatico || ataquesEstudados) && (
         <>
-          <div className="section-title">Estilo de Luta</div>
-          <InfoChip nome={estiloDeLuta.nome} descricao={estiloDeLuta.beneficios} />
+          <div className="section-title">Características</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+            {estiloDeLuta && <InfoChip nome={estiloDeLuta.nome} descricao={estiloDeLuta.beneficios} />}
+            {mestreTatico && <InfoChip nome={mestreTatico.nome} descricao={mestreTatico.descricao} />}
+            {ataquesEstudados && <InfoChip nome={ataquesEstudados.nome} descricao={ataquesEstudados.descricao} />}
+          </div>
+        </>
+      )}
+
+      {indomavelMaximo > 0 && (
+        <>
+          <div className="section-title">Indomável</div>
+          <div
+            className="box"
+            style={{
+              padding: 12,
+              marginBottom: 12,
+              cursor: indomavelRestantes > 0 ? 'pointer' : 'default',
+              opacity: indomavelRestantes > 0 ? 1 : 0.5,
+            }}
+            onClick={indomavelRestantes > 0 ? usarIndomavel : undefined}
+          >
+            <div style={{ fontSize: 14 }}>🛡️ Ao falhar uma salvaguarda, toque aqui</div>
+            <div className="label" style={{ marginTop: 2 }}>
+              Rola de novo somando seu nível de Guerreiro ({indomavelRestantes}/{indomavelMaximo} usos — só recupera
+              no Descanso Longo).
+            </div>
+          </div>
         </>
       )}
 
@@ -186,6 +256,7 @@ export default function CombatTab({
           onFimDoTurno();
           setFeedback(null);
           setDanoPendente(null);
+          setAtaquesFeitos(0);
         }}
       >
         ↻ Fim do Turno — restaura os 3 botões
@@ -215,10 +286,17 @@ export default function CombatTab({
         {painelAberto === 'acao' && (
           <AcaoPanelContent
             onEscolher={(nome, desc, dano) => escolherNoPainel('acao', nome, desc, dano)}
+            onAtacar={registrarAtaque}
             gastarSlot={onGastarSlot}
             espacosGastos={espacosGastos}
             espacosMaximo={espacosMagiaExemplo.maximo}
             conjura={conjura}
+            numAtaques={numAtaques}
+            ataquesFeitos={ataquesFeitos}
+            surtoMax={surtoMaximo}
+            surtoRestantes={surtoRestantes}
+            surtoUsadoTurno={surtoUsadoTurno}
+            onUsarSurto={usarSurtoDeAcao}
           />
         )}
         {painelAberto === 'bonus' && (

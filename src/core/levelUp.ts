@@ -61,3 +61,57 @@ export function caracteristicasDoNivel(classe: Classe, nivel: number): Caracteri
     return { nome, descricao: detalhe?.descricao ?? null };
   });
 }
+
+/** True + descrição real se a classe já desbloqueou uma característica
+ * nomeada até `nivelAtual` (ex: "Mestre Tático" nível 9, "Ataques
+ * Estudados" nível 13) — null se ainda não chegou nesse nível. Usa a
+ * mesma busca "maior nível ≤ atual" de `caracteristicasDoNivel`, só que
+ * por nome direto em vez de por linha de progressão inteira — útil pra
+ * telas (ex: Combat) que só precisam saber de 1 característica
+ * específica, sem montar a lista toda do nível. */
+export function caracteristicaDesbloqueada(classe: Classe, nome: string, nivelAtual: number): CaracteristicaNivel | null {
+  const desbloqueada = classe.progressao.some((p) => p.nivel <= nivelAtual && p.caracteristicas.includes(nome));
+  if (!desbloqueada) return null;
+  const candidatos = caracteristicasClasse.filter(
+    (c) => c.classe === classe.nome && c.nome === nome && c.nivel <= nivelAtual,
+  );
+  const detalhe = candidatos.sort((a, b) => b.nivel - a.nivel)[0];
+  return { nome, descricao: detalhe?.descricao ?? null };
+}
+
+/** Conta quantas vezes uma característica com o padrão "repete o mesmo
+ * nome pra indicar +1 uso" (ver DECISOES-DESIGN.md "Cuidado de import —
+ * nome repetido", convenção 1) aparece na progressão até `nivelAtual` —
+ * usado pra derivar nº de usos de recursos como Indomável (9/13/17) e
+ * Surto de Ação (2/17) que não têm coluna numérica própria em
+ * `classes.ts` (diferente de Recuperar Fôlego/Maestria em Arma, que
+ * têm). Genérico por nome — funciona pra qualquer classe futura com o
+ * mesmo padrão, não só Guerreiro. */
+export function contarRepeticoesCaracteristica(classe: Classe, nome: string, nivelAtual: number): number {
+  return classe.progressao.filter((p) => p.nivel <= nivelAtual && p.caracteristicas.includes(nome)).length;
+}
+
+/** Nº de ataques concedidos pela ação Atacar no nível atual — deriva do
+ * padrão "muda de nome a cada salto" (convenção 2 da mesma decisão):
+ * "Ataque Extra" (2), "Dois Ataques Extras" (3), "Três Ataques Extras"
+ * (4) são nomes oficiais usados por várias classes do Livro do Jogador
+ * 2024 (não é specific de Guerreiro) pra indicar a mesma mecânica de
+ * base escalando — por isso o mapa nome→contagem é genérico, lido
+ * contra a progressão real da classe, não uma tabela por classe. */
+const CONTAGEM_ATAQUE_EXTRA: Record<string, number> = {
+  'Ataque Extra': 2,
+  'Dois Ataques Extras': 3,
+  'Três Ataques Extras': 4,
+};
+
+export function numeroDeAtaques(classe: Classe, nivelAtual: number): number {
+  let maximo = 1;
+  for (const linha of classe.progressao) {
+    if (linha.nivel > nivelAtual) break;
+    for (const nome of linha.caracteristicas) {
+      const contagem = CONTAGEM_ATAQUE_EXTRA[nome];
+      if (contagem && contagem > maximo) maximo = contagem;
+    }
+  }
+  return maximo;
+}

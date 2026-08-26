@@ -498,15 +498,50 @@ pendência entra aqui.
   1d10 — somar ao teste de atributo que falhou é decisão de mesa, não
   dá pra saber qual teste era).
 
+- **B4 — Surto de Ação, Indomável, Ataque Extra, Mestre Tático,
+  Ataques Estudados.** Resolve os itens #6/#11 do teste do Osmar
+  (Ataque Extra não aparecendo na Combat). Novo em `core/levelUp.ts`:
+  `contarRepeticoesCaracteristica(classe, nome, nivel)` — conta
+  quantas vezes uma característica no padrão "repete nome = +1 uso"
+  (convenção 1 já documentada) aparece até o nível atual, usado pra
+  derivar usos de Indomável (9/13/17) e Surto de Ação (2/17) sem
+  precisar de coluna numérica própria; `numeroDeAtaques(classe,
+  nivel)` — deriva quantos ataques a ação Atacar concede, lendo o
+  padrão "muda de nome a cada salto" (convenção 2: Ataque Extra=2,
+  Dois Ataques Extras=3, Três Ataques Extras=4 — nomes oficiais
+  usados por várias classes, não é hardcode do Guerreiro);
+  `caracteristicaDesbloqueada(classe, nome, nivel)` — retorna
+  nome+descrição se a classe já tem essa característica nomeada
+  (usado pra Mestre Tático/Ataques Estudados como InfoChip
+  informativo).
+  - **Atacar**: linha do painel de Ação agora mostra "(ataque N/M)" e
+    conta os toques — só marca a Ação do turno como "usada" e fecha o
+    painel no **último** ataque; os anteriores mantêm o painel aberto
+    (pra tocar Atacar de novo) sem consumir o turno.
+  - **Surto de Ação**: nova linha no painel de Ação — usar não marca
+    a Ação normal como usada (ela continua disponível), respeita
+    limite duplo (nº de usos por descanso E máximo 1x por turno,
+    controlado por um flag que reseta no "Fim do Turno").
+  - **Indomável**: card sempre visível na Combat (mesmo padrão de
+    Mente Tática) — toque rola 1d20+nível como nova salvaguarda;
+    recupera só no Descanso Longo (diferente de Recuperar
+    Fôlego/Mente Tática, que também recuperam 1 no Descanso Curto).
+  - **Mestre Tático/Ataques Estudados**: só InfoChip informativo por
+    ora (nome+descrição real, clicável) — a mecânica de "trocar
+    propriedade de maestria por ataque" (Mestre Tático) e "rastrear
+    Vantagem contra o último inimigo que errei" (Ataques Estudados)
+    não tem UI interativa ainda, fica como simplificação assumida.
+  - **Simplificação de UX conhecida:** o feedback + botão "Rolar
+    Dano" de cada ataque ficam atrás do painel de Ação enquanto ele
+    segue aberto (entre o 1º e o último ataque) — o jogador só vê
+    depois de fechar o painel manualmente. Funcional, mas não é o
+    fluxo mais fluido; revisar se incomodar no teste real de mesa.
+
 **Falta:**
 - **Nº de armas de Maestria crescendo em nível alto (4/10/16)** — hoje
   só a escolha inicial (nível 1) tem UI; quando o recurso cresce (ex:
   de 3 pra 4 armas no nível 4), o Level Up ainda não tem um passo pra
-  escolher a arma extra. Fica pra quando B4 (níveis automáticos) for
-  implementado, ou uma entrega própria se não couber lá.
-- **B4** — Surto de Ação, Indomável, Ataque Extra e o resto das
-  características automáticas/numéricas (níveis 2, 5, 9, 11, 13, 17,
-  20).
+  escolher a arma extra.
 - **B5** — revisão geral do Guerreiro base 1-20 antes de partir pras 4
   subclasses (ordem: base → Campeão → Mestre da Batalha → Combatente
   Psíquico → Cavaleiro Místico).

@@ -2187,3 +2187,71 @@ generalizado agora pra essa aba inteira.
 Magias já é sempre visível hoje, mas só porque tudo é fixture; falta
 o estado vazio real condicionado a `personagemConjura()`. Ver
 `PENDENCIAS.md`.
+
+## Guerreiro B4 — Ataque Extra, Surto de Ação, Indomável, Mestre Tático, Ataques Estudados
+
+**Decisão:** quarta entrega do plano "Guerreiro 1-20". Duas funções
+novas em `core/levelUp.ts` generalizam os 2 padrões de "recurso que
+escala por nível sem coluna numérica própria" já documentados em
+"Cuidado de import — nome repetido":
+- `contarRepeticoesCaracteristica(classe, nome, nivel)` — convenção 1
+  (repete o mesmo nome): conta ocorrências até o nível atual. Deriva
+  usos de Indomável (9/13/17 → 1/2/3 usos) e Surto de Ação (2/17 →
+  1/2 usos).
+- `numeroDeAtaques(classe, nivel)` — convenção 2 (muda de nome a cada
+  salto): mapa fixo `{'Ataque Extra': 2, 'Dois Ataques Extras': 3,
+  'Três Ataques Extras': 4}` — nomes oficiais do Livro do Jogador
+  2024, compartilhados por várias classes (não é hardcode específico
+  de Guerreiro), lidos contra a progressão real.
+- `caracteristicaDesbloqueada(classe, nome, nivel)` — retorna
+  nome+descrição se a classe já tem essa característica nomeada até
+  o nível atual; usado pra Mestre Tático/Ataques Estudados como
+  InfoChip informativo (sem mecânica interativa ainda).
+
+**UI de "Atacar" com múltiplos golpes:** o desafio real era que o
+painel de Ação fecha e marca a Ação do turno como "usada" assim que
+qualquer opção é escolhida — mas Ataque Extra dá múltiplos ataques
+dentro da MESMA Ação, não uma Ação por ataque. Solução: `AcaoPanelContent`
+ganhou um callback `onAtacar` separado de `onEscolher`, e `CombatTab`
+conta os ataques feitos no turno (`ataquesFeitos`, reseta no "Fim do
+Turno") — só fecha o painel e marca a Ação como usada quando o último
+ataque é registrado; os anteriores mantêm o painel aberto (o rótulo
+mostra "ataque N/M") sem consumir o turno.
+
+**Surto de Ação dentro do painel de Ação, mas sem marcar a Ação
+como usada:** ao contrário de Recuperar Fôlego (que É uma Ação Bônus
+de verdade, então marca o botão Bônus), Surto de Ação **concede** uma
+ação extra — usá-lo não pode consumir a Ação normal do turno. A linha
+fica dentro do painel de Ação (é conceitualmente relacionado), mas o
+clique só decrementa o banco de usos e mostra feedback, sem chamar
+`onMarcarUsado`. O limite duplo do nível 17 (2 usos por descanso, mas
+só 1x por turno) usa um flag `surtoUsadoTurno` separado do contador
+de usos, resetado no "Fim do Turno".
+
+**Indomável fica fora da economia de ação** (card sempre visível na
+Combat, mesmo padrão de Mente Tática) — não é Ação/Bônus/Reação, é
+reativo a "falhar uma salvaguarda", pode acontecer a qualquer
+momento. Diferença importante de Recuperar Fôlego/Mente Tática:
+Indomável só recupera no Descanso Longo, não 1 uso no Curto — o
+código já reflete isso (`indomavelGasto` só zera em `descansoLongo`,
+não em `descansoCurto`).
+
+**Simplificação assumida — Mestre Tático e Ataques Estudados só
+informativos:** a mecânica real (trocar propriedade de maestria por
+ataque; rastrear Vantagem contra o último inimigo que errou) exigiria
+estado por-ataque ou por-inimigo que a Combat ainda não modela.
+Registrados como InfoChip com a descrição real, sem interatividade —
+suficiente pra o jogador saber que a característica existe e o que
+ela faz, sem fingir suporte mecânico que não existe.
+
+**Simplificação de UX identificada, não corrigida ainda:** o feedback
++ botão "Rolar Dano" de cada ataque intermediário fica atrás do
+painel de Ação (que continua aberto até o último ataque) — o jogador
+só vê depois de fechar o painel manualmente. Funciona, mas não é
+ideal; ver `PENDENCIAS.md`.
+
+**Contexto:** quarta entrega do plano "Guerreiro 1-20", resolve os
+itens #6/#11 da lista de teste do Osmar pós-B1 (Ataque Extra/Dois
+Ataques Extras/Três Ataques Extras não contabilizados na Combat).
+
+**Data/origem:** 2026-08.
