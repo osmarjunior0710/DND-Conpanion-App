@@ -41,7 +41,14 @@ exibido, até virar dado/lógica de verdade.
 - **Atacar** precisa calcular o ataque de verdade a partir da arma
   equipada (ou a mais provável, se várias) + atributo (Força/Destreza
   + Acuidade) + Bônus de Proficiência — hoje não existe esse cálculo
-  em `core/`, só o fixture de `exampleCombat.ts`.
+  em `core/`, só o fixture de `exampleCombat.ts`. Junto com isso,
+  precisa entrar a escolha **Arma vs. Ataque Desarmado** (com as 3
+  sub-opções Dano/Empurrar/Imobilizar, confirmadas na planilha) **por
+  instância de ataque**, não uma escolha única pra todos os ataques
+  do turno — ver decisão "Ataque Extra — cada instância de ataque é
+  independente" no `DECISOES-DESIGN.md`. Não faz sentido montar essa
+  UI antes do cálculo de ataque real existir, então os dois entram
+  juntos na mesma entrega.
 - **Usar Magia / Escudo Arcano / aba Magias inteira** — trocar
   `magiasExemplo` por magia real assim que a 1ª classe conjuradora
   (Mago ou Clérigo) for importada (mesma pendência já registrada em

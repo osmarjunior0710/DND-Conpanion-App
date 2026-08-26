@@ -2255,3 +2255,44 @@ itens #6/#11 da lista de teste do Osmar pós-B1 (Ataque Extra/Dois
 Ataques Extras/Três Ataques Extras não contabilizados na Combat).
 
 **Data/origem:** 2026-08.
+
+## Ataque Extra — cada instância de ataque é independente, não um "modo" único pra ação toda
+
+**Decisão:** Ataque Extra concede múltiplas **instâncias** da ação
+Atacar, e cada instância pode ser escolhida separadamente entre arma
+ou Ataque Desarmado. Ataque Desarmado, por sua vez, tem 3 sub-opções
+(Dano/Empurrar/Imobilizar) escolhidas a cada uso individual —
+confirmado na planilha mestra (aba "Glossário de Regras", termo
+"Ataque Desarmado"): "Sempre que você usar seu Ataque Desarmado,
+escolha uma das seguintes opções para seu efeito" (Dano: 1+FOR
+Contundente; Empurrar: salvaguarda FOR/DES CD 8+FOR+Bônus de
+Proficiência ou empurra 1,5m/Caído; Imobilizar: salvaguarda FOR/DES
+mesma CD ou condição Imobilizado, exige mão livre).
+
+**Implicação prática confirmada:** um personagem com Ataque Extra (2,
+3 ou 4 ataques) pode usar Imobilizar (agarrar) em **todos** os
+ataques da mesma ação Atacar, contra alvos diferentes se quiser — não
+é "escolhe um modo pra ação toda". Não existe restrição de "só pode
+agarrar 1x por turno" na regra base (só existe se algo específico
+limitar).
+
+**Implicação de UI:** o "Atacar" do painel de Ação, quando o
+personagem tem Ataque Extra, precisa oferecer a escolha Arma/
+Desarmado (Dano/Empurrar/Imobilizar) **por instância de ataque
+dentro da mesma ação**, não uma escolha única aplicada a todos os
+ataques do turno.
+
+**Estado atual (ainda não implementado):** hoje "Atacar" nem sequer
+tem Ataque Desarmado como opção — é só a arma fixture da Adaga
+(marcada `[PH]`, ver `PENDENCIAS.md` "Combat tab — auditoria de
+fixture vs. real"). A escolha por-instância Arma/Desarmado entra
+junto quando o cálculo de ataque real (arma equipada + atributo +
+proficiência) for implementado — não faz sentido montar a UI de
+escolha antes do cálculo por trás existir.
+
+**Contexto:** dúvida direta do Osmar sobre se Ataque Extra só dá mais
+dano ou permite repetir qualquer opção de Ataque Desarmado múltiplas
+vezes. Confirmado que sim, repete — achado registrado num chat
+paralelo, verificado contra a planilha mestra antes de entrar aqui.
+
+**Data/origem:** 2026-08.
