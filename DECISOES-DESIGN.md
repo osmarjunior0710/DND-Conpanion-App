@@ -2296,3 +2296,33 @@ vezes. Confirmado que sim, repete — achado registrado num chat
 paralelo, verificado contra a planilha mestra antes de entrar aqui.
 
 **Data/origem:** 2026-08.
+
+## Guerreiro B5 — revisão geral 1-20 (Guerreiro base concluído)
+
+**Decisão:** quinta e última entrega do "Guerreiro base" (níveis
+1-20, sem subclasse). Auditoria de todas as características contra a
+progressão real (`classes.ts`) confirmou que só uma estava com dado
+real importado mas sem UI: **Ajuste Tático** (nível 5 — "Sempre que
+executar uma Ação Bônus para seu Recuperar Fôlego, você pode mover-se
+até metade do seu Deslocamento sem provocar Ataques de Oportunidade")
+não tinha InfoChip na Combat, diferente de Mestre Tático/Ataques
+Estudados que já tinham. Corrigido — mesmo padrão, 3º chip na seção
+"Características".
+
+**Verificação de ponta a ponta:** Level Up automatizado nível 1→20
+sem travar em nenhum passo (incluindo os placeholders de Subclasse/
+Dádiva Épica, que não bloqueiam o avanço por design). Nível 20
+conferido manualmente: PV, usos de Indomável/Recuperar
+Fôlego/Surto de Ação e contagem de ataques todos batendo com a
+planilha.
+
+**Guerreiro base 1-20 está completo** pro escopo já aprovado — o que
+falta (ASI, Dádiva Épica, Atacar real) são pendências já registradas
+e conscientes, não gaps novos descobertos aqui. Próximo passo do
+plano "Guerreiro 1-20": subclasses, na ordem já definida (Campeão →
+Mestre da Batalha → Combatente Psíquico → Cavaleiro Místico).
+
+**Contexto:** quinta entrega do plano "Guerreiro 1-20", aprovado pelo
+Osmar ("sim b5").
+
+**Data/origem:** 2026-08.

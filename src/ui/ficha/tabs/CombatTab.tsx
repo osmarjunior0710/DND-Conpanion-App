@@ -38,6 +38,7 @@ interface CombatTabProps {
   onUsarSurto: () => boolean;
   mestreTatico: CaracteristicaNivel | null;
   ataquesEstudados: CaracteristicaNivel | null;
+  ajusteTatico: CaracteristicaNivel | null;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -71,6 +72,7 @@ export default function CombatTab({
   onUsarSurto,
   mestreTatico,
   ataquesEstudados,
+  ajusteTatico,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -179,11 +181,12 @@ export default function CombatTab({
         motor de cálculo (`core/`) entrar de verdade.
       </div>
 
-      {(estiloDeLuta || mestreTatico || ataquesEstudados) && (
+      {(estiloDeLuta || mestreTatico || ataquesEstudados || ajusteTatico) && (
         <>
           <div className="section-title">Características</div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
             {estiloDeLuta && <InfoChip nome={estiloDeLuta.nome} descricao={estiloDeLuta.beneficios} />}
+            {ajusteTatico && <InfoChip nome={ajusteTatico.nome} descricao={ajusteTatico.descricao} />}
             {mestreTatico && <InfoChip nome={mestreTatico.nome} descricao={mestreTatico.descricao} />}
             {ataquesEstudados && <InfoChip nome={ataquesEstudados.nome} descricao={ataquesEstudados.descricao} />}
           </div>

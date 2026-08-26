@@ -583,14 +583,34 @@ pendência entra aqui.
     depois de fechar o painel manualmente. Funcional, mas não é o
     fluxo mais fluido; revisar se incomodar no teste real de mesa.
 
+**Já feito:**
+- **B5 — revisão geral do Guerreiro base 1-20.** Auditoria
+  característica por característica das 20 níveis + teste automatizado
+  de ponta a ponta (Level Up 1→20 sem travar, sem erro de console).
+  Achado corrigido: **Ajuste Tático** (nível 5) tinha descrição real
+  importada mas nenhuma tela mostrava — agora é o 3º InfoChip na
+  seção "Características" da Combat, mesmo padrão de Mestre
+  Tático/Ataques Estudados. Confirmado no teste (nível 20): PV
+  145/145, 4 chips de característica, Indomável 3/3 usos, Mente
+  Tática/Recuperar Fôlego 4/4 usos, "Atacar (ataque 1/4)" com `[PH]`
+  correto, Surto de Ação 2/2 usos — todos os números batem com a
+  progressão real da planilha.
+  **Gaps já conhecidos, não fazem parte do escopo de B5** (cada um já
+  tem entrada própria nesta lista ou em `DECISOES-DESIGN.md`, revisar
+  lá antes de reabrir aqui): Subclasse de Guerreiro (placeholder,
+  níveis 3/7/10/15/18 — entra na fase de subclasses); ASI (seletor
+  `toggleAsi` não permite +2 no mesmo atributo, e o resultado não é
+  aplicado à ficha — "Level Up — itens de teste do Osmar" abaixo);
+  Dádiva Épica (nível 19, placeholder — lista do Cap. 5 não
+  importada); Atacar (`[PH]`, precisa do cálculo real de arma
+  equipada + atributo, junto com a escolha Arma/Desarmado por
+  instância — "Combat tab — auditoria de fixture vs. real" acima).
+
 **Falta:**
 - **Nº de armas de Maestria crescendo em nível alto (4/10/16)** — hoje
   só a escolha inicial (nível 1) tem UI; quando o recurso cresce (ex:
   de 3 pra 4 armas no nível 4), o Level Up ainda não tem um passo pra
   escolher a arma extra.
-- **B5** — revisão geral do Guerreiro base 1-20 antes de partir pras 4
-  subclasses (ordem: base → Campeão → Mestre da Batalha → Combatente
-  Psíquico → Cavaleiro Místico).
 
 ## Level Up — itens de teste do Osmar (pós-B1) ainda não cobertos pelo plano B2-B5
 
