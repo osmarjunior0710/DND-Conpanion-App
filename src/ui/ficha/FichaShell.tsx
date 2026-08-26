@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { espacosMagiaExemplo } from '../../data/exampleCombat';
 import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
@@ -85,21 +85,21 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [tab, setTab] = useState<TabName>('perfil');
   const [personagem, setPersonagem] = useState<PersonagemNivel>({
     nivel: personagemSalvo.nivel,
-    pvMax: calcularPvMaximoNivel1(selecao) ?? personagemSalvo.pvAtual,
+    pvMax: personagemSalvo.pvMax ?? calcularPvMaximoNivel1(selecao) ?? personagemSalvo.pvAtual,
     dadoVida: classe?.dadoDeVida ?? 'd8',
     conMod: conValor !== null ? modificador(conValor) : 0,
     subclasse: null,
-    estiloDeLuta: selecao.estiloDeLutaEscolhido,
+    estiloDeLuta: personagemSalvo.estiloDeLutaAtual ?? selecao.estiloDeLutaEscolhido,
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
-  const [maestriaArma, setMaestriaArma] = useState<string[]>(selecao.maestriaArmaEscolhida);
-  const [folegoGasto, setFolegoGasto] = useState(0);
-  const [indomavelGasto, setIndomavelGasto] = useState(0);
-  const [surtoGasto, setSurtoGasto] = useState(0);
+  const [maestriaArma, setMaestriaArma] = useState<string[]>(personagemSalvo.maestriaArmaAtual ?? selecao.maestriaArmaEscolhida);
+  const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
+  const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
+  const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
   const [surtoUsadoTurno, setSurtoUsadoTurno] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
-  const [espacosGastos, setEspacosGastos] = useState(0);
+  const [espacosGastos, setEspacosGastos] = useState(personagemSalvo.espacosGastos ?? 0);
   const [levelUpAberto, setLevelUpAberto] = useState(false);
   const [itensDetalhados, setItensDetalhados] = useState(false);
   const [pesoAtivo, setPesoAtivo] = useState(true);
@@ -129,6 +129,39 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const mestreTatico = classe ? caracteristicaDesbloqueada(classe, 'Mestre Tático', personagem.nivel) : null;
   const ataquesEstudados = classe ? caracteristicaDesbloqueada(classe, 'Ataques Estudados', personagem.nivel) : null;
   const ajusteTatico = classe ? caracteristicaDesbloqueada(classe, 'Ajuste Tático', personagem.nivel) : null;
+
+  // Salva progresso automaticamente a cada mudança relevante — Level
+  // Up, Descanso, troca de arma de Maestria, uso de Recuperar
+  // Fôlego/Indomável/Surto de Ação. Sem isso, um F5 na Ficha depois de
+  // subir de nível voltava tudo pro estado da criação (só nivel/xp/
+  // pvAtual eram salvos, o resto só existia em estado do React). Não
+  // inclui turnState/surtoUsadoTurno de propósito — são "estado do
+  // turno atual", esperado resetar como qualquer app de mesa.
+  useEffect(() => {
+    armazenamentoPersonagens.salvar({
+      ...personagemSalvo,
+      nivel: personagem.nivel,
+      pvAtual,
+      pvMax: personagem.pvMax,
+      estiloDeLutaAtual: personagem.estiloDeLuta,
+      maestriaArmaAtual: maestriaArma,
+      folegoGasto,
+      indomavelGasto,
+      surtoGasto,
+      espacosGastos,
+    });
+  }, [
+    personagemSalvo,
+    personagem.nivel,
+    personagem.pvMax,
+    personagem.estiloDeLuta,
+    pvAtual,
+    maestriaArma,
+    folegoGasto,
+    indomavelGasto,
+    surtoGasto,
+    espacosGastos,
+  ]);
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));

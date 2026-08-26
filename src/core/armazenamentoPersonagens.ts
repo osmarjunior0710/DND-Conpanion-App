@@ -11,6 +11,22 @@ export interface PersonagemSalvo {
   xp: number;
   pvAtual: number;
   selecao: WizardSelection;
+  /** Campos abaixo guardam estado de progressão que muda DEPOIS da
+   * criação (Level Up, Descanso, uso de recursos em combate) — tudo
+   * opcional porque personagens salvos antes dessa entrega não têm
+   * esses campos ainda; quem lê usa `??` com um fallback derivado de
+   * `selecao`/nível 1 (ver `FichaShell.tsx`). Sem isso, dar F5 na
+   * Ficha depois de subir de nível perdia o progresso — só `nivel`,
+   * `xp` e `pvAtual` eram salvos, o resto (PV máximo real, Estilo de
+   * Luta trocado, Maestria em Arma trocada, usos gastos de recurso)
+   * só existia em estado do React, nunca em disco. */
+  pvMax?: number;
+  estiloDeLutaAtual?: string | null;
+  maestriaArmaAtual?: string[];
+  folegoGasto?: number;
+  indomavelGasto?: number;
+  surtoGasto?: number;
+  espacosGastos?: number;
 }
 
 export interface ArmazenamentoPersonagens {

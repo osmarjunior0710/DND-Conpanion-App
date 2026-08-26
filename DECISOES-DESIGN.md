@@ -2326,3 +2326,46 @@ Mestre da Batalha → Combatente Psíquico → Cavaleiro Místico).
 Osmar ("sim b5").
 
 **Data/origem:** 2026-08.
+
+## Ficha — auto-save de progresso, não só na criação
+
+**Decisão:** `FichaShell.tsx` ganhou um `useEffect` que salva o
+personagem (`armazenamentoPersonagens.salvar`) sempre que nível, PV
+(atual e máximo), Estilo de Luta atual, Maestria em Arma atual, ou
+usos gastos de Recuperar Fôlego/Indomável/Surto de Ação/Espaços de
+Magia mudam — não só uma vez na criação (wizard). `PersonagemSalvo`
+ganhou os campos correspondentes (`pvMax`, `estiloDeLutaAtual`,
+`maestriaArmaAtual`, `folegoGasto`, `indomavelGasto`, `surtoGasto`,
+`espacosGastos`), todos opcionais pra não quebrar personagens salvos
+antes dessa entrega (leitura usa `??` com fallback pro valor
+derivado de `selecao`/nível 1).
+
+**Contexto:** bug reportado pelo Osmar testando — dar F5 na Ficha
+depois de subir de nível voltava tudo pro nível 1. Causa raiz: só
+`nivel`/`xp`/`pvAtual` eram persistidos (e só na criação, pelo
+wizard); todo o resto do progresso (PV máximo real após Level Up,
+troca de Estilo de Luta, troca de Maestria em Arma, usos gastos de
+recurso) só existia em estado do React, nunca ia pro `localStorage`.
+
+**Decisão de escopo — o que NÃO entra no auto-save:** `turnState`
+(Ação/Bônus/Reação usada) e `surtoUsadoTurno` ficam de fora de
+propósito — são "estado do turno atual", já resetam sozinhos no "Fim
+do Turno", e é esperado (mesmo padrão de qualquer app de mesa) que
+sumam se a página recarregar no meio de um turno. Persistir só o que
+representa progresso real do personagem, não estado efêmero de UI.
+
+**Alternativa descartada:** salvar manualmente em cada handler
+(`confirmarLevelUp`, `descansoLongo`, `trocarArmaMaestria`, etc.)
+depois de cada `setState`. Descartado porque `setState` é assíncrono
+— salvar logo depois de chamar `setPersonagem(...)` capturaria o
+valor **antigo**, não o novo, exigindo duplicar os cálculos só pra
+montar o objeto a salvar. O `useEffect` observando os valores já
+resolve isso de graça (roda depois do re-render, com o valor
+atualizado) e cobre todos os pontos de mudança de uma vez, sem
+precisar lembrar de adicionar a chamada em cada handler novo no
+futuro.
+
+**Contexto:** teste do Osmar, "se estou numa ficha e faço Level Up
+... e dou refresh, ela volta pro nível 1".
+
+**Data/origem:** 2026-08.
