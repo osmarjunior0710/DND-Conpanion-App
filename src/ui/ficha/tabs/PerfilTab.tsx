@@ -156,7 +156,7 @@ export default function PerfilTab({
                 {arma && (
                   <div className={styles.maestriaDetalhe}>
                     {arma.dano} ·{' '}
-                    <ItemComDescricao nome={arma.maestria} descricao={buscarDescricaoMaestria(arma.maestria)} />
+                    <ItemComDescricao nome={arma.maestria} descricao={buscarDescricaoMaestria(arma.maestria)} variante="icone" />
                   </div>
                 )}
               </div>

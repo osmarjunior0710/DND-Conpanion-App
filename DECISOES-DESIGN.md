@@ -601,6 +601,37 @@ o popup que antes só estava desenhado no papel.
 **Data/origem:** 2026-08, depois da atualização da planilha mestra com a
 coluna Descrição.
 
+## ItemComDescricao — regra fixa de qual variante usar (sublinhado vs. ícone)
+
+**Decisão:** `ItemComDescricao` tem 2 variantes visuais pro mesmo
+comportamento (toque abre popup com nome+descrição) — a partir de
+agora, qual usar não é escolha caso a caso, é regra fixa por contexto:
+- **`sublinhado`** (padrão) — termo dentro de uma frase/parágrafo de
+  texto corrido (ex: descrição de kit, lista de itens da Loja/Origem).
+- **`icone`** (ⓘ solto ao lado, nome sem sublinhado) — termo dentro de
+  uma **linha de estatística ou linha com checkbox**, onde sublinhar o
+  texto competiria visualmente com o resto da linha ou pareceria um
+  controle interativo à parte (ex: Mochila com "itens detalhados"
+  desligado, Maestria em Arma — tanto no wizard quanto na Ficha).
+
+**Contexto:** a Maestria em Arma tinha ganhado sublinhado na Ficha (B2)
+e ícone no wizard (ajuste seguinte) sem uma regra declarada — o Osmar
+notou a inconsistência e perguntou qual deveria ser o padrão único.
+Resposta: não existe 1 variante única pro app inteiro, existem 2
+variantes com contexto de uso bem definido — o real problema era essa
+regra não estar registrada em lugar nenhum, então cada tela escolhia
+"no olho". Agora está: tanto no JSDoc de `ItemComDescricao.tsx` quanto
+aqui. Qualquer termo novo com popup de descrição consulta essa regra
+antes de escolher a variante — não decide de novo.
+
+**Termo de design pra isso:** isso é uma **guideline de uso de
+componente** (ou "contrato de variante") — a mesma ideia de design
+system que já usamos nesse arquivo pra qualquer decisão de UI: uma vez
+registrada, vale pra sempre até você pedir pra mudar, sem precisar
+repetir o pedido a cada tela nova.
+
+**Data/origem:** 2026-08.
+
 ## "Concedido pela origem" — Talento + Perícias como botões tonais (InfoChip)
 
 **Decisão:** tudo que é "garantido/fixado" ao escolher uma origem

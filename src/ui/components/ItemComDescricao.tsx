@@ -7,10 +7,14 @@ interface ItemComDescricaoProps {
   descricao: string | null;
   /** texto a mostrar (ex: "2× Adaga") — se omitido, usa `nome` */
   rotulo?: string;
-  /** 'sublinhado' (padrão): o texto inteiro fica sublinhado e clicável.
-   * 'icone': o texto fica normal, com um "ⓘ" solto ao lado — pra listas
-   * onde o nome do item não deveria mudar de aparência (ex: Mochila
-   * com o toggle "itens detalhados" desligado). */
+  /** 'sublinhado' (padrão): o texto inteiro fica sublinhado e clicável —
+   * usar quando o termo está dentro de uma frase/parágrafo de texto
+   * corrido (ex: descrição de kit, lista de itens da Loja).
+   * 'icone': o texto fica normal, com um "ⓘ" solto ao lado — usar
+   * dentro de linhas de estatística/checkbox, onde o nome do item não
+   * deveria mudar de aparência ou competir visualmente com outros
+   * ícones da linha (ex: Mochila com "itens detalhados" desligado,
+   * lista de Maestria em Arma no wizard e na Ficha). */
   variante?: 'sublinhado' | 'icone';
 }
 
