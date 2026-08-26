@@ -2155,14 +2155,20 @@ resolve de graça o caso de um não-conjurador usar item mágico sem
 precisar de nenhuma lógica especial de exceção.
 
 **`personagemConjura()` fica enxuta:** só responde "esse personagem tem
-alguma fonte própria de conjuração (classe atual + multiclasse
-futuramente)?" — item mágico nunca entra nessa pergunta, por ser
-sistema independente.
+alguma fonte própria de conjuração?" — item mágico nunca entra nessa
+pergunta, por ser sistema independente. As fontes reais que somam
+nessa resposta são 3: **classe atual** (já implementado), **multiclasse**
+(pendência em aberto) e **Talento de Origem que concede magia** (ex:
+"Iniciado em Magia" — Acólito/Guia/Sábio; hoje essas 3 origens estão
+`disponivel: false` no wizard, então inalcançável na prática, mas
+precisa entrar no cálculo assim que a tela de escolha existir).
 
-**Implementação:** decisão registrada, `personagemConjura()` e "Usar
-Objeto" ainda não existem no código — hoje `MagiasTab.tsx` e o
-acordeão "Usar Magia" da Combat usam dado fixture (`exampleCombat.ts`)
-sem ligação com classe real nenhuma. Ver `PENDENCIAS.md`.
+**Implementação:** `core/conjuracao.ts` (`personagemConjura()`) já
+existe e está ligado em `MagiasTab.tsx` (estado vazio real) e no
+acordeão "Usar Magia" da Combat (some completamente pra quem não
+conjura). Hoje só a fonte "classe atual" está implementada — Talento
+de Origem e multiclasse ficam como pendência, ver `PENDENCIAS.md`.
+"Usar Objeto" (item mágico com carga) ainda não existe no código.
 
 ## Aba Magias sempre visível, nunca escondida por classe
 

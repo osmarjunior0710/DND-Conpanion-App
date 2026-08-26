@@ -363,6 +363,10 @@ breve)"**, e ficam **não-selecionáveis** (mesmo tratamento visual que
    de classe" (reutilizável — mesmo padrão serve pra Iniciado em Magia e
    depois pra escolha de magias conhecidas de classes conjuradoras).
 3. Depois de ambos existirem, tirar o "(em breve)" dessas 5 origens.
+4. Quando Iniciado em Magia virar selecionável, `core/conjuracao.ts`
+   (`personagemConjura()`) precisa passar a contar essa fonte também
+   — hoje só olha a classe, essas 3 origens ainda não entram no
+   cálculo porque são inalcançáveis no wizard.
 
 ## Espécies com sub-escolha ainda não têm as opções estruturadas (Aasimar, Draconato, Elfo, Gnomo, Golias, Tiferino)
 

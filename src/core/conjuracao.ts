@@ -2,10 +2,18 @@
 // registrada em DECISOES-DESIGN.md ("Magia de item vs magia natural" +
 // "Aba Magias sempre visível, nunca escondida por classe"). Hoje só
 // olha a classe atual (nenhuma classe conjuradora foi importada ainda
-// — Guerreiro é a única), mas fica pronta pra somar multiclasse assim
-// que isso existir no app. Item mágico com magia NUNCA entra aqui — é
-// sistema separado (Mochila + ação "Usar Objeto"), não afeta essa
-// resposta.
+// — Guerreiro é a única), mas fica pronta pra somar outras fontes
+// assim que existirem de verdade no app:
+// - Multiclasse (pendência em aberto, ver PENDENCIAS.md).
+// - Talento de Origem que concede magia (ex: "Iniciado em Magia" — dá
+//   2 truques + 1 magia de 1º círculo; concedido por Acólito/Guia/
+//   Sábio). Essas 3 origens já têm o talento certo no dado
+//   (`origens.ts`), mas estão `disponivel: false` — a tela de
+//   escolher truque/magia da lista ainda não existe (ver pendência
+//   "Origens com seleção extra no Talento de Origem"). Inalcançável
+//   na prática hoje, por isso não entra ainda no cálculo abaixo.
+// Item mágico com magia NUNCA entra aqui — é sistema separado
+// (Mochila + ação "Usar Objeto"), não afeta essa resposta.
 
 import type { Classe } from '../data/rulesets/dnd2024/classes';
 
