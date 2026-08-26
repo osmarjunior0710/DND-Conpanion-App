@@ -19,6 +19,7 @@ import { modificador } from '../../core/personagem';
 import { calcularCapacidadeMaxima, calcularItensIniciais, explicarCapacidadeMaxima } from '../../core/mochila';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
+import { personagemConjura } from '../../core/conjuracao';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
@@ -111,6 +112,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const estiloDeLuta = estilosDeLuta.find((e) => e.nome === personagem.estiloDeLuta) ?? null;
   const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
+  const conjura = personagemConjura(classe);
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -247,7 +249,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             explicacaoCapacidadeMaxima={explicacaoCapacidadeMaxima}
           />
         )}
-        {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} />}
+        {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} conjura={conjura} />}
         {tab === 'combat' && (
           <CombatTab
             pvAtual={pvAtual}
@@ -263,6 +265,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             usosFolegoMaximo={usosFolegoMaximo}
             usosFolegoRestantes={usosFolegoRestantes}
             onUsarUsoFolego={usarUsoFolego}
+            conjura={conjura}
           />
         )}
       </div>

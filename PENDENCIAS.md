@@ -166,7 +166,7 @@ ponta (wizard completo → Salvar → aparece na Lista → abre a Ficha real
 com PV/CA/atributos/perícias/itens da Mochila calculados, não mais
 fixture).
 
-## Aba Magias e "Usar Magia" ainda são 100% fixture — falta personagemConjura() de verdade
+## Aba Magias e "Usar Magia" — personagemConjura() implementada, dado de magia real ainda falta
 
 **O que é:** `MagiasTab.tsx` e o acordeão "Usar Magia" do painel de
 Ação (Combat) mostram hoje dado de `data/exampleCombat.ts` — truques e
@@ -193,15 +193,27 @@ na Mochila, usado pela ação "Usar Objeto" (distinta de "Usar Magia" no
 Cap. 1 do livro). Isso já resolve sozinho o caso "não-conjurador com
 item mágico", sem precisar de exceção.
 
+**Já feito:** `core/conjuracao.ts` — `personagemConjura(classe):
+boolean` procura um recurso cujo nome contenha "Espaços de Magia" ou
+"Magias Preparadas" na progressão da classe (convenção assumida,
+ainda não validada contra dado real de nenhuma classe conjuradora
+importada — revisar quando a 1ª, Mago ou Clérigo, entrar).
+`MagiasTab.tsx` agora mostra estado vazio de verdade
+("Esse personagem não tem nenhuma fonte de conjuração no momento")
+quando `!conjura`, em vez do fixture sempre visível; o acordeão "Usar
+Magia" do painel de Ação some completamente pra quem não conjura
+(testado com Guerreiro nível 1 — painel de Ação vai direto de "Atacar"
+pras outras ações base, sem a linha de magia).
+
 **Falta implementar:**
-- `core/conjuracao.ts` com `personagemConjura(classe, ...): boolean` —
-  só fonte real hoje é a classe atual; multiclasse e itens mágicos
-  ficam como "gancho pronto, sem efeito ainda" até essas duas coisas
-  existirem de verdade no app.
-- `MagiasTab.tsx` e o acordeão "Usar Magia" trocarem o fixture por
-  dado real de conjuração da classe (quando a 1ª classe conjuradora,
-  tipo Mago ou Clérigo, for importada) + estado vazio condicionado a
-  `personagemConjura()` pra classes não-conjuradoras tipo Guerreiro.
+- Quando a 1ª classe conjuradora for importada, trocar o fixture de
+  `MagiasTab.tsx`/"Usar Magia" por dado real (truques, magias
+  preparadas, espaços por círculo) — hoje quem passa em
+  `personagemConjura()` ainda vê o mesmo fixture de antes, só quem
+  não passa que ganhou o estado vazio.
+- Multiclasse e itens mágicos continuam de fora de
+  `personagemConjura()` (gancho pronto, sem efeito ainda) até essas
+  duas coisas existirem de verdade no app.
 - Ação "Usar Objeto" (item mágico com carga de magia) — ainda não
   existe no app; depende da Mochila ganhar suporte a "item com cargas"
   primeiro.

@@ -3,11 +3,20 @@ import styles from './MagiasTab.module.css';
 
 interface MagiasTabProps {
   espacosGastos: number;
+  conjura: boolean;
 }
 
-export default function MagiasTab({ espacosGastos }: MagiasTabProps) {
+export default function MagiasTab({ espacosGastos, conjura }: MagiasTabProps) {
   const truques = magiasExemplo.filter((m) => m.circulo === 0);
   const preparadas = magiasExemplo.filter((m) => m.circulo > 0);
+
+  if (!conjura) {
+    return (
+      <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 13, textAlign: 'center' }}>
+        Esse personagem não tem nenhuma fonte de conjuração no momento (nem pela classe, nem por multiclasse).
+      </div>
+    );
+  }
 
   return (
     <>

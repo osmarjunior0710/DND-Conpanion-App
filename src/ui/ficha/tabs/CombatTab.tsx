@@ -26,6 +26,7 @@ interface CombatTabProps {
   usosFolegoMaximo: number;
   usosFolegoRestantes: number;
   onUsarUsoFolego: () => boolean;
+  conjura: boolean;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -48,6 +49,7 @@ export default function CombatTab({
   usosFolegoMaximo,
   usosFolegoRestantes,
   onUsarUsoFolego,
+  conjura,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -216,6 +218,7 @@ export default function CombatTab({
             gastarSlot={onGastarSlot}
             espacosGastos={espacosGastos}
             espacosMaximo={espacosMagiaExemplo.maximo}
+            conjura={conjura}
           />
         )}
         {painelAberto === 'bonus' && (

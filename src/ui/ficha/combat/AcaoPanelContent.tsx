@@ -15,9 +15,16 @@ interface AcaoPanelContentProps {
   gastarSlot: () => boolean;
   espacosGastos: number;
   espacosMaximo: number;
+  conjura: boolean;
 }
 
-export default function AcaoPanelContent({ onEscolher, gastarSlot, espacosGastos, espacosMaximo }: AcaoPanelContentProps) {
+export default function AcaoPanelContent({
+  onEscolher,
+  gastarSlot,
+  espacosGastos,
+  espacosMaximo,
+  conjura,
+}: AcaoPanelContentProps) {
   const [magiaAberta, setMagiaAberta] = useState(false);
   const [avisoSlot, setAvisoSlot] = useState<string | null>(null);
   const { rolarD20 } = useRoll();
@@ -59,32 +66,36 @@ export default function AcaoPanelContent({ onEscolher, gastarSlot, espacosGastos
         <div className={styles.rowDesc}>Ataca com arma ou Ataque Desarmado</div>
       </div>
 
-      <div className={styles.row} onClick={() => setMagiaAberta((v) => !v)}>
-        <div className={styles.rowName}>✨ Usar Magia {magiaAberta ? '▴' : '▾'}</div>
-        <div className={styles.rowDesc}>Conjurar magia, usar item mágico ou característica mágica</div>
-      </div>
-      <div className={`${styles.accordionBody} ${magiaAberta ? styles.accordionBodyOpen : ''}`}>
-        <div className={styles.slotCounter}>
-          <span>1º círculo:</span>
-          {Array.from({ length: espacosMaximo }).map((_, i) => (
-            <div key={i} className={`${styles.slotPipLg} ${i < espacosGastos ? styles.slotPipLgGasto : ''}`} />
-          ))}
-          <span style={{ color: 'var(--text-faint)' }}>
-            {espacosMaximo - espacosGastos}/{espacosMaximo} disponíveis
-          </span>
-        </div>
-        {avisoSlot && (
-          <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>
-            {avisoSlot}
+      {conjura && (
+        <>
+          <div className={styles.row} onClick={() => setMagiaAberta((v) => !v)}>
+            <div className={styles.rowName}>✨ Usar Magia {magiaAberta ? '▴' : '▾'}</div>
+            <div className={styles.rowDesc}>Conjurar magia, usar item mágico ou característica mágica</div>
           </div>
-        )}
-        {magiasExemplo.map((m) => (
-          <div key={m.nome} className={styles.spellMiniRow} onClick={() => escolherMagia(m)}>
-            <span>{m.nome}</span>
-            <span className="tag">{m.tipo}</span>
+          <div className={`${styles.accordionBody} ${magiaAberta ? styles.accordionBodyOpen : ''}`}>
+            <div className={styles.slotCounter}>
+              <span>1º círculo:</span>
+              {Array.from({ length: espacosMaximo }).map((_, i) => (
+                <div key={i} className={`${styles.slotPipLg} ${i < espacosGastos ? styles.slotPipLgGasto : ''}`} />
+              ))}
+              <span style={{ color: 'var(--text-faint)' }}>
+                {espacosMaximo - espacosGastos}/{espacosMaximo} disponíveis
+              </span>
+            </div>
+            {avisoSlot && (
+              <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>
+                {avisoSlot}
+              </div>
+            )}
+            {magiasExemplo.map((m) => (
+              <div key={m.nome} className={styles.spellMiniRow} onClick={() => escolherMagia(m)}>
+                <span>{m.nome}</span>
+                <span className="tag">{m.tipo}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
 
       <div
         className={styles.row}
