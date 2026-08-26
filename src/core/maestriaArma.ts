@@ -7,10 +7,10 @@
 import { armas, type Arma } from '../data/rulesets/dnd2024/armas';
 import { proficienciasArmaArmaduraClasse } from '../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
 import type { Classe } from '../data/rulesets/dnd2024/classes';
+import { valorRecursoClasse } from './recursosClasse';
 
 export function quantidadeMaestriaEmArma(classe: Classe, nivel: number): number {
-  const recurso = classe.recursos.find((r) => r.nome.startsWith('Maestria em Arma'));
-  return recurso?.valorPorNivel[nivel] ?? 0;
+  return valorRecursoClasse(classe, 'Maestria em Arma', nivel);
 }
 
 /** Armas elegíveis pra Maestria — qualquer arma que a classe tenha

@@ -22,6 +22,10 @@ interface CombatTabProps {
   espacosGastos: number;
   onGastarSlot: () => boolean;
   estiloDeLuta: EstiloDeLuta | null;
+  nivel: number;
+  usosFolegoMaximo: number;
+  usosFolegoRestantes: number;
+  onUsarUsoFolego: () => boolean;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -40,6 +44,10 @@ export default function CombatTab({
   espacosGastos,
   onGastarSlot,
   estiloDeLuta,
+  nivel,
+  usosFolegoMaximo,
+  usosFolegoRestantes,
+  onUsarUsoFolego,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -62,6 +70,20 @@ export default function CombatTab({
     setPainelAberto(null);
     setFeedback(`${nome} — ${desc}`);
     setDanoPendente(dano ?? null);
+  }
+
+  function usarRecuperarFolego() {
+    if (!onUsarUsoFolego()) return;
+    rolarDados({ label: 'Recuperar Fôlego (cura)', formula: `1d10 + ${nivel}`, quantidade: 1, lados: 10, mod: nivel });
+    onMarcarUsado('bonus');
+    setPainelAberto(null);
+    setFeedback('🩹 Recuperar Fôlego — role o dado e some ao seu PV atual (+ pra cima na barra de PV).');
+  }
+
+  function usarMenteTatica() {
+    if (!onUsarUsoFolego()) return;
+    rolarDados({ label: 'Mente Tática', formula: '1d10', quantidade: 1, lados: 10, mod: 0 });
+    setFeedback('🧠 Mente Tática — some o resultado ao teste de atributo que falhou.');
   }
 
   function rolarDanoPendente() {
@@ -108,6 +130,27 @@ export default function CombatTab({
         <>
           <div className="section-title">Estilo de Luta</div>
           <InfoChip nome={estiloDeLuta.nome} descricao={estiloDeLuta.beneficios} />
+        </>
+      )}
+
+      {usosFolegoMaximo > 0 && (
+        <>
+          <div className="section-title">Mente Tática</div>
+          <div
+            className="box"
+            style={{
+              padding: 12,
+              cursor: usosFolegoRestantes > 0 ? 'pointer' : 'default',
+              opacity: usosFolegoRestantes > 0 ? 1 : 0.5,
+            }}
+            onClick={usosFolegoRestantes > 0 ? usarMenteTatica : undefined}
+          >
+            <div style={{ fontSize: 14 }}>🧠 Ao falhar um teste de atributo, toque aqui</div>
+            <div className="label" style={{ marginTop: 2 }}>
+              Gasta 1 uso de Recuperar Fôlego, joga 1d10 e soma ao teste ({usosFolegoRestantes}/{usosFolegoMaximo}{' '}
+              usos — banco compartilhado com Recuperar Fôlego).
+            </div>
+          </div>
         </>
       )}
 
@@ -168,7 +211,13 @@ export default function CombatTab({
             espacosMaximo={espacosMagiaExemplo.maximo}
           />
         )}
-        {painelAberto === 'bonus' && <BonusPanelContent />}
+        {painelAberto === 'bonus' && (
+          <BonusPanelContent
+            usosFolegoMaximo={usosFolegoMaximo}
+            usosFolegoRestantes={usosFolegoRestantes}
+            onUsarRecuperarFolego={usarRecuperarFolego}
+          />
+        )}
         {painelAberto === 'reacao' && (
           <ReacaoPanelContent onEscolher={(nome, desc) => escolherNoPainel('reacao', nome, desc)} gastarSlot={onGastarSlot} />
         )}

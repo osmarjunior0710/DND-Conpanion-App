@@ -2070,3 +2070,33 @@ Ficha — queria a hierarquia visual mais clara e a explicação da
 maestria acessível sem precisar decorar o que cada termo significa.
 
 **Data/origem:** 2026-08.
+
+## Guerreiro B3 — Recuperar Fôlego + Mente Tática (banco de usos compartilhado)
+
+**Decisão:** Recuperar Fôlego e Mente Tática gastam o **mesmo banco de
+usos** (regra real: Mente Tática "gasta um uso de seu Recuperar
+Fôlego"), então o app modela isso como 1 contador só
+(`folegoGasto`/`usosFolegoRestantes` em `FichaShell.tsx`), não dois
+contadores separados. Recuperar Fôlego vive dentro do painel de Ação
+Bônus (é uma Ação Bônus de verdade — marca o botão "Bônus" como
+usado). Mente Tática **não** vive dentro de nenhum painel de
+Ação/Bônus/Reação — é um card sempre visível na aba Combat, porque a
+regra não consome a economia de ação do turno (é reativo a "falhar um
+teste de atributo", pode acontecer a qualquer momento).
+
+**Novo `core/recursosClasse.ts`:** `valorRecursoClasse(classe,
+prefixoNome, nivel)` — leitura genérica de qualquer recurso da classe
+por nome+nível. `maestriaArma.ts` (B2) foi refatorado pra usar essa
+função em vez de duplicar a mesma lógica de busca em `recursos`.
+
+**Simplificação assumida:** nem a cura de Recuperar Fôlego nem o
+resultado de Mente Tática são aplicados automaticamente (PV ou teste)
+— o app só rola o dado (`useRoll`), igual o resto do protótipo de
+Combat já avisa ("cada toque muda 1 PV por vez... fica pra quando o
+motor de cálculo entrar de verdade"). Aplicar de verdade fica pra
+quando isso for resolvido de forma geral, não só pra esses dois casos.
+
+**Contexto:** terceira entrega do plano "Guerreiro 1-20", aprovado
+pelo Osmar ("vamos seguir").
+
+**Data/origem:** 2026-08.

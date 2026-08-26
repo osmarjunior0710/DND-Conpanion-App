@@ -18,6 +18,7 @@ import {
 import { modificador } from '../../core/personagem';
 import { calcularCapacidadeMaxima, calcularItensIniciais, explicarCapacidadeMaxima } from '../../core/mochila';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
+import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
@@ -86,6 +87,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
   const [maestriaArma, setMaestriaArma] = useState<string[]>(selecao.maestriaArmaEscolhida);
+  const [folegoGasto, setFolegoGasto] = useState(0);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
   const [espacosGastos, setEspacosGastos] = useState(0);
@@ -107,6 +109,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const explicacaoIniciativa = explicarIniciativa(selecao);
   const explicacaoPercepcaoPassiva = explicarPercepcaoPassiva(selecao, personagem.nivel);
   const estiloDeLuta = estilosDeLuta.find((e) => e.nome === personagem.estiloDeLuta) ?? null;
+  const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
+  const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -129,17 +133,25 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function descansoLongo() {
     setPvAtual(personagem.pvMax);
     setEspacosGastos(0);
+    setFolegoGasto(0);
     fimDoTurno();
-    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax} e Espaços de Magia recuperados.`);
+    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia e Recuperar Fôlego recuperados.`);
   }
 
   function descansoCurto() {
     setEspacosGastos(0);
-    setRestStatus('Descanso Curto: Espaços de Magia (Magia de Pacto) recuperados. PV não recupera automaticamente por descanso curto.');
+    setFolegoGasto((v) => Math.max(0, v - 1));
+    setRestStatus('Descanso Curto: Espaços de Magia (Magia de Pacto) recuperados e 1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.');
   }
 
   function trocarArmaMaestria(armaAntiga: string, armaNova: string) {
     setMaestriaArma((prev) => prev.map((a) => (a === armaAntiga ? armaNova : a)));
+  }
+
+  function usarUsoFolego(): boolean {
+    if (usosFolegoRestantes <= 0) return false;
+    setFolegoGasto((v) => v + 1);
+    return true;
   }
 
   function confirmarLevelUp(resultado: {
@@ -247,6 +259,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             espacosGastos={espacosGastos}
             onGastarSlot={gastarSlot}
             estiloDeLuta={estiloDeLuta}
+            nivel={personagem.nivel}
+            usosFolegoMaximo={usosFolegoMaximo}
+            usosFolegoRestantes={usosFolegoRestantes}
+            onUsarUsoFolego={usarUsoFolego}
           />
         )}
       </div>

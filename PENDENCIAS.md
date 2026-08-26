@@ -424,14 +424,27 @@ decisão consciente em `DECISOES-DESIGN.md` — se o Osmar preferir a
 versão mais fiel (só habilita a troca logo depois de descansar), essa
 pendência entra aqui.
 
+**Já feito:**
+- **B3 — Recuperar Fôlego + Mente Tática na aba Combat.** Painel de
+  Ação Bônus ganhou o banco de usos real (pips + botão "Recuperar
+  Fôlego", cura 1d10+nível, marca a Ação Bônus como usada) e a aba
+  Combat ganhou um card "Mente Tática" sempre visível (não gated por
+  turno, porque a regra não consome a Ação Bônus) que gasta o mesmo
+  banco de usos e rola 1d10 pra somar num teste falhado. Novo
+  `core/recursosClasse.ts`: `valorRecursoClasse` genérico (usado
+  também por `maestriaArma.ts`, refatorado pra não duplicar a mesma
+  lógica de leitura de recurso). **Simplificação assumida:** a
+  rolagem de cura não é aplicada automaticamente ao PV (mesmo
+  protótipo já avisado na aba Combat — "cada toque muda 1 PV por
+  vez"); o jogador rola e ajusta o PV na mão. Idem Mente Tática: o
+  app só rola o 1d10, somar ao teste é manual.
+
 **Falta:**
 - **Nº de armas de Maestria crescendo em nível alto (4/10/16)** — hoje
   só a escolha inicial (nível 1) tem UI; quando o recurso cresce (ex:
   de 3 pra 4 armas no nível 4), o Level Up ainda não tem um passo pra
   escolher a arma extra. Fica pra quando B4 (níveis automáticos) for
   implementado, ou uma entrega própria se não couber lá.
-- **B3** — Recuperar Fôlego + Mente Tática na aba Combat (Ação Bônus
-  real, recurso com 2 formas de uso compartilhando o mesmo "banco").
 - **B4** — Surto de Ação, Indomável, Ataque Extra e o resto das
   características automáticas/numéricas (níveis 2, 5, 9, 11, 13, 17,
   20).
