@@ -182,3 +182,29 @@ e remova de `PENDENCIAS.md` — não deixe as duas listas com a mesma coisa.
 Antes de propor uma entrega nova que toque em dado de regra (origens,
 classes, espécies, talentos, magias), **consulte esse arquivo primeiro**
 pra não reabrir uma pendência que já tinha contexto registrado.
+
+## 12. Marcação de conteúdo placeholder — prefixo `[PH]`
+
+Qualquer texto visível na tela que **não** venha de regra real
+validada — dado fixture/exemplo (ex: `data/exampleCombat.ts`), número
+inventado só pra preencher espaço, ou qualquer coisa colocada só pra
+o layout não ficar vazio enquanto a lógica de verdade não existe —
+precisa começar com `[PH]` no próprio texto exibido (ex: "🗡 Atacar
+`[PH]` valores de exemplo (Adaga +4)"). Isso vale tanto pro nome
+quanto pra descrição, o que fizer mais sentido pro caso.
+
+- **Objetivo:** o Osmar consegue olhar qualquer tela e saber na hora
+  o que já foi revisado/é regra real (sem `[PH]`) vs. o que ainda é
+  espaço reservado esperando dado/lógica de verdade (com `[PH]`) —
+  sem precisar perguntar ou ler código.
+- **Ao substituir o placeholder por lógica/dado real, remova o
+  `[PH]`** — não deixe as duas coisas ao mesmo tempo.
+- **Regra permanente daqui pra frente:** sempre que, durante qualquer
+  entrega, você notar um texto na tela que se encaixa nessa definição
+  e ainda não tem `[PH]`, adicione — mesmo que não tenha sido pedido
+  especificamente pra essa tela. Não espere uma revisão formal pra
+  marcar.
+- Ações genéricas do Cap. 1 (Ajudar, Analisar, Correr, etc.) **não**
+  são placeholder — são texto de regra real, mesmo sem cálculo por
+  trás ainda. `[PH]` é só pra número/nome inventado, não pra texto de
+  regra correto com pouca interatividade.

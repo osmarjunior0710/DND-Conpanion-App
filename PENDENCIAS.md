@@ -13,6 +13,40 @@
 
 ---
 
+## Combat tab — auditoria de fixture vs. real (Guerreiro) + marcação [PH]
+
+**O que é:** pedido do Osmar pra auditar tudo que aparece na aba
+Combat/Magias e distinguir claramente o que é dado real do Guerreiro
+(ou ação genérica do Cap. 1) do que ainda é fixture de exemplo. Regra
+nova registrada em `CLAUDE.md` (seção 12): todo texto que não vem de
+regra real validada precisa começar com `[PH]` no próprio texto
+exibido, até virar dado/lógica de verdade.
+
+**Resultado da auditoria (Guerreiro nível 1-20, hoje):**
+- **Real, sem `[PH]`:** ações genéricas do Cap. 1 (Atacar/Desengajar/
+  Ajudar/Analisar/Correr/Esconder/Esquivar/Influenciar/Preparar/
+  Procurar/Usar Objeto/Ataque de Oportunidade), Maestria em Arma,
+  Recuperar Fôlego, Mente Tática, Surto de Ação, Indomável, Estilo de
+  Luta, Mestre Tático, Ataques Estudados, contagem de Ataque Extra.
+- **Fixture, marcado `[PH]` agora:** os números do ataque em si
+  (`data/exampleCombat.ts` → `ataqueArmaExemplo`, hardcoded "Adaga
+  +4/1d4+3" independente da arma/atributo reais do personagem);
+  "Usar Magia" (acordeão do painel de Ação) e "Escudo Arcano"
+  (painel de Reação) — já ficavam escondidos pra quem não conjura
+  (`conjura === false`), mas o texto interno (`magiasExemplo`) segue
+  fixture pronto pra quando a 1ª classe conjuradora existir; toda a
+  aba Magias também ganhou aviso `[PH]` no topo.
+
+**Falta implementar (pra tirar o `[PH]`):**
+- **Atacar** precisa calcular o ataque de verdade a partir da arma
+  equipada (ou a mais provável, se várias) + atributo (Força/Destreza
+  + Acuidade) + Bônus de Proficiência — hoje não existe esse cálculo
+  em `core/`, só o fixture de `exampleCombat.ts`.
+- **Usar Magia / Escudo Arcano / aba Magias inteira** — trocar
+  `magiasExemplo` por magia real assim que a 1ª classe conjuradora
+  (Mago ou Clérigo) for importada (mesma pendência já registrada em
+  "Aba Magias e 'Usar Magia'" mais abaixo).
+
 ## Fluxo completo wizard → Ficha — A1-A4 feitas, A5/A6 ainda faltam
 
 **O que é:** plano de 6 entregas pequenas pra fechar o fluxo completo

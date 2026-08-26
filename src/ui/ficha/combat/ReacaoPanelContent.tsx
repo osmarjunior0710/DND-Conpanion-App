@@ -16,7 +16,7 @@ export default function ReacaoPanelContent({ onEscolher, gastarSlot, conjura }: 
       setAviso('Sem Espaços de Magia disponíveis. Faça um Descanso Curto pra recuperar.');
       return;
     }
-    onEscolher('✨ Escudo Arcano', '1º círculo · +5 CA até o início do seu próximo turno.');
+    onEscolher('[PH] ✨ Escudo Arcano', '1º círculo · +5 CA até o início do seu próximo turno.');
   }
 
   return (
@@ -24,8 +24,11 @@ export default function ReacaoPanelContent({ onEscolher, gastarSlot, conjura }: 
       {conjura && (
         <>
           <div className={styles.row} onClick={usarEscudoArcano}>
-            <div className={styles.rowName}>✨ Escudo Arcano</div>
-            <div className={styles.rowDesc}>1º círculo · gasta um Espaço de Magia · +5 CA até o início do seu próximo turno</div>
+            <div className={styles.rowName}>[PH] ✨ Escudo Arcano</div>
+            <div className={styles.rowDesc}>
+              1º círculo · gasta um Espaço de Magia · +5 CA até o início do seu próximo turno. [PH] fixture de
+              exemplo — ainda não é a lista real de magias da classe conjuradora.
+            </div>
           </div>
           {aviso && (
             <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>

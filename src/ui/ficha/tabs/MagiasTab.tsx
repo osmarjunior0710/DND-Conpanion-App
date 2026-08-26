@@ -20,6 +20,11 @@ export default function MagiasTab({ espacosGastos, conjura }: MagiasTabProps) {
 
   return (
     <>
+      <div className="label" style={{ marginBottom: 8, color: 'var(--warn)' }}>
+        [PH] tudo nesta aba ainda é fixture de exemplo — nenhuma classe conjuradora foi importada ainda, então isso
+        não reflete a magia real do personagem.
+      </div>
+
       <div className="section-title">Espaços de Magia</div>
       <div className="label">1º círculo</div>
       <div className={styles.slotRow}>
@@ -38,7 +43,7 @@ export default function MagiasTab({ espacosGastos, conjura }: MagiasTabProps) {
       {truques.map((m) => (
         <div key={m.nome} className={styles.spellRow}>
           <div>
-            <div className={styles.spellName}>{m.nome}</div>
+            <div className={styles.spellName}>[PH] {m.nome}</div>
             <div className={styles.spellDesc}>{m.descricao}</div>
           </div>
           <span className="label">{m.tipo}</span>
@@ -49,7 +54,7 @@ export default function MagiasTab({ espacosGastos, conjura }: MagiasTabProps) {
       {preparadas.map((m) => (
         <div key={m.nome} className={styles.spellRow}>
           <div>
-            <div className={styles.spellName}>{m.nome}</div>
+            <div className={styles.spellName}>[PH] {m.nome}</div>
             <div className={styles.spellDesc}>{m.descricao}</div>
           </div>
           <span className="label">{m.tipo}</span>

@@ -67,24 +67,25 @@ export default function AcaoPanelContent({
     }
     setAvisoSlot(null);
     if (m.ataque) {
-      rolarAtaque(m.nome, m.ataque, onEscolher);
+      rolarAtaque(`[PH] ${m.nome}`, m.ataque, onEscolher);
       return;
     }
-    onEscolher(`✨ ${m.nome}`, m.descricao);
+    onEscolher(`[PH] ✨ ${m.nome}`, m.descricao);
   }
 
   const surtoDesabilitado = surtoRestantes <= 0 || surtoUsadoTurno;
 
   return (
     <>
-      <div className={styles.row} onClick={() => rolarAtaque('Atacar (Adaga)', ataqueArmaExemplo, onAtacar)}>
+      <div className={styles.row} onClick={() => rolarAtaque('[PH] Atacar (Adaga)', ataqueArmaExemplo, onAtacar)}>
         <div className={styles.rowName}>
           🗡 Atacar {numAtaques > 1 ? `(ataque ${Math.min(ataquesFeitos + 1, numAtaques)}/${numAtaques})` : ''}
         </div>
         <div className={styles.rowDesc}>
+          [PH] valores de exemplo (Adaga +4 / 1d4+3) — ainda não usa a arma equipada de verdade.{' '}
           {numAtaques > 1
             ? `Ataque Extra: você tem direito a ${numAtaques} ataques nesse turno — toque de novo depois de rolar o dano.`
-            : 'Ataca com arma ou Ataque Desarmado'}
+            : 'Ataca com arma ou Ataque Desarmado.'}
         </div>
       </div>
 
@@ -109,6 +110,10 @@ export default function AcaoPanelContent({
             <div className={styles.rowDesc}>Conjurar magia, usar item mágico ou característica mágica</div>
           </div>
           <div className={`${styles.accordionBody} ${magiaAberta ? styles.accordionBodyOpen : ''}`}>
+            <div className="label" style={{ marginBottom: 6 }}>
+              [PH] lista de magias/espaços abaixo é fixture de exemplo — ainda não é a lista real da classe
+              conjuradora do personagem.
+            </div>
             <div className={styles.slotCounter}>
               <span>1º círculo:</span>
               {Array.from({ length: espacosMaximo }).map((_, i) => (
@@ -125,7 +130,7 @@ export default function AcaoPanelContent({
             )}
             {magiasExemplo.map((m) => (
               <div key={m.nome} className={styles.spellMiniRow} onClick={() => escolherMagia(m)}>
-                <span>{m.nome}</span>
+                <span>[PH] {m.nome}</span>
                 <span className="tag">{m.tipo}</span>
               </div>
             ))}
