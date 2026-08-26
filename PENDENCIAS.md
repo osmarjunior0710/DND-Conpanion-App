@@ -166,6 +166,46 @@ ponta (wizard completo → Salvar → aparece na Lista → abre a Ficha real
 com PV/CA/atributos/perícias/itens da Mochila calculados, não mais
 fixture).
 
+## Aba Magias e "Usar Magia" ainda são 100% fixture — falta personagemConjura() de verdade
+
+**O que é:** `MagiasTab.tsx` e o acordeão "Usar Magia" do painel de
+Ação (Combat) mostram hoje dado de `data/exampleCombat.ts` — truques e
+magias de exemplo, nota fixa sobre Magia de Pacto do Bruxo — pra
+**qualquer** personagem, inclusive um Guerreiro base que não conjura
+nada. O Osmar notou que isso deixa a tela poluída/confusa: mostra
+recurso que boa parte dos personagens nunca vai ter de verdade.
+
+**Por que não é só "esconder se a classe não conjura":** um Guerreiro
+pode multiclassar (ainda não implementado — ver pendência
+"Personagem multiclasse" abaixo) e ganhar conjuração de outra classe.
+Amarrar a visibilidade só na classe base quebraria nesse caso. Decisão
+registrada em `DECISOES-DESIGN.md` ("Magia de item vs magia natural" +
+"Aba Magias sempre visível, nunca escondida por classe"): a resposta
+certa é uma função derivada `personagemConjura()` (hoje só olharia a
+classe atual, pronta pra somar multiclasse depois) — a aba Magias
+continua sempre visível (mesmo padrão já usado pra Ação Bônus vazia),
+mas mostra estado vazio de verdade quando `personagemConjura()` for
+`false`, em vez do fixture atual.
+
+**Item mágico com magia (bastão, anel...) é sistema separado** — não
+entra em `personagemConjura()` nem na aba Magias; vira item com cargas
+na Mochila, usado pela ação "Usar Objeto" (distinta de "Usar Magia" no
+Cap. 1 do livro). Isso já resolve sozinho o caso "não-conjurador com
+item mágico", sem precisar de exceção.
+
+**Falta implementar:**
+- `core/conjuracao.ts` com `personagemConjura(classe, ...): boolean` —
+  só fonte real hoje é a classe atual; multiclasse e itens mágicos
+  ficam como "gancho pronto, sem efeito ainda" até essas duas coisas
+  existirem de verdade no app.
+- `MagiasTab.tsx` e o acordeão "Usar Magia" trocarem o fixture por
+  dado real de conjuração da classe (quando a 1ª classe conjuradora,
+  tipo Mago ou Clérigo, for importada) + estado vazio condicionado a
+  `personagemConjura()` pra classes não-conjuradoras tipo Guerreiro.
+- Ação "Usar Objeto" (item mágico com carga de magia) — ainda não
+  existe no app; depende da Mochila ganhar suporte a "item com cargas"
+  primeiro.
+
 ## Faltam 11 classes (só Guerreiro importado)
 
 **O que é:** Guerreiro foi a classe-piloto (mais simples: sem magia,

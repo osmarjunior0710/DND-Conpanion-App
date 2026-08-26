@@ -2135,3 +2135,49 @@ certo pra aplicar automaticamente.
 pelo Osmar ("vamos seguir").
 
 **Data/origem:** 2026-08.
+
+## Magia de item vs magia natural — sistemas separados, não uma "fonte a mais"
+
+**Decisão:** magia concedida por item mágico (bastão, anel, etc. com
+cargas) **não entra** na aba Magias nem na função `personagemConjura()`.
+Vive como item com contador de cargas na Mochila; o uso em combate
+acontece pela ação **"Usar Objeto"** (uma das 12 ações oficiais do Cap.
+1, distinta de "Usar Magia"), reaproveitando o motor de rolagem de
+magia, mas com a fonte do efeito vindo do item (CD/bônus fixos do
+item), não da ficha de conjuração do personagem.
+
+**Contexto:** pergunta do Osmar sobre onde encaixar item mágico com uso
+de magia, e sobre esconder a aba Magias por classe (rejeitado por
+quebrar em multiclasse — ver decisão seguinte). A separação Usar
+Magia/Usar Objeto já existe na regra oficial (Cap. 1) — não é invenção
+de design, é reconhecer uma distinção que o livro já faz. Isso também
+resolve de graça o caso de um não-conjurador usar item mágico sem
+precisar de nenhuma lógica especial de exceção.
+
+**`personagemConjura()` fica enxuta:** só responde "esse personagem tem
+alguma fonte própria de conjuração (classe atual + multiclasse
+futuramente)?" — item mágico nunca entra nessa pergunta, por ser
+sistema independente.
+
+**Implementação:** decisão registrada, `personagemConjura()` e "Usar
+Objeto" ainda não existem no código — hoje `MagiasTab.tsx` e o
+acordeão "Usar Magia" da Combat usam dado fixture (`exampleCombat.ts`)
+sem ligação com classe real nenhuma. Ver `PENDENCIAS.md`.
+
+## Aba Magias sempre visível, nunca escondida por classe
+
+**Decisão:** a aba Magias não some pra personagens sem conjuração —
+mostra estado vazio ("nenhuma magia disponível"), mesmo padrão já
+usado pra Ação Bônus vazia no Layout C. Visibilidade/estado
+controlado por `personagemConjura()` (derivado, não hardcoded por
+classe), justamente pra não quebrar em multiclasse.
+
+**Contexto:** mesma conversa acima. Consistência de navegação (aba
+sempre no mesmo lugar) vale mais que economizar a aba pra quem não
+usa — já era o padrão adotado antes (Ação Bônus vazia), só
+generalizado agora pra essa aba inteira.
+
+**Implementação:** decisão registrada, ainda não aplicada — a aba
+Magias já é sempre visível hoje, mas só porque tudo é fixture; falta
+o estado vazio real condicionado a `personagemConjura()`. Ver
+`PENDENCIAS.md`.
