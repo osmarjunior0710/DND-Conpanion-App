@@ -203,7 +203,12 @@ importada — revisar quando a 1ª, Mago ou Clérigo, entrar).
 quando `!conjura`, em vez do fixture sempre visível; o acordeão "Usar
 Magia" do painel de Ação some completamente pra quem não conjura
 (testado com Guerreiro nível 1 — painel de Ação vai direto de "Atacar"
-pras outras ações base, sem a linha de magia).
+pras outras ações base, sem a linha de magia). **Correção:** o painel
+de Reação também tinha um fixture de magia solto ("Escudo Arcano",
+1º círculo) sempre visível — o Osmar notou que continuava aparecendo
+pra Guerreiro depois do fix acima, que só cobriu o painel de Ação.
+`ReacaoPanelContent.tsx` agora recebe `conjura` também e esconde
+Escudo Arcano do mesmo jeito.
 
 **Falta implementar:**
 - Quando a 1ª classe conjuradora for importada, trocar o fixture de

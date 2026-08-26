@@ -307,7 +307,11 @@ export default function CombatTab({
           />
         )}
         {painelAberto === 'reacao' && (
-          <ReacaoPanelContent onEscolher={(nome, desc) => escolherNoPainel('reacao', nome, desc)} gastarSlot={onGastarSlot} />
+          <ReacaoPanelContent
+            onEscolher={(nome, desc) => escolherNoPainel('reacao', nome, desc)}
+            gastarSlot={onGastarSlot}
+            conjura={conjura}
+          />
         )}
       </SidePanel>
     </>

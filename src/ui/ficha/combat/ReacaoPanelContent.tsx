@@ -4,9 +4,10 @@ import styles from './PanelRows.module.css';
 interface ReacaoPanelContentProps {
   onEscolher: (nome: string, desc: string) => void;
   gastarSlot: () => boolean;
+  conjura: boolean;
 }
 
-export default function ReacaoPanelContent({ onEscolher, gastarSlot }: ReacaoPanelContentProps) {
+export default function ReacaoPanelContent({ onEscolher, gastarSlot, conjura }: ReacaoPanelContentProps) {
   const [aviso, setAviso] = useState<string | null>(null);
 
   function usarEscudoArcano() {
@@ -20,14 +21,18 @@ export default function ReacaoPanelContent({ onEscolher, gastarSlot }: ReacaoPan
 
   return (
     <>
-      <div className={styles.row} onClick={usarEscudoArcano}>
-        <div className={styles.rowName}>✨ Escudo Arcano</div>
-        <div className={styles.rowDesc}>1º círculo · gasta um Espaço de Magia · +5 CA até o início do seu próximo turno</div>
-      </div>
-      {aviso && (
-        <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>
-          {aviso}
-        </div>
+      {conjura && (
+        <>
+          <div className={styles.row} onClick={usarEscudoArcano}>
+            <div className={styles.rowName}>✨ Escudo Arcano</div>
+            <div className={styles.rowDesc}>1º círculo · gasta um Espaço de Magia · +5 CA até o início do seu próximo turno</div>
+          </div>
+          {aviso && (
+            <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>
+              {aviso}
+            </div>
+          )}
+        </>
       )}
       <div
         className={styles.row}
