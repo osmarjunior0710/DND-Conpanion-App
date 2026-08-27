@@ -2847,3 +2847,43 @@ dado apareceram com contador certo, "Jóias e Artefatos" não apareceu
 os itens corretamente.
 
 **Data/origem:** 2026-08.
+
+## Itens Mágicos — E4.1: catálogo real importado (E4 deixa de estar bloqueado)
+
+**Descoberta que muda uma decisão anterior.** A entrada "Sistema de
+Equipamento — schema de referência" registrava E4 (Sintonização)
+como bloqueado "até itens mágicos existirem como dado — ainda não
+foram importados na planilha". Isso estava desatualizado: o upload
+mais recente da `dnd-master-referencia.xlsx` nesta sessão **tem** a
+aba "Itens Mágicos" com 288 itens reais (Nome, Categoria, Raridade,
+Sintonização, Efeito Resumido, Página, Fonte). E4 deixa de estar
+bloqueado a partir de agora.
+
+**Escopo consciente — só a aba "Itens Mágicos".** A planilha também
+tem "Itens Mágicos Inteligentes" (não é catálogo, é só o texto de
+regra de como criar um item inteligente — sem tabela por item) e
+"Artefatos" (8 itens únicos, superpoderosos, cada um com regra
+própria — Cetro de Orcus, Espada de Kas...). Os dois ficam de fora
+por ora; só entram se algum dia fizerem falta numa mesa real.
+
+**`data/rulesets/dnd2024/itensMagicos.ts` (novo).** 288 itens,
+`ItemMagico { id, nome, categoria, raridade, requerSintonizacao,
+sintonizacaoTexto, efeitoResumido, pagina, fonte }`. Gerado por script
+Python de uso único (rodado e descartado, mesmo padrão de
+`armas.ts`/`armaduras.ts`).
+
+**`requerSintonizacao` é um booleano derivado, não a coluna crua.** A
+coluna real "Sintonização" da planilha é texto livre e inconsistente:
+"Sim", "não", "Não requer sintonização", "Requer sintonização", "sim
+(bardo, clérigo ou druida)", "Opcional (para a propriedade Destruidor
+de Gigantes)", etc. — 26 variantes distintas de texto pra "sim" ou
+"não". Regra aplicada: **só é `false` quando o texto começa com
+"não"/"nao"** (case-insensitive) — qualquer outra coisa (incluindo
+"Opcional...", que na prática significa que sintonizar dá um bônus
+extra) vira `true`. `sintonizacaoTexto` guarda o texto original
+intacto pra qualquer conferência manual depois — a régua do booleano
+é propositalmente simples (não tenta capturar "só bardo" ou
+"opcional"), fica documentado no cabeçalho do arquivo gerado.
+Conferido manualmente: 150 itens exigem Sintonização, 138 não.
+
+**Data/origem:** 2026-08.
