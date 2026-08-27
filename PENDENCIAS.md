@@ -13,7 +13,7 @@
 
 ---
 
-## Plano de Equipamento — E1/E2/E3 feitas, só E4 falta
+## Plano de Equipamento — COMPLETO (E1-E4 feitas)
 
 **O que é:** plano de 4 entregas nascido de uma revisão geral pedida
 pelo Osmar, que expôs que Mão Principal/Secundária, equipar/
@@ -110,6 +110,55 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 **Contexto:** revisão geral pedida pelo Osmar ("vale a gente passar
 por tudo que fizemos"), que levantou as perguntas de equipamento —
 plano aprovado ("vamos de e1").
+
+## Bardo — próxima classe, plano em 5 etapas (nada feito ainda)
+
+**O que é:** depois do Plano de Equipamento fechado e das subclasses
+de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
+implementar é **Bardo** — ver decisões "Casters — 3 padrões reais de
+troca de magia" e "Bardo — próxima classe a implementar" no
+`DECISOES-DESIGN.md` pra achados de regra completos e a decupagem
+das 4 subclasses (Colégios). Esta entrada é só o checklist de
+progresso — os detalhes de regra ficam lá, não duplicar aqui.
+
+**Dados já confirmados na planilha mestra (não precisa reconferir):**
+140 magias com "Bardo" na coluna Classes; progressão nível 1-20
+completa; 13 linhas de característica de classe base + 24 linhas de
+subclasse (4 Colégios).
+
+**Falta tudo — 5 etapas planejadas, nenhuma feita:**
+1. **Dados** — filtrar/importar magias de Bardo, separando Truques
+   (círculo 0) de Magias (círculo 1+); schema já precisa comportar
+   `sempreDisponivel` e "magia de outra classe" (achados das
+   subclasses, mesmo que só usados depois).
+2. **Criação de personagem** — wizard filtra 2 truques + 4 magias de
+   1º círculo (sugestão do livro: Enfeitiçar Pessoa, Leque Cromático,
+   Palavra Curativa, Sussurros Dissonantes).
+3. **Ficha/aba Magias** — suportar múltiplos círculos simultâneos
+   (hoje só tem 1 círculo, prototipado pro Bruxo/fixture).
+4. **Level Up** — truques/magias/espaços crescem por tabela; nova
+   categoria "troca opcional de 1 magia preparada por level-up"
+   (padrão A, ainda não existe no motor — motor hoje só conhece
+   Guerreiro, não-conjurador).
+5. **Combat** — "Usar Magia" passa a listar as magias preparadas
+   reais do Bardo (tira o `[PH]`/fixture atual), gasto de espaço
+   generalizado pra N círculos independentes.
+
+**Antes de começar a codar:** propor o plano de entregas pequenas pro
+Osmar e esperar confirmação (regra 6 do CLAUDE.md) — as 5 etapas
+acima são o esqueleto, mas cada uma provavelmente quebra em
+sub-entregas menores na hora de implementar de verdade (mesmo padrão
+usado no Guerreiro, B1-B5).
+
+**As 4 subclasses (Bravura, Dança, Conhecimento, Glamour) ficam pra
+depois da base** — decisão de seguir ou não será tomada só quando a
+base estiver pronta e testada, não presumida agora.
+
+**Contexto:** decisão do Osmar após fechar o Plano de Equipamento —
+"vamos pra sintonização" (E4) e depois "a gente vai começar uma
+classe nova". Bardo escolhido por cobrir o padrão mais completo de
+conjuração (truques + troca restritiva + 9º círculo) entre os 8
+conjuradores, e por escolha pessoal (esposa do Osmar joga Bardo).
 
 ## Combat tab — auditoria de fixture vs. real (Guerreiro) + marcação [PH]
 

@@ -2936,3 +2936,132 @@ efeito real da planilha.
 **Com essa entrega, o Plano de Equipamento (E1-E4) está completo.**
 
 **Data/origem:** 2026-08.
+
+## Casters — 3 padrões reais de troca de magia (não é "known vs prepared")
+
+**Decisão:** análise feita em chat paralelo (revisada e aceita) sobre
+os 8 conjuradores do jogo (Mago, Clérigo, Druida, Bardo, Feiticeiro,
+Bruxo, Guardião, Paladino) antes de implementar a 1ª classe
+conjuradora de verdade. Achado central: a troca de magia preparada
+tem **3 variações reais**, não a divisão binária comum "known vs
+prepared":
+
+- **Padrão A (restritiva):** troca só 1 magia, só ao subir de nível —
+  Bardo, Bruxo, Feiticeiro.
+- **Padrão B (flexível por descanso):** troca só 1 magia, mas a cada
+  Descanso Longo — Guardião, Paladino (meio-conjuradores).
+- **Padrão C (redefinição livre):** troca qualquer quantidade, a cada
+  Descanso Longo — Clérigo, Druida, Mago (Mago tem ainda uma camada
+  extra: só pode preparar o que já está no grimório físico, item da
+  Mochila — fora de escopo por ora).
+
+**O que generaliza pras 8, sem exceção:** truque nunca gasta espaço
+de magia (sempre lista separada, sempre 1 troca por level-up nas 6
+classes que têm truque); espaço de magia é sempre banco por círculo,
+recuperando no Descanso Longo — **exceto Bruxo**, que recupera no
+Curto também (já confirmado antes); atributo de conjuração é sempre 1
+só, fixo por classe (nunca escolha do jogador); CD/bônus de ataque de
+magia seguem sempre a mesma fórmula.
+
+**Schema recomendado (ainda não implementado):** `padraoDeTroca`
+(`restritiva | flexivel_por_descanso | redefinicao_livre`) +
+`gatilhoDeTroca` (`level_up | descanso_longo`) + `qtdTrocavelPorVez`
+(`1 | "todas"`) — decide qual UI de troca mostrar, sem hardcode por
+classe individual.
+
+**Nova categoria de Level Up identificada:** "troca opcional de magia
+preparada por level-up" (padrão A) ainda não existe no motor de Level
+Up (que hoje só conhece Guerreiro, não-conjurador) — precisa entrar
+como categoria própria quando a 1ª classe conjuradora for feita.
+
+**Ordem de implementação recomendada:** Bardo (padrão A + truques + 9º
+círculo completo) → Clérigo ou Druida (padrão C) → Guardião ou
+Paladino (padrão B, mais barato depois dos 2 anteriores) → Mago
+(grimório físico) → Bruxo (recuperação por Descanso Curto, baixo
+esforço a qualquer momento).
+
+**Data/origem:** 2026-08, análise em chat paralelo revisada.
+
+## Bardo — próxima classe a implementar, decupagem completa (base + 4 Colégios)
+
+**Decisão do Osmar:** depois de fechar o Plano de Equipamento (E1-E4),
+a próxima classe é **Bardo** (não uma das subclasses de Guerreiro,
+já deprioritizadas — ver `PENDENCIAS.md`). Escolhido porque cobre o
+padrão A de troca de magia + truques + progressão até 9º círculo, a
+combinação mais completa entre os conjuradores (ver decisão "Casters"
+acima) — e por escolha pessoal do Osmar (a esposa dele joga Bardo).
+
+**Dados confirmados na planilha mestra** (upload mais recente da
+sessão) antes de comprometer o plano: 140 magias com "Bardo" na
+coluna Classes (aba Magias); progressão completa nível 1-20 (aba
+Progressão de Classe); 13 linhas de característica de classe base +
+24 linhas de subclasse cobrindo os 4 Colégios (aba Características de
+Classe / Subclasses). Dado existe, é só importar/conectar — mesmo
+padrão do Guerreiro (que também já tinha tudo na planilha, só
+precisava ser lido).
+
+**As 4 subclasses (Colégios, todas no nível 3) ensinam padrões novos
+que o motor ainda não tem:**
+- **Colégio da Bravura** — Ataque Extra pode substituir 1 ataque por
+  um truque (escolha por instância de ataque, mesma categoria já
+  vista no Guerreiro/Mestre Tático); Magia de Batalha dá ataque de
+  graça depois de conjurar. Complexidade média.
+- **Colégio da Dança** — pacote de 4 efeitos condicionados a "sem
+  armadura/escudo", incluindo Defesa sem Armadura própria (`10 + Des
+  + Car`) — **3º caso confirmado dessa exceção de CA, e o 1º vindo de
+  subclasse, não de classe base** (Bárbaro/Monge são classe). A
+  função central de cálculo de CA precisa checar característica ativa
+  (classe OU subclasse), não uma lista fixa de 2-3 classes. Golpes
+  Ágeis soma Ataque Desarmado de graça ao gastar um dado de
+  Inspiração em qualquer ação. Complexidade alta (6 efeitos, mesmo
+  recurso, gatilhos diferentes).
+- **Colégio do Conhecimento** — Descobertas Mágicas (nível 6) dá
+  acesso a 2 magias de **outra classe inteira** (Clérigo/Druida/Mago)
+  sempre preparadas — o filtro "Classes contém Bardo" na aba Magias
+  **não é suficiente sozinho**, precisa aceitar essa exceção. Perícia
+  Inigualável (nível 14) só gasta o recurso se o efeito realmente
+  converter falha em sucesso — "reembolso condicional", padrão novo
+  de gasto de recurso. Complexidade média.
+- **Colégio do Glamour** — magias "sempre preparadas, não contam no
+  limite" (precisa de flag `sempreDisponivel: true` por magia, não só
+  a lista normal); Manto de Majestade recarrega gastando espaço de
+  magia de 3º círculo+ em vez de Inspiração — **1º caso de recurso
+  recarregável por 2 fontes alternativas diferentes**. Complexidade
+  média-alta.
+
+**Plano de implementação em 5 etapas (adaptado do documento original,
+critérios de conclusão testáveis):**
+1. **Dados** — filtrar magias de Bardo (coluna Classes) + separar
+   Truques (círculo 0) de Magias (círculo 1+). Conferir contagem
+   total bate com 140. **Não é filtro simples**: precisa já prever a
+   exceção do Colégio do Conhecimento (magia de outra classe) e a
+   flag `sempreDisponivel` (Conhecimento/Glamour) — mesmo que essas 2
+   coisas só entrem de verdade nas Etapas 2/4, o schema de dado
+   inicial já precisa comportar os campos.
+2. **Criação de personagem** — wizard filtra 2 truques + 4 magias de
+   1º círculo (sugestão do livro: Enfeitiçar Pessoa, Leque Cromático,
+   Palavra Curativa, Sussurros Dissonantes). Critério: Bardo nível 1
+   criado mostra exatamente 2 truques + 4 magias na Ficha, nada de
+   outra classe aparecendo.
+3. **Ficha/aba Magias** — suporte a múltiplos círculos simultâneos
+   (hoje só existe 1 círculo, prototipado pro fixture do Bruxo).
+   Critério: Bardo nível 5 (dado fixo, sem passar pelo Level Up ainda)
+   mostra 3 círculos com pips corretos.
+4. **Level Up** — truques/magias/espaços crescem por tabela; nova
+   categoria "troca opcional de magia preparada" (padrão restritivo,
+   só 1 por vez, ver decisão "Casters" acima). Critério: subir 1→2→3
+   pelo fluxo real, ver a lista crescer e a troca aparecer no nível
+   certo.
+5. **Combat** — "Usar Magia" já existe (Bruxo), só listar as magias
+   preparadas reais do Bardo em vez de fixture, e generalizar o gasto
+   de espaço pra N círculos independentes. Critério: conjurar 1ª
+   círculo gasta só o pip daquele círculo.
+
+**Subclasses (Colégios) ficam pra depois da base**, mesma ordem já
+usada com Guerreiro (base completa primeiro, subclasses depois) — mas
+diferente do Guerreiro, aqui a decisão de seguir ou não pras
+subclasses de Bardo será tomada quando a base estiver pronta e
+testada, não presumida de antemão.
+
+**Data/origem:** 2026-08, decupagem em chat paralelo revisada e
+validada contra a planilha mestra real.
