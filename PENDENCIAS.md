@@ -945,3 +945,28 @@ idioma extra aparece na Ficha/wizard (soma na mesma lista de idiomas da
 Origem? aparece separado, ligado à característica de classe?) — é uma
 decisão de UI pequena, mas precisa de confirmação do Osmar antes de
 implementar (regra 6 do `CLAUDE.md`).
+
+## Marcação de duplicidade — só Perícias hoje, Talentos/Truques/Magias dormentes
+
+`core/duplicidadeSelecao.ts` (`nomesDuplicados`) foi escrito genérico
+(aceita N grupos de nomes, não só 2), mas só está **realmente usado**
+pra Perícia da Origem × Perícia da Classe (`OrigemStep.tsx`) — a única
+sobreposição hoje alcançável no wizard. Talentos, Truques e Magias não
+têm um 2º ponto de concessão alcançável ainda: as Espécies com
+truque/magia grátis por traço (Alto Elfo, Drow, etc.) existem na
+planilha mas nenhuma está `disponivel: true`. Quando a 1ª Espécie com
+esse tipo de traço for habilitada, revisar se faz sentido extrair o
+truque/magia concedida de forma estruturada (hoje está só em prosa
+dentro de `descricao`) e então marcar a pill correspondente na etapa
+de Classe (Truques/Magias Preparadas) usando a mesma função. Ver
+DECISOES-DESIGN.md "Marcação de duplicidade... — só na criação" pro
+resto do contexto.
+
+## Iconografia de Magias (⚔️/❤️‍🩹/🪙) — só na criação, Ficha ainda não usa
+
+`core/classificarMagia.ts` foi escrito de forma genérica (recebe
+qualquer `Magia`), mas hoje só é chamado em `ClasseEscolhasStep.tsx`
+(Truques/Magias Preparadas da criação). A aba Magias da Ficha ainda
+usa fixture (Etapa 3 do plano de Bardo, não feita) — quando essa etapa
+acontecer, reaproveitar `iconesMagia()`/`classificarMagia()` lá também
+em vez de duplicar a lógica.

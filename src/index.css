@@ -190,6 +190,10 @@ button {
   background: var(--accent-dim);
 }
 
+.opt-card-duplicada {
+  border-color: var(--warn);
+}
+
 .opt-card-row {
   display: flex;
   align-items: center;

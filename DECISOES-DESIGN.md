@@ -3219,3 +3219,77 @@ de cálculo genérico); Mochila mostra o instrumento escolhido (ex.:
 Combat carregam sem quebrar (ainda fixture, como esperado).
 
 **Data/origem:** 2026-08.
+
+## Marcação de duplicidade (Perícias) e iconografia de Magias (ataque/cura/custo) — só na criação
+
+Portado do "outro modelo" (versão anterior do app do Osmar,
+`rjunior0710.github.io`), a pedido dele — 2 recursos de UX que já
+existiam lá:
+
+**1. Marcação de duplicidade.** Aviso não-bloqueante quando uma
+escolha do wizard já foi concedida em outra etapa. Escopo confirmado
+com o Osmar: **só a criação de personagem por enquanto** — a Ficha
+precisaria de uma abordagem diferente (não é escolha, é revisão de
+personagem já pronto), fica pra depois. Hoje a única sobreposição
+real e alcançável no wizard é **Perícia da Origem × Perícia da
+Classe** (ex.: Bardo pode escolher livremente entre as 18 perícias do
+jogo, então qualquer Origem cujas 2 perícias fixas colidam com o que
+já foi escolhido na Classe deve avisar). Espécies com truque/magia
+concedida por traço (Alto Elfo → Prestidigitação Arcana, Drow → Luzes
+Dançantes, etc.) existem na planilha mas nenhuma está `disponivel:
+true` ainda — não há hoje um 2º caso real de duplicidade de
+Talento/Truque/Magia alcançável no wizard. Ver PENDENCIAS.md pro
+ponto de extensão.
+
+Implementação: `core/duplicidadeSelecao.ts` exporta `nomesDuplicados(
+...grupos: string[][]): Set<string>` — genérica, conta nomes únicos
+por grupo e marca quem aparece em 2+ grupos. Como a ordem real do
+wizard é **Classe (com Perícia) → Origem** (não o contrário — ver
+`WizardShell.tsx`), o aviso não faz sentido nos checkboxes de Perícia
+da Classe (a Origem ainda não foi escolhida nesse ponto — sempre
+`null`). Em vez disso, o aviso aparece nos **cards de Origem**
+(`OrigemStep.tsx`): cada card calcula `nomesDuplicados(
+selection.periciasClasseEscolhidas, origem.pericias)` e, se houver
+sobreposição, ganha borda tracejada `var(--warn)` (classe
+`.opt-card-duplicada`) + texto "⚠️ X já escolhida na Classe" abaixo da
+descrição. Escolher aquela Origem continua permitido — é só aviso.
+
+**2. Iconografia de Magias.** ⚔️ ataque / ❤️‍🩹 cura / 🪙 componente com
+custo em PO — podem aparecer sozinhos ou combinados na mesma pill de
+Truque/Magia Preparada da criação. `core/classificarMagia.ts` exporta
+`classificarMagia(magia): {ataque, cura, custoComponente}`, heurística
+por regex em cima de `descricaoCurta` (coluna curada, não
+`descricaoCompleta` — que tem problema de conteúdo colado documentado
+no cabeçalho de `magias.ts`) e `componentes`:
+- `ataque`: `/\bataques?\b[^."]{0,30}:/i` — captura os marcadores
+  formais do livro ("Ataque corpo a corpo:", "Ataque à distância:",
+  "Ataque:"), maiúscula ou minúscula (varia se a frase é o início da
+  descrição ou está no meio, ex. depois de parêntese) — confirmado
+  por amostra da planilha.
+- `cura`: `/\bcura(m)?\b/i` OU (`recupera(m)? + todo/metade/dígito`,
+  removendo antes qualquer trecho "não recupera..." — evita falso
+  positivo em magias que negam cura, ex. "não recupera PV" do Toque
+  do Vampiro).
+- `custoComponente`: `/\d+[^.)]{0,20}\b(po|pp|pc)\b/i` — precisa de um
+  número antes da sigla de moeda dentro de uma janela curta (não
+  exclui frases como "no valor de 100 ou mais PO", que é o padrão real
+  da planilha), sem casar menção solta a moeda sem custo (ex. "um fio
+  de cobre", sem número, não marca).
+
+**Aceito explicitamente pelo Osmar que a heurística pode errar
+ocasionalmente** ("vamos seguir, se aparecer erros, nós corrigimos") —
+não é regra de mecânica, é só ajuda visual pra achar magia mais rápido.
+Testado contra a amostra real da planilha (Bardo, ~36 magias entre
+truques e 1º círculo) sem falso positivo/negativo encontrado nos casos
+verificados manualmente.
+
+**Testado:** Playwright 390×844, fluxo completo Classe (Bardo) →
+Perícias (Intuição/Religião/Atuação, colidindo de propósito com
+Acólito/Andarilho/Artista/Sábio) → Ferramentas → Truques → Magias
+Preparadas → Equipamento → Origem. Confirmado: ⚔️/❤️‍🩹/🪙 aparecem nas
+pills certas (ex. Palavra Curativa → ❤️‍🩹, Identificar → 🪙); ao chegar
+em Origem, os 4 cards com Perícia colidente mostram a borda tracejada
+`--warn` + texto de aviso; escolher a Origem mesmo assim continua
+funcionando.
+
+**Data/origem:** 2026-08.

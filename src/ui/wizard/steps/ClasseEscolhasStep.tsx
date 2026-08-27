@@ -10,6 +10,7 @@ import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propried
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../../core/maestriaArma';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
 import { temEstiloDeLutaTrocavel } from '../../../core/levelUp';
+import { iconesMagia } from '../../../core/classificarMagia';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoChip from '../../components/InfoChip';
 import styles from './ClasseEscolhasStep.module.css';
@@ -218,6 +219,7 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                   <span className="check-label">
                     <ItemComDescricao nome={m.nome} descricao={m.descricaoCurta} rotulo={m.nome} variante="icone" />
                     {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>({m.escola})</span>
+                    {' '}{iconesMagia(m)}
                   </span>
                 </div>
               ))}
@@ -239,6 +241,7 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                   <span className="check-label">
                     <ItemComDescricao nome={m.nome} descricao={m.descricaoCurta} rotulo={m.nome} variante="icone" />
                     {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>({m.escola})</span>
+                    {' '}{iconesMagia(m)}
                   </span>
                 </div>
               ))}
