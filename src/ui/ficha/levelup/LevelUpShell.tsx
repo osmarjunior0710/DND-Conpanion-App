@@ -3,7 +3,6 @@ import { dadoVidaValor } from '../../../data/levelUpFixtures';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { caracteristicasDoNivel, niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel } from '../../../core/levelUp';
-import { useRoll } from '../../roll/RollContext';
 import styles from './LevelUpShell.module.css';
 
 export interface PersonagemNivel {
@@ -28,11 +27,12 @@ interface LevelUpShellProps {
 }
 
 type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'asi' | 'dadivaEpica' | 'resumo';
+type FaseDramatica = 'idle' | 'rolando' | 'resultado';
 
 const NOMES_ATRIBUTOS = ['FOR', 'DES', 'CON', 'INT', 'SAB', 'CAR'];
+const DURACAO_ROLAGEM_MS = 1400;
 
 export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar }: LevelUpShellProps) {
-  const { rolarDados } = useRoll();
   const novoNivel = personagem.nivel + 1;
 
   const luSteps: LuStep[] = ['pv', 'features'];
@@ -45,6 +45,8 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
   const [luIndex, setLuIndex] = useState(0);
   const [hpModo, setHpModo] = useState<'media' | 'rolar' | null>(null);
   const [hpRolado, setHpRolado] = useState<number | null>(null);
+  const [faseDramatica, setFaseDramatica] = useState<FaseDramatica>('idle');
+  const [valorDadoAnimado, setValorDadoAnimado] = useState<number | null>(null);
   // Escolha de subclasse ainda não tem UI própria (nenhuma subclasse
   // foi importada ainda — ver PENDENCIAS.md, plano "Guerreiro 1-20").
   // Fica null até essa entrega existir; a etapa "subclasse" só mostra
@@ -58,16 +60,29 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
   const media = dadoVidaValor[personagem.dadoVida] + personagem.conMod;
   const pvGanho = hpModo === 'media' ? media : hpModo === 'rolar' ? (hpRolado !== null ? hpRolado + personagem.conMod : null) : null;
 
-  function rolarHp() {
+  // Rolagem do dado de vida é definitiva assim que acontece — só roda
+  // uma vez, disparada pelo "Avançar" (não por um botão dentro do
+  // passo), com uma pausa dramática em tela cheia antes do resultado.
+  // Uma vez que `hpRolado` é preenchido, o passo PV fica travado (ver
+  // JSX abaixo) — voltar/reabrir o Level Up não permite rolar de novo.
+  function iniciarRolagemDramatica() {
     const lados = parseInt(personagem.dadoVida.slice(1), 10);
-    rolarDados({
-      label: 'PV do Level Up',
-      formula: `1${personagem.dadoVida}`,
-      quantidade: 1,
-      lados,
-      mod: 0,
-      onResultado: (total) => setHpRolado(total),
-    });
+    setFaseDramatica('rolando');
+    const intervalo = setInterval(() => {
+      setValorDadoAnimado(1 + Math.floor(Math.random() * lados));
+    }, 90);
+    setTimeout(() => {
+      clearInterval(intervalo);
+      const resultado = 1 + Math.floor(Math.random() * lados);
+      setValorDadoAnimado(resultado);
+      setHpRolado(resultado);
+      setFaseDramatica('resultado');
+    }, DURACAO_ROLAGEM_MS);
+  }
+
+  function continuarAposRolagem() {
+    setFaseDramatica('idle');
+    setLuIndex((i) => i + 1);
   }
 
   function toggleAsi(a: string) {
@@ -93,9 +108,16 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
   };
 
   function avancar() {
-    if (step === 'pv' && pvGanho === null) {
-      setAviso('Escolha um método de PV antes de avançar.');
-      return;
+    if (step === 'pv') {
+      if (hpModo === null) {
+        setAviso('Escolha um método de PV antes de avançar.');
+        return;
+      }
+      if (hpModo === 'rolar' && hpRolado === null) {
+        setAviso(null);
+        iniciarRolagemDramatica();
+        return;
+      }
     }
     setAviso(null);
     if (step === 'resumo') {
@@ -117,6 +139,32 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
   const features = caracteristicasDoNivel(classe, novoNivel);
   const dadivaEpica = caracteristicasDoNivel(classe, novoNivel).find((f) => f.nome === 'Dádiva Épica');
 
+  if (faseDramatica !== 'idle') {
+    return (
+      <div className={styles.dramaScreen}>
+        {faseDramatica === 'rolando' ? (
+          <>
+            <div className={styles.dramaLabel}>rolando 1{personagem.dadoVida}...</div>
+            <div className={`${styles.dramaDie} ${styles.dramaDieSpinning}`}>{valorDadoAnimado ?? '?'}</div>
+          </>
+        ) : (
+          <>
+            <div className={styles.dramaLabel}>resultado</div>
+            <div className={styles.dramaDie}>{hpRolado}</div>
+            <div className={styles.dramaSub}>
+              {hpRolado} + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
+              {personagem.conMod})
+            </div>
+            <div className={styles.dramaTotal}>+{(hpRolado ?? 0) + personagem.conMod} PV</div>
+            <div className={`btn btn-primary ${styles.dramaBtn}`} onClick={continuarAposRolagem}>
+              Continuar →
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -136,33 +184,32 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
         {step === 'pv' && (
           <>
             <div className="section-title">Como determinar os novos PV?</div>
-            <div className={`opt-card ${hpModo === 'media' ? 'selected' : ''}`} onClick={() => { setHpModo('media'); setHpRolado(null); }}>
-              <div className="opt-card-name">Usar a média fixa</div>
-              <div className="opt-card-desc">
-                {dadoVidaValor[personagem.dadoVida]} (média de {personagem.dadoVida}) + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
-                {personagem.conMod}) = <b>+{media} PV</b>
+            {hpRolado !== null ? (
+              <div className="opt-card selected" style={{ cursor: 'default' }}>
+                <div className="opt-card-name">🎲 Dado de vida rolado — resultado travado</div>
+                <div className="opt-card-desc">
+                  Rolou <b>{hpRolado}</b> em 1{personagem.dadoVida} + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
+                  {personagem.conMod}) = <b>+{hpRolado + personagem.conMod} PV</b>. Não dá pra rolar de novo.
+                </div>
               </div>
-            </div>
-            <div className={`opt-card ${hpModo === 'rolar' ? 'selected' : ''}`} onClick={() => { setHpModo('rolar'); setHpRolado(null); }}>
-              <div className="opt-card-name">Rolar o dado de vida 🎲</div>
-              <div className="opt-card-desc">
-                Rola 1{personagem.dadoVida} + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
-                {personagem.conMod})
-              </div>
-            </div>
-            {hpModo === 'rolar' && (
-              <div className="box" style={{ textAlign: 'center', padding: 14, marginTop: 10 }}>
-                {hpRolado === null ? (
-                  <div className="btn btn-primary" onClick={rolarHp}>
-                    Rolar 1{personagem.dadoVida} 🎲
+            ) : (
+              <>
+                <div className={`opt-card ${hpModo === 'media' ? 'selected' : ''}`} onClick={() => setHpModo('media')}>
+                  <div className="opt-card-name">Usar a média fixa</div>
+                  <div className="opt-card-desc">
+                    {dadoVidaValor[personagem.dadoVida]} (média de {personagem.dadoVida}) + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
+                    {personagem.conMod}) = <b>+{media} PV</b>
                   </div>
-                ) : (
-                  <>
-                    <div className="label">resultado</div>
-                    <div style={{ fontSize: 22 }}>+{hpRolado + personagem.conMod} PV</div>
-                  </>
-                )}
-              </div>
+                </div>
+                <div className={`opt-card ${hpModo === 'rolar' ? 'selected' : ''}`} onClick={() => setHpModo('rolar')}>
+                  <div className="opt-card-name">Rolar o dado de vida 🎲</div>
+                  <div className="opt-card-desc">
+                    Rola 1{personagem.dadoVida} + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
+                    {personagem.conMod}) — ao tocar em "Avançar" o dado rola e o resultado é definitivo, sem chance
+                    de rolar de novo.
+                  </div>
+                </div>
+              </>
             )}
             <div className="summary-row" style={{ marginTop: 14 }}>
               <span>PV atuais</span>

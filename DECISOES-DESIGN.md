@@ -2734,3 +2734,48 @@ completos — só falta E4 (Sintonização), bloqueado até existir dado de
 item mágico na planilha.**
 
 **Data/origem:** 2026-08.
+
+## Level Up — dado de vida rolado é definitivo, com pausa dramática em tela cheia
+
+**Problema:** no passo de PV do Level Up, quando o jogador escolhia
+"Rolar o dado de vida", um botão "Rolar 1dX 🎲" aparecia DENTRO do
+próprio passo — dava pra rolar, ver o resultado, e reclicar no card
+"Rolar o dado de vida" (mesmo já selecionado) pra resetar o resultado
+e rolar de novo quantas vezes quisesse. Nada travava a escolha.
+
+**Correção — rolagem só acontece ao avançar, e é definitiva.** O
+passo PV agora só deixa escolher o MÉTODO (média ou rolar), sem
+rolar nada ainda. Ao tocar "Avançar":
+- **Média** → segue direto pro próximo passo, sem cerimônia (não tem
+  aleatoriedade, não precisa de drama).
+- **Rolar** (ainda não rolado) → abre uma tela cheia **preta**,
+  cobrindo a tela inteira (sem X, sem fechar por fora — não é o
+  `RollOverlay` genérico de combate, que é dispensável por toque no
+  fundo) com o dado "girando" por 1,4s (números aleatórios trocando
+  rápido, puramente visual) e SÓ ENTÃO rola o valor real e mostra o
+  resultado, com um botão "Continuar →" que é a única saída — segue
+  pro próximo passo do Level Up.
+
+**Trava definitiva.** Uma vez que `hpRolado` é preenchido, o passo PV
+para de mostrar os cards de escolha — mostra só um card fixo
+"🎲 Dado de vida rolado — resultado travado" com o valor. Voltar pro
+passo PV (via "← Voltar" de qualquer passo seguinte) mostra essa
+mesma tela travada — não tem como escolher de novo nem re-rolar. Isso
+resolve o pedido do Osmar: "se a pessoa escolheu o dado, acabou".
+
+**Por que não usar o `RollOverlay` genérico (`ui/roll/`)?** Aquele
+componente é feito pra ser dispensável (clique no fundo fecha,
+"FECHAR" sempre disponível) — o oposto do que essa rolagem precisa
+(não pode ser cancelada/fechada sem terminar). Por isso o Level Up
+ganhou sua própria tela cheia preta (`LevelUpShell.tsx`, fase
+`faseDramatica: 'rolando' | 'resultado'`), sem reusar o overlay
+genérico.
+
+**Testado:** Playwright 390×844 — escolher "Rolar", avançar: tela
+preta com "ROLANDO 1D10..." e dado girando, depois "RESULTADO" com o
+valor rolado + mod. CON + total, botão "Continuar". Voltando pro
+passo PV depois: mostra só o card travado, sem cards de escolha.
+Escolher "Média" e avançar: pula direto pro próximo passo, sem tela
+preta.
+
+**Data/origem:** 2026-08.
