@@ -557,17 +557,27 @@ exceção, só depois desenhar schema). O Guerreiro (ver pendência
 variação — quando terminar, revisitar essa entrada com o que
 generalizou de verdade pras outras 11 classes.
 
-## Guerreiro 1-20 completo + 4 subclasses — B1 feita, B2-B5 + subclasses faltam
+## Guerreiro 1-20 — B1-B5 feitas (base completa), as 4 subclasses foram DEPRIORIZADAS
 
-**O que é:** em vez de continuar entregando pedaços soltos (Estilo de
-Luta, Magias...), o Osmar quer o Guerreiro resolvido de ponta a ponta
-(nível 1 ao 20, incluindo as 4 subclasses: Campeão, Cavaleiro Místico,
-Combatente Psíquico, Mestre da Batalha) antes de partir pras outras 11
-classes. Decupagem nível a nível já feita e verificada — ver decisão
-"Guerreiro — plano de implementação completa nível 1-20 + 4
-subclasses" no `DECISOES-DESIGN.md` pra achados de regra e ordem de
-implementação recomendada. Quebrado em 5 entregas pequenas (B1-B5) pro
-"Guerreiro base" (sem subclasse), antes de partir pras 4 subclasses.
+**Decisão do Osmar (2026-08):** as 4 subclasses de Guerreiro (Campeão,
+Cavaleiro Místico, Combatente Psíquico, Mestre da Batalha) **não vão
+ser implementadas agora** — o próximo passo do projeto é importar
+**outra classe** (2ª classe do jogo), não terminar as subclasses do
+Guerreiro. O "Guerreiro base" (nível 1-20 sem subclasse, B1-B5) está
+completo e testado — fica assim mesmo por enquanto. Se/quando as
+subclasses de Guerreiro voltarem a fazer sentido, reabrir esta
+pendência; não é um "esquecido", é adiado de propósito.
+
+**O que é (histórico, antes da decisão acima):** em vez de continuar
+entregando pedaços soltos (Estilo de Luta, Magias...), o Osmar queria
+o Guerreiro resolvido de ponta a ponta (nível 1 ao 20, incluindo as 4
+subclasses) antes de partir pras outras 11 classes. Decupagem nível a
+nível já feita e verificada — ver decisão "Guerreiro — plano de
+implementação completa nível 1-20 + 4 subclasses" no
+`DECISOES-DESIGN.md` pra achados de regra e ordem de implementação
+recomendada, caso isso seja retomado no futuro. Quebrado em 5
+entregas pequenas (B1-B5) pro "Guerreiro base", antes de partir pras
+4 subclasses — só o "base" foi feito.
 
 **Já feito:**
 - **B1 — Motor de Level Up ganha as 3 categorias novas de escolha.**
@@ -688,7 +698,8 @@ pendência entra aqui.
   **Gaps já conhecidos, não fazem parte do escopo de B5** (cada um já
   tem entrada própria nesta lista ou em `DECISOES-DESIGN.md`, revisar
   lá antes de reabrir aqui): Subclasse de Guerreiro (placeholder,
-  níveis 3/7/10/15/18 — entra na fase de subclasses); ASI (seletor
+  níveis 3/7/10/15/18 — deprioritizado, ver nota acima "as 4
+  subclasses foram DEPRIORIZADAS"); ASI (seletor
   `toggleAsi` não permite +2 no mesmo atributo, e o resultado não é
   aplicado à ficha — "Level Up — itens de teste do Osmar" abaixo);
   Dádiva Épica (nível 19, placeholder — lista do Cap. 5 não
