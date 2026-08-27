@@ -77,9 +77,10 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   a ser relevante quando existir dado de item mágico ou uma marcação
   manual no catálogo estruturado de "Adicionar item" (pendência
   acima).
-- **E3 — Combat/CA lendo o equipamento de verdade.** CA soma
-  Armadura+Escudo realmente equipados (não só a opção do wizard,
-  incluindo o +2 do Escudo que hoje nunca é somado); "Atacar" no
+- **E3 — Combat/CA lendo o equipamento de verdade (E3.1 feita, E3.2-E3.4
+  faltam).** ~~CA soma Armadura+Escudo realmente equipados (incluindo
+  o +2 do Escudo)~~ — feito (`calcularCAEquipado`, ver
+  DECISOES-DESIGN.md "E3.1"). Falta: "Atacar" no
   Combat usa a arma equipada de verdade (tira o `[PH]` já registrado
   na pendência de auditoria); Ataque Desarmado vira opção real, com
   Dano/Empurrar/Imobilizar por instância de ataque (decisão "Ataque

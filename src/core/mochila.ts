@@ -7,6 +7,7 @@ import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesPro
 import { buscarPesoItem } from '../data/rulesets/dnd2024/buscarDescricaoItem';
 import { classeDaSelecao, type ExplicacaoCalculo } from './calculoPersonagem';
 import { valorFinalAtributo, type WizardSelection } from './personagem';
+import { identificarEquipamento } from './equipamento';
 
 /**
  * Capacidade máxima de carga — confirmada na planilha mestra, aba
@@ -180,6 +181,21 @@ const DESAGREGACAO_KITS: Record<string, { nome: string; quantidade: number }[]> 
   ],
 };
 
+/**
+ * Armadura/Escudo do equipamento inicial já nascem equipados (é o que
+ * o jogador está vestindo ao começar a aventura) — só a primeira
+ * Armadura e o primeiro Escudo que aparecerem, se já não tiver algo
+ * no slot. Arma não entra aqui de propósito: "o que está na mão" é
+ * uma escolha mais explícita do jogador, fica pra ele equipar na
+ * Mochila (ver E2/E3 em DECISOES-DESIGN.md).
+ */
+function slotInicialAutomatico(itensJaAdicionados: ItemMochila[], nome: string): ItemMochila['slot'] {
+  const info = identificarEquipamento(nome);
+  if (info.tipo === 'armadura' && !itensJaAdicionados.some((it) => it.slot === 'armadura')) return 'armadura';
+  if (info.tipo === 'escudo' && !itensJaAdicionados.some((it) => it.slot === 'escudo')) return 'escudo';
+  return null;
+}
+
 function adicionarItem(itens: ItemMochila[], nome: string, quantidade: number, origemDoItem: 'Origem' | 'Classe' | 'Loja') {
   const componentes = DESAGREGACAO_KITS[nome];
   if (componentes) {
@@ -194,7 +210,14 @@ function adicionarItem(itens: ItemMochila[], nome: string, quantidade: number, o
     }
     return;
   }
-  itens.push({ id: gerarIdItem(), nome, quantidade, peso: buscarPesoItem(nome), origemDoItem });
+  itens.push({
+    id: gerarIdItem(),
+    nome,
+    quantidade,
+    peso: buscarPesoItem(nome),
+    origemDoItem,
+    slot: slotInicialAutomatico(itens, nome),
+  });
 }
 
 export function calcularItensIniciais(selection: WizardSelection): ItemMochila[] {

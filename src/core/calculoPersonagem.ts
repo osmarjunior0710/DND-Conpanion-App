@@ -9,6 +9,8 @@ import { armaduras } from '../data/rulesets/dnd2024/armaduras';
 import { pericias } from '../data/rulesets/dnd2024/pericias';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { modificador, valorFinalAtributo, type WizardSelection } from './personagem';
+import { resumoEquipado } from './equipamento';
+import type { ItemMochila } from './mochila';
 
 const ATRIBUTO_POR_NOME_COMPLETO: Record<string, Atributo> = {
   Força: 'FOR',
@@ -81,6 +83,66 @@ export function calcularCA(selection: WizardSelection): number | null {
   const armadura = armaduraEquipadaInicial(selection);
   if (!armadura) return 10 + desMod;
   return caPelaArmadura(armadura.classeArmadura, desMod);
+}
+
+/** Bônus de CA de um Escudo, a partir do texto da coluna "Classe de
+ * Armadura" na planilha (hoje sempre "+2", mas lido do dado mesmo
+ * assim — zero constante de D&D hardcoded). */
+function bonusEscudo(classeArmaduraEscudo: string): number {
+  const m = classeArmaduraEscudo.match(/\+(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
+/**
+ * CA lida do que está EQUIPADO AGORA na Mochila (Armadura + Escudo nos
+ * slots — ver `core/equipamento.ts`), não da escolha do wizard na
+ * criação (essa continua em `calcularCA`, usada só no Resumo do
+ * wizard, antes da Mochila existir como estado). Sem armadura
+ * equipada = 10 + mod. Destreza (padrão "sem armadura").
+ */
+export function calcularCAEquipado(itensMochila: ItemMochila[], desValor: number): number {
+  const desMod = modificador(desValor);
+  const { armadura, escudo } = resumoEquipado(itensMochila);
+  const armaduraCatalogo = armadura ? armaduras.find((a) => a.nome === armadura.nome) : undefined;
+  const base = armaduraCatalogo ? caPelaArmadura(armaduraCatalogo.classeArmadura, desMod) : 10 + desMod;
+  const escudoCatalogo = escudo ? armaduras.find((a) => a.nome === escudo.nome) : undefined;
+  const bonus = escudoCatalogo ? bonusEscudo(escudoCatalogo.classeArmadura) : 0;
+  return base + bonus;
+}
+
+/** Explicação estruturada da `calcularCAEquipado`, pro popup do "ⓘ". */
+export function explicarCAEquipado(itensMochila: ItemMochila[], desValor: number): ExplicacaoCalculo {
+  const desMod = modificador(desValor);
+  const { armadura, escudo } = resumoEquipado(itensMochila);
+  const armaduraCatalogo = armadura ? armaduras.find((a) => a.nome === armadura.nome) : undefined;
+  const escudoCatalogo = escudo ? armaduras.find((a) => a.nome === escudo.nome) : undefined;
+  const bonus = escudoCatalogo ? bonusEscudo(escudoCatalogo.classeArmadura) : 0;
+
+  const linhas: LinhaExplicacao[] = [];
+  let base: number;
+  if (!armaduraCatalogo) {
+    linhas.push({ label: 'Sem armadura (base)', valor: '10' });
+    linhas.push({ label: 'mod. Destreza', valor: fmtMod(desMod) });
+    base = 10 + desMod;
+  } else {
+    const ca = caPelaArmadura(armaduraCatalogo.classeArmadura, desMod);
+    const teto = armaduraCatalogo.classeArmadura.match(/máx\.?\s*(\d+)/i);
+    const baseMatch = armaduraCatalogo.classeArmadura.match(/^(\d+)/);
+    const baseArmadura = baseMatch ? parseInt(baseMatch[1], 10) : ca - desMod;
+    linhas.push({ label: `${armaduraCatalogo.nome} (base)`, valor: `${baseArmadura}` });
+    linhas.push({
+      label: teto ? `mod. Destreza (máx. ${teto[1]})` : 'mod. Destreza',
+      valor: fmtMod(ca - baseArmadura),
+    });
+    base = ca;
+  }
+  if (escudoCatalogo) {
+    linhas.push({ label: `${escudoCatalogo.nome} equipado`, valor: fmtMod(bonus) });
+  }
+  return {
+    linhas,
+    total: { label: 'Classe de Armadura', valor: `${base + bonus}` },
+  };
 }
 
 function proficienteEmPericia(selection: WizardSelection, pericia: string): boolean {

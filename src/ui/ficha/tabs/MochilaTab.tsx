@@ -259,7 +259,8 @@ export default function MochilaTab({
         </div>
       </div>
       <div className="label" style={{ marginTop: 4, marginBottom: 4 }}>
-        equipar ainda não muda a CA nem o Atacar da aba Combat — isso é a próxima entrega.
+        Armadura e Escudo já mudam a CA (aba Perfil). O "Atacar" da aba
+        Combat ainda usa dado de exemplo — isso é a próxima entrega.
       </div>
 
       <div className="section-title">Itens</div>

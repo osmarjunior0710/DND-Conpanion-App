@@ -2582,3 +2582,40 @@ então.
 
 **Data/origem:** 2026-08 (schema inicial) + 2026-08 (verificação
 contra PDFs reais: Cap. 1, Cap. 3, Cap. 5, Cap. 6, Apêndice C).
+
+## E3.1 — CA lê o equipamento de verdade da Mochila
+
+**O que mudou.** Até aqui `calcularCA` (usado na aba Perfil) lia a
+escolha do wizard (`selection.equipamentoClasseEscolhido`) — uma foto
+do momento da criação, sem relação com o que o jogador equipou/
+desequipou depois na Mochila (E2). Criada `calcularCAEquipado`/
+`explicarCAEquipado` (`core/calculoPersonagem.ts`), que leem
+`resumoEquipado(itensMochila)` (E2) e calculam: base pela Armadura no
+slot `armadura` (ou 10 + mod. Destreza se nada equipado) + bônus do
+Escudo no slot `escudo` (lido da coluna "Classe de Armadura" da
+planilha, hoje sempre "+2"). `calcularCA`/`explicarCA` originais
+continuam existindo e sendo usados só no Resumo do wizard (`ResumoStep.tsx`),
+onde a Mochila ainda não existe como estado.
+
+**Armadura/Escudo iniciais já nascem equipados.** Pra não regredir o
+comportamento (CA já correta ao criar o personagem, sem precisar
+entrar na Mochila e equipar manualmente), `calcularItensIniciais`
+(`core/mochila.ts`) agora atribui automaticamente o slot `armadura`/
+`escudo` à primeira Armadura/primeiro Escudo que entrar na lista
+inicial (de Origem, Classe ou Loja), via `slotInicialAutomatico`
+(usa `identificarEquipamento` da E2). Arma **não** entra nessa
+automação de propósito — "o que está na mão" fica sempre como escolha
+explícita do jogador na Mochila.
+
+**Texto desatualizado da E2 corrigido.** A caixa "Equipado agora" da
+Mochila tinha o aviso "equipar ainda não muda a CA nem o Atacar" —
+agora que a CA já muda, o texto virou "Armadura e Escudo já mudam a
+CA (aba Perfil). O 'Atacar' da aba Combat ainda usa dado de exemplo —
+isso é a próxima entrega" (E3.2).
+
+**Testado:** Playwright 390×844, Guerreiro nível 1 com Cota de Malha
+(CA 16 fixo) + Escudo equipados — CA inicial 18 → desequipar Escudo
+→ 16 → desequipar Armadura → 12 (10 + mod. Des +2) → reequipar
+Armadura → 16. Todos os valores bateram.
+
+**Data/origem:** 2026-08.

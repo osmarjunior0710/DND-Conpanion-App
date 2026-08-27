@@ -4,18 +4,18 @@ import { espacosMagiaExemplo } from '../../data/exampleCombat';
 import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
 import {
   calcularAtributosFinais,
-  calcularCA,
+  calcularCAEquipado,
   calcularIniciativa,
   calcularPercepcaoPassiva,
   calcularPericias,
   calcularPvMaximoNivel1,
   classeDaSelecao,
-  explicarCA,
+  explicarCAEquipado,
   explicarIniciativa,
   explicarPercepcaoPassiva,
   explicarPvMaximoNivel1,
 } from '../../core/calculoPersonagem';
-import { modificador } from '../../core/personagem';
+import { modificador, valorFinalAtributo } from '../../core/personagem';
 import {
   calcularCapacidadeMaxima,
   calcularItensIniciais,
@@ -115,7 +115,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [pesoAtivo, setPesoAtivo] = useState(true);
   const touchX = useRef(0);
 
-  const ca = calcularCA(selecao);
+  const desValor = valorFinalAtributo(selecao, 'DES') ?? 10;
+  const ca = calcularCAEquipado(itensMochila, desValor);
   const iniciativa = calcularIniciativa(selecao);
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
@@ -123,7 +124,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
   const explicacaoPv = explicarPvMaximoNivel1(selecao);
-  const explicacaoCa = explicarCA(selecao);
+  const explicacaoCa = explicarCAEquipado(itensMochila, desValor);
   const explicacaoIniciativa = explicarIniciativa(selecao);
   const explicacaoPercepcaoPassiva = explicarPercepcaoPassiva(selecao, personagem.nivel);
   const estiloDeLuta = estilosDeLuta.find((e) => e.nome === personagem.estiloDeLuta) ?? null;
