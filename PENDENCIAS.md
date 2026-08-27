@@ -77,16 +77,6 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   a ser relevante quando existir dado de item mágico ou uma marcação
   manual no catálogo estruturado de "Adicionar item" (pendência
   acima).
-- **Verificar regra "Duas Armas exige Leve nas duas mãos" antes de
-  travar isso no equipar.** Um chat paralelo afirmou que equipar 2
-  armas simultâneas (1 em cada mão) só é válido se ambas tiverem
-  propriedade Leve — **não bati isso contra nenhuma aba da planilha
-  mestra** (é regra de ação do Cap. 1, "Duas Armas", que não está
-  importada; `Glossário de Regras` não tem entrada pra isso). Hoje
-  `equiparNoSlot` (E2) deixa equipar qualquer arma de 1 mão na Mão
-  Secundária, sem checar Leve — pode estar errado. Não implementei a
-  trava sem fonte confirmada. Se o Osmar tiver o texto do Cap. 1 ou
-  confirmar de cabeça, adiciona a validação certa.
 - **E3 — Combat/CA lendo o equipamento de verdade.** CA soma
   Armadura+Escudo realmente equipados (não só a opção do wizard,
   incluindo o +2 do Escudo que hoje nunca é somado); "Atacar" no
@@ -97,7 +87,12 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   arma Versátil ganha o dado maior de dano quando empunhada com 2
   mãos — **e nesse modo também precisa ocupar a Mão Secundária no
   equipamento** (E2), não só mudar o dado (refinamento registrado na
-  decisão do schema de equipamento).
+  decisão do schema de equipamento); e o ataque bônus extra da
+  propriedade **Leve** só fica disponível se a arma da Mão Principal
+  E a da Mão Secundária forem ambas Leve — confirmado no texto real
+  do Cap. 6 (ver decisão "Sistema de Equipamento" no
+  `DECISOES-DESIGN.md`), é regra de ataque (E3), não trava de equipar
+  (E2 já está certo do jeito que está).
 - **E4 — Sintonização (3 itens simultâneos).** Bloqueado até itens
   mágicos existirem como dado — ainda não foram importados na
   planilha/`data/`. Quando destravar: a checagem vale pra **qualquer**

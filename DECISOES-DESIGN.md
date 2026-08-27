@@ -2519,17 +2519,66 @@ qualquer categoria equipada, separada da validação física de
 slot/mão. Ainda bloqueado (zero itens mágicos importados), só deixa
 o desenho futuro mais correto desde já.
 
-**NÃO adotado ainda — "Duas Armas exige propriedade Leve nas duas
-mãos".** Essa afirmação do chat paralelo **não bate contra nenhuma
-aba da planilha mestra** (`Glossário de Regras` não tem entrada pra
-"Duas Armas"/dual-wield — é regra de ação do Cap. 1, que não está
-importado). Hoje `equiparNoSlot` permite equipar QUALQUER arma de 1
-mão na Mão Secundária, sem checar a propriedade Leve — o que pode
-estar errado (o livro real provavelmente exige Leve pro ataque bônus
-de "Duas Armas"), mas não vou implementar uma trava baseada só na
-palavra do chat paralelo sem confirmar na fonte. Registrado como
-pendência de verificação em `PENDENCIAS.md` — se o Osmar tiver o
-texto do Cap. 1 (ação "Duas Armas") ou confirmar de cabeça, a gente
-adiciona a validação com a fonte certa.
+**Verificado contra o livro real (Osmar enviou os PDFs Cap. 1, Cap. 3,
+Cap. 5, Cap. 6 e Apêndice C) — "Duas Armas exige Leve" é confirmado,
+mas é regra de ATAQUE (E3), não de EQUIPAR (E2).** A afirmação do
+chat paralelo bate, mas a fonte não é uma ação separada "Duas Armas"
+(não existe isso no Cap. 1 nem no Glossário) — é a própria descrição
+da propriedade **Leve**, no Cap. 6:
 
-**Data/origem:** 2026-08.
+> "Quando você executa a ação Atacar em seu turno e usa uma arma
+> Leve, pode realizar um ataque adicional como uma Ação Bônus mais
+> tarde no mesmo turno. Esse ataque adicional deve ser realizado com
+> uma arma Leve diferente, e você não adiciona seu modificador de
+> atributo ao dano do ataque adicional, a menos que esse modificador
+> seja negativo."
+
+Ou seja: o livro **não proíbe** equipar uma arma não-Leve na Mão
+Secundária — isso continua fisicamente válido (seguro uma espada
+longa numa mão e um machado numa mão, por exemplo, mesmo sem ganhar
+o ataque bônus). O que a regra Leve condiciona é **se o ataque bônus
+extra fica disponível**, e isso só é avaliado no momento de atacar,
+não no momento de equipar. Por isso: **nenhuma mudança em
+`equiparNoSlot`/`slotsValidos` (E2)** — a lógica atual (qualquer arma
+de 1 mão pode ir pra Mão Secundária) já está certa. A checagem de
+Leve nas duas armas (a equipada na Mão Principal E a da Mão
+Secundária) vira um requisito confirmado da **E3**, quando "Atacar"
+passar a ler o equipamento de verdade — condição pra oferecer a opção
+de ataque bônus com a arma da Mão Secundária.
+
+**Confirmado — Versátil muda o dado de dano com 2 mãos (Cap. 6, tabela
+de Armas).** Ex.: Espada Longa `1d8 Cortante — Versátil (1d10)`,
+Lança `Versátil (1d8)`. Bate com o que já estava registrado como
+refinamento da E3 acima (empunhar com 2 mãos ocupa a Mão Secundária
+também) — nenhuma mudança adicional necessária, só confirma a fonte.
+
+**Confirmado — Sintonização é de qualquer item mágico, não só
+Acessório (Cap. 6, seção "Não Mais do Que Três Itens" + exemplo
+explícito de Escudo mágico).** Texto do livro usa literalmente um
+Escudo mágico como exemplo de item que pode exigir Sintonização
+("Sem se sintonizar a um item que requer Sintonização, você só obtém
+seus benefícios não mágicos... Por exemplo, um Escudo mágico que
+requer Sintonização oferece os benefícios de um Escudo normal se
+você não estiver sintonizado a ele"). Confirma o que já estava
+registrado acima — nenhuma mudança de código (ainda bloqueado por
+falta de dado de item mágico).
+
+**Confirmado — Escudo ocupa uma mão (Cap. 6, "Treinamento com
+Armadura": "Qualquer um pode vestir uma armadura ou segurar um
+Escudo").** "Segurar" confirma que Escudo consome uma mão fisicamente
+— consistente com o slot `'escudo'` hoje ser mutuamente exclusivo com
+a Mão Secundária em `equiparNoSlot` (E2). Nenhuma mudança necessária.
+
+**Não verificado — "Mãos como recurso numérico 0-2" vs. slots
+nomeados.** O chat paralelo propôs modelar mãos como um contador
+genérico em vez de `maoPrincipal`/`maoSecundaria` nomeados. Não é uma
+regra de D&D pra verificar contra o livro (é decisão de arquitetura
+do nosso app) — decisão: manter os slots nomeados como estão, porque
+já resolvem corretamente os casos reais confirmados acima (2 mãos =
+libera a Mão Secundária; Escudo/Mão Secundária são mutuamente
+exclusivos) sem precisar de um contador abstrato adicional. Se
+aparecer um caso real que o modelo nomeado não resolva, reavaliar
+então.
+
+**Data/origem:** 2026-08 (schema inicial) + 2026-08 (verificação
+contra PDFs reais: Cap. 1, Cap. 3, Cap. 5, Cap. 6, Apêndice C).
