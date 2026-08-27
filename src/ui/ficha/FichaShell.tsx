@@ -31,6 +31,7 @@ import {
   type SlotEquipamento,
 } from '../../core/equipamento';
 import { ataqueAtual, ataqueBonusMaoSecundaria } from '../../core/ataque';
+import { alternarSintonizacao } from '../../core/sintonizacao';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
@@ -270,6 +271,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setItensMochila((prev) => alternarDuasMaosVersatil(prev, id));
   }
 
+  function alternarSintonizacaoItem(id: string) {
+    setItensMochila((prev) => alternarSintonizacao(prev, id));
+  }
+
   function usarUsoFolego(): boolean {
     if (usosFolegoRestantes <= 0) return false;
     setFolegoGasto((v) => v + 1);
@@ -392,6 +397,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onEquipar={equiparItem}
             onDesequipar={desequiparItem}
             onAlternarDuasMaos={alternarDuasMaos}
+            onAlternarSintonizacao={alternarSintonizacaoItem}
           />
         )}
         {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} conjura={conjura} />}

@@ -96,21 +96,16 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   toda arma Simples/Marcial. Quando uma 2ª classe com proficiência de
   arma restrita for importada, essa checagem precisa entrar antes de
   somar o bônus.
-- **E4 — Sintonização (3 itens simultâneos). E4.1 feita (catálogo
-  importado), E4.2 falta (UI de sintonizar/dessintonizar na
-  Mochila).** ~~Bloqueado até itens mágicos existirem como dado~~ —
-  resolvido: a planilha TEM a aba "Itens Mágicos" (288 itens),
-  importada em `data/rulesets/dnd2024/itensMagicos.ts` (ver
-  DECISOES-DESIGN.md "Itens Mágicos — E4.1"). Falta a UI: botão
-  Sintonizar/Dessintonizar por item (só quando `requerSintonizacao`
-  bater por nome), limite de 3 sintonizados simultâneos, caixa
-  "Sintonizados agora (X/3)" na Mochila (mesmo padrão de "Equipado
-  agora"), popup do item mostrando Categoria/Raridade/Efeito quando
-  reconhecido. **Fora de escopo mesmo depois da E4.2:** efeito
-  mecânico automático (CA/dano de item mágico aplicado sozinho na
-  Ficha) — `efeitoResumido` é texto livre, não número estruturado;
-  automatizar isso exigiria curar campo por campo os 288 itens, é
-  projeto à parte.
+- ~~**E4 — Sintonização (3 itens simultâneos).**~~ **Completa**
+  (E4.1 catálogo + E4.2 UI, ver DECISOES-DESIGN.md). Com isso o Plano
+  de Equipamento inteiro (E1-E4) está feito. **Segue fora de
+  escopo:** efeito mecânico automático (CA/dano de item mágico
+  aplicado sozinho na Ficha) — `efeitoResumido` é texto livre, não
+  número estruturado; automatizar isso exigiria curar campo por campo
+  os 288 itens, é projeto à parte. Também falta uma tela de "receber
+  item" — hoje o único jeito de dar um item mágico a um personagem é
+  digitar o nome exato em "Adicionar item" (Mochila), que já reconhece
+  automaticamente pelo nome contra o catálogo.
 
 **Contexto:** revisão geral pedida pelo Osmar ("vale a gente passar
 por tudo que fizemos"), que levantou as perguntas de equipamento —

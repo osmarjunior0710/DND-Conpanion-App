@@ -170,6 +170,11 @@
   color: var(--text);
 }
 
+.equiparBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .addBox {
   padding: var(--space-3);
   margin-top: var(--space-3);

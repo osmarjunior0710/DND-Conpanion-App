@@ -2887,3 +2887,52 @@ intacto pra qualquer conferência manual depois — a régua do booleano
 Conferido manualmente: 150 itens exigem Sintonização, 138 não.
 
 **Data/origem:** 2026-08.
+
+## Itens Mágicos — E4.2: Sintonizar/Dessintonizar na Mochila (fecha o Plano de Equipamento)
+
+**O que mudou.** `core/sintonizacao.ts` (novo): `itemExigeSintonizacao(nome)`
+cruza o nome do item da Mochila contra `itensMagicos.ts` (E4.1);
+`alternarSintonizacao(itens, id)` liga/desliga, travando silenciosamente
+quando já há 3 sintonizados (`LIMITE_SINTONIZACAO`) e o item não está
+sintonizado ainda — a UI desabilita o botão antes disso acontecer, não
+depende só da trava da função. `ItemMochila` ganhou `sintonizado?:
+boolean`, persistido pelo mesmo auto-save de sempre (é só mais um
+campo dentro do array já salvo).
+
+**UI (`MochilaTab.tsx`):** qualquer item cujo nome bata com um item
+mágico que exige Sintonização ganha um botão "✨ Sintonizar" (mesmo
+estilo dos botões de Equipar) — vira "✓ Sintonizado" quando ativo, ou
+"Sintonização cheia (3/3)" (desabilitado) quando o limite já foi
+atingido por outros itens. Nova caixa "Sintonizados agora (X/3)"
+acima da lista de Itens, no mesmo padrão visual de "Equipado agora" —
+só aparece quando há pelo menos 1 sintonizado (mesma régua de "grupo
+vazio invisível" já usada em outros lugares da Mochila).
+
+**Popup do item (ⓘ) ganhou o efeito real.** `buscarDescricaoItem.ts`
+passou a indexar `itensMagicos.ts` também — qualquer item da Mochila
+cujo nome bata exatamente com o catálogo mostra "Categoria · Raridade
+[· exige Sintonização]. Efeito Resumido" no popup, sem precisar de
+UI nova (reaproveita o `ItemComDescricao`/`InfoValor` que toda linha
+da Mochila já tinha).
+
+**Como testar um item mágico sem uma tela de "receber item" (essa
+tela não existe ainda).** "Adicionar item" na Mochila já aceita
+qualquer nome digitado — se o nome bater **exatamente** (case-insensitive,
+mas os acentos importam) com um dos 288 itens de `itensMagicos.ts`,
+ele já é reconhecido automaticamente como mágico, ganha o botão de
+Sintonizar e o popup real. Não foi preciso construir uma feature nova
+pra "dar" item mágico a alguém — só funciona porque a Mochila já
+aceitava nome livre desde a E1.
+
+**Testado:** Playwright 390×844 — 4 anéis/botas que exigem
+Sintonização + 1 anel que não exige, todos adicionados via nome exato
+(simulando "Adicionar item" manual). Sintonizar os 3 primeiros mostrou
+"Sintonizados agora (3/3)"; o 4º item ficou com o botão desabilitado
+mostrando "Sintonização cheia (3/3)"; o item que não exige Sintonização
+não ganhou botão nenhum; dessintonizar um voltou pra "(2/3)"; o popup
+do "Anel de Calor" mostrou "Anel · Incomum · exige Sintonização" + o
+efeito real da planilha.
+
+**Com essa entrega, o Plano de Equipamento (E1-E4) está completo.**
+
+**Data/origem:** 2026-08.

@@ -15,6 +15,7 @@ import {
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoValor from '../../components/InfoValor';
 import { corDaCarga } from '../../utils/corCarga';
+import { itemExigeSintonizacao, contarSintonizados, LIMITE_SINTONIZACAO } from '../../../core/sintonizacao';
 import styles from './MochilaTab.module.css';
 
 interface MochilaTabProps {
@@ -28,6 +29,7 @@ interface MochilaTabProps {
   onAdicionarItem: (nome: string, quantidade: number) => void;
   onEquipar: (id: string, slot: SlotEquipamento) => void;
   onDesequipar: (id: string) => void;
+  onAlternarSintonizacao: (id: string) => void;
   onAlternarDuasMaos: (id: string) => void;
 }
 
@@ -100,6 +102,8 @@ function Linha({
   onEquipar,
   onDesequipar,
   onAlternarDuasMaos,
+  onAlternarSintonizacao,
+  sintonizadosAtual,
 }: {
   item: ItemMochila;
   itensDetalhados: boolean;
@@ -109,6 +113,8 @@ function Linha({
   onEquipar: (id: string, slot: SlotEquipamento) => void;
   onDesequipar: (id: string) => void;
   onAlternarDuasMaos: (id: string) => void;
+  onAlternarSintonizacao: (id: string) => void;
+  sintonizadosAtual: number;
 }) {
   const descricao = buscarDescricaoItem(item.nome);
   const [confirmandoRemocao, setConfirmandoRemocao] = useState(false);
@@ -141,6 +147,22 @@ function Linha({
       </div>
       {itensDetalhados && descricao && <div className={styles.itemDesc}>{descricao}</div>}
       <LinhaEquipar item={item} onEquipar={onEquipar} onDesequipar={onDesequipar} onAlternarDuasMaos={onAlternarDuasMaos} />
+      {itemExigeSintonizacao(item.nome) && (
+        <div className={styles.equiparRow}>
+          <button
+            type="button"
+            className={`${styles.equiparBtn} ${item.sintonizado ? styles.equiparBtnAtivo : ''}`}
+            disabled={!item.sintonizado && sintonizadosAtual >= LIMITE_SINTONIZACAO}
+            onClick={() => onAlternarSintonizacao(item.id)}
+          >
+            {item.sintonizado
+              ? '✓ Sintonizado'
+              : sintonizadosAtual >= LIMITE_SINTONIZACAO
+                ? `Sintonização cheia (${LIMITE_SINTONIZACAO}/${LIMITE_SINTONIZACAO})`
+                : '✨ Sintonizar'}
+          </button>
+        </div>
+      )}
       <div className={styles.itemBottom}>
         {pesoAtivo ? <span className={styles.itemWeight}>{pesoDaLinha(item)}</span> : <span />}
         <div className={styles.stepperRow}>
@@ -176,6 +198,8 @@ function GrupoItens({
   onEquipar,
   onDesequipar,
   onAlternarDuasMaos,
+  onAlternarSintonizacao,
+  sintonizadosAtual,
 }: {
   categoria: CategoriaMochila;
   itens: ItemMochila[];
@@ -188,6 +212,8 @@ function GrupoItens({
   onEquipar: (id: string, slot: SlotEquipamento) => void;
   onDesequipar: (id: string) => void;
   onAlternarDuasMaos: (id: string) => void;
+  onAlternarSintonizacao: (id: string) => void;
+  sintonizadosAtual: number;
 }) {
   if (itens.length === 0) return null;
 
@@ -211,6 +237,8 @@ function GrupoItens({
             onEquipar={onEquipar}
             onDesequipar={onDesequipar}
             onAlternarDuasMaos={onAlternarDuasMaos}
+            onAlternarSintonizacao={onAlternarSintonizacao}
+            sintonizadosAtual={sintonizadosAtual}
           />
         ))}
     </>
@@ -270,11 +298,14 @@ export default function MochilaTab({
   onEquipar,
   onDesequipar,
   onAlternarDuasMaos,
+  onAlternarSintonizacao,
 }: MochilaTabProps) {
   const carga = calcularCargaTotal(itens);
   const percentual = capacidadeMaxima ? Math.round((carga.kg / capacidadeMaxima) * 100) : 0;
   const sobrecarregado = capacidadeMaxima !== null && carga.kg > capacidadeMaxima;
   const equipado = resumoEquipado(itens);
+  const sintonizadosAtual = contarSintonizados(itens);
+  const itensSintonizados = itens.filter((it) => it.sintonizado);
 
   const [gruposExpandidos, setGruposExpandidos] = useState<Record<CategoriaMochila, boolean>>({
     arma: true,
@@ -350,6 +381,21 @@ export default function MochilaTab({
         de verdade na CA e no "Atacar" da aba Combat.
       </div>
 
+      {sintonizadosAtual > 0 && (
+        <>
+          <div className="section-title">
+            Sintonizados agora ({sintonizadosAtual}/{LIMITE_SINTONIZACAO})
+          </div>
+          <div className={`box ${styles.equipadoBox}`}>
+            {itensSintonizados.map((it) => (
+              <div key={it.id} className={styles.equipadoLinha}>
+                <span>✨ {it.nome}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       <div className="section-title">Itens</div>
       {itens.length === 0 && <div className="label">Mochila vazia.</div>}
       {ORDEM_CATEGORIAS.map((categoria) => (
@@ -366,6 +412,8 @@ export default function MochilaTab({
           onEquipar={onEquipar}
           onDesequipar={onDesequipar}
           onAlternarDuasMaos={onAlternarDuasMaos}
+          onAlternarSintonizacao={onAlternarSintonizacao}
+          sintonizadosAtual={sintonizadosAtual}
         />
       ))}
 

@@ -66,6 +66,11 @@ export interface ItemMochila {
    * jogador escolheu empunhar com as 2 mãos (dado de dano maior, mas
    * ocupa a Mão Secundária também) — ver E3.4 em DECISOES-DESIGN.md. */
   duasMaosAtivo?: boolean;
+  /** Item mágico sintonizado (E4.2, ver DECISOES-DESIGN.md) — só faz
+   * sentido pra itens que `itemExigeSintonizacao` reconhece
+   * (`core/sintonizacao.ts`). Limite de 3 simultâneos é aplicado na
+   * hora de ligar, não é uma trava de tipo aqui. */
+  sintonizado?: boolean;
 }
 
 let contadorId = 0;

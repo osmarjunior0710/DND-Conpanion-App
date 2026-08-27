@@ -3,6 +3,7 @@ import { montariasVeiculos } from './montariasVeiculos';
 import { armas } from './armas';
 import { armaduras } from './armaduras';
 import { gruposFerramenta } from './ferramentas';
+import { itensMagicos } from './itensMagicos';
 
 const indiceDescricao = new Map<string, string>();
 const indicePeso = new Map<string, string>();
@@ -28,10 +29,17 @@ for (const grupo of Object.values(gruposFerramenta)) {
     if (it.peso) indicePeso.set(it.nome.toLowerCase(), it.peso);
   }
 }
+for (const it of itensMagicos) {
+  indiceDescricao.set(
+    it.nome.toLowerCase(),
+    `${it.categoria} · ${it.raridade}${it.requerSintonizacao ? ' · exige Sintonização' : ''}. ${it.efeitoResumido}`,
+  );
+}
 
 /** Busca a descrição de um item pelo nome (case-insensitive). Cobre
- * Equipamento de Aventura, Montarias/Veículos, Armas, Armaduras e
- * Ferramentas (grupos de escolha). */
+ * Equipamento de Aventura, Montarias/Veículos, Armas, Armaduras,
+ * Ferramentas (grupos de escolha) e Itens Mágicos (Categoria ·
+ * Raridade · Efeito Resumido). */
 export function buscarDescricaoItem(nome: string): string | null {
   return indiceDescricao.get(nome.toLowerCase().trim()) ?? null;
 }
