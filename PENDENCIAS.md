@@ -111,7 +111,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 por tudo que fizemos"), que levantou as perguntas de equipamento —
 plano aprovado ("vamos de e1").
 
-## Bardo — próxima classe, plano em 5 etapas (nada feito ainda)
+## Bardo — próxima classe, plano em 5 etapas (Etapa 1 feita)
 
 **O que é:** depois do Plano de Equipamento fechado e das subclasses
 de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
@@ -126,12 +126,23 @@ progresso — os detalhes de regra ficam lá, não duplicar aqui.
 completa; 13 linhas de característica de classe base + 24 linhas de
 subclasse (4 Colégios).
 
-**Falta tudo — 5 etapas planejadas, nenhuma feita:**
-1. **Dados** — filtrar/importar magias de Bardo, separando Truques
-   (círculo 0) de Magias (círculo 1+); schema já precisa comportar
-   `sempreDisponivel` e "magia de outra classe" (achados das
-   subclasses, mesmo que só usados depois).
-2. **Criação de personagem** — wizard filtra 2 truques + 4 magias de
+**Progresso:**
+1. ~~**Dados**~~ — **feita.** `classes.ts` ganhou a entrada de Bardo
+   (Espaços de Magia como 9 recursos por círculo); `caracteristicasClasse.ts`
+   ganhou as 12 características reais (2 células com conteúdo colado
+   de outra parte do livro foram limpas); `magias.ts` (novo) importa o
+   catálogo completo de 390 magias (não só Bardo), com `classes:
+   string[]` e `magiasDaClasse(nome, circulo?)`. Ver DECISOES-DESIGN.md
+   "Bardo — Etapa 1 (Dados) feita" pra detalhes e o que ficou
+   documentado como qualidade de dado conhecida (1 caso confirmado de
+   texto colado em "Badalar Fúnebre", não revisado célula por célula
+   nas 390). **Ainda não cobre:** `sempreDisponivel` (magia que não
+   conta no limite, achado do Colégio do Conhecimento/Glamour) — isso
+   entra como campo em `ItemMochila`-like quando a Etapa 4
+   (Level Up)/Ficha precisar, não faz sentido no catálogo genérico de
+   magia (é uma propriedade de "esse personagem tem essa magia sempre
+   preparada", não da magia em si).
+2. **Criação de personagem** (falta) — wizard filtra 2 truques + 4 magias de
    1º círculo (sugestão do livro: Enfeitiçar Pessoa, Leque Cromático,
    Palavra Curativa, Sussurros Dissonantes).
 3. **Ficha/aba Magias** — suportar múltiplos círculos simultâneos

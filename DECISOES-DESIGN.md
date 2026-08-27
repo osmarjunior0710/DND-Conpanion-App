@@ -3065,3 +3065,50 @@ testada, não presumida de antemão.
 
 **Data/origem:** 2026-08, decupagem em chat paralelo revisada e
 validada contra a planilha mestra real.
+
+## Bardo — Etapa 1 (Dados) feita: núcleo, características e catálogo de magias
+
+**O que foi importado:**
+- `data/rulesets/dnd2024/classes.ts` — entrada completa de Bardo
+  (Carisma, d8, DES+CAR, subclasse no nível 3), com os "Espaços de
+  Magia" modelados como **9 `RecursoClasse` separados (1 por
+  círculo)** em vez de 1 recurso com sub-tabela — reaproveita o schema
+  genérico já existente (`RecursoClasse`) sem precisar de um novo, e
+  cada círculo recupera no Descanso Longo, igual aos outros casters.
+- `data/rulesets/dnd2024/caracteristicasClasse.ts` — 12 características
+  reais de Bardo (base, sem subclasses). Duas células tinham o mesmo
+  problema de extração já documentado pro Guerreiro (tabela/lista
+  inteira colada dentro do texto): "Conjuração" (nível 1) trazia a
+  tabela de progressão inteira colada no meio; "Palavras de Criação"
+  (nível 20) trazia a lista completa de 140 magias de Bardo colada no
+  fim. Limpas mantendo o parágrafo de regra real intacto.
+- `data/rulesets/dnd2024/magias.ts` (novo) — **catálogo completo de
+  390 magias** (não só as de Bardo) — decisão consciente de importar
+  tudo de uma vez, não por classe, porque (a) o schema já vem com
+  `classes: string[]` pronto pra qualquer classe futura reaproveitar
+  sem reimportar, e (b) resolve de graça a exceção do Colégio do
+  Conhecimento (acesso a magia de Clérigo/Druida/Mago), que já está
+  no mesmo catálogo. `magiasDaClasse(nome, circulo?)` filtra por
+  classe (e opcionalmente círculo). Confirmado: 140 magias de Bardo
+  (13 truques + 127 de 1º-9º círculo).
+
+**Qualidade de dado conhecida, não bloqueante:** a coluna "Descrição
+Completa" da aba Magias tem pelo menos 1 caso confirmado (Badalar
+Fúnebre) com um trecho de OUTRA magia colado no meio da frase — mesmo
+tipo de problema de extração da planilha, mas na aba Magias em vez de
+Características. Não foi viável revisar célula por célula as 390
+magias nesta entrega — `descricaoCurta` (coluna já curada) é a fonte
+preferida pra exibir em UI compacta; `descricaoCompleta` fica como
+está, com o problema documentado. Registrado em PENDENCIAS.md.
+
+**Testado:** script de sanidade rodado direto contra os arquivos
+gerados (não é UI, não precisa de Playwright): `magiasDaClasse('Bardo')`
+retorna 140 magias (13 truques); `classes.find(id==='bardo')` existe;
+nível 3 tem 6 Magias Preparadas e 2 Espaços de 2º Círculo (bate com a
+tabela oficial); 12 características de Bardo carregadas.
+
+**Próximo passo (Etapa 2):** wizard filtra 2 truques + 4 magias de 1º
+círculo na criação — ainda não implementado, essa entrega foi só os
+dados.
+
+**Data/origem:** 2026-08.
