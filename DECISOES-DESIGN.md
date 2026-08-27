@@ -2369,3 +2369,52 @@ futuro.
 ... e dou refresh, ela volta pro nível 1".
 
 **Data/origem:** 2026-08.
+
+## Mochila vira estado de verdade (E1 do plano de Equipamento)
+
+**Decisão:** primeira entrega do plano de Equipamento (proposto após
+o Osmar apontar as perguntas de mão principal/secundária, equipar/
+desequipar, CA não olhar equipamento real, e falta de +/- na
+Mochila). Antes, `itensMochila` era só um cálculo derivado da
+seleção do wizard (`calcularItensIniciais(selecao)`), recalculado a
+cada render — não existia array de inventário persistido em lugar
+nenhum, por isso não dava pra editar. Agora é estado de verdade:
+`FichaShell.tsx` inicializa `itensMochila` uma vez (da seleção, na
+1ª visita) e depois só muta (`+`/`-`/remover/adicionar), com
+`useEffect` de auto-save (já existente, reaproveitado) persistindo
+em `PersonagemSalvo.itensMochilaAtual`.
+
+**Cada item ganhou `id` estável** (`core/mochila.ts`) — antes a
+Mochila só tinha nome/quantidade/peso/origem, chaveada por índice do
+array na UI, o que quebraria assim que qualquer item fosse removido
+(o índice de todo mundo depois dele mudaria).
+
+**Grupos "Equipado (Origem)/(Classe)"/"Itens comprados na loja"
+viraram 1 lista só.** Confirmado com o Osmar: depois que o item entra
+na Mochila, de onde ele veio não importa mais pra exibição — `origemDoItem`
+continua existindo no dado (agora incluindo `'Manual'`, pra item
+adicionado direto na tela), mas é só metadado, não controla mais
+agrupamento visual.
+
+**Cada linha ganhou:** stepper `-`/`+` de quantidade (chegar a 0
+remove a linha automaticamente — "gastou a última tocha" devia
+sumir, não ficar mostrando "0×"), e um "🗑" que remove a pilha
+inteira de uma vez, independente da quantidade. Um card no fim da
+lista deixa adicionar item novo por nome livre + quantidade — peso
+vem do catálogo se o nome bater com algo conhecido (`buscarPesoItem`),
+senão fica "sem peso cadastrado" como qualquer outro item sem dado.
+
+**O que isso NÃO resolve ainda (fica pras próximas entregas do
+plano):** não existe conceito de "equipado" — a Mochila lista tudo
+igual, sem diferenciar o que está na mão/vestido de que está só
+guardado. CA continua sem olhar a Mochila real (só a opção A/B/C do
+wizard). Isso é a **E2** (equipar/desequipar, Mão Principal/
+Secundária) e **E3** (Combat/CA lendo o equipamento de verdade) do
+mesmo plano — ver `PENDENCIAS.md`.
+
+**Contexto:** pedido do Osmar depois de revisar tudo que foi feito
+até aqui e notar que a separação por Origem/Classe/Loja não fazia
+sentido, e que faltava +/- e adicionar item — junto com as perguntas
+mais profundas sobre equipamento que abriram o plano E1-E4.
+
+**Data/origem:** 2026-08.

@@ -16,7 +16,13 @@ import {
   explicarPvMaximoNivel1,
 } from '../../core/calculoPersonagem';
 import { modificador } from '../../core/personagem';
-import { calcularCapacidadeMaxima, calcularItensIniciais, explicarCapacidadeMaxima } from '../../core/mochila';
+import {
+  calcularCapacidadeMaxima,
+  calcularItensIniciais,
+  criarItemManual,
+  explicarCapacidadeMaxima,
+  type ItemMochila,
+} from '../../core/mochila';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
@@ -100,6 +106,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
   const [espacosGastos, setEspacosGastos] = useState(personagemSalvo.espacosGastos ?? 0);
+  const [itensMochila, setItensMochila] = useState<ItemMochila[]>(
+    personagemSalvo.itensMochilaAtual ?? calcularItensIniciais(selecao),
+  );
   const [levelUpAberto, setLevelUpAberto] = useState(false);
   const [itensDetalhados, setItensDetalhados] = useState(false);
   const [pesoAtivo, setPesoAtivo] = useState(true);
@@ -110,7 +119,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
   const pericias = calcularPericias(selecao, personagem.nivel);
-  const itensMochila = calcularItensIniciais(selecao);
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
   const explicacaoPv = explicarPvMaximoNivel1(selecao);
@@ -149,6 +157,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       indomavelGasto,
       surtoGasto,
       espacosGastos,
+      itensMochilaAtual: itensMochila,
     });
   }, [
     personagemSalvo,
@@ -161,6 +170,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     indomavelGasto,
     surtoGasto,
     espacosGastos,
+    itensMochila,
   ]);
 
   function alterarPv(delta: number) {
@@ -200,6 +210,22 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function trocarArmaMaestria(armaAntiga: string, armaNova: string) {
     setMaestriaArma((prev) => prev.map((a) => (a === armaAntiga ? armaNova : a)));
+  }
+
+  function alterarQuantidadeItem(id: string, delta: number) {
+    setItensMochila((prev) =>
+      prev
+        .map((it) => (it.id === id ? { ...it, quantidade: it.quantidade + delta } : it))
+        .filter((it) => it.quantidade > 0),
+    );
+  }
+
+  function removerItemMochila(id: string) {
+    setItensMochila((prev) => prev.filter((it) => it.id !== id));
+  }
+
+  function adicionarItemMochila(nome: string, quantidade: number) {
+    setItensMochila((prev) => [...prev, criarItemManual(nome, quantidade)]);
   }
 
   function usarUsoFolego(): boolean {
@@ -312,6 +338,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             pesoAtivo={pesoAtivo}
             capacidadeMaxima={capacidadeMaxima}
             explicacaoCapacidadeMaxima={explicacaoCapacidadeMaxima}
+            onAlterarQuantidade={alterarQuantidadeItem}
+            onRemoverItem={removerItemMochila}
+            onAdicionarItem={adicionarItemMochila}
           />
         )}
         {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} conjura={conjura} />}

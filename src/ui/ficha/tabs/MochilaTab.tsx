@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ExplicacaoCalculo } from '../../../core/calculoPersonagem';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import { calcularCargaTotal, pesoDaLinha, type ItemMochila } from '../../../core/mochila';
@@ -12,34 +13,109 @@ interface MochilaTabProps {
   pesoAtivo: boolean;
   capacidadeMaxima: number | null;
   explicacaoCapacidadeMaxima: ExplicacaoCalculo;
+  onAlterarQuantidade: (id: string, delta: number) => void;
+  onRemoverItem: (id: string) => void;
+  onAdicionarItem: (nome: string, quantidade: number) => void;
 }
 
-function Linha({ item, itensDetalhados, pesoAtivo }: { item: ItemMochila; itensDetalhados: boolean; pesoAtivo: boolean }) {
+function Linha({
+  item,
+  itensDetalhados,
+  pesoAtivo,
+  onAlterarQuantidade,
+  onRemoverItem,
+}: {
+  item: ItemMochila;
+  itensDetalhados: boolean;
+  pesoAtivo: boolean;
+  onAlterarQuantidade: (id: string, delta: number) => void;
+  onRemoverItem: (id: string) => void;
+}) {
   const descricao = buscarDescricaoItem(item.nome);
-  const rotulo = item.quantidade > 1 ? `${item.quantidade}× ${item.nome}` : item.nome;
 
   return (
     <div className={styles.itemRow}>
-      <div className={styles.itemInfo}>
+      <div className={styles.itemTop}>
         <span className={styles.itemName}>
           {itensDetalhados ? (
-            rotulo
+            item.nome
           ) : (
-            <ItemComDescricao nome={item.nome} descricao={descricao} rotulo={rotulo} variante="icone" />
+            <ItemComDescricao nome={item.nome} descricao={descricao} rotulo={item.nome} variante="icone" />
           )}
         </span>
-        {itensDetalhados && descricao && <div className={styles.itemDesc}>{descricao}</div>}
+        <span className={styles.trashBtn} onClick={() => onRemoverItem(item.id)}>
+          🗑
+        </span>
       </div>
-      {pesoAtivo && <span className={styles.itemWeight}>{pesoDaLinha(item)}</span>}
+      {itensDetalhados && descricao && <div className={styles.itemDesc}>{descricao}</div>}
+      <div className={styles.itemBottom}>
+        {pesoAtivo ? <span className={styles.itemWeight}>{pesoDaLinha(item)}</span> : <span />}
+        <div className={styles.stepperRow}>
+          <button type="button" className={styles.stepperBtn} onClick={() => onAlterarQuantidade(item.id, -1)}>
+            −
+          </button>
+          <span className={styles.stepperQtd}>{item.quantidade}</span>
+          <button type="button" className={styles.stepperBtn} onClick={() => onAlterarQuantidade(item.id, 1)}>
+            +
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default function MochilaTab({ itens, itensDetalhados, pesoAtivo, capacidadeMaxima, explicacaoCapacidadeMaxima }: MochilaTabProps) {
+function AdicionarItem({ onAdicionarItem }: { onAdicionarItem: (nome: string, quantidade: number) => void }) {
+  const [nome, setNome] = useState('');
+  const [quantidade, setQuantidade] = useState(1);
+
+  function confirmar() {
+    const nomeLimpo = nome.trim();
+    if (!nomeLimpo) return;
+    onAdicionarItem(nomeLimpo, quantidade);
+    setNome('');
+    setQuantidade(1);
+  }
+
+  return (
+    <div className={`box ${styles.addBox}`}>
+      <div className="label" style={{ marginBottom: 6 }}>
+        ganhou ou achou um item? adiciona aqui
+      </div>
+      <div className={styles.addRow}>
+        <input
+          className={styles.addInput}
+          placeholder="nome do item..."
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+        />
+        <div className={styles.stepperRow}>
+          <button type="button" className={styles.stepperBtn} onClick={() => setQuantidade((v) => Math.max(1, v - 1))}>
+            −
+          </button>
+          <span className={styles.stepperQtd}>{quantidade}</span>
+          <button type="button" className={styles.stepperBtn} onClick={() => setQuantidade((v) => v + 1)}>
+            +
+          </button>
+        </div>
+      </div>
+      <div className="btn btn-primary" style={{ marginTop: 8, textAlign: 'center' }} onClick={confirmar}>
+        + Adicionar item
+      </div>
+    </div>
+  );
+}
+
+export default function MochilaTab({
+  itens,
+  itensDetalhados,
+  pesoAtivo,
+  capacidadeMaxima,
+  explicacaoCapacidadeMaxima,
+  onAlterarQuantidade,
+  onRemoverItem,
+  onAdicionarItem,
+}: MochilaTabProps) {
   const carga = calcularCargaTotal(itens);
-  const itensOrigem = itens.filter((i) => i.origemDoItem === 'Origem');
-  const itensClasse = itens.filter((i) => i.origemDoItem === 'Classe');
-  const itensLoja = itens.filter((i) => i.origemDoItem === 'Loja');
   const percentual = capacidadeMaxima ? Math.round((carga.kg / capacidadeMaxima) * 100) : 0;
   const sobrecarregado = capacidadeMaxima !== null && carga.kg > capacidadeMaxima;
 
@@ -77,23 +153,20 @@ export default function MochilaTab({ itens, itensDetalhados, pesoAtivo, capacida
         </>
       )}
 
-      <div className="section-title">Equipado (Origem)</div>
-      {itensOrigem.length === 0 && <div className="label">Nenhum item — opção "só ouro" escolhida na Origem.</div>}
-      {itensOrigem.map((it, i) => (
-        <Linha key={`${it.nome}-${i}`} item={it} itensDetalhados={itensDetalhados} pesoAtivo={pesoAtivo} />
+      <div className="section-title">Itens</div>
+      {itens.length === 0 && <div className="label">Mochila vazia.</div>}
+      {itens.map((it) => (
+        <Linha
+          key={it.id}
+          item={it}
+          itensDetalhados={itensDetalhados}
+          pesoAtivo={pesoAtivo}
+          onAlterarQuantidade={onAlterarQuantidade}
+          onRemoverItem={onRemoverItem}
+        />
       ))}
 
-      <div className="section-title">Equipado (Classe)</div>
-      {itensClasse.length === 0 && <div className="label">Nenhum item — opção "só ouro" escolhida na Classe.</div>}
-      {itensClasse.map((it, i) => (
-        <Linha key={`${it.nome}-${i}`} item={it} itensDetalhados={itensDetalhados} pesoAtivo={pesoAtivo} />
-      ))}
-
-      <div className="section-title">Itens comprados na loja</div>
-      {itensLoja.length === 0 && <div className="label">Nenhum item comprado no wizard.</div>}
-      {itensLoja.map((it, i) => (
-        <Linha key={`${it.nome}-${i}`} item={it} itensDetalhados={itensDetalhados} pesoAtivo={pesoAtivo} />
-      ))}
+      <AdicionarItem onAdicionarItem={onAdicionarItem} />
     </>
   );
 }

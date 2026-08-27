@@ -42,10 +42,33 @@ export function explicarCapacidadeMaxima(selection: WizardSelection): Explicacao
 }
 
 export interface ItemMochila {
+  /** Identidade estável da linha — precisa pra +/- quantidade e
+   * remover funcionarem em React sem depender do índice do array
+   * (que muda assim que qualquer item é removido). */
+  id: string;
   nome: string;
   quantidade: number;
   peso: string | null;
-  origemDoItem: 'Origem' | 'Classe' | 'Loja';
+  /** De onde o item veio — só metadado/histórico agora (a Mochila é
+   * uma lista única, ver DECISOES-DESIGN.md "Mochila vira estado de
+   * verdade"), não controla mais agrupamento visual. 'Manual' é item
+   * que o jogador adicionou direto na tela (ganhou em jogo, achou,
+   * etc), sem passar pelo wizard/Loja. */
+  origemDoItem: 'Origem' | 'Classe' | 'Loja' | 'Manual';
+}
+
+let contadorId = 0;
+function gerarIdItem(): string {
+  contadorId += 1;
+  return `item-${Date.now()}-${contadorId}`;
+}
+
+/** Item adicionado manualmente na aba Mochila (ganhou em jogo, achou,
+ * etc) — peso vem do catálogo se o nome bater com algo conhecido,
+ * senão fica sem peso cadastrado (mesmo tratamento de qualquer outro
+ * item sem peso na planilha). */
+export function criarItemManual(nome: string, quantidade: number): ItemMochila {
+  return { id: gerarIdItem(), nome, quantidade, peso: buscarPesoItem(nome), origemDoItem: 'Manual' };
 }
 
 /** Placeholders de grupo de ferramenta (ver origens.ts) que precisam
@@ -156,6 +179,7 @@ function adicionarItem(itens: ItemMochila[], nome: string, quantidade: number, o
   if (componentes) {
     for (const c of componentes) {
       itens.push({
+        id: gerarIdItem(),
         nome: c.nome,
         quantidade: c.quantidade * quantidade,
         peso: buscarPesoItem(c.nome),
@@ -164,7 +188,7 @@ function adicionarItem(itens: ItemMochila[], nome: string, quantidade: number, o
     }
     return;
   }
-  itens.push({ nome, quantidade, peso: buscarPesoItem(nome), origemDoItem });
+  itens.push({ id: gerarIdItem(), nome, quantidade, peso: buscarPesoItem(nome), origemDoItem });
 }
 
 export function calcularItensIniciais(selection: WizardSelection): ItemMochila[] {

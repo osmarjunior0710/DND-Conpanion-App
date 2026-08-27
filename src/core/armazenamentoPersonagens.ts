@@ -3,6 +3,7 @@
 // existe a implementação local; nuvem (Supabase) entra na Fase 5.
 
 import type { WizardSelection } from './personagem';
+import type { ItemMochila } from './mochila';
 
 export interface PersonagemSalvo {
   id: string;
@@ -27,6 +28,11 @@ export interface PersonagemSalvo {
   indomavelGasto?: number;
   surtoGasto?: number;
   espacosGastos?: number;
+  /** Mochila como estado de verdade (ver DECISOES-DESIGN.md "Mochila
+   * vira estado de verdade") — quando ausente (personagem salvo antes
+   * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a
+   * partir de `selecao` (mesmo cálculo de sempre), só na 1ª vez. */
+  itensMochilaAtual?: ItemMochila[];
 }
 
 export interface ArmazenamentoPersonagens {

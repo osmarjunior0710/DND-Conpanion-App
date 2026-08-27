@@ -13,6 +13,42 @@
 
 ---
 
+## Plano de Equipamento — E1 feita, E2-E4 faltam
+
+**O que é:** plano de 4 entregas nascido de uma revisão geral pedida
+pelo Osmar, que expôs que Mão Principal/Secundária, equipar/
+desequipar, e a CA lendo o equipamento real não existem — só a opção
+A/B/C escolhida no wizard fixa a CA pra sempre, ignorando Escudo (nem
+soma o +2), compras na Loja, ou qualquer mudança depois.
+
+**Já feito:**
+- **E1 — Mochila vira estado de verdade.** Lista única (sem separar
+  por Origem/Classe/Loja), +/- quantidade, remover item, adicionar
+  item novo por nome livre. Ver decisão "Mochila vira estado de
+  verdade (E1 do plano de Equipamento)" no `DECISOES-DESIGN.md`.
+
+**Falta:**
+- **E2 — Equipar/Desequipar.** Conceito de slot (Mão Principal, Mão
+  Secundária, Armadura, Escudo, Vestiário genérico sem limite) +
+  toggle equipado/na mochila por item. Arma de Duas Mãos ocupa as 2
+  mãos; propriedade Leve permite 2 armas (1 em cada mão).
+- **E3 — Combat/CA lendo o equipamento de verdade.** CA soma
+  Armadura+Escudo realmente equipados (não só a opção do wizard,
+  incluindo o +2 do Escudo que hoje nunca é somado); "Atacar" no
+  Combat usa a arma equipada de verdade (tira o `[PH]` já registrado
+  na pendência de auditoria); Ataque Desarmado vira opção real, com
+  Dano/Empurrar/Imobilizar por instância de ataque (decisão "Ataque
+  Extra — cada instância de ataque é independente" já registrada);
+  arma Versátil ganha o dado maior de dano quando empunhada com 2
+  mãos.
+- **E4 — Sintonização (3 itens simultâneos).** Bloqueado até itens
+  mágicos existirem como dado — ainda não foram importados na
+  planilha/`data/`. Registrar aqui de novo quando isso destravar.
+
+**Contexto:** revisão geral pedida pelo Osmar ("vale a gente passar
+por tudo que fizemos"), que levantou as perguntas de equipamento —
+plano aprovado ("vamos de e1").
+
 ## Combat tab — auditoria de fixture vs. real (Guerreiro) + marcação [PH]
 
 **O que é:** pedido do Osmar pra auditar tudo que aparece na aba
