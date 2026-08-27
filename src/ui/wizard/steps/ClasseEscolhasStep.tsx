@@ -3,15 +3,17 @@ import { caracteristicasClasse } from '../../../data/rulesets/dnd2024/caracteris
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { proficienciasArmaArmaduraClasse } from '../../../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
+import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
+import { magiasDaClasse } from '../../../data/rulesets/dnd2024/magias';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../../core/maestriaArma';
+import { valorRecursoClasse } from '../../../core/recursosClasse';
+import { temEstiloDeLutaTrocavel } from '../../../core/levelUp';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoChip from '../../components/InfoChip';
 import styles from './ClasseEscolhasStep.module.css';
 import type { StepProps } from './StepProps';
-
-const MAX_PERICIAS = 2;
 
 function rotuloItem(it: { nome: string; quantidade: number; unidade: string | null }): string {
   if (it.quantidade <= 1) return it.nome;
@@ -30,6 +32,23 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
   const caracteristicasNivel1 = caracteristicasClasse.filter((c) => c.classe === classe.nome && c.nivel === 1);
   const qtdMaestria = quantidadeMaestriaEmArma(classe, 1);
   const armasMaestria = qtdMaestria > 0 ? armasParaMaestria(classe) : [];
+  const temEstiloDeLuta = temEstiloDeLutaTrocavel(classe, 1);
+  const maxPericias = proficiencias?.periciasEscolha.quantidade ?? 0;
+  const opcoesFerramenta = proficiencias?.ferramentasEscolha
+    ? (gruposFerramenta[proficiencias.ferramentasEscolha.grupo] ?? [])
+    : [];
+  const maxFerramentas = proficiencias?.ferramentasEscolha?.quantidade ?? 0;
+
+  // Truques/Magias Preparadas — só existem pra classes conjuradoras
+  // (0 pras que não têm esses recursos, ex: Guerreiro). Nível 1 fixo
+  // aqui porque é a criação do personagem.
+  const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', 1);
+  const maxMagiasPreparadas = valorRecursoClasse(classe, 'Magias Preparadas', 1);
+  const truquesDaClasse = maxTruques > 0 ? magiasDaClasse(classe.nome, 0) : [];
+  // Nível 1 só pode preparar magias de 1º círculo (livro: "escolha
+  // quatro magias de 1º círculo") — magias de círculo maior entram
+  // conforme o personagem sobe de nível, não na criação.
+  const magiasNivel1 = maxMagiasPreparadas > 0 ? magiasDaClasse(classe.nome, 1) : [];
 
   function toggleEstiloDeLuta(nome: string) {
     update({ estiloDeLutaEscolhido: selection.estiloDeLutaEscolhido === nome ? null : nome });
@@ -49,8 +68,38 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
     const i = selection.periciasClasseEscolhidas.indexOf(nome);
     if (i > -1) {
       update({ periciasClasseEscolhidas: selection.periciasClasseEscolhidas.filter((x) => x !== nome) });
-    } else if (selection.periciasClasseEscolhidas.length < MAX_PERICIAS) {
+    } else if (selection.periciasClasseEscolhidas.length < maxPericias) {
       update({ periciasClasseEscolhidas: [...selection.periciasClasseEscolhidas, nome] });
+    }
+  }
+
+  function toggleFerramenta(nome: string) {
+    const atual = selection.ferramentasClasseEscolhidas;
+    const i = atual.indexOf(nome);
+    if (i > -1) {
+      update({ ferramentasClasseEscolhidas: atual.filter((x) => x !== nome) });
+    } else if (atual.length < maxFerramentas) {
+      update({ ferramentasClasseEscolhidas: [...atual, nome] });
+    }
+  }
+
+  function toggleTruque(nome: string) {
+    const atual = selection.truquesEscolhidos;
+    const i = atual.indexOf(nome);
+    if (i > -1) {
+      update({ truquesEscolhidos: atual.filter((x) => x !== nome) });
+    } else if (atual.length < maxTruques) {
+      update({ truquesEscolhidos: [...atual, nome] });
+    }
+  }
+
+  function toggleMagiaPreparada(nome: string) {
+    const atual = selection.magiasPreparadasEscolhidas;
+    const i = atual.indexOf(nome);
+    if (i > -1) {
+      update({ magiasPreparadasEscolhidas: atual.filter((x) => x !== nome) });
+    } else if (atual.length < maxMagiasPreparadas) {
+      update({ magiasPreparadasEscolhidas: [...atual, nome] });
     }
   }
 
@@ -91,18 +140,22 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
           ))}
       </div>
 
-      <div className="section-title">Estilo de Luta — escolha 1</div>
-      {estilosDeLuta.map((e) => (
-        <div
-          key={e.id}
-          className={`opt-card ${selection.estiloDeLutaEscolhido === e.nome ? 'selected' : ''}`}
-          style={{ padding: '10px 12px' }}
-          onClick={() => toggleEstiloDeLuta(e.nome)}
-        >
-          <div className="opt-card-name">{e.nome}</div>
-          <div className="opt-card-desc">{e.beneficios}</div>
-        </div>
-      ))}
+      {temEstiloDeLuta && (
+        <>
+          <div className="section-title">Estilo de Luta — escolha 1</div>
+          {estilosDeLuta.map((e) => (
+            <div
+              key={e.id}
+              className={`opt-card ${selection.estiloDeLutaEscolhido === e.nome ? 'selected' : ''}`}
+              style={{ padding: '10px 12px' }}
+              onClick={() => toggleEstiloDeLuta(e.nome)}
+            >
+              <div className="opt-card-name">{e.nome}</div>
+              <div className="opt-card-desc">{e.beneficios}</div>
+            </div>
+          ))}
+        </>
+      )}
 
       {qtdMaestria > 0 && (
         <>
@@ -131,7 +184,7 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
       {proficiencias && (
         <>
           <div className="section-title">
-            Perícias — escolha {MAX_PERICIAS} ({selection.periciasClasseEscolhidas.length}/{MAX_PERICIAS})
+            Perícias — escolha {maxPericias} ({selection.periciasClasseEscolhidas.length}/{maxPericias})
           </div>
           {proficiencias.periciasEscolha.opcoes.map((nome) => (
             <div key={nome} className="check-row" onClick={() => togglePericia(nome)}>
@@ -139,6 +192,58 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
               <span className="check-label">{nome}</span>
             </div>
           ))}
+
+          {maxFerramentas > 0 && (
+            <>
+              <div className="section-title">
+                Ferramentas — escolha {maxFerramentas} ({selection.ferramentasClasseEscolhidas.length}/{maxFerramentas})
+              </div>
+              {opcoesFerramenta.map((f) => (
+                <div key={f.nome} className="check-row" onClick={() => toggleFerramenta(f.nome)}>
+                  <div className={`check-box ${selection.ferramentasClasseEscolhidas.includes(f.nome) ? 'checked' : ''}`} />
+                  <span className="check-label">{f.nome}</span>
+                </div>
+              ))}
+            </>
+          )}
+
+          {maxTruques > 0 && (
+            <>
+              <div className="section-title">
+                Truques — escolha {maxTruques} ({selection.truquesEscolhidos.length}/{maxTruques})
+              </div>
+              {truquesDaClasse.map((m) => (
+                <div key={m.id} className="check-row" onClick={() => toggleTruque(m.nome)}>
+                  <div className={`check-box ${selection.truquesEscolhidos.includes(m.nome) ? 'checked' : ''}`} />
+                  <span className="check-label">
+                    <ItemComDescricao nome={m.nome} descricao={m.descricaoCurta} rotulo={m.nome} variante="icone" />
+                    {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>({m.escola})</span>
+                  </span>
+                </div>
+              ))}
+            </>
+          )}
+
+          {maxMagiasPreparadas > 0 && (
+            <>
+              <div className="section-title">
+                Magias Preparadas (1º círculo) — escolha {maxMagiasPreparadas} (
+                {selection.magiasPreparadasEscolhidas.length}/{maxMagiasPreparadas})
+              </div>
+              <div className="label" style={{ marginBottom: 4 }}>
+                sugestão do livro: Enfeitiçar Pessoa, Leque Cromático, Palavra Curativa e Sussurros Dissonantes.
+              </div>
+              {magiasNivel1.map((m) => (
+                <div key={m.id} className="check-row" onClick={() => toggleMagiaPreparada(m.nome)}>
+                  <div className={`check-box ${selection.magiasPreparadasEscolhidas.includes(m.nome) ? 'checked' : ''}`} />
+                  <span className="check-label">
+                    <ItemComDescricao nome={m.nome} descricao={m.descricaoCurta} rotulo={m.nome} variante="icone" />
+                    {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>({m.escola})</span>
+                  </span>
+                </div>
+              ))}
+            </>
+          )}
 
           <div className="section-title">Equipamento inicial — escolha uma opção</div>
           {proficiencias.equipamentoInicial.map((opcao) => (

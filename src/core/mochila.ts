@@ -249,7 +249,11 @@ export function calcularItensIniciais(selection: WizardSelection): ItemMochila[]
     const opcao = proficiencias?.equipamentoInicial.find((o) => o.rotulo === selection.equipamentoClasseEscolhido);
     if (opcao) {
       for (const item of opcao.itens) {
-        adicionarItem(itens, item.nome, item.quantidade, 'Classe');
+        const nome =
+          PLACEHOLDERS_FERRAMENTA.includes(item.nome) && selection.ferramentasClasseEscolhidas[0]
+            ? selection.ferramentasClasseEscolhidas[0]
+            : item.nome;
+        adicionarItem(itens, nome, item.quantidade, 'Classe');
       }
     }
   }

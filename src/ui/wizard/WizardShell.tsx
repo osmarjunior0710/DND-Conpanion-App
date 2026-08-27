@@ -8,9 +8,12 @@ import { classes } from '../../data/rulesets/dnd2024/classes';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
+import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
 import { criarSelecaoInicial, type WizardSelection } from '../../core/personagem';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../core/maestriaArma';
+import { valorRecursoClasse } from '../../core/recursosClasse';
+import { temEstiloDeLutaTrocavel } from '../../core/levelUp';
 import { armazenamentoPersonagens, gerarIdPersonagem } from '../../core/armazenamentoPersonagens';
 import styles from './WizardShell.module.css';
 import ClasseStep from './steps/ClasseStep';
@@ -73,9 +76,10 @@ export default function WizardShell() {
     const classeSelecionada = classes.find((c) => c.nome === selection.classe);
     if (!classeSelecionada) return;
     const proficiencias = proficienciasIniciaisClasse[classeSelecionada.id];
-    const patch: Partial<WizardSelection> = {
-      estiloDeLutaEscolhido: estilosDeLuta[Math.floor(Math.random() * estilosDeLuta.length)].nome,
-    };
+    const patch: Partial<WizardSelection> = {};
+    if (temEstiloDeLutaTrocavel(classeSelecionada, 1)) {
+      patch.estiloDeLutaEscolhido = estilosDeLuta[Math.floor(Math.random() * estilosDeLuta.length)].nome;
+    }
     const qtdMaestria = quantidadeMaestriaEmArma(classeSelecionada, 1);
     if (qtdMaestria > 0) {
       patch.maestriaArmaEscolhida = embaralhar(armasParaMaestria(classeSelecionada))
@@ -87,8 +91,26 @@ export default function WizardShell() {
         0,
         proficiencias.periciasEscolha.quantidade,
       );
+      if (proficiencias.ferramentasEscolha) {
+        const opcoesFerramenta = gruposFerramenta[proficiencias.ferramentasEscolha.grupo] ?? [];
+        patch.ferramentasClasseEscolhidas = embaralhar(opcoesFerramenta)
+          .slice(0, proficiencias.ferramentasEscolha.quantidade)
+          .map((f) => f.nome);
+      }
       const opcoes = proficiencias.equipamentoInicial;
       patch.equipamentoClasseEscolhido = opcoes[Math.floor(Math.random() * opcoes.length)].rotulo as 'A' | 'B' | 'C';
+    }
+    const maxTruques = valorRecursoClasse(classeSelecionada, 'Truques Conhecidos', 1);
+    if (maxTruques > 0) {
+      patch.truquesEscolhidos = embaralhar(magiasDaClasse(classeSelecionada.nome, 0))
+        .slice(0, maxTruques)
+        .map((m) => m.nome);
+    }
+    const maxMagias = valorRecursoClasse(classeSelecionada, 'Magias Preparadas', 1);
+    if (maxMagias > 0) {
+      patch.magiasPreparadasEscolhidas = embaralhar(magiasDaClasse(classeSelecionada.nome, 1))
+        .slice(0, maxMagias)
+        .map((m) => m.nome);
     }
     update(patch);
   }
@@ -154,14 +176,21 @@ export default function WizardShell() {
         const classeSelecionada = classes.find((c) => c.nome === s.classe);
         if (!classeSelecionada) return true;
         const proficiencias = proficienciasIniciaisClasse[classeSelecionada.id];
-        if (s.estiloDeLutaEscolhido === null) return false;
+        if (temEstiloDeLutaTrocavel(classeSelecionada, 1) && s.estiloDeLutaEscolhido === null) return false;
         const qtdMaestria = quantidadeMaestriaEmArma(classeSelecionada, 1);
         if (s.maestriaArmaEscolhida.length !== qtdMaestria) return false;
+        const maxTruques = valorRecursoClasse(classeSelecionada, 'Truques Conhecidos', 1);
+        if (s.truquesEscolhidos.length !== maxTruques) return false;
+        const maxMagias = valorRecursoClasse(classeSelecionada, 'Magias Preparadas', 1);
+        if (s.magiasPreparadasEscolhidas.length !== maxMagias) return false;
         if (!proficiencias) return true;
         if (s.periciasClasseEscolhidas.length !== proficiencias.periciasEscolha.quantidade) return false;
+        if (proficiencias.ferramentasEscolha && s.ferramentasClasseEscolhidas.length !== proficiencias.ferramentasEscolha.quantidade) {
+          return false;
+        }
         return s.equipamentoClasseEscolhido !== null;
       },
-      mensagemInvalida: 'Escolha o Estilo de Luta, a Maestria em Arma, as perícias e o equipamento antes de avançar.',
+      mensagemInvalida: 'Complete todas as escolhas da classe antes de avançar.',
       randomize: randomizarEscolhasClasse,
     },
     {

@@ -2,9 +2,10 @@
 // DECISOES-DESIGN.md) — igual descricoesOrigens.ts. A aba "Progressão de
 // Classe" não tem coluna de perícia à escolha nem de equipamento inicial
 // de classe (diferente do equipamento de Origem, que já vem da
-// planilha). Transcrito direto da tabela "Traços Básicos de Guerreiro",
-// Livro do Jogador (D&D 5e 2024), Cap. 3, pág. 127 — com autorização
-// explícita do Osmar, que enviou o PDF do capítulo.
+// planilha). Transcrito direto das tabelas "Traços Básicos de
+// Guerreiro" (pág. 127) e "Traços Básicos de Bardo" (pág. 57), Livro
+// do Jogador (D&D 5e 2024) — com autorização explícita do Osmar, que
+// enviou o PDF dos capítulos.
 //
 // Proficiência com Armas e Treinamento com Armadura NÃO estão mais aqui
 // — o Osmar adicionou a aba "Proficiências de Classe" na planilha, então
@@ -30,6 +31,10 @@ export interface OpcaoEquipamentoClasse {
 export interface ProficienciasIniciaisClasse {
   classeId: string;
   periciasEscolha: { quantidade: number; opcoes: string[] };
+  /** Só classes com proficiência de ferramenta na criação (ex.: Bardo
+   * escolhe 3 Instrumentos Musicais) — Guerreiro não tem, por isso é
+   * opcional. `grupo` referencia `gruposFerramenta` (ferramentas.ts). */
+  ferramentasEscolha?: { quantidade: number; grupo: string };
   equipamentoInicial: OpcaoEquipamentoClasse[];
   fonte: string;
 }
@@ -83,5 +88,39 @@ export const proficienciasIniciaisClasse: Record<string, ProficienciasIniciaisCl
       },
     ],
     fonte: 'Livro do Jogador (D&D 5e 2024), Cap. 3, pág. 127',
+  },
+  bardo: {
+    classeId: 'bardo',
+    // "Escolha quaisquer 3 perícias (veja o capítulo 1)" — diferente do
+    // Guerreiro (lista curta fixa), Bardo escolhe de TODAS as 18
+    // perícias do jogo.
+    periciasEscolha: {
+      quantidade: 3,
+      opcoes: [
+        'Acrobacia', 'Arcanismo', 'Atletismo', 'Atuação', 'Enganação', 'Furtividade',
+        'História', 'Intimidação', 'Intuição', 'Investigação', 'Lidar com Animais',
+        'Medicina', 'Natureza', 'Percepção', 'Persuasão', 'Prestidigitação', 'Religião',
+        'Sobrevivência',
+      ],
+    },
+    ferramentasEscolha: { quantidade: 3, grupo: 'Instrumento Musical' },
+    equipamentoInicial: [
+      {
+        rotulo: 'A',
+        itens: [
+          { nome: 'Couro', quantidade: 1, unidade: null },
+          { nome: 'Adaga', quantidade: 2, unidade: null },
+          { nome: 'Instrumento Musical', quantidade: 1, unidade: null },
+          { nome: 'Kit de Artista', quantidade: 1, unidade: null },
+        ],
+        ouro: 19,
+      },
+      {
+        rotulo: 'B',
+        itens: [],
+        ouro: 90,
+      },
+    ],
+    fonte: 'Livro do Jogador (D&D 5e 2024), Cap. 3, pág. 57',
   },
 };

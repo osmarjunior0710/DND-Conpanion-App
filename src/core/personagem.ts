@@ -12,6 +12,12 @@ export interface WizardSelection {
   estiloDeLutaEscolhido: string | null;
   maestriaArmaEscolhida: string[];
   periciasClasseEscolhidas: string[];
+  /** Ferramentas concedidas por proficiência de classe (ex.: Bardo
+   * escolhe 3 Instrumentos Musicais) — diferente de
+   * `ferramentaOrigemEscolhida` (Origem só concede 1). */
+  ferramentasClasseEscolhidas: string[];
+  truquesEscolhidos: string[];
+  magiasPreparadasEscolhidas: string[];
   equipamentoClasseEscolhido: 'A' | 'B' | 'C' | null;
   origem: string | null;
   ferramentaOrigemEscolhida: string | null;
@@ -36,6 +42,9 @@ export function criarSelecaoInicial(): WizardSelection {
     estiloDeLutaEscolhido: null,
     maestriaArmaEscolhida: [],
     periciasClasseEscolhidas: [],
+    ferramentasClasseEscolhidas: [],
+    truquesEscolhidos: [],
+    magiasPreparadasEscolhidas: [],
     equipamentoClasseEscolhido: null,
     origem: null,
     ferramentaOrigemEscolhida: null,

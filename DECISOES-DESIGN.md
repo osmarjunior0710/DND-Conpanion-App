@@ -3149,3 +3149,73 @@ alaúde (cinza); as outras 10 aparecem "em breve" com o emblema de
 espada reaproveitado (cinza).
 
 **Data/origem:** 2026-08.
+
+## Bardo — Etapa 2 (Criação de personagem) feita: wizard completo de ponta a ponta
+
+**Bardo virou `disponivel: true`** — o wizard já cria um Bardo nível 1
+completo: perícias, ferramentas, truques, magias preparadas e
+equipamento inicial, tudo real.
+
+**Achado ao implementar — "Escolhas da Classe" tinha 3 acoplamentos
+implícitos a Guerreiro** que só não quebravam antes porque Guerreiro
+era a única classe:
+1. `MAX_PERICIAS = 2` era uma constante fixa no componente, não lida
+   de `proficiencias.periciasEscolha.quantidade` (Bardo escolhe 3).
+2. A seção "Estilo de Luta" era renderizada incondicionalmente — Bardo
+   não tem essa característica. Corrigido pra usar
+   `temEstiloDeLutaTrocavel(classe, 1)` (já existia, criado no
+   Guerreiro, só não estava sendo reaproveitado aqui).
+3. `WizardShell.tsx`'s `isValid` do passo travava exigindo
+   `estiloDeLutaEscolhido !== null` sempre — mesmo bug, mesma correção.
+
+**Dados novos transcritos do Cap. 3 do Livro do Jogador (PDF que o
+Osmar já tinha enviado, "Bárbaro a Feiticeiro" — cobre Bardo)**, mesma
+exceção documentada de `classesProficienciasIniciais.ts`: Bardo
+escolhe **3 perícias quaisquer** (não uma lista curta como Guerreiro —
+`opcoes` virou as 18 perícias do jogo), **3 Instrumentos Musicais**
+(proficiência de ferramenta — campo novo `ferramentasEscolha`,
+reaproveita `gruposFerramenta['Instrumento Musical']` que já existia
+pra Origem), e equipamento inicial com só 2 opções (A: Armadura de
+Couro + 2 Adagas + Instrumento à escolha + Kit de Artista + 19 PO; B:
+90 PO), diferente do A/B/C do Guerreiro.
+
+**`WizardSelection` ganhou 3 campos novos:** `ferramentasClasseEscolhidas`,
+`truquesEscolhidos`, `magiasPreparadasEscolhidas`. O item "Instrumento
+Musical à sua escolha" do equipamento inicial é substituído pelo
+primeiro instrumento escolhido (`ferramentasClasseEscolhidas[0]`) na
+hora de montar a Mochila — mesmo mecanismo de placeholder que Origem
+já usava (`PLACEHOLDERS_FERRAMENTA`), reaproveitado.
+
+**Truques/Magias Preparadas na criação usam `magiasDaClasse` (E4.1 do
+Plano de Equipamento, catálogo de 390 magias já existia) filtrado por
+círculo** — truques = círculo 0, magias preparadas iniciais = só 1º
+círculo (regra do livro: "escolha quatro magias de 1º círculo"; a
+lista cresce e aceita círculos maiores só no Level Up, ainda não
+implementado — Etapa 4). Contadores lidos de `valorRecursoClasse`
+(genérico, já existia) em vez de constante fixa.
+
+**Ainda não faz nada na Ficha** — Magias/Combat da aba de jogo
+continuam mostrando fixture/`[PH]` pra qualquer classe (isso é Etapa
+3+); esta entrega só garante que a CRIAÇÃO funciona de ponta a ponta.
+
+**Bundle JS cresceu bastante (604KB → 1,13MB) com a entrada do
+catálogo de 390 magias** (`descricaoCompleta` de cada uma, texto
+bruto do livro, embutido no JS carregado inteiro na primeira visita).
+Não é usado em nenhuma UI ainda (só `descricaoCurta` é exibida) —
+possível otimização futura (não decidida agora): parar de embutir
+`descricaoCompleta` no bundle principal, ou aplicar code-splitting.
+Registrado em PENDENCIAS.md, não bloqueou esta entrega.
+
+**Testado:** Playwright 390×844 — criei um Bardo de ponta a ponta pelo
+wizard real (incluindo o botão 🔀 de sortear), confirmando: Estilo de
+Luta ausente, "Perícias — escolha 3", "Ferramentas — escolha 3",
+"Truques — escolha 2", "Magias Preparadas — escolha 4" todos
+aparecendo certos; personagem salvo no armazenamento com os dados
+reais (3 perícias, 3 ferramentas, 2 truques reais de Bardo, 4 magias
+de 1º círculo reais, equipamento A). Abri a Ficha desse Bardo: Perfil
+mostra CA/PV/perícias corretos com Carisma (herdado de graça do motor
+de cálculo genérico); Mochila mostra o instrumento escolhido (ex.:
+"Alaúde") no lugar do placeholder "Instrumento Musical"; Magias e
+Combat carregam sem quebrar (ainda fixture, como esperado).
+
+**Data/origem:** 2026-08.

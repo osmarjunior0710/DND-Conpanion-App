@@ -111,7 +111,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 por tudo que fizemos"), que levantou as perguntas de equipamento —
 plano aprovado ("vamos de e1").
 
-## Bardo — próxima classe, plano em 5 etapas (Etapa 1 feita)
+## Bardo — próxima classe, plano em 5 etapas (Etapas 1-2 feitas)
 
 **O que é:** depois do Plano de Equipamento fechado e das subclasses
 de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
@@ -142,10 +142,17 @@ subclasse (4 Colégios).
    (Level Up)/Ficha precisar, não faz sentido no catálogo genérico de
    magia (é uma propriedade de "esse personagem tem essa magia sempre
    preparada", não da magia em si).
-2. **Criação de personagem** (falta) — wizard filtra 2 truques + 4 magias de
-   1º círculo (sugestão do livro: Enfeitiçar Pessoa, Leque Cromático,
-   Palavra Curativa, Sussurros Dissonantes).
-3. **Ficha/aba Magias** — suportar múltiplos círculos simultâneos
+2. ~~**Criação de personagem**~~ — **feita.** Bardo virou
+   `disponivel: true`; wizard cria um Bardo nível 1 completo (3
+   perícias quaisquer, 3 Instrumentos Musicais, 2 truques, 4 magias
+   preparadas de 1º círculo, equipamento A/B). Achado: "Escolhas da
+   Classe" tinha 3 acoplamentos implícitos a Guerreiro (perícias
+   fixas em 2, Estilo de Luta sempre visível, validação do wizard
+   travando sem Estilo de Luta) — corrigidos, ver DECISOES-DESIGN.md
+   "Bardo — Etapa 2". Dados de perícia/ferramenta/equipamento inicial
+   transcritos do Cap. 3 (PDF "Bárbaro a Feiticeiro" que o Osmar já
+   tinha enviado).
+3. **Ficha/aba Magias** (falta) — suportar múltiplos círculos simultâneos
    (hoje só tem 1 círculo, prototipado pro Bruxo/fixture).
 4. **Level Up** — truques/magias/espaços crescem por tabela; nova
    categoria "troca opcional de 1 magia preparada por level-up"
@@ -164,6 +171,16 @@ usado no Guerreiro, B1-B5).
 **As 4 subclasses (Bravura, Dança, Conhecimento, Glamour) ficam pra
 depois da base** — decisão de seguir ou não será tomada só quando a
 base estiver pronta e testada, não presumida agora.
+
+**Bundle JS cresceu bastante (604KB → 1,13MB) com o catálogo de 390
+magias.** `descricaoCompleta` de cada magia (texto bruto do livro,
+longo) fica embutida no JS carregado na primeira visita, mas não é
+exibida em nenhuma UI ainda (só `descricaoCurta`, mais curta). Não
+bloqueou a entrega, mas é uma otimização futura óbvia se o carregamento
+no celular ficar perceptivelmente lento: parar de embutir
+`descricaoCompleta` no bundle principal (carregar sob demanda) ou
+aplicar code-splitting. Ninguém decidiu fazer isso ainda — só
+registrado como possibilidade.
 
 **Emblemas das outras 10 classes são placeholder (cópia do emblema do
 Guerreiro).** O Osmar já subiu os emblemas novos (formato redondo) de
