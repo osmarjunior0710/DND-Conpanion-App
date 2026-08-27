@@ -3293,3 +3293,29 @@ em Origem, os 4 cards com Perícia colidente mostram a borda tracejada
 funcionando.
 
 **Data/origem:** 2026-08.
+
+## Card padronizado pra magia/truque (MagiaComDescricao) — mesmo formato sempre
+
+Também portado do "outro modelo", a pedido do Osmar (junto com a
+marcação de duplicidade e os ícones de magia da entrega anterior). Em
+vez do popup genérico (`ItemComDescricao`, só nome + texto corrido),
+`MagiaComDescricao` fixa o formato pra qualquer magia/truque: Nome,
+Tipo (Truque ou "Xº Círculo"), toggle Desc. curta/longa, Tempo de
+Conjuração + Alcance, Componentes, Duração, e a descrição em si.
+
+Regras confirmadas com o Osmar:
+- **Campo em branco fica escondido** — `null`/vazio não aparece como
+  linha vazia (ex.: se não tiver Componentes, a linha some).
+- **O toggle Desc. curta/Desc. longa só aparece se as duas existirem
+  E forem diferentes** — se forem o mesmo texto (ou uma faltando),
+  mostra só a descrição direto, sem o par de botões.
+
+Escopo desta entrega: só Magias (única classe conjuradora pronta é
+Bardo, único lugar que usa isso hoje é Truques/Magias Preparadas da
+criação). Replicar esse padrão de card fixo pra Itens
+Comuns/Mágicos/Armas/Armaduras é pendência registrada em
+PENDENCIAS.md — cada tipo teria campos próprios (Arma: Dano/
+Propriedades/Maestria, por exemplo), não é o mesmo card reaproveitado
+1:1.
+
+**Data/origem:** 2026-08.

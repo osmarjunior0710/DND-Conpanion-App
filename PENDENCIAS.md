@@ -970,3 +970,18 @@ qualquer `Magia`), mas hoje só é chamado em `ClasseEscolhasStep.tsx`
 usa fixture (Etapa 3 do plano de Bardo, não feita) — quando essa etapa
 acontecer, reaproveitar `iconesMagia()`/`classificarMagia()` lá também
 em vez de duplicar a lógica.
+
+## Card padronizado de descrição — só Magias hoje, falta Itens/Armas/Armaduras/Itens Mágicos
+
+`MagiaComDescricao` (novo, `ui/components/`) é um popup com formato fixo
+pra qualquer magia/truque — nome, tipo (Truque/Xº Círculo), toggle Desc.
+curta/longa (só aparece se as duas existirem e forem diferentes), Tempo,
+Alcance, Componentes, Duração e a descrição (campos em branco ficam
+escondidos, não aparecem vazios). Portado do "outro modelo" a pedido do
+Osmar. Hoje só é usado pra Magias (Truques/Magias Preparadas da criação
+de Bardo). Os outros tipos — Itens Comuns, Itens Mágicos, Armas,
+Armaduras — continuam no popup genérico simples (`ItemComDescricao`,
+só nome + descrição corrida). Pendência: quando mexer nesses outros
+tipos de novo, avaliar replicar o mesmo padrão de card fixo (campos
+próprios de cada tipo — ex. Arma teria Dano/Propriedades/Maestria em
+vez de Tempo/Alcance/Componentes/Duração).
