@@ -32,6 +32,16 @@ function Linha({
   onRemoverItem: (id: string) => void;
 }) {
   const descricao = buscarDescricaoItem(item.nome);
+  const [confirmandoRemocao, setConfirmandoRemocao] = useState(false);
+
+  function tocarTrash() {
+    if (confirmandoRemocao) {
+      onRemoverItem(item.id);
+      return;
+    }
+    setConfirmandoRemocao(true);
+    setTimeout(() => setConfirmandoRemocao(false), 3000);
+  }
 
   return (
     <div className={styles.itemRow}>
@@ -43,15 +53,23 @@ function Linha({
             <ItemComDescricao nome={item.nome} descricao={descricao} rotulo={item.nome} variante="icone" />
           )}
         </span>
-        <span className={styles.trashBtn} onClick={() => onRemoverItem(item.id)}>
-          🗑
+        <span
+          className={`${styles.trashBtn} ${confirmandoRemocao ? styles.trashBtnConfirmando : ''}`}
+          onClick={tocarTrash}
+        >
+          {confirmandoRemocao ? 'confirmar 🗑' : '🗑'}
         </span>
       </div>
       {itensDetalhados && descricao && <div className={styles.itemDesc}>{descricao}</div>}
       <div className={styles.itemBottom}>
         {pesoAtivo ? <span className={styles.itemWeight}>{pesoDaLinha(item)}</span> : <span />}
         <div className={styles.stepperRow}>
-          <button type="button" className={styles.stepperBtn} onClick={() => onAlterarQuantidade(item.id, -1)}>
+          <button
+            type="button"
+            className={styles.stepperBtn}
+            disabled={item.quantidade === 0}
+            onClick={() => onAlterarQuantidade(item.id, -1)}
+          >
             −
           </button>
           <span className={styles.stepperQtd}>{item.quantidade}</span>

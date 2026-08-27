@@ -214,9 +214,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function alterarQuantidadeItem(id: string, delta: number) {
     setItensMochila((prev) =>
-      prev
-        .map((it) => (it.id === id ? { ...it, quantidade: it.quantidade + delta } : it))
-        .filter((it) => it.quantidade > 0),
+      prev.map((it) => (it.id === id ? { ...it, quantidade: Math.max(0, it.quantidade + delta) } : it)),
     );
   }
 

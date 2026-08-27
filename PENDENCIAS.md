@@ -26,8 +26,29 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   por Origem/Classe/Loja), +/- quantidade, remover item, adicionar
   item novo por nome livre. Ver decisão "Mochila vira estado de
   verdade (E1 do plano de Equipamento)" no `DECISOES-DESIGN.md`.
+- **Ajuste pós-E1 — quantidade trava em 0, remover pede confirmação.**
+  O Osmar testou e pediu 2 correções de comportamento: (1) o `-`
+  agora trava a quantidade em 0 em vez de apagar a linha sozinho — o
+  jogador pode ter clicado sem querer, então o item some só quando
+  ele confirma de propósito; (2) o 🗑 agora exige 2 toques — o
+  primeiro deixa o botão vermelho ("confirmar 🗑", desarma sozinho
+  depois de 3s se não confirmar), o segundo apaga de verdade.
 
 **Falta:**
+- **Catálogo pra "Adicionar item" na Mochila, com tipos estruturados.**
+  Hoje "Adicionar item" é só nome livre + quantidade — o Osmar quer
+  poder adicionar uma arma (que dá pra equipar), armadura, ou item
+  mágico seguindo o mesmo schema de dado que os itens reais já usam
+  (`armas.ts`, `armaduras.ts`, `equipamentoAventura.ts`...), não texto
+  solto. Ideia: a tela de adicionar item ganha uma escolha de "tipo"
+  (Arma / Armadura / Equipamento Geral / outro) que puxa do catálogo
+  já existente (autocomplete/lista, não digitar do zero) quando o
+  nome bate com algo conhecido — e, pro caso de item mágico (ainda
+  sem dado importado — ver E4 abaixo), definir um formato mínimo
+  (nome, tipo, se precisa Sintonização) pra já nascer no padrão certo
+  quando a base de itens mágicos existir. Depende de E2 pra fazer
+  sentido de verdade (só importa o "tipo" se o item puder ser
+  equipado depois).
 - **E2 — Equipar/Desequipar.** Conceito de slot (Mão Principal, Mão
   Secundária, Armadura, Escudo, Vestiário genérico sem limite) +
   toggle equipado/na mochila por item. Arma de Duas Mãos ocupa as 2

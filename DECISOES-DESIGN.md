@@ -2418,3 +2418,20 @@ sentido, e que faltava +/- e adicionar item — junto com as perguntas
 mais profundas sobre equipamento que abriram o plano E1-E4.
 
 **Data/origem:** 2026-08.
+
+## Mochila — quantidade trava em 0, remover exige 2 toques (ajuste pós-E1)
+
+**Decisão:** o Osmar testou o E1 e pediu 2 ajustes de comportamento:
+- **`-` da quantidade trava em 0**, não apaga a linha sozinho. Um
+  toque a mais sem querer não devia fazer o item sumir — "0×" fica
+  visível até o jogador decidir de propósito removê-lo.
+- **Remover (🗑) exige confirmação em 2 toques**: 1º toque deixa o
+  botão vermelho com texto "confirmar 🗑" (some sozinho depois de 3s
+  se ninguém confirmar); 2º toque no mesmo botão remove de verdade.
+
+**Contexto:** mesmo padrão de "ação destrutiva pede confirmação" que
+qualquer app deveria ter — evita perder item de propósito (ração,
+tocha) por 1 toque errado, sem precisar de um modal/popup separado
+(mais pesado pra uma ação tão frequente).
+
+**Data/origem:** 2026-08.
