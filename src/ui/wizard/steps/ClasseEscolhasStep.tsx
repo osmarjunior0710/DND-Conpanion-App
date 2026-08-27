@@ -218,7 +218,6 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                   <div className={`check-box ${selection.truquesEscolhidos.includes(m.nome) ? 'checked' : ''}`} />
                   <span className="check-label">
                     <ItemComDescricao nome={m.nome} descricao={m.descricaoCurta} rotulo={m.nome} variante="icone" />
-                    {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>({m.escola})</span>
                     {' '}{iconesMagia(m)}
                   </span>
                 </div>
@@ -240,7 +239,6 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                   <div className={`check-box ${selection.magiasPreparadasEscolhidas.includes(m.nome) ? 'checked' : ''}`} />
                   <span className="check-label">
                     <ItemComDescricao nome={m.nome} descricao={m.descricaoCurta} rotulo={m.nome} variante="icone" />
-                    {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>({m.escola})</span>
                     {' '}{iconesMagia(m)}
                   </span>
                 </div>
