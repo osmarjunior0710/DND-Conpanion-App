@@ -7,6 +7,7 @@
 import { armas, type Arma } from '../data/rulesets/dnd2024/armas';
 import type { Classe } from '../data/rulesets/dnd2024/classes';
 import { bonusProficiencia } from './calculoPersonagem';
+import { identificarEquipamento } from './equipamento';
 import type { AtaqueInfo } from '../data/exampleCombat';
 
 export interface AtaqueResolvido {
@@ -51,6 +52,10 @@ export function ataqueDesarmado(classe: Classe, nivel: number, forMod: number): 
  * o dano não soma o modificador de atributo, a menos que ele seja
  * negativo (Cap. 6: "não adiciona seu modificador de atributo ao dano
  * do ataque adicional, a menos que esse modificador seja negativo").
+ *
+ * `duasMaosAtivo` é o modo 2 mãos de uma arma Versátil (E3.4): troca
+ * o dado de dano pelo maior, indicado entre parênteses na propriedade
+ * (ex.: "Versátil (1d10)") — planilha, não hardcoded.
  */
 export function ataqueComArma(
   arma: Arma,
@@ -59,31 +64,39 @@ export function ataqueComArma(
   forMod: number,
   desMod: number,
   semModAtributoNoDano = false,
+  duasMaosAtivo = false,
 ): AtaqueResolvido {
   const acuidade = arma.propriedades.includes('Acuidade');
   const distancia = arma.categoria.includes('à Distância');
   const atribMod = acuidade ? Math.max(forMod, desMod) : distancia ? desMod : forMod;
   const prof = bonusProficiencia(classe, nivel);
-  const { quantidade, lados, tipo } = parseDano(arma.dano);
+  const dadoVersatil = identificarEquipamento(arma.nome).dadoVersatil;
+  const usaVersatil = duasMaosAtivo && dadoVersatil;
+  const { quantidade, lados, tipo } = usaVersatil ? parseDano(`${dadoVersatil} ${arma.dano.replace(/^\d+d\d+\s*/, '')}`) : parseDano(arma.dano);
   const danoMod = semModAtributoNoDano && atribMod > 0 ? 0 : atribMod;
+  const descPropriedades = arma.propriedades ? ` · ${arma.propriedades}` : '';
   return {
     nome: arma.nome,
-    descricao: `${arma.dano}${arma.propriedades ? ` · ${arma.propriedades}` : ''}.`,
+    descricao: `${usaVersatil ? `${dadoVersatil} ${tipo}` : arma.dano}${descPropriedades}${usaVersatil ? ' (empunhada com 2 mãos)' : ''}.`,
     info: { modAcerto: atribMod + prof, danoQuantidade: quantidade, danoLados: lados, danoMod, danoTipo: tipo },
   };
 }
 
 /** Resolve o ataque disponível pelo nome do item na Mão Principal —
- * arma real do catálogo se identificar, senão Ataque Desarmado. */
+ * arma real do catálogo se identificar, senão Ataque Desarmado.
+ * `duasMaosAtivo` vem do `ItemMochila.duasMaosAtivo` da arma. */
 export function ataqueAtual(
   nomeArmaEquipada: string | null,
   classe: Classe,
   nivel: number,
   forMod: number,
   desMod: number,
+  duasMaosAtivo = false,
 ): AtaqueResolvido {
   const arma = nomeArmaEquipada ? armas.find((a) => a.nome === nomeArmaEquipada) : undefined;
-  return arma ? ataqueComArma(arma, classe, nivel, forMod, desMod) : ataqueDesarmado(classe, nivel, forMod);
+  return arma
+    ? ataqueComArma(arma, classe, nivel, forMod, desMod, false, duasMaosAtivo)
+    : ataqueDesarmado(classe, nivel, forMod);
 }
 
 /**

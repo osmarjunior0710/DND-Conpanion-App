@@ -16,14 +16,27 @@ export type TipoEquipamento = 'arma' | 'armadura' | 'escudo' | 'generico';
 export interface InfoEquipamento {
   tipo: TipoEquipamento;
   duasMaos: boolean;
+  /** Dado de dano maior da propriedade Versátil (ex.: "1d10"), ou
+   * `null` se a arma não for Versátil — lido de `arma.propriedades`
+   * (planilha), nunca hardcoded. Ver E3.4 em DECISOES-DESIGN.md. */
+  dadoVersatil: string | null;
 }
 
 export function identificarEquipamento(nome: string): InfoEquipamento {
   const arma = armas.find((a) => a.nome === nome);
-  if (arma) return { tipo: 'arma', duasMaos: arma.propriedades.includes('Duas Mãos') };
+  if (arma) {
+    const versatil = arma.propriedades.match(/Versátil \((\d+d\d+)\)/i);
+    return {
+      tipo: 'arma',
+      duasMaos: arma.propriedades.includes('Duas Mãos'),
+      dadoVersatil: versatil ? versatil[1] : null,
+    };
+  }
   const armadura = armaduras.find((a) => a.nome === nome);
-  if (armadura) return { tipo: armadura.categoria.includes('Escudo') ? 'escudo' : 'armadura', duasMaos: false };
-  return { tipo: 'generico', duasMaos: false };
+  if (armadura) {
+    return { tipo: armadura.categoria.includes('Escudo') ? 'escudo' : 'armadura', duasMaos: false, dadoVersatil: null };
+  }
+  return { tipo: 'generico', duasMaos: false, dadoVersatil: null };
 }
 
 /** Slots que fazem sentido oferecer pro jogador escolher, dado o tipo
@@ -40,7 +53,8 @@ export interface ResumoEquipado {
   maoPrincipal: ItemMochila | null;
   maoSecundaria: ItemMochila | null;
   /** true quando a mão secundária está ocupada pela arma de Duas Mãos
-   * da mão principal, não por um item próprio equipado nela. */
+   * (ou por Versátil empunhada com 2 mãos, `duasMaosAtivo`) da mão
+   * principal, não por um item próprio equipado nela. */
   maoSecundariaOcupadaPorDuasMaos: boolean;
   armadura: ItemMochila | null;
   escudo: ItemMochila | null;
@@ -48,7 +62,9 @@ export interface ResumoEquipado {
 
 export function resumoEquipado(itens: ItemMochila[]): ResumoEquipado {
   const maoPrincipal = itens.find((it) => it.slot === 'maoPrincipal') ?? null;
-  const duasMaos = maoPrincipal ? identificarEquipamento(maoPrincipal.nome).duasMaos : false;
+  const duasMaos = maoPrincipal
+    ? identificarEquipamento(maoPrincipal.nome).duasMaos || maoPrincipal.duasMaosAtivo === true
+    : false;
   return {
     maoPrincipal,
     maoSecundaria: itens.find((it) => it.slot === 'maoSecundaria') ?? null,
@@ -81,12 +97,35 @@ export function equiparNoSlot(itens: ItemMochila[], id: string, slot: SlotEquipa
     ) {
       return { ...it, slot: null };
     }
+    // Equipar algo na Mão Secundária (ou Escudo) libera a Mão
+    // Principal do modo "2 mãos" de uma arma Versátil, senão as duas
+    // coisas disputariam a mesma mão.
+    if ((slot === 'maoSecundaria' || slot === 'escudo') && it.slot === 'maoPrincipal' && it.duasMaosAtivo) {
+      return { ...it, duasMaosAtivo: false };
+    }
     return it;
   });
 }
 
 export function desequiparItem(itens: ItemMochila[], id: string): ItemMochila[] {
-  return itens.map((it) => (it.id === id ? { ...it, slot: null } : it));
+  return itens.map((it) => (it.id === id ? { ...it, slot: null, duasMaosAtivo: false } : it));
+}
+
+/** Liga/desliga o modo "2 mãos" de uma arma Versátil equipada na Mão
+ * Principal (E3.4) — ligar libera qualquer item que estivesse na Mão
+ * Secundária ou no Escudo (a mesma mão passa a segurar a arma). */
+export function alternarDuasMaosVersatil(itens: ItemMochila[], id: string): ItemMochila[] {
+  const alvo = itens.find((it) => it.id === id);
+  if (!alvo || alvo.slot !== 'maoPrincipal') return itens;
+  const info = identificarEquipamento(alvo.nome);
+  if (!info.dadoVersatil) return itens;
+  const ligar = !alvo.duasMaosAtivo;
+
+  return itens.map((it) => {
+    if (it.id === id) return { ...it, duasMaosAtivo: ligar };
+    if (ligar && (it.slot === 'maoSecundaria' || it.slot === 'escudo')) return { ...it, slot: null };
+    return it;
+  });
 }
 
 export const NOME_SLOT: Record<SlotEquipamento, string> = {

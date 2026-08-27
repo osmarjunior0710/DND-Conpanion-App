@@ -23,7 +23,13 @@ import {
   explicarCapacidadeMaxima,
   type ItemMochila,
 } from '../../core/mochila';
-import { desequiparItem as desequiparItemPuro, equiparNoSlot, resumoEquipado, type SlotEquipamento } from '../../core/equipamento';
+import {
+  alternarDuasMaosVersatil,
+  desequiparItem as desequiparItemPuro,
+  equiparNoSlot,
+  resumoEquipado,
+  type SlotEquipamento,
+} from '../../core/equipamento';
 import { ataqueAtual, ataqueBonusMaoSecundaria } from '../../core/ataque';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
@@ -144,7 +150,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const equipadoAtual = resumoEquipado(itensMochila);
   const armaEquipada = equipadoAtual.maoPrincipal;
-  const ataque = classe ? ataqueAtual(armaEquipada?.nome ?? null, classe, personagem.nivel, forMod, desMod) : null;
+  const ataque = classe
+    ? ataqueAtual(armaEquipada?.nome ?? null, classe, personagem.nivel, forMod, desMod, armaEquipada?.duasMaosAtivo === true)
+    : null;
   const ataqueBonus = classe
     ? ataqueBonusMaoSecundaria(
         armaEquipada?.nome ?? null,
@@ -250,6 +258,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function desequiparItem(id: string) {
     setItensMochila((prev) => desequiparItemPuro(prev, id));
+  }
+
+  function alternarDuasMaos(id: string) {
+    setItensMochila((prev) => alternarDuasMaosVersatil(prev, id));
   }
 
   function usarUsoFolego(): boolean {
@@ -367,6 +379,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onAdicionarItem={adicionarItemMochila}
             onEquipar={equiparItem}
             onDesequipar={desequiparItem}
+            onAlternarDuasMaos={alternarDuasMaos}
           />
         )}
         {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} conjura={conjura} />}

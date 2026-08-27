@@ -13,7 +13,7 @@
 
 ---
 
-## Plano de Equipamento — E1 feita, E2-E4 faltam
+## Plano de Equipamento — E1/E2/E3 feitas, só E4 falta
 
 **O que é:** plano de 4 entregas nascido de uma revisão geral pedida
 pelo Osmar, que expôs que Mão Principal/Secundária, equipar/
@@ -48,9 +48,12 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   identificar com o catálogo real — "Vestiário genérico" (anel,
   capa, bota) fica de fora até existir uma forma de saber quais
   itens são "vestíveis" sem exclusividade (ver item abaixo).
-  **CA e Combat ainda não leem o equipamento** — isso é a E3, próxima
-  entrega (já avisado na própria tela: "equipar ainda não muda a CA
-  nem o Atacar da aba Combat").
+- **E3 — CA e Combat lendo o equipamento de verdade.** CA soma
+  Armadura+Escudo realmente equipados; "Atacar" usa a arma da Mão
+  Principal (ou Ataque Desarmado real); ataque bônus da propriedade
+  Leve quando as duas mãos forem Leve; Versátil ganha o dado maior
+  empunhada com 2 mãos, ocupando a Mão Secundária. Ver DECISOES-DESIGN.md
+  "E3.1"-"E3.4" pra detalhes de cada uma.
 
 **Falta:**
 - **Catálogo pra "Adicionar item" na Mochila, com tipos estruturados.**
@@ -77,15 +80,6 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   a ser relevante quando existir dado de item mágico ou uma marcação
   manual no catálogo estruturado de "Adicionar item" (pendência
   acima).
-- **E3 — Combat/CA lendo o equipamento de verdade (E3.1, E3.2 e E3.3
-  feitas, só E3.4 falta).** ~~CA soma Armadura+Escudo realmente
-  equipados~~ — feito (E3.1). ~~"Atacar" usa a arma equipada de
-  verdade~~ — feito (E3.2, `core/ataque.ts`, ver DECISOES-DESIGN.md).
-  ~~Ataque bônus extra com a Mão Secundária quando as duas armas
-  forem Leve~~ — feito (E3.3, painel de Ação Bônus). Falta só
-  **E3.4** — arma Versátil ganha o dado maior de dano quando
-  empunhada com 2 mãos, ocupando também a Mão Secundária no
-  equipamento (E2).
 - **Ataque Desarmado — só a opção "Dano" está implementada.** O
   Apêndice C (Glossário) também descreve **Empurrar** e **Imobilizar**
   como opções do Ataque Desarmado (testes de resistência do alvo

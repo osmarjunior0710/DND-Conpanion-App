@@ -2694,3 +2694,43 @@ Recuperar Fôlego normalmente (não cai no estado "nenhuma ação bônus
 disponível").
 
 **Data/origem:** 2026-08.
+
+## E3.4 — Versátil empunhada com 2 mãos (fecha o Plano de Equipamento)
+
+**O que mudou.** `ItemMochila` ganhou `duasMaosAtivo?: boolean` — só
+faz sentido pra arma Versátil na Mão Principal, liga/desliga via novo
+`alternarDuasMaosVersatil` (`core/equipamento.ts`). Ligado: a Mão
+Secundária é liberada automaticamente (mesma regra de "arma de Duas
+Mãos ocupa as duas mãos" que já existia, agora também vale pro modo
+Versátil) e o dado de dano usado no "Atacar" passa a ser o maior
+(entre parênteses na propriedade, ex.: "Versátil (1d10)" em vez de
+"1d8") — lido de `arma.propriedades` via `identificarEquipamento`,
+zero valor hardcoded. `resumoEquipado().maoSecundariaOcupadaPorDuasMaos`
+passou a considerar esse flag também, então a caixa "Equipado agora"
+já mostrava "ocupada (arma de 2 mãos)" sem precisar de mudança ali.
+
+**Auto-liberação ao equipar outra coisa na Mão Secundária.**
+`equiparNoSlot` ganhou uma checagem: equipar qualquer coisa na Mão
+Secundária (ou Escudo) desliga automaticamente o `duasMaosAtivo` de
+quem estiver na Mão Principal — senão as duas coisas "disputariam" a
+mesma mão sem nenhum aviso. Testado explicitamente (ver abaixo).
+
+**UI:** `MochilaTab.tsx` — arma Versátil equipada na Mão Principal
+ganha um botão extra "Empunhar com 2 mãos (XdY)" ao lado dos botões
+de slot normais. Texto desatualizado da caixa "Equipado agora"
+corrigido de novo (não falava mais em `[PH]`/"dado de exemplo",
+estava só desatualizado da E3.2/E3.3).
+
+**Testado:** Playwright 390×844 — Guerreiro nível 1 com Machado de
+Batalha (Versátil, 1d8→1d10) na Mão Principal: ligar "2 mãos" fez a
+Mão Secundária mostrar "ocupada (arma de 2 mãos)" e o Combat mostrar
+"1d10 Cortante ... (empunhada com 2 mãos)" no lugar de 1d8. Equipar a
+Adaga na Mão Secundária depois disso desligou o modo 2 mãos do
+Machado automaticamente (confirmado lendo o estado salvo no
+localStorage, não só a tela).
+
+**Com essa entrega, o Plano de Equipamento (E1-E4) está com E1/E2/E3
+completos — só falta E4 (Sintonização), bloqueado até existir dado de
+item mágico na planilha.**
+
+**Data/origem:** 2026-08.

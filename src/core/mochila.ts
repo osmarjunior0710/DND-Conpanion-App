@@ -62,6 +62,10 @@ export interface ItemMochila {
    * escudo; outros itens nunca ganham esse campo preenchido nessa
    * entrega (E2). */
   slot?: 'maoPrincipal' | 'maoSecundaria' | 'armadura' | 'escudo' | null;
+  /** Só faz sentido pra arma Versátil na Mão Principal: true quando o
+   * jogador escolheu empunhar com as 2 mãos (dado de dano maior, mas
+   * ocupa a Mão Secundária também) — ver E3.4 em DECISOES-DESIGN.md. */
+  duasMaosAtivo?: boolean;
 }
 
 let contadorId = 0;
