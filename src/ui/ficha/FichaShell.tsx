@@ -118,6 +118,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo.itensMochilaAtual ?? calcularItensIniciais(selecao),
   );
   const [levelUpAberto, setLevelUpAberto] = useState(false);
+  const [levelUpHpModo, setLevelUpHpModo] = useState<'media' | 'rolar' | null>(personagemSalvo.levelUpHpModo ?? null);
+  const [levelUpHpRolado, setLevelUpHpRolado] = useState<number | null>(personagemSalvo.levelUpHpRolado ?? null);
   const [itensDetalhados, setItensDetalhados] = useState(false);
   const [pesoAtivo, setPesoAtivo] = useState(true);
   const touchX = useRef(0);
@@ -184,6 +186,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       surtoGasto,
       espacosGastos,
       itensMochilaAtual: itensMochila,
+      levelUpHpModo,
+      levelUpHpRolado,
     });
   }, [
     personagemSalvo,
@@ -197,6 +201,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     surtoGasto,
     espacosGastos,
     itensMochila,
+    levelUpHpModo,
+    levelUpHpRolado,
   ]);
 
   function alterarPv(delta: number) {
@@ -297,6 +303,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       estiloDeLuta: resultado.estiloDeLutaEscolhido ?? prev.estiloDeLuta,
     }));
     setPvAtual((v) => v + resultado.pvGanho);
+    setLevelUpHpModo(null);
+    setLevelUpHpRolado(null);
     setLevelUpAberto(false);
   }
 
@@ -317,6 +325,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         classe={classe}
         onFechar={() => setLevelUpAberto(false)}
         onConfirmar={confirmarLevelUp}
+        hpModo={levelUpHpModo}
+        onHpModoChange={setLevelUpHpModo}
+        hpRolado={levelUpHpRolado}
+        onHpRoladoChange={setLevelUpHpRolado}
       />
     );
   }

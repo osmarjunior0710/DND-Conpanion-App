@@ -2779,3 +2779,31 @@ Escolher "Média" e avançar: pula direto pro próximo passo, sem tela
 preta.
 
 **Data/origem:** 2026-08.
+
+## Level Up — ajuste: fechar a tela inteira também não pode resetar o dado rolado
+
+**Problema (achado pelo Osmar testando a entrega acima):** `hpModo`/
+`hpRolado` viviam em `useState` local de `LevelUpShell.tsx` — travava
+certinho contra reclicar no card ou usar "← Voltar" internamente, mas
+"← Voltar" no 1º passo (PV) fecha o Level Up inteiro
+(`onFechar` → `setLevelUpAberto(false)`), desmontando o componente.
+Reabrir o Level Up depois disso criava uma instância nova, com
+`useState` do zero — o valor rolado sumia e dava pra rolar de novo.
+
+**Correção:** `hpModo`/`hpRolado` subiram pra `FichaShell.tsx` como
+estado controlado (`levelUpHpModo`/`levelUpHpRolado`, passados como
+props + callbacks pro `LevelUpShell`), e entraram no mesmo mecanismo
+de auto-save de progresso que já existia (`PersonagemSalvo.levelUpHpModo`/
+`levelUpHpRolado`, novos campos opcionais em `armazenamentoPersonagens.ts`).
+Agora o rascunho do Level Up sobrevive a: fechar a tela e reabrir,
+trocar de aba, e até dar F5 na página — só é zerado quando o Level Up
+é **confirmado** de verdade (`confirmarLevelUp`), preparando o
+próximo Level Up do zero.
+
+**Testado:** Playwright 390×844 — rolou o dado (resultado salvo no
+localStorage confirmado lendo `levelUpHpRolado`), avançou um passo,
+voltou até fechar o Level Up inteiro (2× "← Voltar"), reabriu — o
+passo PV já mostrou o card travado com o MESMO valor rolado antes,
+sem oferecer os cards de escolha de novo.
+
+**Data/origem:** 2026-08.

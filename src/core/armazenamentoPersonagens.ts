@@ -33,6 +33,14 @@ export interface PersonagemSalvo {
    * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a
    * partir de `selecao` (mesmo cálculo de sempre), só na 1ª vez. */
   itensMochilaAtual?: ItemMochila[];
+  /** Rascunho do Level Up em andamento (passo de PV) — precisa
+   * sobreviver a fechar o Level Up ou dar F5, senão o jogador
+   * consegue "voltar" saindo da tela pra rolar o dado de vida de
+   * novo. `null`/ausente = nenhuma rolagem pendente. Zerado só quando
+   * o Level Up é confirmado (`FichaShell.tsx`, `confirmarLevelUp`).
+   * Ver DECISOES-DESIGN.md "Level Up — dado de vida rolado...". */
+  levelUpHpModo?: 'media' | 'rolar' | null;
+  levelUpHpRolado?: number | null;
 }
 
 export interface ArmazenamentoPersonagens {

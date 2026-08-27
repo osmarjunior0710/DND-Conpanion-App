@@ -24,6 +24,14 @@ interface LevelUpShellProps {
     subclasseEscolhida: string | null;
     estiloDeLutaEscolhido: string | null;
   }) => void;
+  /** Controlado pelo `FichaShell` (persistido junto com o resto do
+   * progresso) em vez de estado local — uma vez rolado o dado de
+   * vida, fechar o Level Up (ou dar F5) não pode apagar o resultado e
+   * abrir margem pra rolar de novo. Ver DECISOES-DESIGN.md. */
+  hpModo: 'media' | 'rolar' | null;
+  onHpModoChange: (modo: 'media' | 'rolar' | null) => void;
+  hpRolado: number | null;
+  onHpRoladoChange: (valor: number | null) => void;
 }
 
 type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'asi' | 'dadivaEpica' | 'resumo';
@@ -32,7 +40,16 @@ type FaseDramatica = 'idle' | 'rolando' | 'resultado';
 const NOMES_ATRIBUTOS = ['FOR', 'DES', 'CON', 'INT', 'SAB', 'CAR'];
 const DURACAO_ROLAGEM_MS = 1400;
 
-export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar }: LevelUpShellProps) {
+export default function LevelUpShell({
+  personagem,
+  classe,
+  onFechar,
+  onConfirmar,
+  hpModo,
+  onHpModoChange,
+  hpRolado,
+  onHpRoladoChange,
+}: LevelUpShellProps) {
   const novoNivel = personagem.nivel + 1;
 
   const luSteps: LuStep[] = ['pv', 'features'];
@@ -43,8 +60,6 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
   luSteps.push('resumo');
 
   const [luIndex, setLuIndex] = useState(0);
-  const [hpModo, setHpModo] = useState<'media' | 'rolar' | null>(null);
-  const [hpRolado, setHpRolado] = useState<number | null>(null);
   const [faseDramatica, setFaseDramatica] = useState<FaseDramatica>('idle');
   const [valorDadoAnimado, setValorDadoAnimado] = useState<number | null>(null);
   // Escolha de subclasse ainda não tem UI própria (nenhuma subclasse
@@ -75,7 +90,7 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
       clearInterval(intervalo);
       const resultado = 1 + Math.floor(Math.random() * lados);
       setValorDadoAnimado(resultado);
-      setHpRolado(resultado);
+      onHpRoladoChange(resultado);
       setFaseDramatica('resultado');
     }, DURACAO_ROLAGEM_MS);
   }
@@ -194,14 +209,14 @@ export default function LevelUpShell({ personagem, classe, onFechar, onConfirmar
               </div>
             ) : (
               <>
-                <div className={`opt-card ${hpModo === 'media' ? 'selected' : ''}`} onClick={() => setHpModo('media')}>
+                <div className={`opt-card ${hpModo === 'media' ? 'selected' : ''}`} onClick={() => onHpModoChange('media')}>
                   <div className="opt-card-name">Usar a média fixa</div>
                   <div className="opt-card-desc">
                     {dadoVidaValor[personagem.dadoVida]} (média de {personagem.dadoVida}) + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
                     {personagem.conMod}) = <b>+{media} PV</b>
                   </div>
                 </div>
-                <div className={`opt-card ${hpModo === 'rolar' ? 'selected' : ''}`} onClick={() => setHpModo('rolar')}>
+                <div className={`opt-card ${hpModo === 'rolar' ? 'selected' : ''}`} onClick={() => onHpModoChange('rolar')}>
                   <div className="opt-card-name">Rolar o dado de vida 🎲</div>
                   <div className="opt-card-desc">
                     Rola 1{personagem.dadoVida} + mod. CON ({personagem.conMod >= 0 ? '+' : ''}
