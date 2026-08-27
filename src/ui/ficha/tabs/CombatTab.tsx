@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { espacosMagiaExemplo } from '../../../data/exampleCombat';
 import type { EstiloDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import type { CaracteristicaNivel } from '../../../core/levelUp';
+import type { AtaqueResolvido } from '../../../core/ataque';
 import { useRoll } from '../../roll/RollContext';
 import InfoChip from '../../components/InfoChip';
 import SidePanel from '../combat/SidePanel';
@@ -39,6 +40,7 @@ interface CombatTabProps {
   mestreTatico: CaracteristicaNivel | null;
   ataquesEstudados: CaracteristicaNivel | null;
   ajusteTatico: CaracteristicaNivel | null;
+  ataqueAtual: AtaqueResolvido | null;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -73,6 +75,7 @@ export default function CombatTab({
   mestreTatico,
   ataquesEstudados,
   ajusteTatico,
+  ataqueAtual,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -300,6 +303,7 @@ export default function CombatTab({
             surtoRestantes={surtoRestantes}
             surtoUsadoTurno={surtoUsadoTurno}
             onUsarSurto={usarSurtoDeAcao}
+            ataqueAtual={ataqueAtual}
           />
         )}
         {painelAberto === 'bonus' && (

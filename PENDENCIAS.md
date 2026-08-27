@@ -77,23 +77,31 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   a ser relevante quando existir dado de item mágico ou uma marcação
   manual no catálogo estruturado de "Adicionar item" (pendência
   acima).
-- **E3 — Combat/CA lendo o equipamento de verdade (E3.1 feita, E3.2-E3.4
-  faltam).** ~~CA soma Armadura+Escudo realmente equipados (incluindo
-  o +2 do Escudo)~~ — feito (`calcularCAEquipado`, ver
-  DECISOES-DESIGN.md "E3.1"). Falta: "Atacar" no
-  Combat usa a arma equipada de verdade (tira o `[PH]` já registrado
-  na pendência de auditoria); Ataque Desarmado vira opção real, com
-  Dano/Empurrar/Imobilizar por instância de ataque (decisão "Ataque
-  Extra — cada instância de ataque é independente" já registrada);
-  arma Versátil ganha o dado maior de dano quando empunhada com 2
-  mãos — **e nesse modo também precisa ocupar a Mão Secundária no
-  equipamento** (E2), não só mudar o dado (refinamento registrado na
-  decisão do schema de equipamento); e o ataque bônus extra da
-  propriedade **Leve** só fica disponível se a arma da Mão Principal
-  E a da Mão Secundária forem ambas Leve — confirmado no texto real
-  do Cap. 6 (ver decisão "Sistema de Equipamento" no
-  `DECISOES-DESIGN.md`), é regra de ataque (E3), não trava de equipar
-  (E2 já está certo do jeito que está).
+- **E3 — Combat/CA lendo o equipamento de verdade (E3.1 e E3.2 feitas,
+  E3.3/E3.4 faltam).** ~~CA soma Armadura+Escudo realmente
+  equipados~~ — feito (E3.1). ~~"Atacar" usa a arma equipada de
+  verdade~~ — feito (E3.2, `core/ataque.ts`, ver DECISOES-DESIGN.md).
+  Falta: **E3.3** — ataque bônus extra com a Mão Secundária quando as
+  duas armas forem Leve (confirmado no Cap. 6, ver decisão "Sistema
+  de Equipamento"); **E3.4** — arma Versátil ganha o dado maior de
+  dano quando empunhada com 2 mãos, ocupando também a Mão Secundária
+  no equipamento (E2).
+- **Ataque Desarmado — só a opção "Dano" está implementada.** O
+  Apêndice C (Glossário) também descreve **Empurrar** e **Imobilizar**
+  como opções do Ataque Desarmado (testes de resistência do alvo
+  contra CD 8+mod.Força+Proficiência, sem rolagem de dano) — o painel
+  de Combat hoje só sabe fazer acerto+dano, não tem UI pra teste de
+  resistência de terceiro. Fica de fora até esse tipo de mecânica
+  existir no Combat (vale também pra qualquer magia/talento que peça
+  salvaguarda do alvo, não é exclusivo do Ataque Desarmado).
+- **Proficiência com arma equipada — assumida sempre verdadeira, só
+  Guerreiro existe hoje.** `core/ataque.ts` soma o Bônus de
+  Proficiência em qualquer ataque com arma, sem checar se o
+  personagem é realmente proficiente com aquela arma específica —
+  hoje inofensivo porque a única classe (Guerreiro) é proficiente em
+  toda arma Simples/Marcial. Quando uma 2ª classe com proficiência de
+  arma restrita for importada, essa checagem precisa entrar antes de
+  somar o bônus.
 - **E4 — Sintonização (3 itens simultâneos).** Bloqueado até itens
   mágicos existirem como dado — ainda não foram importados na
   planilha/`data/`. Quando destravar: a checagem vale pra **qualquer**
@@ -120,27 +128,23 @@ exibido, até virar dado/lógica de verdade.
   Procurar/Usar Objeto/Ataque de Oportunidade), Maestria em Arma,
   Recuperar Fôlego, Mente Tática, Surto de Ação, Indomável, Estilo de
   Luta, Mestre Tático, Ataques Estudados, contagem de Ataque Extra.
-- **Fixture, marcado `[PH]` agora:** os números do ataque em si
-  (`data/exampleCombat.ts` → `ataqueArmaExemplo`, hardcoded "Adaga
-  +4/1d4+3" independente da arma/atributo reais do personagem);
-  "Usar Magia" (acordeão do painel de Ação) e "Escudo Arcano"
-  (painel de Reação) — já ficavam escondidos pra quem não conjura
-  (`conjura === false`), mas o texto interno (`magiasExemplo`) segue
-  fixture pronto pra quando a 1ª classe conjuradora existir; toda a
-  aba Magias também ganhou aviso `[PH]` no topo.
+- ~~Fixture: os números do ataque em si (`ataqueArmaExemplo`,
+  hardcoded "Adaga +4/1d4+3")~~ — **resolvido na E3.2** (ver
+  DECISOES-DESIGN.md): `core/ataque.ts` calcula o ataque de verdade a
+  partir da arma equipada na Mão Principal (ou Ataque Desarmado real
+  se nada estiver equipado), `ataqueArmaExemplo` foi removido. Falta
+  só a escolha **Arma vs. Ataque Desarmado por instância de ataque**
+  quando o personagem tiver mais de uma arma equipada que valha a
+  pena trocar entre ataques (hoje sempre usa o que estiver na Mão
+  Principal) — não é urgente, registrar se o Osmar sentir falta.
+- **Fixture, ainda marcado `[PH]`:** "Usar Magia" (acordeão do painel
+  de Ação) e "Escudo Arcano" (painel de Reação) — já ficavam
+  escondidos pra quem não conjura (`conjura === false`), mas o texto
+  interno (`magiasExemplo`) segue fixture pronto pra quando a 1ª
+  classe conjuradora existir; toda a aba Magias também ganhou aviso
+  `[PH]` no topo.
 
 **Falta implementar (pra tirar o `[PH]`):**
-- **Atacar** precisa calcular o ataque de verdade a partir da arma
-  equipada (ou a mais provável, se várias) + atributo (Força/Destreza
-  + Acuidade) + Bônus de Proficiência — hoje não existe esse cálculo
-  em `core/`, só o fixture de `exampleCombat.ts`. Junto com isso,
-  precisa entrar a escolha **Arma vs. Ataque Desarmado** (com as 3
-  sub-opções Dano/Empurrar/Imobilizar, confirmadas na planilha) **por
-  instância de ataque**, não uma escolha única pra todos os ataques
-  do turno — ver decisão "Ataque Extra — cada instância de ataque é
-  independente" no `DECISOES-DESIGN.md`. Não faz sentido montar essa
-  UI antes do cálculo de ataque real existir, então os dois entram
-  juntos na mesma entrega.
 - **Usar Magia / Escudo Arcano / aba Magias inteira** — trocar
   `magiasExemplo` por magia real assim que a 1ª classe conjuradora
   (Mago ou Clérigo) for importada (mesma pendência já registrada em

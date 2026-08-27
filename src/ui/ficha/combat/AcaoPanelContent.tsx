@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { acoesBase, ataqueArmaExemplo, magiasExemplo, type AtaqueInfo, type MagiaExemplo } from '../../../data/exampleCombat';
+import { acoesBase, magiasExemplo, type AtaqueInfo, type MagiaExemplo } from '../../../data/exampleCombat';
+import type { AtaqueResolvido } from '../../../core/ataque';
 import { useRoll } from '../../roll/RollContext';
 import styles from './PanelRows.module.css';
 
@@ -23,6 +24,7 @@ interface AcaoPanelContentProps {
   surtoRestantes: number;
   surtoUsadoTurno: boolean;
   onUsarSurto: () => void;
+  ataqueAtual: AtaqueResolvido | null;
 }
 
 export default function AcaoPanelContent({
@@ -38,6 +40,7 @@ export default function AcaoPanelContent({
   surtoRestantes,
   surtoUsadoTurno,
   onUsarSurto,
+  ataqueAtual,
 }: AcaoPanelContentProps) {
   const [magiaAberta, setMagiaAberta] = useState(false);
   const [avisoSlot, setAvisoSlot] = useState<string | null>(null);
@@ -77,17 +80,23 @@ export default function AcaoPanelContent({
 
   return (
     <>
-      <div className={styles.row} onClick={() => rolarAtaque('[PH] Atacar (Adaga)', ataqueArmaExemplo, onAtacar)}>
-        <div className={styles.rowName}>
-          🗡 Atacar {numAtaques > 1 ? `(ataque ${Math.min(ataquesFeitos + 1, numAtaques)}/${numAtaques})` : ''}
+      {ataqueAtual && (
+        <div
+          className={styles.row}
+          onClick={() => rolarAtaque(`🗡 ${ataqueAtual.nome}`, ataqueAtual.info, onAtacar)}
+        >
+          <div className={styles.rowName}>
+            🗡 Atacar — {ataqueAtual.nome}{' '}
+            {numAtaques > 1 ? `(ataque ${Math.min(ataquesFeitos + 1, numAtaques)}/${numAtaques})` : ''}
+          </div>
+          <div className={styles.rowDesc}>
+            {ataqueAtual.descricao}{' '}
+            {numAtaques > 1
+              ? `Ataque Extra: você tem direito a ${numAtaques} ataques nesse turno — toque de novo depois de rolar o dano.`
+              : 'Equipe uma arma na Mochila pra trocar; sem nada na Mão Principal, é Ataque Desarmado.'}
+          </div>
         </div>
-        <div className={styles.rowDesc}>
-          [PH] valores de exemplo (Adaga +4 / 1d4+3) — ainda não usa a arma equipada de verdade.{' '}
-          {numAtaques > 1
-            ? `Ataque Extra: você tem direito a ${numAtaques} ataques nesse turno — toque de novo depois de rolar o dano.`
-            : 'Ataca com arma ou Ataque Desarmado.'}
-        </div>
-      </div>
+      )}
 
       {surtoMax > 0 && (
         <div

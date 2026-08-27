@@ -2619,3 +2619,49 @@ isso é a próxima entrega" (E3.2).
 Armadura → 16. Todos os valores bateram.
 
 **Data/origem:** 2026-08.
+
+## E3.2 — "Atacar" usa a arma equipada de verdade (tira o `[PH]`)
+
+**O que mudou.** Novo `core/ataque.ts`: `ataqueAtual(nomeArmaEquipada,
+classe, nivel, forMod, desMod)` resolve o ataque disponível olhando o
+que está na Mão Principal (via `resumoEquipado`, E2) — se for uma arma
+do catálogo (`armas.ts`), calcula acerto/dano de verdade; se não tiver
+nada equipado, cai pra **Ataque Desarmado real** (não mais fixture).
+O "Atacar" no painel de Ação (`AcaoPanelContent.tsx`) mostra o nome da
+arma, o dano/propriedades reais, e rola `1d20 + (mod. atributo + Bônus
+de Proficiência)` de verdade — o `[PH]` (Adaga fixa `+4`/`1d4+3`) saiu
+completamente, junto com o fixture `ataqueArmaExemplo`
+(`data/exampleCombat.ts`, removido por não ter mais uso).
+
+**Atributo usado — regra confirmada no Cap. 1 e no Apêndice C.**
+Corpo a Corpo usa Força, à Distância usa Destreza, por padrão; com a
+propriedade **Acuidade**, usa o maior entre os dois (texto do Cap. 1:
+"a propriedade Acuidade... permite que você use Força ou Destreza").
+Lido de `arma.categoria`/`arma.propriedades` (planilha), não
+hardcoded.
+
+**Ataque Desarmado — confirmado no Apêndice C (Glossário de
+Regras).** "Seu bônus para a jogada é igual ao seu modificador de
+Força mais seu Bônus de Proficiência. Se acertar, o alvo sofre dano
+Contundente igual a 1 mais seu modificador de Força." Implementado só
+a opção **Dano** — o livro também oferece Empurrar/Imobilizar (testes
+de resistência do alvo, sem rolagem de dano), que ficam de fora por
+enquanto porque o painel de Combat hoje só sabe rolar
+acerto+dano, não testes de resistência de terceiros — registrado em
+PENDENCIAS.md.
+
+**Assumido — proficiência com a arma equipada.** Hoje só existe uma
+classe (Guerreiro), que é proficiente com toda arma Simples e Marcial
+(`core/maestriaArma.ts` já trata "Armas Simples e Marciais" como o
+catálogo inteiro) — por isso `ataqueAtual` assume proficiência sempre.
+Quando uma 2ª classe existir com proficiência de arma restrita,
+precisa checar isso antes de somar o Bônus de Proficiência —
+registrado em PENDENCIAS.md.
+
+**Testado:** Playwright 390×844, Guerreiro nível 1 (FOR 16 → +3) com
+Espada Grande equipada na Mão Principal — painel de Ação mostrou
+"Atacar — Espada Grande" com descrição "2d6 Cortante · Duas Mãos,
+Pesada.", e a rolagem de acerto usou `1d20 + 5` (+3 Força + 2 Bônus
+de Proficiência), batendo com a conta esperada.
+
+**Data/origem:** 2026-08.

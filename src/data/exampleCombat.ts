@@ -57,5 +57,3 @@ export const magiasExemplo: MagiaExemplo[] = [
 
 export const espacosMagiaExemplo = { maximo: 1 };
 
-export const ataqueArmaExemplo: AtaqueInfo = { modAcerto: 4, danoQuantidade: 1, danoLados: 4, danoMod: 3, danoTipo: 'perfurante' };
-
