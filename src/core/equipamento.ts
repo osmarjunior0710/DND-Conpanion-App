@@ -134,3 +134,33 @@ export const NOME_SLOT: Record<SlotEquipamento, string> = {
   armadura: 'Armadura',
   escudo: 'Escudo',
 };
+
+export type CategoriaMochila = 'arma' | 'armadura' | 'joia' | 'outros';
+
+export const NOME_CATEGORIA_MOCHILA: Record<CategoriaMochila, string> = {
+  arma: 'Armas',
+  armadura: 'Armadura',
+  joia: 'Jóias e Artefatos',
+  outros: 'Outros',
+};
+
+/**
+ * Classificação da Mochila em 4 grupos visuais (não é regra de D&D,
+ * é só organização de tela — ver DECISOES-DESIGN.md "Mochila
+ * organizada em grupos"): Armas / Armadura (inclui Escudo, mesma
+ * régua de "aumenta CA") / Jóias e Artefatos / Outros.
+ *
+ * "Jóias e Artefatos" sempre fica vazio hoje: nenhum item mágico
+ * (anel, amuleto...) foi importado ainda (planilha não tem — ver
+ * PENDENCIAS.md, E4/Sintonização). `identificarEquipamento` nunca
+ * classifica nada como "joia" enquanto isso não existir — todo item
+ * `'generico'` cai em "Outros" por enquanto. Quando o catálogo de
+ * itens mágicos existir, essa função ganha o critério real (ex.:
+ * categoria "Anel"/"Amuleto"/"Item Maravilhoso" da planilha).
+ */
+export function categoriaMochila(nome: string): CategoriaMochila {
+  const info = identificarEquipamento(nome);
+  if (info.tipo === 'arma') return 'arma';
+  if (info.tipo === 'armadura' || info.tipo === 'escudo') return 'armadura';
+  return 'outros';
+}

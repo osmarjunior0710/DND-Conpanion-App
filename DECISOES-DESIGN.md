@@ -2807,3 +2807,43 @@ passo PV já mostrou o card travado com o MESMO valor rolado antes,
 sem oferecer os cards de escolha de novo.
 
 **Data/origem:** 2026-08.
+
+## Mochila organizada em 4 grupos expansíveis/colapsáveis
+
+**Pedido do Osmar:** a lista plana da Mochila (E1) cresceu demais pra
+ficar tudo junto — pediu 4 grupos fixos: **Armas** / **Armadura**
+(inclui Escudo) / **Jóias e Artefatos** (anéis, amuletos... hoje sem
+dado importado) / **Outros** (tudo mais — comida, kits, tocha...).
+Grupo vazio fica invisível, não aparece como cabeçalho sem itens
+embaixo.
+
+**Implementação:** `categoriaMochila(nome)` (novo, `core/equipamento.ts`)
+reaproveita `identificarEquipamento` (E2) — zero duplicação de regra:
+`'arma'` → grupo Armas; `'armadura'`/`'escudo'` → grupo Armadura;
+`'generico'` → grupo Outros (por enquanto — ver abaixo). `MochilaTab.tsx`
+agora agrupa os itens por categoria antes de renderizar, com um
+cabeçalho clicável por grupo (nome + contador + ▾/▸) que expande/
+colapsa — estado só local do componente (não precisa persistir, é só
+preferência de visualização momentânea, mesmo tratamento de
+`itensDetalhados`/`pesoAtivo`).
+
+**"Jóias e Artefatos" fica sempre vazio hoje, de propósito.** Não
+existe NENHUM dado de item mágico (anel, amuleto, item maravilhoso)
+importado ainda — `categoriaMochila` não tem como diferenciar "Jóias"
+de "Outros" sem esse dado, então todo item não-arma/não-armadura cai
+em Outros por enquanto. Isso não é bug: é exatamente a régua "grupo
+vazio fica invisível" em ação — o grupo existe no código
+(`NOME_CATEGORIA_MOCHILA`), só nunca recebe nada até a base de itens
+mágicos existir (mesma pendência de sempre, ver E4/Sintonização em
+`PENDENCIAS.md`). Quando isso acontecer, `categoriaMochila` ganha o
+critério real (provavelmente a categoria "Anel"/"Amuleto"/"Item
+Maravilhoso" da planilha de itens mágicos).
+
+**Testado:** Playwright 390×844 — Guerreiro com Espada Grande/Mangual/
+Azagaia (grupo Armas, 3 itens), Cota de Malha (grupo Armadura), Kit
+de Explorador desagregado + Tocha (grupo Outros): os 3 grupos com
+dado apareceram com contador certo, "Jóias e Artefatos" não apareceu
+(sem item mágico), colapsar/expandir o grupo Armas escondeu/mostrou
+os itens corretamente.
+
+**Data/origem:** 2026-08.

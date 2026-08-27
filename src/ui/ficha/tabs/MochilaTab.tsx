@@ -6,8 +6,11 @@ import {
   identificarEquipamento,
   slotsValidos,
   resumoEquipado,
+  categoriaMochila,
   NOME_SLOT,
+  NOME_CATEGORIA_MOCHILA,
   type SlotEquipamento,
+  type CategoriaMochila,
 } from '../../../core/equipamento';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoValor from '../../components/InfoValor';
@@ -159,6 +162,61 @@ function Linha({
   );
 }
 
+const ORDEM_CATEGORIAS: CategoriaMochila[] = ['arma', 'armadura', 'joia', 'outros'];
+
+function GrupoItens({
+  categoria,
+  itens,
+  expandido,
+  onToggle,
+  itensDetalhados,
+  pesoAtivo,
+  onAlterarQuantidade,
+  onRemoverItem,
+  onEquipar,
+  onDesequipar,
+  onAlternarDuasMaos,
+}: {
+  categoria: CategoriaMochila;
+  itens: ItemMochila[];
+  expandido: boolean;
+  onToggle: () => void;
+  itensDetalhados: boolean;
+  pesoAtivo: boolean;
+  onAlterarQuantidade: (id: string, delta: number) => void;
+  onRemoverItem: (id: string) => void;
+  onEquipar: (id: string, slot: SlotEquipamento) => void;
+  onDesequipar: (id: string) => void;
+  onAlternarDuasMaos: (id: string) => void;
+}) {
+  if (itens.length === 0) return null;
+
+  return (
+    <>
+      <div className={styles.grupoHeader} onClick={onToggle}>
+        <span>
+          {NOME_CATEGORIA_MOCHILA[categoria]} ({itens.length})
+        </span>
+        <span>{expandido ? '▾' : '▸'}</span>
+      </div>
+      {expandido &&
+        itens.map((it) => (
+          <Linha
+            key={it.id}
+            item={it}
+            itensDetalhados={itensDetalhados}
+            pesoAtivo={pesoAtivo}
+            onAlterarQuantidade={onAlterarQuantidade}
+            onRemoverItem={onRemoverItem}
+            onEquipar={onEquipar}
+            onDesequipar={onDesequipar}
+            onAlternarDuasMaos={onAlternarDuasMaos}
+          />
+        ))}
+    </>
+  );
+}
+
 function AdicionarItem({ onAdicionarItem }: { onAdicionarItem: (nome: string, quantidade: number) => void }) {
   const [nome, setNome] = useState('');
   const [quantidade, setQuantidade] = useState(1);
@@ -217,6 +275,18 @@ export default function MochilaTab({
   const percentual = capacidadeMaxima ? Math.round((carga.kg / capacidadeMaxima) * 100) : 0;
   const sobrecarregado = capacidadeMaxima !== null && carga.kg > capacidadeMaxima;
   const equipado = resumoEquipado(itens);
+
+  const [gruposExpandidos, setGruposExpandidos] = useState<Record<CategoriaMochila, boolean>>({
+    arma: true,
+    armadura: true,
+    joia: true,
+    outros: true,
+  });
+  function toggleGrupo(categoria: CategoriaMochila) {
+    setGruposExpandidos((prev) => ({ ...prev, [categoria]: !prev[categoria] }));
+  }
+  const itensPorCategoria: Record<CategoriaMochila, ItemMochila[]> = { arma: [], armadura: [], joia: [], outros: [] };
+  for (const it of itens) itensPorCategoria[categoriaMochila(it.nome)].push(it);
 
   return (
     <>
@@ -282,10 +352,13 @@ export default function MochilaTab({
 
       <div className="section-title">Itens</div>
       {itens.length === 0 && <div className="label">Mochila vazia.</div>}
-      {itens.map((it) => (
-        <Linha
-          key={it.id}
-          item={it}
+      {ORDEM_CATEGORIAS.map((categoria) => (
+        <GrupoItens
+          key={categoria}
+          categoria={categoria}
+          itens={itensPorCategoria[categoria]}
+          expandido={gruposExpandidos[categoria]}
+          onToggle={() => toggleGrupo(categoria)}
           itensDetalhados={itensDetalhados}
           pesoAtivo={pesoAtivo}
           onAlterarQuantidade={onAlterarQuantidade}

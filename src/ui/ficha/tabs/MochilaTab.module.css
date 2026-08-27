@@ -24,6 +24,21 @@
   transition: width var(--motion-emphasized) var(--ease-standard), background var(--motion-standard) var(--ease-standard);
 }
 
+.grupoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: var(--touch-target-min);
+  padding: var(--space-2) var(--space-1);
+  margin-top: var(--space-2);
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
 .itemRow {
   padding: var(--space-3) var(--space-1);
   border-bottom: 1px dashed var(--line-soft);
