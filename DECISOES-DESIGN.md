@@ -2477,3 +2477,59 @@ plano. A própria tela da Mochila já avisa isso, pra não parecer bug.
 Osmar ("e2!").
 
 **Data/origem:** 2026-08.
+
+## Sistema de Equipamento — schema de referência (chat paralelo), o que foi adotado e o que ficou pendente de verificação
+
+**Contexto:** o Osmar pediu ajuda a outro chat pra organizar o
+schema de equipamento antes de continuar a E3, e trouxe o resultado
+(`schema-equipamentos.md`) pra eu conferir contra a fonte real e
+adaptar — mesmo tratamento que qualquer draft externo recebe nesse
+projeto (nunca aceitar direto, sempre bater contra `dnd-master-referencia.xlsx`
+primeiro).
+
+**Adotado — regra de classificação Equipável vs. Miscelânea.** A
+proposta "equipável = tem Bônus de CA, Dano, ou Efeito Mágico;
+senão é Miscelânea" não é uma regra de D&D, é uma decisão de
+**arquitetura do nosso app** (não precisa verificação na planilha,
+é escolha nossa de design) — e ela **confirma e explica melhor**
+uma decisão que a E2 já tinha tomado na prática: hoje nenhum item
+de `equipamentoAventura.ts` tem CA/dano/efeito mágico cadastrado
+(itens mágicos não foram importados ainda), então TODOS eles já são
+Miscelânea por essa régua — a "Vestiário genérico ficou de fora"
+registrada na decisão da E2 não era uma lacuna arbitrária, era essa
+regra objetiva já valendo, só sem estar nomeada. Fica formalizado
+aqui: `identificarEquipamento()` (`core/equipamento.ts`) já implementa
+essa régua na prática (arma/armadura têm dano/CA cadastrados →
+equipável; o resto não tem nenhum dos 3 campos → Miscelânea).
+
+**Adotado — refinamento da pendência de Versátil (já estava listada
+na E3, agora mais precisa):** arma Versátil pode ser empunhada com 1
+ou 2 mãos por escolha do jogador, mudando o dado de dano (`Versátil
+(1d10)` já vem estruturado assim na planilha) — quando isso for
+implementado (E3), empunhar em modo 2 mãos também precisa **ocupar a
+Mão Secundária** no equipamento (não só mudar o dado), senão o
+personagem "usa 2 mãos" pro dano mas a Mão Secundária continua
+livre pra outro item, o que não faz sentido físico.
+
+**Adotado — Sintonização não é exclusiva de Acessório (refinamento
+da E4, ainda bloqueada por dado):** quando itens mágicos existirem,
+armas/armaduras/escudos mágicos também podem exigir Sintonização, não
+só "acessórios" — a checagem de Sintonização precisa rodar em cima de
+qualquer categoria equipada, separada da validação física de
+slot/mão. Ainda bloqueado (zero itens mágicos importados), só deixa
+o desenho futuro mais correto desde já.
+
+**NÃO adotado ainda — "Duas Armas exige propriedade Leve nas duas
+mãos".** Essa afirmação do chat paralelo **não bate contra nenhuma
+aba da planilha mestra** (`Glossário de Regras` não tem entrada pra
+"Duas Armas"/dual-wield — é regra de ação do Cap. 1, que não está
+importado). Hoje `equiparNoSlot` permite equipar QUALQUER arma de 1
+mão na Mão Secundária, sem checar a propriedade Leve — o que pode
+estar errado (o livro real provavelmente exige Leve pro ataque bônus
+de "Duas Armas"), mas não vou implementar uma trava baseada só na
+palavra do chat paralelo sem confirmar na fonte. Registrado como
+pendência de verificação em `PENDENCIAS.md` — se o Osmar tiver o
+texto do Cap. 1 (ação "Duas Armas") ou confirmar de cabeça, a gente
+adiciona a validação com a fonte certa.
+
+**Data/origem:** 2026-08.

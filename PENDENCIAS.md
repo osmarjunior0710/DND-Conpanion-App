@@ -67,13 +67,26 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   quando a base de itens mágicos existir. Depende de E2 pra fazer
   sentido de verdade (só importa o "tipo" se o item puder ser
   equipado depois).
-- **Vestiário genérico (E2, adiado).** Itens sem correspondência no
-  catálogo de armas/armaduras (anel, capa, bota, etc) ainda não têm
-  controle de equipar — não dá pra saber com segurança quais são
-  "vestíveis" sem exclusividade e quais são só consumíveis (ração,
-  tocha) sem mais dado/categorização. Fica pra quando isso existir
-  (talento com o catálogo de item mágico, ou uma marcação manual no
-  "Adicionar item" — ver pendência acima).
+- **Vestiário genérico (E2, adiado) — regra de classificação já
+  definida, só falta dado.** Regra confirmada (ver decisão "Sistema
+  de Equipamento — schema de referência" no `DECISOES-DESIGN.md`):
+  item é equipável se tiver Bônus de CA, Dano, ou Efeito Mágico
+  cadastrado — hoje nenhum item de `equipamentoAventura.ts` tem
+  nenhum dos 3 (itens mágicos ainda não importados), então por essa
+  régua eles são Miscelânea mesmo, não é lacuna arbitrária. Só volta
+  a ser relevante quando existir dado de item mágico ou uma marcação
+  manual no catálogo estruturado de "Adicionar item" (pendência
+  acima).
+- **Verificar regra "Duas Armas exige Leve nas duas mãos" antes de
+  travar isso no equipar.** Um chat paralelo afirmou que equipar 2
+  armas simultâneas (1 em cada mão) só é válido se ambas tiverem
+  propriedade Leve — **não bati isso contra nenhuma aba da planilha
+  mestra** (é regra de ação do Cap. 1, "Duas Armas", que não está
+  importada; `Glossário de Regras` não tem entrada pra isso). Hoje
+  `equiparNoSlot` (E2) deixa equipar qualquer arma de 1 mão na Mão
+  Secundária, sem checar Leve — pode estar errado. Não implementei a
+  trava sem fonte confirmada. Se o Osmar tiver o texto do Cap. 1 ou
+  confirmar de cabeça, adiciona a validação certa.
 - **E3 — Combat/CA lendo o equipamento de verdade.** CA soma
   Armadura+Escudo realmente equipados (não só a opção do wizard,
   incluindo o +2 do Escudo que hoje nunca é somado); "Atacar" no
@@ -82,10 +95,15 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   Dano/Empurrar/Imobilizar por instância de ataque (decisão "Ataque
   Extra — cada instância de ataque é independente" já registrada);
   arma Versátil ganha o dado maior de dano quando empunhada com 2
-  mãos.
+  mãos — **e nesse modo também precisa ocupar a Mão Secundária no
+  equipamento** (E2), não só mudar o dado (refinamento registrado na
+  decisão do schema de equipamento).
 - **E4 — Sintonização (3 itens simultâneos).** Bloqueado até itens
   mágicos existirem como dado — ainda não foram importados na
-  planilha/`data/`. Registrar aqui de novo quando isso destravar.
+  planilha/`data/`. Quando destravar: a checagem vale pra **qualquer**
+  categoria equipada (arma/armadura/escudo mágicos também exigem
+  Sintonização, não só acessório), rodando separada da validação
+  física de slot/mão — registrar aqui de novo quando isso destravar.
 
 **Contexto:** revisão geral pedida pelo Osmar ("vale a gente passar
 por tudo que fizemos"), que levantou as perguntas de equipamento —
