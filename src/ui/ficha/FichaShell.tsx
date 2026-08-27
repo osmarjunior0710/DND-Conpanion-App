@@ -23,6 +23,7 @@ import {
   explicarCapacidadeMaxima,
   type ItemMochila,
 } from '../../core/mochila';
+import { desequiparItem as desequiparItemPuro, equiparNoSlot, type SlotEquipamento } from '../../core/equipamento';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
@@ -226,6 +227,14 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setItensMochila((prev) => [...prev, criarItemManual(nome, quantidade)]);
   }
 
+  function equiparItem(id: string, slot: SlotEquipamento) {
+    setItensMochila((prev) => equiparNoSlot(prev, id, slot));
+  }
+
+  function desequiparItem(id: string) {
+    setItensMochila((prev) => desequiparItemPuro(prev, id));
+  }
+
   function usarUsoFolego(): boolean {
     if (usosFolegoRestantes <= 0) return false;
     setFolegoGasto((v) => v + 1);
@@ -339,6 +348,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onAlterarQuantidade={alterarQuantidadeItem}
             onRemoverItem={removerItemMochila}
             onAdicionarItem={adicionarItemMochila}
+            onEquipar={equiparItem}
+            onDesequipar={desequiparItem}
           />
         )}
         {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} conjura={conjura} />}

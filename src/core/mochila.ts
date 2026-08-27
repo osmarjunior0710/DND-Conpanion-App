@@ -55,6 +55,12 @@ export interface ItemMochila {
    * que o jogador adicionou direto na tela (ganhou em jogo, achou,
    * etc), sem passar pelo wizard/Loja. */
   origemDoItem: 'Origem' | 'Classe' | 'Loja' | 'Manual';
+  /** Slot onde o item está equipado (ver `core/equipamento.ts`) —
+   * `null`/ausente = só guardado na Mochila, não equipado. Só existe
+   * de verdade pra itens que o catálogo reconhece como arma/armadura/
+   * escudo; outros itens nunca ganham esse campo preenchido nessa
+   * entrega (E2). */
+  slot?: 'maoPrincipal' | 'maoSecundaria' | 'armadura' | 'escudo' | null;
 }
 
 let contadorId = 0;

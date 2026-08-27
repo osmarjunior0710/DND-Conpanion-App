@@ -2,6 +2,13 @@ import { useState } from 'react';
 import type { ExplicacaoCalculo } from '../../../core/calculoPersonagem';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import { calcularCargaTotal, pesoDaLinha, type ItemMochila } from '../../../core/mochila';
+import {
+  identificarEquipamento,
+  slotsValidos,
+  resumoEquipado,
+  NOME_SLOT,
+  type SlotEquipamento,
+} from '../../../core/equipamento';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import InfoValor from '../../components/InfoValor';
 import { corDaCarga } from '../../utils/corCarga';
@@ -16,6 +23,55 @@ interface MochilaTabProps {
   onAlterarQuantidade: (id: string, delta: number) => void;
   onRemoverItem: (id: string) => void;
   onAdicionarItem: (nome: string, quantidade: number) => void;
+  onEquipar: (id: string, slot: SlotEquipamento) => void;
+  onDesequipar: (id: string) => void;
+}
+
+function LinhaEquipar({
+  item,
+  onEquipar,
+  onDesequipar,
+}: {
+  item: ItemMochila;
+  onEquipar: (id: string, slot: SlotEquipamento) => void;
+  onDesequipar: (id: string) => void;
+}) {
+  const info = identificarEquipamento(item.nome);
+  const slots = slotsValidos(info);
+  if (slots.length === 0) return null;
+
+  if (info.duasMaos) {
+    const equipado = item.slot === 'maoPrincipal';
+    return (
+      <div className={styles.equiparRow}>
+        <button
+          type="button"
+          className={`${styles.equiparBtn} ${equipado ? styles.equiparBtnAtivo : ''}`}
+          onClick={() => (equipado ? onDesequipar(item.id) : onEquipar(item.id, 'maoPrincipal'))}
+        >
+          {equipado ? '✓ Empunhada (2 mãos)' : 'Equipar (ocupa as 2 mãos)'}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.equiparRow}>
+      {slots.map((slot) => {
+        const ativo = item.slot === slot;
+        return (
+          <button
+            key={slot}
+            type="button"
+            className={`${styles.equiparBtn} ${ativo ? styles.equiparBtnAtivo : ''}`}
+            onClick={() => (ativo ? onDesequipar(item.id) : onEquipar(item.id, slot))}
+          >
+            {ativo ? `✓ ${NOME_SLOT[slot]}` : NOME_SLOT[slot]}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 function Linha({
@@ -24,12 +80,16 @@ function Linha({
   pesoAtivo,
   onAlterarQuantidade,
   onRemoverItem,
+  onEquipar,
+  onDesequipar,
 }: {
   item: ItemMochila;
   itensDetalhados: boolean;
   pesoAtivo: boolean;
   onAlterarQuantidade: (id: string, delta: number) => void;
   onRemoverItem: (id: string) => void;
+  onEquipar: (id: string, slot: SlotEquipamento) => void;
+  onDesequipar: (id: string) => void;
 }) {
   const descricao = buscarDescricaoItem(item.nome);
   const [confirmandoRemocao, setConfirmandoRemocao] = useState(false);
@@ -61,6 +121,7 @@ function Linha({
         </span>
       </div>
       {itensDetalhados && descricao && <div className={styles.itemDesc}>{descricao}</div>}
+      <LinhaEquipar item={item} onEquipar={onEquipar} onDesequipar={onDesequipar} />
       <div className={styles.itemBottom}>
         {pesoAtivo ? <span className={styles.itemWeight}>{pesoDaLinha(item)}</span> : <span />}
         <div className={styles.stepperRow}>
@@ -132,10 +193,13 @@ export default function MochilaTab({
   onAlterarQuantidade,
   onRemoverItem,
   onAdicionarItem,
+  onEquipar,
+  onDesequipar,
 }: MochilaTabProps) {
   const carga = calcularCargaTotal(itens);
   const percentual = capacidadeMaxima ? Math.round((carga.kg / capacidadeMaxima) * 100) : 0;
   const sobrecarregado = capacidadeMaxima !== null && carga.kg > capacidadeMaxima;
+  const equipado = resumoEquipado(itens);
 
   return (
     <>
@@ -171,6 +235,33 @@ export default function MochilaTab({
         </>
       )}
 
+      <div className="section-title">Equipado agora</div>
+      <div className={`box ${styles.equipadoBox}`}>
+        <div className={styles.equipadoLinha}>
+          <span>Mão Principal</span>
+          <span>{equipado.maoPrincipal?.nome ?? '—'}</span>
+        </div>
+        <div className={styles.equipadoLinha}>
+          <span>Mão Secundária</span>
+          <span>
+            {equipado.maoSecundariaOcupadaPorDuasMaos
+              ? 'ocupada (arma de 2 mãos)'
+              : (equipado.maoSecundaria?.nome ?? '—')}
+          </span>
+        </div>
+        <div className={styles.equipadoLinha}>
+          <span>Armadura</span>
+          <span>{equipado.armadura?.nome ?? '—'}</span>
+        </div>
+        <div className={styles.equipadoLinha}>
+          <span>Escudo</span>
+          <span>{equipado.escudo?.nome ?? '—'}</span>
+        </div>
+      </div>
+      <div className="label" style={{ marginTop: 4, marginBottom: 4 }}>
+        equipar ainda não muda a CA nem o Atacar da aba Combat — isso é a próxima entrega.
+      </div>
+
       <div className="section-title">Itens</div>
       {itens.length === 0 && <div className="label">Mochila vazia.</div>}
       {itens.map((it) => (
@@ -181,6 +272,8 @@ export default function MochilaTab({
           pesoAtivo={pesoAtivo}
           onAlterarQuantidade={onAlterarQuantidade}
           onRemoverItem={onRemoverItem}
+          onEquipar={onEquipar}
+          onDesequipar={onDesequipar}
         />
       ))}
 

@@ -2435,3 +2435,45 @@ tocha) por 1 toque errado, sem precisar de um modal/popup separado
 (mais pesado pra uma ação tão frequente).
 
 **Data/origem:** 2026-08.
+
+## Equipar/Desequipar (E2 do plano de Equipamento) — só arma/armadura/escudo, por enquanto
+
+**Decisão:** `core/equipamento.ts` identifica o tipo de um item da
+Mochila cruzando o **nome** contra os catálogos reais (`armas.ts`,
+`armaduras.ts`) — zero suposição nova, só usa dado que já existia.
+Cada item ganha botões de equipar pro(s) slot(s) válidos pro seu
+tipo: arma normal → Mão Principal/Mão Secundária; arma com
+propriedade "Duas Mãos" → 1 botão só, ocupa as duas ao equipar;
+armadura → Armadura; item cuja `categoria` contém "Escudo" (aba
+Armaduras da planilha, "Escudo" é uma linha lá, não uma aba própria)
+→ Escudo. Item que não bate com nenhum catálogo (ração, tocha, item
+mágico ainda não importado) não ganha controle de equipar nessa
+entrega.
+
+**Exclusividade de slot resolvida com 2 regras derivadas da mesma
+"mão" física, não hardcoded por nome de item:**
+1. Equipar em um slot já ocupado por outro item libera esse outro
+   item automaticamente (slot é exclusivo, 1 item por vez).
+2. Duas Mãos ocupa Mão Principal E libera Mão Secundária/Escudo (não
+   dá pra seguir empunhando nada nem escudo com as duas mãos na arma).
+3. Escudo e arma na Mão Secundária se excluem mutuamente (mesmo
+   conceito de "a mão que não é a principal").
+
+**Por que "Vestiário genérico" ficou de fora:** o Osmar pediu que
+itens tipo anel/capa/bota também pudessem ser equipados sem limite
+de slot (diferente de jóias). O catálogo real (`equipamentoAventura.ts`
+etc.) não tem uma coluna que diga "isso é vestível", então não dá
+pra saber com segurança se um item genérico é roupa ou é uma ração —
+tentar adivinhar pelo nome seria fake data. Fica pendente até existir
+uma forma real de marcar isso (provavelmente junto com o catálogo
+estruturado de "Adicionar item", outra pendência já registrada).
+
+**CA e Combat não leem o equipamento ainda — de propósito.** Essa
+entrega é só o mecanismo de equipar/desequipar em si; ligar isso no
+cálculo de CA e no "Atacar" da Combat é a **E3**, próxima entrega do
+plano. A própria tela da Mochila já avisa isso, pra não parecer bug.
+
+**Contexto:** segunda entrega do plano de Equipamento, aprovada pelo
+Osmar ("e2!").
+
+**Data/origem:** 2026-08.

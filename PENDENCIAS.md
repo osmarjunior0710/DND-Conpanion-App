@@ -33,6 +33,24 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   ele confirma de propósito; (2) o 🗑 agora exige 2 toques — o
   primeiro deixa o botão vermelho ("confirmar 🗑", desarma sozinho
   depois de 3s se não confirmar), o segundo apaga de verdade.
+- **E2 — Equipar/Desequipar (arma/armadura/escudo).** Novo
+  `core/equipamento.ts`: `identificarEquipamento(nome)` cruza o nome
+  do item contra `armas.ts`/`armaduras.ts` reais pra saber o tipo
+  (arma/armadura/escudo/genérico) e se é Duas Mãos; cada item ganha
+  botões de equipar pro(s) slot(s) que fazem sentido pro seu tipo.
+  Regras de exclusividade resolvidas em `equiparNoSlot`: equipar em
+  um slot já ocupado libera quem estava lá; arma de Duas Mãos ocupa
+  Mão Principal e libera Mão Secundária/Escudo automaticamente;
+  Escudo e arma na Mão Secundária se excluem (mesma mão, na prática).
+  Seção "Equipado agora" no topo da aba Mochila mostra o resumo dos 4
+  slots. Persistido junto com o resto (mesmo mecanismo de auto-save).
+  **Escopo consciente:** só cobre arma/armadura/escudo, que dá pra
+  identificar com o catálogo real — "Vestiário genérico" (anel,
+  capa, bota) fica de fora até existir uma forma de saber quais
+  itens são "vestíveis" sem exclusividade (ver item abaixo).
+  **CA e Combat ainda não leem o equipamento** — isso é a E3, próxima
+  entrega (já avisado na própria tela: "equipar ainda não muda a CA
+  nem o Atacar da aba Combat").
 
 **Falta:**
 - **Catálogo pra "Adicionar item" na Mochila, com tipos estruturados.**
@@ -49,10 +67,13 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   quando a base de itens mágicos existir. Depende de E2 pra fazer
   sentido de verdade (só importa o "tipo" se o item puder ser
   equipado depois).
-- **E2 — Equipar/Desequipar.** Conceito de slot (Mão Principal, Mão
-  Secundária, Armadura, Escudo, Vestiário genérico sem limite) +
-  toggle equipado/na mochila por item. Arma de Duas Mãos ocupa as 2
-  mãos; propriedade Leve permite 2 armas (1 em cada mão).
+- **Vestiário genérico (E2, adiado).** Itens sem correspondência no
+  catálogo de armas/armaduras (anel, capa, bota, etc) ainda não têm
+  controle de equipar — não dá pra saber com segurança quais são
+  "vestíveis" sem exclusividade e quais são só consumíveis (ração,
+  tocha) sem mais dado/categorização. Fica pra quando isso existir
+  (talento com o catálogo de item mágico, ou uma marcação manual no
+  "Adicionar item" — ver pendência acima).
 - **E3 — Combat/CA lendo o equipamento de verdade.** CA soma
   Armadura+Escudo realmente equipados (não só a opção do wizard,
   incluindo o +2 do Escudo que hoje nunca é somado); "Atacar" no
