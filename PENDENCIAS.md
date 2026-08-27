@@ -985,3 +985,28 @@ só nome + descrição corrida). Pendência: quando mexer nesses outros
 tipos de novo, avaliar replicar o mesmo padrão de card fixo (campos
 próprios de cada tipo — ex. Arma teria Dano/Propriedades/Maestria em
 vez de Tempo/Alcance/Componentes/Duração).
+
+## Combat "Usar Magia" (Ação/Reação) ainda usa fixture de Bruxo — Etapa 3.2 do Bardo
+
+`AcaoPanelContent.tsx`/`ReacaoPanelContent.tsx` (aba Combat) continuam
+usando `magiasExemplo`/`espacosMagiaExemplo` de `data/exampleCombat.ts`
+— "Escudo Arcano" na Reação não existe pra Bardo, e a lista de magias
+do painel de Ação não é a real do personagem. `MagiasTab.tsx` já foi
+corrigido (Etapa 3.1, ver DECISOES-DESIGN.md) — falta replicar o mesmo
+uso de `core/magiasPersonagem.ts` no Combat. Decisões que essa entrega
+vai precisar tomar: quais magias preparadas cabem em cada painel
+(Ação/Bônus/Reação — provavelmente por `tempoConjuracao` da magia, ex.
+"Reação" só entra no painel de Reação), e como ligar uma magia de
+ataque (`classificarMagia().ataque`) à rolagem de acerto/dano que já
+existe pra arma.
+
+## espacoDeMagiaAtivo só cobre 1 círculo simultâneo — falta a Etapa 4 (Level Up de magia)
+
+`core/magiasPersonagem.ts`'s `espacoDeMagiaAtivo` retorna só o círculo
+de MENOR número com espaço > 0 no nível atual. Funciona hoje porque
+nenhum personagem alcançável no app tem 2 círculos com espaço > 0 ao
+mesmo tempo (Bardo nível 1 só tem 1º círculo; Level Up não sabe
+crescer Truques/Magias Preparadas/Espaços — essa é a Etapa 4, ainda
+não feita). Quando a Etapa 4 existir e alguém levar um Bardo até
+nível 3+ (2º círculo destrava), essa função vai continuar mostrando só
+o 1º círculo — precisa virar lista de círculos ativos, não um só.

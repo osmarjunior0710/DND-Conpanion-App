@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { espacosMagiaExemplo } from '../../data/exampleCombat';
 import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
 import {
   calcularAtributosFinais,
@@ -35,6 +34,7 @@ import { alternarSintonizacao } from '../../core/sintonizacao';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
+import { espacoDeMagiaAtivo } from '../../core/magiasPersonagem';
 import {
   caracteristicaDesbloqueada,
   contarRepeticoesCaracteristica,
@@ -141,6 +141,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
   const conjura = personagemConjura(classe);
+  const espaco = espacoDeMagiaAtivo(classe, personagem.nivel);
   const numAtaques = classe ? numeroDeAtaques(classe, personagem.nivel) : 1;
   const indomavelMaximo = classe ? contarRepeticoesCaracteristica(classe, 'Indomável', personagem.nivel) : 0;
   const indomavelRestantes = Math.max(0, indomavelMaximo - indomavelGasto);
@@ -220,7 +221,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   }
 
   function gastarSlot(): boolean {
-    if (espacosGastos >= espacosMagiaExemplo.maximo) return false;
+    if (!espaco || espacosGastos >= espaco.maximo) return false;
     setEspacosGastos((v) => v + 1);
     return true;
   }
@@ -236,9 +237,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   }
 
   function descansoCurto() {
-    setEspacosGastos(0);
+    const recuperaMagia = espaco?.recuperaNoDescansoCurto === true;
+    if (recuperaMagia) setEspacosGastos(0);
     setFolegoGasto((v) => Math.max(0, v - 1));
-    setRestStatus('Descanso Curto: Espaços de Magia (Magia de Pacto) recuperados e 1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.');
+    setRestStatus(
+      `Descanso Curto: ${recuperaMagia ? 'Espaços de Magia recuperados e ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
+    );
   }
 
   function trocarArmaMaestria(armaAntiga: string, armaNova: string) {
@@ -400,7 +404,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onAlternarSintonizacao={alternarSintonizacaoItem}
           />
         )}
-        {tab === 'magias' && <MagiasTab espacosGastos={espacosGastos} conjura={conjura} />}
+        {tab === 'magias' && (
+          <MagiasTab selecao={selecao} classe={classe} nivel={personagem.nivel} espacosGastos={espacosGastos} conjura={conjura} />
+        )}
         {tab === 'combat' && (
           <CombatTab
             pvAtual={pvAtual}

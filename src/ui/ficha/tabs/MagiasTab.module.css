@@ -38,9 +38,3 @@
 .spellName {
   font-size: 14px;
 }
-
-.spellDesc {
-  font-size: 12px;
-  color: var(--text-faint);
-  margin-top: 2px;
-}

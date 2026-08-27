@@ -3319,3 +3319,45 @@ Propriedades/Maestria, por exemplo), não é o mesmo card reaproveitado
 1:1.
 
 **Data/origem:** 2026-08.
+
+## Bardo — Etapa 3.1 (Ficha, aba Magias) feita: dado real no lugar do fixture de Bruxo
+
+Aba Magias da Ficha usava fixture fixo de Bruxo (1 círculo, recupera no
+Descanso Curto — errado pra Bardo). Trocado por dado real:
+
+- `core/magiasPersonagem.ts` (novo): `espacoDeMagiaAtivo(classe, nivel)`
+  lê os 9 recursos "Espaços de Magia — Xº Círculo" de `classes.ts` e
+  retorna o círculo ativo (o de menor número com espaço > 0 nesse
+  nível) + se recupera no Descanso Curto (lido do `recuperaEm` real do
+  recurso, não mais assumido). `truquesDoPersonagem`/
+  `magiasPreparadasDoPersonagem` buscam os nomes escolhidos no wizard
+  (`selecao.truquesEscolhidos`/`magiasPreparadasEscolhidas`) no
+  catálogo completo de magias.
+- **Limitação conhecida, aceita por ora:** só existe UM círculo ativo
+  de cada vez hoje — suficiente porque Bardo nível 1 (único nível
+  alcançável sem a Etapa 4, que ainda não existe) só tem 1º círculo.
+  Se `espacoDeMagiaAtivo` algum dia encontrar 2+ círculos com espaço >
+  0 simultaneamente (só possível depois que Level Up souber crescer
+  Truques/Magias/Espaços — Etapa 4), ele retorna só o de menor
+  círculo. Registrado como pendência, não bloqueou esta entrega.
+- `FichaShell.tsx`: `gastarSlot`/`descansoCurto` usam o máximo e a
+  regra de recuperação reais em vez da constante fixa de fixture
+  (`espacosMagiaExemplo`). Descanso Curto só reseta Espaços de Magia
+  se o recurso realmente recupera nele (Bardo não recupera — só no
+  Longo).
+- `MagiasTab.tsx`: cada Truque/Magia Preparada usa o card novo
+  (`MagiaComDescricao`) — nome sublinhado abre o popup com Tempo/
+  Alcance/Componentes/Duração/Descrição de verdade.
+
+**Fora desta entrega (fica pra Etapa 3.2):** o painel "Usar Magia" da
+aba Combat (Ação e Reação) ainda usa fixture de Bruxo com "Escudo
+Arcano" — não existe pra Bardo, decidir isso é maior que essa entrega.
+
+**Testado:** Playwright 390×844 — wizard completo (Classe Bardo
+manual, resto sorteado) → Salvar → abri a Ficha → aba Magias mostra
+Espaços de Magia reais (1º círculo, 2/2, "recupera no Descanso
+Longo"), Truques e Magias Preparadas reais (nomes/escolas/círculos
+batendo com o que foi sorteado na criação), popup de magia abre com
+os campos certos.
+
+**Data/origem:** 2026-08.

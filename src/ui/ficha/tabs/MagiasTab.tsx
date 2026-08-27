@@ -1,15 +1,18 @@
-import { espacosMagiaExemplo, magiasExemplo } from '../../../data/exampleCombat';
+import type { Classe } from '../../../data/rulesets/dnd2024/classes';
+import type { WizardSelection } from '../../../core/personagem';
+import { espacoDeMagiaAtivo, truquesDoPersonagem, magiasPreparadasDoPersonagem } from '../../../core/magiasPersonagem';
+import MagiaComDescricao from '../../components/MagiaComDescricao';
 import styles from './MagiasTab.module.css';
 
 interface MagiasTabProps {
+  selecao: WizardSelection;
+  classe: Classe | null;
+  nivel: number;
   espacosGastos: number;
   conjura: boolean;
 }
 
-export default function MagiasTab({ espacosGastos, conjura }: MagiasTabProps) {
-  const truques = magiasExemplo.filter((m) => m.circulo === 0);
-  const preparadas = magiasExemplo.filter((m) => m.circulo > 0);
-
+export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conjura }: MagiasTabProps) {
   if (!conjura) {
     return (
       <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 13, textAlign: 'center' }}>
@@ -18,48 +21,57 @@ export default function MagiasTab({ espacosGastos, conjura }: MagiasTabProps) {
     );
   }
 
+  const espaco = espacoDeMagiaAtivo(classe, nivel);
+  const truques = truquesDoPersonagem(selecao);
+  const preparadas = magiasPreparadasDoPersonagem(selecao);
+
   return (
     <>
-      <div className="label" style={{ marginBottom: 8, color: 'var(--warn)' }}>
-        [PH] tudo nesta aba ainda é fixture de exemplo — nenhuma classe conjuradora foi importada ainda, então isso
-        não reflete a magia real do personagem.
-      </div>
-
-      <div className="section-title">Espaços de Magia</div>
-      <div className="label">1º círculo</div>
-      <div className={styles.slotRow}>
-        {Array.from({ length: espacosMagiaExemplo.maximo }).map((_, i) => (
-          <div key={i} className={`${styles.slotPip} ${i < espacosGastos ? styles.slotPipGasto : ''}`}>
-            {i < espacosGastos ? '✓' : '①'}
+      {espaco && (
+        <>
+          <div className="section-title">Espaços de Magia</div>
+          <div className="label">{espaco.circulo}º círculo</div>
+          <div className={styles.slotRow}>
+            {Array.from({ length: espaco.maximo }).map((_, i) => (
+              <div key={i} className={`${styles.slotPip} ${i < espacosGastos ? styles.slotPipGasto : ''}`}>
+                {i < espacosGastos ? '✓' : '①'}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="label" style={{ marginBottom: 12 }}>
-        {espacosMagiaExemplo.maximo - espacosGastos}/{espacosMagiaExemplo.maximo} disponíveis — Magia de Pacto do
-        Bruxo recupera no Descanso Curto (não só no Longo).
-      </div>
-
-      <div className="section-title">Truques</div>
-      {truques.map((m) => (
-        <div key={m.nome} className={styles.spellRow}>
-          <div>
-            <div className={styles.spellName}>[PH] {m.nome}</div>
-            <div className={styles.spellDesc}>{m.descricao}</div>
+          <div className="label" style={{ marginBottom: 12 }}>
+            {espaco.maximo - espacosGastos}/{espaco.maximo} disponíveis — recupera no{' '}
+            {espaco.recuperaNoDescansoCurto ? 'Descanso Curto' : 'Descanso Longo'}.
           </div>
-          <span className="label">{m.tipo}</span>
-        </div>
-      ))}
+        </>
+      )}
 
-      <div className="section-title">1º Círculo — preparadas</div>
-      {preparadas.map((m) => (
-        <div key={m.nome} className={styles.spellRow}>
-          <div>
-            <div className={styles.spellName}>[PH] {m.nome}</div>
-            <div className={styles.spellDesc}>{m.descricao}</div>
-          </div>
-          <span className="label">{m.tipo}</span>
-        </div>
-      ))}
+      {truques.length > 0 && (
+        <>
+          <div className="section-title">Truques</div>
+          {truques.map((m) => (
+            <div key={m.id} className={styles.spellRow}>
+              <div className={styles.spellName}>
+                <MagiaComDescricao magia={m} />
+              </div>
+              <span className="label">{m.escola}</span>
+            </div>
+          ))}
+        </>
+      )}
+
+      {preparadas.length > 0 && (
+        <>
+          <div className="section-title">Magias Preparadas</div>
+          {preparadas.map((m) => (
+            <div key={m.id} className={styles.spellRow}>
+              <div className={styles.spellName}>
+                <MagiaComDescricao magia={m} />
+              </div>
+              <span className="label">{m.circulo}º círculo</span>
+            </div>
+          ))}
+        </>
+      )}
 
       <div className="label" style={{ marginTop: 8 }}>
         Conjurar de verdade (gastar espaço, rolar ataque/dano) acontece pela aba Combat, dentro do painel de Ação.
