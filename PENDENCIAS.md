@@ -77,15 +77,15 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   a ser relevante quando existir dado de item mágico ou uma marcação
   manual no catálogo estruturado de "Adicionar item" (pendência
   acima).
-- **E3 — Combat/CA lendo o equipamento de verdade (E3.1 e E3.2 feitas,
-  E3.3/E3.4 faltam).** ~~CA soma Armadura+Escudo realmente
+- **E3 — Combat/CA lendo o equipamento de verdade (E3.1, E3.2 e E3.3
+  feitas, só E3.4 falta).** ~~CA soma Armadura+Escudo realmente
   equipados~~ — feito (E3.1). ~~"Atacar" usa a arma equipada de
   verdade~~ — feito (E3.2, `core/ataque.ts`, ver DECISOES-DESIGN.md).
-  Falta: **E3.3** — ataque bônus extra com a Mão Secundária quando as
-  duas armas forem Leve (confirmado no Cap. 6, ver decisão "Sistema
-  de Equipamento"); **E3.4** — arma Versátil ganha o dado maior de
-  dano quando empunhada com 2 mãos, ocupando também a Mão Secundária
-  no equipamento (E2).
+  ~~Ataque bônus extra com a Mão Secundária quando as duas armas
+  forem Leve~~ — feito (E3.3, painel de Ação Bônus). Falta só
+  **E3.4** — arma Versátil ganha o dado maior de dano quando
+  empunhada com 2 mãos, ocupando também a Mão Secundária no
+  equipamento (E2).
 - **Ataque Desarmado — só a opção "Dano" está implementada.** O
   Apêndice C (Glossário) também descreve **Empurrar** e **Imobilizar**
   como opções do Ataque Desarmado (testes de resistência do alvo

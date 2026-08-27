@@ -41,6 +41,7 @@ interface CombatTabProps {
   ataquesEstudados: CaracteristicaNivel | null;
   ajusteTatico: CaracteristicaNivel | null;
   ataqueAtual: AtaqueResolvido | null;
+  ataqueBonus: AtaqueResolvido | null;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -76,6 +77,7 @@ export default function CombatTab({
   ataquesEstudados,
   ajusteTatico,
   ataqueAtual,
+  ataqueBonus,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -114,6 +116,24 @@ export default function CombatTab({
     onMarcarUsado('bonus');
     setPainelAberto(null);
     setFeedback('🩹 Recuperar Fôlego — cura aplicada ao seu PV automaticamente.');
+  }
+
+  function usarAtaqueMaoSecundaria() {
+    if (!ataqueBonus) return;
+    rolarD20({
+      label: `Ataque — ${ataqueBonus.nome} (Mão Secundária)`,
+      formula: `1d20 + ${ataqueBonus.info.modAcerto}`,
+      mod: ataqueBonus.info.modAcerto,
+    });
+    onMarcarUsado('bonus');
+    setPainelAberto(null);
+    setFeedback(`🗡 ${ataqueBonus.nome} (Mão Secundária) — ${ataqueBonus.descricao} Toque "Rolar Dano" pra ver o dano.`);
+    setDanoPendente({
+      label: `Dano — ${ataqueBonus.nome} (Mão Secundária)`,
+      quantidade: ataqueBonus.info.danoQuantidade,
+      lados: ataqueBonus.info.danoLados,
+      mod: ataqueBonus.info.danoMod,
+    });
   }
 
   function usarMenteTatica() {
@@ -311,6 +331,8 @@ export default function CombatTab({
             usosFolegoMaximo={usosFolegoMaximo}
             usosFolegoRestantes={usosFolegoRestantes}
             onUsarRecuperarFolego={usarRecuperarFolego}
+            ataqueBonus={ataqueBonus}
+            onUsarAtaqueBonus={usarAtaqueMaoSecundaria}
           />
         )}
         {painelAberto === 'reacao' && (

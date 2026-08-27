@@ -24,7 +24,7 @@ import {
   type ItemMochila,
 } from '../../core/mochila';
 import { desequiparItem as desequiparItemPuro, equiparNoSlot, resumoEquipado, type SlotEquipamento } from '../../core/equipamento';
-import { ataqueAtual } from '../../core/ataque';
+import { ataqueAtual, ataqueBonusMaoSecundaria } from '../../core/ataque';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
@@ -142,8 +142,19 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const ajusteTatico = classe ? caracteristicaDesbloqueada(classe, 'Ajuste Tático', personagem.nivel) : null;
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
-  const armaEquipada = resumoEquipado(itensMochila).maoPrincipal;
+  const equipadoAtual = resumoEquipado(itensMochila);
+  const armaEquipada = equipadoAtual.maoPrincipal;
   const ataque = classe ? ataqueAtual(armaEquipada?.nome ?? null, classe, personagem.nivel, forMod, desMod) : null;
+  const ataqueBonus = classe
+    ? ataqueBonusMaoSecundaria(
+        armaEquipada?.nome ?? null,
+        equipadoAtual.maoSecundaria?.nome ?? null,
+        classe,
+        personagem.nivel,
+        forMod,
+        desMod,
+      )
+    : null;
 
   // Salva progresso automaticamente a cada mudança relevante — Level
   // Up, Descanso, troca de arma de Maestria, uso de Recuperar
@@ -387,6 +398,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             ataquesEstudados={ataquesEstudados}
             ajusteTatico={ajusteTatico}
             ataqueAtual={ataque}
+            ataqueBonus={ataqueBonus}
           />
         )}
       </div>

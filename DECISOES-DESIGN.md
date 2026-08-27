@@ -2665,3 +2665,32 @@ Pesada.", e a rolagem de acerto usou `1d20 + 5` (+3 Força + 2 Bônus
 de Proficiência), batendo com a conta esperada.
 
 **Data/origem:** 2026-08.
+
+## E3.3 — Ataque bônus com a Mão Secundária (propriedade Leve)
+
+**O que mudou.** `core/ataque.ts` ganhou `ataqueBonusMaoSecundaria` —
+só retorna um ataque quando a arma da Mão Principal **e** a da Mão
+Secundária forem as duas Leve (confirmado no Cap. 6, ver decisão
+"Sistema de Equipamento" acima), caso contrário retorna `null` e a
+opção simplesmente não aparece. A opção mora no painel de **Ação
+Bônus** (`BonusPanelContent.tsx`), não no de Ação — o livro descreve
+esse ataque como "uma Ação Bônus mais tarde no mesmo turno", então é
+onde ele pertence mecanicamente, ao lado de Recuperar Fôlego (as duas
+opções convivem no mesmo painel agora, cada uma só aparece se
+disponível).
+
+**Dano sem bônus de atributo — regra aplicada.** `ataqueComArma`
+ganhou um parâmetro `semModAtributoNoDano` (usado só por esse ataque
+bônus): zera o modificador de atributo no dano, a menos que ele seja
+negativo — texto exato do Cap. 6 já citado na decisão acima. O acerto
+continua somando o modificador normalmente (só o dano é afetado).
+
+**Testado:** Playwright 390×844 — Guerreiro nível 1 (FOR 16/DES 14)
+com Cimitarra (Mão Principal) + Adaga (Mão Secundária, ambas Leve):
+painel de Ação Bônus mostrou "Atacar — Adaga (Mão Secundária)",
+rolagem `1d20 + 5` correta. Trocando a Mão Secundária por Machado de
+Batalha (não é Leve): a opção não aparece, e o painel ainda mostra
+Recuperar Fôlego normalmente (não cai no estado "nenhuma ação bônus
+disponível").
+
+**Data/origem:** 2026-08.

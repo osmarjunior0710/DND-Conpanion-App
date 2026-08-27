@@ -46,17 +46,30 @@ export function ataqueDesarmado(classe: Classe, nivel: number, forMod: number): 
  * Assume proficiência com a arma (única classe hoje, Guerreiro, é
  * proficiente em todas — ver `core/maestriaArma.ts`); auditoria de
  * proficiência por classe/arma fica pra quando houver 2ª classe.
+ *
+ * `semModAtributoNoDano` é o ataque bônus da propriedade Leve (E3.3):
+ * o dano não soma o modificador de atributo, a menos que ele seja
+ * negativo (Cap. 6: "não adiciona seu modificador de atributo ao dano
+ * do ataque adicional, a menos que esse modificador seja negativo").
  */
-export function ataqueComArma(arma: Arma, classe: Classe, nivel: number, forMod: number, desMod: number): AtaqueResolvido {
+export function ataqueComArma(
+  arma: Arma,
+  classe: Classe,
+  nivel: number,
+  forMod: number,
+  desMod: number,
+  semModAtributoNoDano = false,
+): AtaqueResolvido {
   const acuidade = arma.propriedades.includes('Acuidade');
   const distancia = arma.categoria.includes('à Distância');
   const atribMod = acuidade ? Math.max(forMod, desMod) : distancia ? desMod : forMod;
   const prof = bonusProficiencia(classe, nivel);
   const { quantidade, lados, tipo } = parseDano(arma.dano);
+  const danoMod = semModAtributoNoDano && atribMod > 0 ? 0 : atribMod;
   return {
     nome: arma.nome,
     descricao: `${arma.dano}${arma.propriedades ? ` · ${arma.propriedades}` : ''}.`,
-    info: { modAcerto: atribMod + prof, danoQuantidade: quantidade, danoLados: lados, danoMod: atribMod, danoTipo: tipo },
+    info: { modAcerto: atribMod + prof, danoQuantidade: quantidade, danoLados: lados, danoMod, danoTipo: tipo },
   };
 }
 
@@ -71,4 +84,27 @@ export function ataqueAtual(
 ): AtaqueResolvido {
   const arma = nomeArmaEquipada ? armas.find((a) => a.nome === nomeArmaEquipada) : undefined;
   return arma ? ataqueComArma(arma, classe, nivel, forMod, desMod) : ataqueDesarmado(classe, nivel, forMod);
+}
+
+/**
+ * Ataque bônus da propriedade Leve (E3.3) — só existe quando a arma
+ * da Mão Principal E a da Mão Secundária forem as duas Leve
+ * (confirmado no Cap. 6, ver DECISOES-DESIGN.md "Sistema de
+ * Equipamento"). `null` quando a condição não é satisfeita — painel
+ * de Ação Bônus simplesmente não mostra a opção.
+ */
+export function ataqueBonusMaoSecundaria(
+  nomeMaoPrincipal: string | null,
+  nomeMaoSecundaria: string | null,
+  classe: Classe,
+  nivel: number,
+  forMod: number,
+  desMod: number,
+): AtaqueResolvido | null {
+  if (!nomeMaoPrincipal || !nomeMaoSecundaria) return null;
+  const principal = armas.find((a) => a.nome === nomeMaoPrincipal);
+  const secundaria = armas.find((a) => a.nome === nomeMaoSecundaria);
+  if (!principal || !secundaria) return null;
+  if (!principal.propriedades.includes('Leve') || !secundaria.propriedades.includes('Leve')) return null;
+  return ataqueComArma(secundaria, classe, nivel, forMod, desMod, true);
 }
