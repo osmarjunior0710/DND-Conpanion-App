@@ -222,6 +222,15 @@ button {
   margin-right: var(--space-3);
 }
 
+.opt-card-img-emblema {
+  width: clamp(56px, 10vw, 110px);
+  height: clamp(56px, 10vw, 110px);
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-right: var(--space-3);
+  border-radius: var(--shape-sm);
+}
+
 .opt-card-img img {
   width: 100%;
   height: 100%;

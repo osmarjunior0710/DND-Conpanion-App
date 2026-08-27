@@ -165,6 +165,15 @@ usado no Guerreiro, B1-B5).
 depois da base** — decisão de seguir ou não será tomada só quando a
 base estiver pronta e testada, não presumida agora.
 
+**Emblemas das outras 10 classes são placeholder (cópia do emblema do
+Guerreiro).** O Osmar já subiu os emblemas novos (formato redondo) de
+Guerreiro e Bardo — as 10 restantes (Bárbaro, Bruxo, Clérigo, Druida,
+Feiticeiro, Guardião, Ladino, Mago, Monge, Paladino) usam uma cópia do
+emblema do Guerreiro por enquanto (aparecem cinza, dentro do card "em
+breve"). Trocar pelo arquivo real assim que existir — é só substituir
+`src/assets/icones-classes/{id}-banner.png`, o código não muda. Ver
+DECISOES-DESIGN.md "Ícones novos (emblema redondo)".
+
 **Contexto:** decisão do Osmar após fechar o Plano de Equipamento —
 "vamos pra sintonização" (E4) e depois "a gente vai começar uma
 classe nova". Bardo escolhido por cobrir o padrão mais completo de

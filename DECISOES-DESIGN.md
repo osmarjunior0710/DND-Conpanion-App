@@ -3112,3 +3112,40 @@ círculo na criação — ainda não implementado, essa entrega foi só os
 dados.
 
 **Data/origem:** 2026-08.
+
+## Ícones novos (emblema redondo) substituem os estandartes na tela de Classe
+
+**Decisão:** o Osmar subiu 2 novos ícones em formato de emblema redondo
+(dourado/bronze, moldura ornamentada) — Guerreiro (espada) e Bardo
+(alaúde) — pra substituir o estandarte alto/estreito antigo na tela
+"1. Classe" do wizard. Mesmo arquivo (`{id}-banner.png`), mas exibido
+na caixa quadrada padrão (`.opt-card-img-emblema`, ~56-110px) em vez
+da caixa alta (`.opt-card-img-banner`) — o formato redondo cabe melhor
+nela.
+
+**Classes sem emblema próprio ainda usam uma cópia do emblema do
+Guerreiro como placeholder** (as 10 restantes: Bárbaro, Bruxo,
+Clérigo, Druida, Feiticeiro, Guardião, Ladino, Mago, Monge, Paladino)
+— aparecem cinza/desativadas porque já ficam dentro do card "em
+breve" (`btn-disabled`, opacidade 0.35), não precisou de tratamento
+visual extra. Trocar pelo emblema real de cada classe assim que
+existir — é só substituir o arquivo, o código não muda.
+
+**Bardo corrigido pra `disponivel: false` (achado ao mexer nisso).**
+A Etapa 1 (dados) do Bardo tinha deixado `disponivel: true` por engano
+— e `ClasseStep.tsx` **nunca filtrava por esse campo** (só Origem e
+Espécie filtravam; funcionava por acaso enquanto só existia 1 classe
+no array). Corrigidos os dois: Bardo virou `disponivel: false` (wizard
+ainda não sabe criar um Bardo de ponta a ponta — falta a Etapa 2), e
+`ClasseStep.tsx` agora filtra `classes` por `disponivel` como as
+outras telas já faziam, mostrando classes com dado real mas ainda não
+prontas ("em breve" com nome/emblema reais) separadas da lista
+hardcoded `CLASSES_EM_BREVE` (que agora só cobre as 10 sem dado
+nenhum ainda).
+
+**Testado:** Playwright 390×844 — Guerreiro aparece selecionável com
+o emblema de espada; Bardo aparece "em breve" com o emblema de
+alaúde (cinza); as outras 10 aparecem "em breve" com o emblema de
+espada reaproveitado (cinza).
+
+**Data/origem:** 2026-08.

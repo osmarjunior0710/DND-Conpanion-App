@@ -16,9 +16,15 @@ function bannerClasse(id: string): string | undefined {
   return entrada?.[1];
 }
 
+// Ícones novos (emblema redondo) substituem os estandartes antigos —
+// mesmo arquivo `-banner.png`, mas exibidos na caixa quadrada padrão
+// (`.opt-card-img`) em vez da caixa alta/estreita de antes, porque o
+// formato redondo cabe melhor nela. Classes sem arte própria ainda
+// usam uma cópia do emblema do Guerreiro como placeholder — trocar
+// pelo emblema real assim que existir (ver DECISOES-DESIGN.md).
 function IconeClasse({ id }: { id: string }) {
   const banner = bannerClasse(id);
-  if (banner) return <img src={banner} alt="" className="opt-card-img-banner" />;
+  if (banner) return <img src={banner} alt="" className="opt-card-img-emblema" />;
   return (
     <div className="opt-card-img">
       {iconeClasse(id) ? <img src={iconeClasse(id)} alt="" /> : '🖼'}
@@ -28,7 +34,6 @@ function IconeClasse({ id }: { id: string }) {
 
 const CLASSES_EM_BREVE = [
   { nome: 'Bárbaro', id: 'barbaro' },
-  { nome: 'Bardo', id: 'bardo' },
   { nome: 'Bruxo', id: 'bruxo' },
   { nome: 'Clérigo', id: 'clerigo' },
   { nome: 'Druida', id: 'druida' },
@@ -41,10 +46,17 @@ const CLASSES_EM_BREVE = [
 ];
 
 export default function ClasseStep({ selection, update }: StepProps) {
+  const disponiveis = classes.filter((c) => c.disponivel);
+  // Classes com dado real (núcleo já importado) mas ainda não prontas
+  // pro wizard de ponta a ponta (ex: Bardo, Etapa 1 só de dados feita)
+  // aparecem na lista "em breve" com o nome/emblema reais, não mais o
+  // placeholder genérico.
+  const indisponiveis = classes.filter((c) => !c.disponivel);
+
   return (
     <>
       <div className="section-title">Selecione uma classe</div>
-      {classes.map((c) => (
+      {disponiveis.map((c) => (
         <div
           key={c.id}
           className={`opt-card ${selection.classe === c.nome ? 'selected' : ''}`}
@@ -58,6 +70,19 @@ export default function ClasseStep({ selection, update }: StepProps) {
               <div className="opt-card-tags">
                 <span className="tag">Dado de Vida {c.dadoDeVida}</span>
                 <span className="tag">Salvaguardas {c.salvaguardas.join('/')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+      {indisponiveis.map((c) => (
+        <div key={c.id} className="opt-card btn-disabled">
+          <div className="opt-card-row">
+            <IconeClasse id={c.id} />
+            <div className="opt-card-info">
+              <div className="opt-card-name">
+                {c.nome}
+                <span className="tag" style={{ marginLeft: 6 }}>(em breve)</span>
               </div>
             </div>
           </div>
@@ -77,8 +102,8 @@ export default function ClasseStep({ selection, update }: StepProps) {
         </div>
       ))}
       <div className="label" style={{ marginTop: 6 }}>
-        Só o Guerreiro está pronto por enquanto — as outras 11 classes ainda não foram importadas da
-        planilha. Ver <code>PENDENCIAS.md</code>.
+        Só o Guerreiro está pronto por enquanto — as outras classes ainda não foram implementadas de
+        ponta a ponta. Ver <code>PENDENCIAS.md</code>.
       </div>
     </>
   );

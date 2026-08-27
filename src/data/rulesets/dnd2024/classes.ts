@@ -223,7 +223,12 @@ export const classes: Classe[] = [
       { nivel: 19, bonusProficiencia: '+6', caracteristicas: ['Dádiva Épica'] },
       { nivel: 20, bonusProficiencia: '+6', caracteristicas: ['Palavras de Criação'] },
     ],
-    disponivel: true,
+    // Núcleo/características/magias já importados (Etapa 1), mas o
+    // wizard ainda não sabe criar um Bardo de ponta a ponta (Etapa 2
+    // — seleção de truques/magias na criação) — `false` até isso
+    // existir, senão o wizard deixa escolher Bardo sem conseguir
+    // terminar a criação. Ver PENDENCIAS.md.
+    disponivel: false,
     fonte: FONTE,
   },
 ];
