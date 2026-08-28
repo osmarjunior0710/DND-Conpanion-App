@@ -3450,3 +3450,43 @@ proposta nova (a planilha precisaria mapear quais ações realmente são
 grátis — não é regra pra inventar de memória).
 
 **Data/origem:** 2026-08.
+
+## Inspiração de Bardo plugada no Combat (painel de Bônus)
+
+Achado do Osmar: Inspiração de Bardo existia só como característica
+exibida (InfoChip), sem contador de usos nem botão de uso — diferente
+de Recuperar Fôlego/Indomável/Surto de Ação (Guerreiro), que já tinham
+esse tratamento completo desde antes.
+
+**Regra confirmada na planilha** (característica "Inspiração de
+Bardo" + "Fonte de Inspiração", não assumida de memória): usos = mod.
+de Carisma (mínimo 1) — **não** é uma tabela por nível como os outros
+recursos (só o TAMANHO do dado cresce por nível: d6→d8→d10→d12). Por
+isso ganhou um arquivo próprio, `core/inspiracaoBardo.ts`, em vez de
+reaproveitar `valorRecursoClasse` (que só lê tabela). Restaura no
+Descanso Longo; a partir do nível 5 ("Fonte de Inspiração", já
+detectável genericamente via `caracteristicaDesbloqueada`), também no
+Curto, e ganha a opção extra "gastar 1 Espaço de Magia (sem ação) pra
+recuperar 1 uso".
+
+**UI:** painel de Ação Bônus (`BonusPanelContent.tsx`) ganhou a seção
+de Inspiração, mesmo padrão visual de Recuperar Fôlego (pips + linha
+clicável). Usar Inspiração marca a Ação Bônus do turno como "usada"
+(gasta a Ação Bônus de verdade, regra do livro: "Como uma Ação
+Bônus..."); a opção de recuperar com Espaço de Magia NÃO marca nada
+como usada (é "sem ação necessária", conforme o texto da própria
+característica) e só some quando 1) não tem Espaço de Magia sobrando
+ou 2) não tem uso gasto pra recuperar.
+
+**Sem rolagem automática do dado** — diferente de Recuperar Fôlego
+(que já cura sozinho): a Inspiração de Bardo é concedida a OUTRA
+criatura, que decide quando/se rola o dado (até 1h depois, só quando
+falhar um teste). O botão só consome o uso e mostra o texto de
+lembrete; não faz sentido "rolar" nada no momento da concessão.
+
+**Testado:** Playwright 390×844 — Bardo nível 1 (CAR sem bônus, então
+1 uso, d6, sem Fonte de Inspiração ainda) → painel de Bônus mostra
+"Inspiração de Bardo (d6): 1/1 disponíveis" → usar marca a Ação Bônus
+como "usada" e mostra o feedback correto.
+
+**Data/origem:** 2026-08.

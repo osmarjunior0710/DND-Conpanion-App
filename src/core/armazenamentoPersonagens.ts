@@ -28,6 +28,7 @@ export interface PersonagemSalvo {
   indomavelGasto?: number;
   surtoGasto?: number;
   espacosGastos?: number;
+  inspiracaoGasto?: number;
   /** Mochila como estado de verdade (ver DECISOES-DESIGN.md "Mochila
    * vira estado de verdade") — quando ausente (personagem salvo antes
    * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a

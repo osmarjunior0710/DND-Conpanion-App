@@ -41,6 +41,7 @@ import {
   truquesDoPersonagem,
   magiasPreparadasDoPersonagem,
 } from '../../core/magiasPersonagem';
+import { usosInspiracaoMaximo, dadoInspiracao, fonteDeInspiracaoDesbloqueada } from '../../core/inspiracaoBardo';
 import {
   caracteristicaDesbloqueada,
   contarRepeticoesCaracteristica,
@@ -117,6 +118,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
+  const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
   const [surtoUsadoTurno, setSurtoUsadoTurno] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
@@ -153,6 +155,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const magiasPreparadasReacao = magiasPreparadas.filter(ehMagiaDeReacao);
   const magiasPreparadasAcao = magiasPreparadas.filter((m) => !ehMagiaDeReacao(m));
   const modAcertoConjuracao = calcularModAcertoConjuracao(selecao, classe, personagem.nivel);
+  const usosInspiracaoMax = usosInspiracaoMaximo(selecao, classe, personagem.nivel);
+  const usosInspiracaoRestantes = Math.max(0, usosInspiracaoMax - inspiracaoGasto);
+  const tamanhoDadoInspiracao = dadoInspiracao(classe, personagem.nivel);
+  const fonteDeInspiracao = fonteDeInspiracaoDesbloqueada(classe, personagem.nivel);
   const numAtaques = classe ? numeroDeAtaques(classe, personagem.nivel) : 1;
   const indomavelMaximo = classe ? contarRepeticoesCaracteristica(classe, 'Indomável', personagem.nivel) : 0;
   const indomavelRestantes = Math.max(0, indomavelMaximo - indomavelGasto);
@@ -198,6 +204,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       indomavelGasto,
       surtoGasto,
       espacosGastos,
+      inspiracaoGasto,
       itensMochilaAtual: itensMochila,
       levelUpHpModo,
       levelUpHpRolado,
@@ -213,6 +220,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     indomavelGasto,
     surtoGasto,
     espacosGastos,
+    inspiracaoGasto,
     itensMochila,
     levelUpHpModo,
     levelUpHpRolado,
@@ -237,22 +245,37 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     return true;
   }
 
+  function usarInspiracao(): boolean {
+    if (usosInspiracaoRestantes <= 0) return false;
+    setInspiracaoGasto((v) => v + 1);
+    return true;
+  }
+
+  function recuperarInspiracaoComEspaco(): boolean {
+    if (inspiracaoGasto <= 0) return false;
+    if (!gastarSlot()) return false;
+    setInspiracaoGasto((v) => Math.max(0, v - 1));
+    return true;
+  }
+
   function descansoLongo() {
     setPvAtual(personagem.pvMax);
     setEspacosGastos(0);
     setFolegoGasto(0);
     setIndomavelGasto(0);
     setSurtoGasto(0);
+    setInspiracaoGasto(0);
     fimDoTurno();
-    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável e Surto de Ação recuperados.`);
+    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação e Inspiração de Bardo recuperados.`);
   }
 
   function descansoCurto() {
     const recuperaMagia = espaco?.recuperaNoDescansoCurto === true;
     if (recuperaMagia) setEspacosGastos(0);
+    if (fonteDeInspiracao) setInspiracaoGasto(0);
     setFolegoGasto((v) => Math.max(0, v - 1));
     setRestStatus(
-      `Descanso Curto: ${recuperaMagia ? 'Espaços de Magia recuperados e ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
+      `Descanso Curto: ${recuperaMagia ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
     );
   }
 
@@ -452,6 +475,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             ajusteTatico={ajusteTatico}
             ataqueAtual={ataque}
             ataqueBonus={ataqueBonus}
+            usosInspiracaoMaximo={usosInspiracaoMax}
+            usosInspiracaoRestantes={usosInspiracaoRestantes}
+            tamanhoDadoInspiracao={tamanhoDadoInspiracao}
+            fonteDeInspiracao={fonteDeInspiracao}
+            onUsarInspiracao={usarInspiracao}
+            onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
           />
         )}
       </div>

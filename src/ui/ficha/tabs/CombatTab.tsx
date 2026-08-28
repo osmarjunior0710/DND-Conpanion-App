@@ -47,6 +47,12 @@ interface CombatTabProps {
   ajusteTatico: CaracteristicaNivel | null;
   ataqueAtual: AtaqueResolvido | null;
   ataqueBonus: AtaqueResolvido | null;
+  usosInspiracaoMaximo: number;
+  usosInspiracaoRestantes: number;
+  tamanhoDadoInspiracao: number;
+  fonteDeInspiracao: boolean;
+  onUsarInspiracao: () => boolean;
+  onRecuperarInspiracaoComEspaco: () => boolean;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -88,6 +94,12 @@ export default function CombatTab({
   ajusteTatico,
   ataqueAtual,
   ataqueBonus,
+  usosInspiracaoMaximo,
+  usosInspiracaoRestantes,
+  tamanhoDadoInspiracao,
+  fonteDeInspiracao,
+  onUsarInspiracao,
+  onRecuperarInspiracaoComEspaco,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -126,6 +138,20 @@ export default function CombatTab({
     onMarcarUsado('bonus');
     setPainelAberto(null);
     setFeedback('🩹 Recuperar Fôlego — cura aplicada ao seu PV automaticamente.');
+  }
+
+  function usarInspiracaoBardo() {
+    if (!onUsarInspiracao()) return;
+    onMarcarUsado('bonus');
+    setPainelAberto(null);
+    setFeedback(
+      `🎵 Inspiração de Bardo — conceda 1 dado de Inspiração (d${tamanhoDadoInspiracao}) pra uma criatura que veja/ouça você a até 18m. Ela pode somar o dado a 1 D20 que falhar, dentro de 1h.`,
+    );
+  }
+
+  function recuperarInspiracaoComEspaco() {
+    if (!onRecuperarInspiracaoComEspaco()) return;
+    setFeedback('🎵 Inspiração de Bardo — 1 uso recuperado gastando 1 Espaço de Magia (sem ação necessária).');
   }
 
   function usarAtaqueMaoSecundaria() {
@@ -354,6 +380,14 @@ export default function CombatTab({
             onUsarRecuperarFolego={usarRecuperarFolego}
             ataqueBonus={ataqueBonus}
             onUsarAtaqueBonus={usarAtaqueMaoSecundaria}
+            usosInspiracaoMaximo={usosInspiracaoMaximo}
+            usosInspiracaoRestantes={usosInspiracaoRestantes}
+            tamanhoDadoInspiracao={tamanhoDadoInspiracao}
+            fonteDeInspiracao={fonteDeInspiracao}
+            espacosGastos={espacosGastos}
+            espacosMaximo={espacosMaximo}
+            onUsarInspiracao={usarInspiracaoBardo}
+            onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
           />
         )}
         {painelAberto === 'reacao' && (
