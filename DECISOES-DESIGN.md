@@ -4001,3 +4001,47 @@ traços reais do Anão. Aba Combate confirmada funcionando sem regressão
 depois da renomeação do rótulo.
 
 **Data/origem:** 2026-08.
+
+## Escolha de subclasse — versão placeholder (só troca o ícone, sem mecânica)
+
+**Pedido do Osmar:** subiu os 4 ícones dos Colégios de Bardo (arte
+nova) e pediu pra Lista de Personagens usar o ícone da subclasse
+escolhida em vez do ícone genérico da classe — "forma mais evoluída"
+do avatar. Mas a escolha de subclasse em si nunca foi implementada de
+verdade (o step "Escolha de Subclasse" do Level Up sempre foi um
+placeholder estático, sem persistir nada).
+
+**Decisão — escolha "de mentirinha" por enquanto, explícita:** em vez
+de esperar a implementação completa das 4 subclasses (características
+mecânicas, decupagem já documentada mas não codada), o step do Level
+Up agora deixa escolher entre os 4 Colégios reais e SALVA o nome
+escolhido (`PersonagemSalvo.subclasseAtual`) — mas com aviso `[PH]`
+explícito na tela ("Escolha ainda não implementada de verdade — só
+guarda o nome... nenhuma característica mecânica existe ainda"), regra
+12 do CLAUDE.md. Registrado em PENDENCIAS.md como pendência clara do
+que falta pra virar de verdade.
+
+**Dado novo:** `data/rulesets/dnd2024/subclasses.ts` — só
+`{id, classeId, nome}`, sem características (isso vem depois). `id`
+bate 1:1 com o arquivo `{id}-banner.png` em `assets/icones-classes/`
+(reaproveita o mesmo componente `IconeClasse` e o mesmo glob de
+lookup — nenhum componente novo precisou ser criado).
+
+**Prioridade do ícone na Lista de Personagens** (`CharacterList.tsx`),
+pedida pelo Osmar: imagem própria do jogador (`[PH]` — upload ainda não
+existe) > ícone da subclasse da classe de maior nível > ícone da
+classe de maior nível > empate de nível, classe mais atual. Hoje só
+existe 1 classe por personagem (sem multiclasse), então as duas
+últimas regras de desempate não têm o que desempatar ainda — a
+implementação já ficou pronta pra quando multiclasse existir, sem
+precisar reescrever a lógica de prioridade.
+
+**Testado:** Playwright 390×844 — Bardo nível 2→3 (Level Up, nível que
+desbloqueia subclasse). Step "Escolha de Subclasse" mostrou os 4
+Colégios reais com o aviso `[PH]` em âmbar. Escolhido "Colégio da
+Dança", confirmado o Level Up — Lista de Personagens passou a mostrar
+o ícone do dançarino (antes mostrava o emblema genérico de Bardo).
+`localStorage` confirmado com `subclasseAtual: "Colégio da Dança"`
+persistido.
+
+**Data/origem:** 2026-08.

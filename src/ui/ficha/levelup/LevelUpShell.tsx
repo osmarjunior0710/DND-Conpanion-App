@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { dadoVidaValor } from '../../../data/levelUpFixtures';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
+import { subclasses } from '../../../data/rulesets/dnd2024/subclasses';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import {
   caracteristicasDoNivel,
@@ -108,6 +109,7 @@ export default function LevelUpShell({
   // (confirmado na descrição da característica), por isso o incremento
   // fixo em vez de ler de `recursos`.
   const especialistaDisparaAgora = niveisComEspecialista(classe).includes(novoNivel);
+  const subclassesDaClasse = subclasses.filter((s) => s.classeId === classe.id);
   const maxEspecialista = periciasEspecialistaAtuais.length + (especialistaDisparaAgora ? 2 : 0);
 
   const luSteps: LuStep[] = ['pv', 'features'];
@@ -123,11 +125,11 @@ export default function LevelUpShell({
   const [luIndex, setLuIndex] = useState(0);
   const [faseDramatica, setFaseDramatica] = useState<FaseDramatica>('idle');
   const [valorDadoAnimado, setValorDadoAnimado] = useState<number | null>(null);
-  // Escolha de subclasse ainda não tem UI própria (nenhuma subclasse
-  // foi importada ainda — ver PENDENCIAS.md, plano "Guerreiro 1-20").
-  // Fica null até essa entrega existir; a etapa "subclasse" só mostra
-  // um aviso, sem travar o avanço.
-  const subclasseEscolhida: string | null = null;
+  // Escolha de subclasse — versão placeholder (ver PENDENCIAS.md
+  // "Escolha de subclasse — versão placeholder"): só salva o NOME
+  // escolhido (pra já poder trocar o ícone na Lista de Personagens),
+  // nenhuma característica mecânica da subclasse existe ainda.
+  const [subclasseEscolhida, setSubclasseEscolhida] = useState<string | null>(personagem.subclasse);
   const [estiloDeLutaEscolhido, setEstiloDeLutaEscolhido] = useState<string | null>(personagem.estiloDeLuta);
   const [truquesEscolhidos, setTruquesEscolhidos] = useState<string[]>(truquesAtuais);
   const [magiasPreparadasEscolhidas, setMagiasPreparadasEscolhidas] = useState<string[]>(magiasPreparadasAtuais);
@@ -242,6 +244,10 @@ export default function LevelUpShell({
         iniciarRolagemDramatica();
         return;
       }
+    }
+    if (step === 'subclasse' && subclassesDaClasse.length > 0 && subclasseEscolhida === null) {
+      setAviso('Escolha uma subclasse antes de avançar.');
+      return;
     }
     if (step === 'truques' && !truquesValido) {
       setAviso(
@@ -410,10 +416,24 @@ export default function LevelUpShell({
         {step === 'subclasse' && (
           <>
             <div className="section-title">Escolha sua subclasse</div>
-            <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
-              ＋ subclasses de {classe.nome} ainda não foram importadas — entra numa próxima entrega (ver
-              PENDENCIAS.md, plano "Guerreiro 1-20").
+            <div className="label" style={{ marginBottom: 8, color: 'var(--warn)' }}>
+              [PH] Escolha ainda não implementada de verdade — só guarda o nome (troca o ícone do personagem na
+              lista). As características mecânicas de cada subclasse ainda não existem na ficha.
             </div>
+            {subclassesDaClasse.length === 0 && (
+              <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
+                ＋ subclasses de {classe.nome} ainda não foram importadas.
+              </div>
+            )}
+            {subclassesDaClasse.map((s) => (
+              <div
+                key={s.id}
+                className={`opt-card ${subclasseEscolhida === s.nome ? 'selected' : ''}`}
+                onClick={() => setSubclasseEscolhida(s.nome)}
+              >
+                <div className="opt-card-name">{s.nome}</div>
+              </div>
+            ))}
           </>
         )}
 

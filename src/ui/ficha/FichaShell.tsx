@@ -118,7 +118,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     pvMax: personagemSalvo.pvMax ?? calcularPvMaximoNivel1(selecao) ?? personagemSalvo.pvAtual,
     dadoVida: classe?.dadoDeVida ?? 'd8',
     conMod: conValor !== null ? modificador(conValor) : 0,
-    subclasse: null,
+    subclasse: personagemSalvo.subclasseAtual ?? null,
     estiloDeLuta: personagemSalvo.estiloDeLutaAtual ?? selecao.estiloDeLutaEscolhido,
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
@@ -227,6 +227,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       nivel: personagem.nivel,
       pvAtual,
       pvMax: personagem.pvMax,
+      subclasseAtual: personagem.subclasse,
       estiloDeLutaAtual: personagem.estiloDeLuta,
       maestriaArmaAtual: maestriaArma,
       folegoGasto,
@@ -245,6 +246,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo,
     personagem.nivel,
     personagem.pvMax,
+    personagem.subclasse,
     personagem.estiloDeLuta,
     pvAtual,
     maestriaArma,

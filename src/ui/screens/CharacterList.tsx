@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { armazenamentoPersonagens } from '../../core/armazenamentoPersonagens';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
 import { classes } from '../../data/rulesets/dnd2024/classes';
+import { subclasses } from '../../data/rulesets/dnd2024/subclasses';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import IconeClasse from '../components/IconeClasse';
 import styles from './CharacterList.module.css';
@@ -16,16 +17,30 @@ export default function CharacterList() {
   const [textoDigitado, setTextoDigitado] = useState('');
   useLockBodyScroll(alvoApagar !== null);
 
-  const personagens = armazenamentoPersonagens.listar().map((p) => ({
-    id: p.id,
-    nome: p.selecao.nome || '(sem nome)',
-    especie: p.selecao.especie ?? '—',
-    classe: p.selecao.classe ?? '—',
-    classeId: classes.find((c) => c.nome === p.selecao.classe)?.id ?? null,
-    nivel: p.nivel,
-    pvAtual: p.pvAtual,
-    pvMax: calcularPvMaximoNivel1(p.selecao) ?? p.pvAtual,
-  }));
+  const personagens = armazenamentoPersonagens.listar().map((p) => {
+    const classeId = classes.find((c) => c.nome === p.selecao.classe)?.id ?? null;
+    // Prioridade do ícone: imagem do jogador ([PH] — upload ainda não
+    // existe, ver PENDENCIAS.md) > subclasse da classe de maior nível
+    // (mais "evoluído") > classe de maior nível > empate de nível,
+    // classe mais atual. Hoje só existe 1 classe por personagem, então
+    // a comparação de "maior nível"/"mais atual" não tem o que
+    // desempatar ainda — a lógica já fica pronta pra quando
+    // multiclasse existir.
+    const subclasseId = p.subclasseAtual
+      ? (subclasses.find((s) => s.nome === p.subclasseAtual)?.id ?? null)
+      : null;
+    return {
+      id: p.id,
+      nome: p.selecao.nome || '(sem nome)',
+      especie: p.selecao.especie ?? '—',
+      classe: p.selecao.classe ?? '—',
+      classeId,
+      iconeId: subclasseId ?? classeId,
+      nivel: p.nivel,
+      pvAtual: p.pvAtual,
+      pvMax: calcularPvMaximoNivel1(p.selecao) ?? p.pvAtual,
+    };
+  });
 
   function abrirConfirmacao(id: string, nome: string, e: React.MouseEvent) {
     e.stopPropagation();
@@ -68,7 +83,7 @@ export default function CharacterList() {
 
       {personagens.map((c) => (
         <div key={c.id} className={`box ${styles.card}`} onClick={() => navigate(`/ficha/${c.id}`)}>
-          <div className={styles.avatar}>{c.classeId ? <IconeClasse id={c.classeId} /> : '👤'}</div>
+          <div className={styles.avatar}>{c.iconeId ? <IconeClasse id={c.iconeId} /> : '👤'}</div>
           <div className={styles.info}>
             <div className={styles.name}>{c.nome}</div>
             <div className={styles.meta}>

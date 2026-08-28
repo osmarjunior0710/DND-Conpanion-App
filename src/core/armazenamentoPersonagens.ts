@@ -22,6 +22,11 @@ export interface PersonagemSalvo {
    * Luta trocado, Maestria em Arma trocada, usos gastos de recurso)
    * só existia em estado do React, nunca em disco. */
   pvMax?: number;
+  /** Subclasse escolhida — versão placeholder (ver PENDENCIAS.md
+   * "Escolha de subclasse — versão placeholder"): só o nome, usado
+   * hoje pra trocar o ícone do personagem na Lista. Nenhuma
+   * característica mecânica de subclasse existe ainda. */
+  subclasseAtual?: string | null;
   estiloDeLutaAtual?: string | null;
   maestriaArmaAtual?: string[];
   folegoGasto?: number;

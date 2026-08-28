@@ -191,7 +191,27 @@ usado no Guerreiro, B1-B5).
 
 **As 4 subclasses (Bravura, Dança, Conhecimento, Glamour) ficam pra
 depois da base** — decisão de seguir ou não será tomada só quando a
-base estiver pronta e testada, não presumida agora.
+base estiver pronta e testada, não presumida agora. Ver "Escolha de
+subclasse — versão placeholder" abaixo pro que já existe hoje (só o
+nome + ícone, nenhuma característica mecânica).
+
+## Escolha de subclasse — versão placeholder (só nome + ícone, sem mecânica)
+
+O Level Up nível 3 do Bardo (`classe.nivelSubclasse`) já deixa
+escolher entre os 4 Colégios reais (`data/rulesets/dnd2024/subclasses.ts`)
+— mas isso é só uma escolha "de mentirinha" por enquanto, pedida pelo
+Osmar pra já poder trocar o ícone do personagem na Lista antes da
+implementação completa existir. A tela mostra aviso `[PH]` deixando
+isso explícito. **Falta pra virar de verdade:**
+- Características mecânicas de cada Colégio (níveis 3/6/14, ver
+  decupagem em DECISOES-DESIGN.md "Bardo — próxima classe a
+  implementar") — hoje escolher um Colégio não muda NADA na ficha além
+  do ícone.
+- Descrição completa de cada Colégio (hoje os cards da escolha não têm
+  texto nenhum, só o nome).
+- Repetir esse padrão pras outras classes conforme forem ganhando
+  subclasses reais (a lista `subclasses.ts` já é genérica por
+  `classeId`, só falta adicionar entradas).
 
 **Bundle JS cresceu bastante (604KB → 1,13MB) com o catálogo de 390
 magias.** `descricaoCompleta` de cada magia (texto bruto do livro,
