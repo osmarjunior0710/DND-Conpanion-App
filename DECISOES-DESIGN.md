@@ -3553,3 +3553,36 @@ reais (2 antigos + 1 novo) e Espaços de Magia em 4/4 (tabela do nível
 4, sem mudança de código).
 
 **Data/origem:** 2026-08.
+
+## Level Up de Truques — marcação "já tinha"/"será removido" fica visível mesmo desmarcado
+
+Achado do Osmar testando a Etapa 4.1: se o jogador desmarcava os 2
+truques que já tinha (pra testar/explorar a lista), perdia a
+referência de quais eram — só um texto pequeno cinza ("· já conhece")
+ao lado, fácil de sumir no meio de uma lista de 13 itens, e ele
+precisava ficar testando até achar de novo.
+
+**Fix:** a marcação de "já tinha" agora é uma borda colorida na linha
+inteira (`check-row`), não só texto — e ela **não desaparece quando
+desmarcado**: continua vindo de `truquesAtuais` (a lista de ANTES
+desse Level Up, congelada durante todo o fluxo — só vira a nova base
+quando o Level Up é confirmado), não do estado mutável da seleção
+atual. 2 estados visuais pros truques que já eram do personagem:
+- **Ainda marcado** (não mexeu, ou desmarcou e marcou nele de novo):
+  borda azul (`--accent`) + "· já tinha".
+- **Desmarcado agora** (sendo removido): borda âmbar (`--warn`) +
+  fundo levemente tingido + "· 🔻 será removido" — deixa explícito que
+  aquilo é uma ação de remoção, não uma caixa vazia igual as que nunca
+  foram dele.
+
+Truques que nunca foram do personagem continuam sem marcação nenhuma.
+Nenhuma mudança de mecânica/validação — só deixa impossível perder a
+referência visualmente.
+
+**Testado:** Playwright 390×844 — Bardo nível 4, desmarcou os 2
+truques originais (Proteção Contra Lâminas, Zombaria Perversa) — as
+duas linhas continuaram com borda âmbar + "será removido" visível o
+tempo todo, mesmo com as caixas vazias; aviso de "só pode trocar 1"
+seguiu bloqueando corretamente.
+
+**Data/origem:** 2026-08.

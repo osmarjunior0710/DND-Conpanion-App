@@ -341,18 +341,27 @@ export default function LevelUpShell({
               Regra oficial: a cada nível, você pode substituir 1 dos truques que já conhece por outro da lista —
               não precisa mexer se não quiser.
             </div>
-            {truquesDaClasse.map((m) => (
-              <div key={m.id} className="check-row" onClick={() => toggleTruque(m.nome)}>
-                <div className={`check-box ${truquesEscolhidos.includes(m.nome) ? 'checked' : ''}`} />
-                <span className="check-label">
-                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                  {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>
-                    ({m.escola}
-                    {truquesAtuais.includes(m.nome) ? ' · já conhece' : ''})
+            {truquesDaClasse.map((m) => {
+              const jaTinha = truquesAtuais.includes(m.nome);
+              const marcado = truquesEscolhidos.includes(m.nome);
+              const removendo = jaTinha && !marcado;
+              return (
+                <div
+                  key={m.id}
+                  className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
+                  onClick={() => toggleTruque(m.nome)}
+                >
+                  <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                  <span className="check-label">
+                    <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                    {' '}<span style={{ color: removendo ? 'var(--warn)' : 'var(--text-faint)', fontSize: 12 }}>
+                      ({m.escola}
+                      {removendo ? ' · 🔻 será removido' : jaTinha ? ' · já tinha' : ''})
+                    </span>
                   </span>
-                </span>
-              </div>
-            ))}
+                </div>
+              );
+            })}
             {trocasDeTruque > 1 && (
               <div className="label" style={{ color: 'var(--warn)', marginTop: 6 }}>
                 ⚠️ {trocasDeTruque} truques trocados — só pode trocar 1 por level-up.
