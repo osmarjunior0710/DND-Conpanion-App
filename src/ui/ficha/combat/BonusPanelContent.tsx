@@ -15,6 +15,7 @@ interface BonusPanelContentProps {
   espacosMaximo: number;
   onUsarInspiracao: () => void;
   onRecuperarInspiracaoComEspaco: () => void;
+  detalhesAtivo: boolean;
 }
 
 export default function BonusPanelContent({
@@ -31,6 +32,7 @@ export default function BonusPanelContent({
   espacosMaximo,
   onUsarInspiracao,
   onRecuperarInspiracaoComEspaco,
+  detalhesAtivo,
 }: BonusPanelContentProps) {
   if (usosFolegoMaximo === 0 && usosInspiracaoMaximo === 0 && !ataqueBonus) {
     return (
@@ -65,11 +67,13 @@ export default function BonusPanelContent({
             onClick={onUsarInspiracao}
           >
             <div className={styles.rowName}>🎵 Inspiração de Bardo</div>
-            <div className={styles.rowDesc}>
-              Concede 1 dado de Inspiração (d{tamanhoDadoInspiracao}) a uma criatura que veja/ouça você a até 18m.
-              Gasta 1 uso — recupera tudo no Descanso Longo
-              {fonteDeInspiracao ? ' (e no Curto, com Fonte de Inspiração)' : ''}.
-            </div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Concede 1 dado de Inspiração (d{tamanhoDadoInspiracao}) a uma criatura que veja/ouça você a até 18m.
+                Gasta 1 uso — recupera tudo no Descanso Longo
+                {fonteDeInspiracao ? ' (e no Curto, com Fonte de Inspiração)' : ''}.
+              </div>
+            )}
           </div>
           {fonteDeInspiracao && (
             <div
@@ -78,10 +82,12 @@ export default function BonusPanelContent({
               onClick={onRecuperarInspiracaoComEspaco}
             >
               <div className={styles.rowName}>🔁 Recuperar Inspiração com Espaço de Magia</div>
-              <div className={styles.rowDesc}>
-                Sem ação necessária — gasta 1 Espaço de Magia pra recuperar 1 uso gasto de Inspiração de Bardo
-                (Fonte de Inspiração).
-              </div>
+              {detalhesAtivo && (
+                <div className={styles.rowDesc}>
+                  Sem ação necessária — gasta 1 Espaço de Magia pra recuperar 1 uso gasto de Inspiração de Bardo
+                  (Fonte de Inspiração).
+                </div>
+              )}
             </div>
           )}
           {semUsosInspiracao && (
@@ -96,8 +102,8 @@ export default function BonusPanelContent({
         <div className={styles.row} onClick={onUsarAtaqueBonus}>
           <div className={styles.rowName}>🗡 Atacar — {ataqueBonus.nome} (Mão Secundária)</div>
           <div className={styles.rowDesc}>
-            {ataqueBonus.descricao} Propriedade Leve nas duas mãos: sem bônus de atributo no dano (a menos que seja
-            negativo).
+            {ataqueBonus.descricao}
+            {detalhesAtivo && ' Propriedade Leve nas duas mãos: sem bônus de atributo no dano (a menos que seja negativo).'}
           </div>
         </div>
       )}
@@ -118,10 +124,12 @@ export default function BonusPanelContent({
             onClick={onUsarRecuperarFolego}
           >
             <div className={styles.rowName}>🩹 Recuperar Fôlego</div>
-            <div className={styles.rowDesc}>
-              Recupera 1d10 + seu nível de Guerreiro em Pontos de Vida. Gasta 1 uso — 1 volta no Descanso Curto, todos
-              no Descanso Longo.
-            </div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Recupera 1d10 + seu nível de Guerreiro em Pontos de Vida. Gasta 1 uso — 1 volta no Descanso Curto,
+                todos no Descanso Longo.
+              </div>
+            )}
           </div>
           {semUsos && (
             <div className="label" style={{ marginTop: 6 }}>

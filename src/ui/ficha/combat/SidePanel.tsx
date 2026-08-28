@@ -9,6 +9,8 @@ interface SidePanelProps {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  detalhesAtivo: boolean;
+  onToggleDetalhes: () => void;
 }
 
 const sideClass: Record<Side, string> = {
@@ -17,12 +19,18 @@ const sideClass: Record<Side, string> = {
   bottom: styles.panelBottom,
 };
 
-export default function SidePanel({ open, side, title, onClose, children }: SidePanelProps) {
+export default function SidePanel({ open, side, title, onClose, children, detalhesAtivo, onToggleDetalhes }: SidePanelProps) {
   return (
     <>
       <div className={`${styles.backdrop} ${open ? styles.backdropOpen : ''}`} onClick={onClose} />
       <div className={`${styles.panel} ${sideClass[side]} ${open ? styles.panelOpen : ''}`}>
         <div className={styles.title}>{title}</div>
+        <div className={styles.detalhesRow} onClick={onToggleDetalhes}>
+          <span>Detalhes</span>
+          <div className={`${styles.switchTrack} ${detalhesAtivo ? styles.switchOn : ''}`}>
+            <div className={styles.switchThumb} />
+          </div>
+        </div>
         {children}
         <div className={styles.closeLabel} onClick={onClose}>
           fechar

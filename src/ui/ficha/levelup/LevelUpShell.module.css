@@ -163,7 +163,7 @@
 }
 
 .truqueRemovendo {
-  border-left: 3px solid var(--warn);
+  border-left: 3px solid var(--danger);
   padding-left: calc(var(--space-2) - 3px);
-  background: var(--warn-dim, rgba(163, 105, 15, 0.08));
+  background: var(--danger-dim);
 }

@@ -11,6 +11,7 @@ interface ReacaoPanelContentProps {
   conjura: boolean;
   magiasReacao: Magia[];
   modAcertoConjuracao: number | null;
+  detalhesAtivo: boolean;
 }
 
 export default function ReacaoPanelContent({
@@ -19,6 +20,7 @@ export default function ReacaoPanelContent({
   conjura,
   magiasReacao,
   modAcertoConjuracao,
+  detalhesAtivo,
 }: ReacaoPanelContentProps) {
   const [aviso, setAviso] = useState<string | null>(null);
   const { rolarD20 } = useRoll();
@@ -74,7 +76,9 @@ export default function ReacaoPanelContent({
         }
       >
         <div className={styles.rowName}>⚔ Ataque de Oportunidade</div>
-        <div className={styles.rowDesc}>Disponível por padrão pra qualquer personagem, sem precisar de característica de classe</div>
+        {detalhesAtivo && (
+          <div className={styles.rowDesc}>Disponível por padrão pra qualquer personagem, sem precisar de característica de classe</div>
+        )}
       </div>
     </>
   );

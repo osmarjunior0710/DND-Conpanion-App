@@ -31,6 +31,7 @@ interface AcaoPanelContentProps {
   surtoUsadoTurno: boolean;
   onUsarSurto: () => void;
   ataqueAtual: AtaqueResolvido | null;
+  detalhesAtivo: boolean;
 }
 
 export default function AcaoPanelContent({
@@ -50,6 +51,7 @@ export default function AcaoPanelContent({
   surtoUsadoTurno,
   onUsarSurto,
   ataqueAtual,
+  detalhesAtivo,
 }: AcaoPanelContentProps) {
   const [magiaAberta, setMagiaAberta] = useState(false);
   const [avisoSlot, setAvisoSlot] = useState<string | null>(null);
@@ -105,10 +107,15 @@ export default function AcaoPanelContent({
             {numAtaques > 1 ? `(ataque ${Math.min(ataquesFeitos + 1, numAtaques)}/${numAtaques})` : ''}
           </div>
           <div className={styles.rowDesc}>
-            {ataqueAtual.descricao}{' '}
-            {numAtaques > 1
-              ? `Ataque Extra: você tem direito a ${numAtaques} ataques nesse turno — toque de novo depois de rolar o dano.`
-              : 'Equipe uma arma na Mochila pra trocar; sem nada na Mão Principal, é Ataque Desarmado.'}
+            {ataqueAtual.descricao}
+            {detalhesAtivo && (
+              <>
+                {' '}
+                {numAtaques > 1
+                  ? `Ataque Extra: você tem direito a ${numAtaques} ataques nesse turno — toque de novo depois de rolar o dano.`
+                  : 'Equipe uma arma na Mochila pra trocar; sem nada na Mão Principal, é Ataque Desarmado.'}
+              </>
+            )}
           </div>
         </div>
       )}
@@ -120,10 +127,12 @@ export default function AcaoPanelContent({
           onClick={onUsarSurto}
         >
           <div className={styles.rowName}>💥 Surto de Ação</div>
-          <div className={styles.rowDesc}>
-            Ganha uma ação extra nesse turno — não gasta sua Ação normal. {surtoRestantes}/{surtoMax} usos
-            {surtoUsadoTurno ? ' (já usado nesse turno)' : ''}.
-          </div>
+          {detalhesAtivo && (
+            <div className={styles.rowDesc}>
+              Ganha uma ação extra nesse turno — não gasta sua Ação normal. {surtoRestantes}/{surtoMax} usos
+              {surtoUsadoTurno ? ' (já usado nesse turno)' : ''}.
+            </div>
+          )}
         </div>
       )}
 
@@ -131,7 +140,7 @@ export default function AcaoPanelContent({
         <>
           <div className={styles.row} onClick={() => setMagiaAberta((v) => !v)}>
             <div className={styles.rowName}>✨ Usar Magia {magiaAberta ? '▴' : '▾'}</div>
-            <div className={styles.rowDesc}>Conjurar Truque ou Magia Preparada</div>
+            {detalhesAtivo && <div className={styles.rowDesc}>Conjurar Truque ou Magia Preparada</div>}
           </div>
           <div className={`${styles.accordionBody} ${magiaAberta ? styles.accordionBodyOpen : ''}`}>
             {espacosMaximo > 0 && (
@@ -177,7 +186,9 @@ export default function AcaoPanelContent({
         }
       >
         <div className={styles.rowName}>💨 Desengajar</div>
-        <div className={styles.rowDesc}>Seu movimento não provoca Ataques de Oportunidade pelo resto do turno</div>
+        {detalhesAtivo && (
+          <div className={styles.rowDesc}>Seu movimento não provoca Ataques de Oportunidade pelo resto do turno</div>
+        )}
       </div>
 
       {acoesBase.map((a) => (
@@ -185,7 +196,7 @@ export default function AcaoPanelContent({
           <div className={styles.rowName}>
             {a.icone} {a.nome}
           </div>
-          <div className={styles.rowDesc}>{a.desc}</div>
+          {detalhesAtivo && <div className={styles.rowDesc}>{a.desc}</div>}
         </div>
       ))}
     </>

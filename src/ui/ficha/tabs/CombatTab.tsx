@@ -102,6 +102,7 @@ export default function CombatTab({
   onRecuperarInspiracaoComEspaco,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
+  const [detalhesAtivo, setDetalhesAtivo] = useState(true);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [danoPendente, setDanoPendente] = useState<DanoPendente | null>(null);
   const [ataquesFeitos, setAtaquesFeitos] = useState(0);
@@ -350,8 +351,10 @@ export default function CombatTab({
       <SidePanel
         open={painelAberto !== null}
         side={painelAberto ? ladoDoPainel(painelAberto) : 'left'}
-        title={painelAberto ? `${LABELS[painelAberto].icone} ${LABELS[painelAberto].nome} — escolha uma` : ''}
+        title={painelAberto ? `${LABELS[painelAberto].icone} ${LABELS[painelAberto].nome}` : ''}
         onClose={fecharPainel}
+        detalhesAtivo={detalhesAtivo}
+        onToggleDetalhes={() => setDetalhesAtivo((v) => !v)}
       >
         {painelAberto === 'acao' && (
           <AcaoPanelContent
@@ -371,6 +374,7 @@ export default function CombatTab({
             surtoUsadoTurno={surtoUsadoTurno}
             onUsarSurto={usarSurtoDeAcao}
             ataqueAtual={ataqueAtual}
+            detalhesAtivo={detalhesAtivo}
           />
         )}
         {painelAberto === 'bonus' && (
@@ -388,6 +392,7 @@ export default function CombatTab({
             espacosMaximo={espacosMaximo}
             onUsarInspiracao={usarInspiracaoBardo}
             onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
+            detalhesAtivo={detalhesAtivo}
           />
         )}
         {painelAberto === 'reacao' && (
@@ -397,6 +402,7 @@ export default function CombatTab({
             conjura={conjura}
             magiasReacao={magiasPreparadasReacao}
             modAcertoConjuracao={modAcertoConjuracao}
+            detalhesAtivo={detalhesAtivo}
           />
         )}
       </SidePanel>

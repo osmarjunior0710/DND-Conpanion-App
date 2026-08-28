@@ -3586,3 +3586,38 @@ tempo todo, mesmo com as caixas vazias; aviso de "só pode trocar 1"
 seguiu bloqueando corretamente.
 
 **Data/origem:** 2026-08.
+
+## Combat — 3 ajustes rápidos (cor de remoção, título do painel, switch Detalhes)
+
+Pedidos do Osmar testando o Level Up e o Combat:
+
+1. **Marcação "será removido" (Level Up de Truques) vira vermelha, não
+   amarela.** Regra de cor confirmada: amarelo/`--warn` fica reservado
+   pra aviso/criticidade (ex.: "só pode trocar 1 truque"); qualquer
+   ação de remover/apagar usa vermelho/`--danger` — mesmo padrão já
+   usado no botão de apagar personagem (`CharacterList.tsx`).
+2. **Título dos painéis de Combat perde o "— escolha uma"** — "⚔
+   Ação", "⚡ Bônus", "🛡 Reação", sem sufixo.
+3. **Switch "Detalhes" novo**, entre o título e a lista de cada painel
+   (Ação/Bônus/Reação) — liga/desliga o texto explicativo de cada
+   linha (`rowDesc`). Ligado por padrão (comportamento de sempre).
+   Desligado, o texto some, **exceto** a informação essencial de
+   arma/Ataque Desarmado (dado de dano, tipo, mãos, alcance/munição —
+   ex.: "1d8 Perfurante · Duas Mãos, Munição..."), que o Osmar pediu
+   pra manter sempre visível porque o jogador precisa saber isso na
+   hora de atacar. Implementado separando, nas linhas de ataque
+   (arma e mão secundária), o texto essencial (`ataqueAtual.descricao`/
+   `ataqueBonus.descricao` — já vem assim de `core/ataque.ts`, sem
+   floreio) da frase explicativa extra (regra de Ataque Extra/Leve
+   nas duas mãos/etc.), que aí sim é escondida com o switch.
+   `SidePanel.tsx` ganhou o switch (reaproveitando o mesmo padrão
+   visual do menu de preferências do avatar); estado vive em
+   `CombatTab.tsx` (sessão, não persiste — mesmo padrão de
+   `itensDetalhados`/`pesoAtivo` da Mochila).
+
+**Testado:** Playwright 390×844 — painel de Ação do Guerreiro, switch
+ligado mostra tudo, desligado esconde todo texto exceto "Soco, chute
+ou golpe corpo a corpo sem arma. Dano Contundente." no Ataque
+Desarmado; título confirmado sem "escolha uma".
+
+**Data/origem:** 2026-08.

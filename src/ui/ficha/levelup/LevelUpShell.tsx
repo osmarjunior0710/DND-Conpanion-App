@@ -354,7 +354,7 @@ export default function LevelUpShell({
                   <div className={`check-box ${marcado ? 'checked' : ''}`} />
                   <span className="check-label">
                     <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                    {' '}<span style={{ color: removendo ? 'var(--warn)' : 'var(--text-faint)', fontSize: 12 }}>
+                    {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
                       ({m.escola}
                       {removendo ? ' · 🔻 será removido' : jaTinha ? ' · já tinha' : ''})
                     </span>
