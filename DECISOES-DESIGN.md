@@ -3964,3 +3964,40 @@ popup passa a mostrar "Nível 1 → 11" + "Ganho em Level Ups seguintes →
 +7" + total "18", batendo com o número grande da tela.
 
 **Data/origem:** 2026-08.
+
+## Menu inferior vira 5 abas: Atributos / Perfil (nova) / Mochila / Magias / Combate
+
+**Decisão:** a antiga aba "Perfil" (atributos, PV/CA/Iniciativa,
+perícias, descanso, maestria em arma) foi renomeada pra **"Atributos"**
+(`AtributosTab.tsx`, era `PerfilTab.tsx` — arquivo renomeado, conteúdo
+idêntico). O nome "Perfil" foi liberado pra uma aba nova de verdade:
+lista as habilidades REAIS do personagem, na ordem Classe → Origem →
+Espécie, cada uma como card não-interativo (mesmo padrão `.opt-card`
+já usado no step "Características desbloqueadas" do Level Up — zero
+componente novo). "Combat" no rótulo virou "Combate" (só o texto, id
+interno continua `combat`).
+
+**Classe:** `core/levelUp.ts` ganhou `caracteristicasAcumuladas(classe,
+nivelAtual)` — roda `caracteristicasDoNivel` do nível 1 até o atual e
+deduplica por nome (características repetidas em vários níveis, tipo
+Indomável/Surto de Ação, só contam +1 uso — não viram card duplicado).
+Diferente de `caracteristicasDoNivel` (só 1 nível, usada no Level Up
+pra mostrar "o que ganhei AGORA"), essa é "tudo que já tenho".
+
+**Origem:** busca o `Talento de Origem` real (`talentosOrigem.ts` via
+`origem.talentoOrigemId`) — nome + benefícios reais, com a variante
+quando existir (ex. "Iniciado em Magia (Clérigo)").
+
+**Espécie:** os `traços` reais da espécie (`especies.ts`), já vêm
+prontos com nome+descrição, sem precisar de lookup.
+
+**Testado:** Playwright 390×844 — barra de 5 abas cabe sem cortar
+(largura exata do viewport, sem overflow horizontal), rótulos legíveis.
+Aba Perfil de um Anão Bardo mostrou "Classe — Bardo" (Inspiração de
+Bardo + Conjuração, descrições completas), "Origem — Fazendeiro"
+(Vigoroso: PV máximo +2x nível...), "Espécie — Anão" (Visão no Escuro,
+Resistência a Toxinas, Tenacidade Anã, Conhecimento de Pedras) — os 4
+traços reais do Anão. Aba Combate confirmada funcionando sem regressão
+depois da renomeação do rótulo.
+
+**Data/origem:** 2026-08.

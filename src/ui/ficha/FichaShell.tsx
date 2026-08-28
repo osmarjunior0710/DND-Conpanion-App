@@ -55,6 +55,7 @@ import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
+import AtributosTab from './tabs/AtributosTab';
 import PerfilTab from './tabs/PerfilTab';
 import MochilaTab from './tabs/MochilaTab';
 import MagiasTab from './tabs/MagiasTab';
@@ -62,15 +63,16 @@ import CombatTab, { type EstadoRecurso, type RecursoTurno } from './tabs/CombatT
 import LevelUpShell, { type PersonagemNivel } from './levelup/LevelUpShell';
 import CompletarMagiasShell from './levelup/CompletarMagiasShell';
 
-type TabName = 'perfil' | 'mochila' | 'magias' | 'combat';
+type TabName = 'atributos' | 'perfil' | 'mochila' | 'magias' | 'combat';
 
-const ORDEM_ABAS: TabName[] = ['perfil', 'mochila', 'magias', 'combat'];
+const ORDEM_ABAS: TabName[] = ['atributos', 'perfil', 'mochila', 'magias', 'combat'];
 
 const TABS: { id: TabName; label: string; icon: string }[] = [
-  { id: 'perfil', label: 'Perfil', icon: '🧬' },
+  { id: 'atributos', label: 'Atributos', icon: '🧬' },
+  { id: 'perfil', label: 'Perfil', icon: '📜' },
   { id: 'mochila', label: 'Mochila', icon: '🎒' },
   { id: 'magias', label: 'Magias', icon: '📖' },
-  { id: 'combat', label: 'Combat', icon: '⚔' },
+  { id: 'combat', label: 'Combate', icon: '⚔' },
 ];
 
 const turnoInicial: Record<RecursoTurno, EstadoRecurso> = {
@@ -110,7 +112,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const classe = classeDaSelecao(selecao);
   const conValor = selecao.atributos.CON;
 
-  const [tab, setTab] = useState<TabName>('perfil');
+  const [tab, setTab] = useState<TabName>('atributos');
   const [personagem, setPersonagem] = useState<PersonagemNivel>({
     nivel: personagemSalvo.nivel,
     pvMax: personagemSalvo.pvMax ?? calcularPvMaximoNivel1(selecao) ?? personagemSalvo.pvAtual,
@@ -496,8 +498,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       </div>
 
       <div className={styles.tabContent} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-        {tab === 'perfil' && (
-          <PerfilTab
+        {tab === 'atributos' && (
+          <AtributosTab
             nivel={personagem.nivel}
             pvMax={personagem.pvMax}
             pvAtual={pvAtual}
@@ -520,6 +522,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onTrocarArmaMaestria={trocarArmaMaestria}
           />
         )}
+        {tab === 'perfil' && <PerfilTab selecao={selecao} classe={classe} nivel={personagem.nivel} />}
         {tab === 'mochila' && (
           <MochilaTab
             itens={itensMochila}

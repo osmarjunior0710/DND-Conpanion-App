@@ -62,6 +62,26 @@ export function caracteristicasDoNivel(classe: Classe, nivel: number): Caracteri
   });
 }
 
+/** Todas as características de classe já desbloqueadas do nível 1 até
+ * `nivelAtual` (inclusive), sem repetir nome — características como
+ * "Indomável"/"Surto de Ação" aparecem de novo em níveis mais altos só
+ * pra indicar +1 uso do mesmo recurso (ver `contarRepeticoesCaracteristica`),
+ * então a 2ª/3ª ocorrência do mesmo nome não vira uma 2ª linha na
+ * lista. Usado pela aba "Perfil" da Ficha (lista de habilidades reais
+ * do personagem, não só do nível atual). */
+export function caracteristicasAcumuladas(classe: Classe, nivelAtual: number): CaracteristicaNivel[] {
+  const vistos = new Set<string>();
+  const resultado: CaracteristicaNivel[] = [];
+  for (let nivel = 1; nivel <= nivelAtual; nivel++) {
+    for (const c of caracteristicasDoNivel(classe, nivel)) {
+      if (vistos.has(c.nome)) continue;
+      vistos.add(c.nome);
+      resultado.push(c);
+    }
+  }
+  return resultado;
+}
+
 /** True + descrição real se a classe já desbloqueou uma característica
  * nomeada até `nivelAtual` (ex: "Mestre Tático" nível 9, "Ataques
  * Estudados" nível 13) — null se ainda não chegou nesse nível. Usa a

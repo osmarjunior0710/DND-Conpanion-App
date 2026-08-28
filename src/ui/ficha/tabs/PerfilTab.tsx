@@ -1,195 +1,75 @@
-import type { AtributoFinal, ExplicacaoCalculo, PericiaFinal } from '../../../core/calculoPersonagem';
-import type { Arma } from '../../../data/rulesets/dnd2024/armas';
-import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
-import { useRoll } from '../../roll/RollContext';
-import InfoValor from '../../components/InfoValor';
-import ItemComDescricao from '../../components/ItemComDescricao';
-import TrocarArmaMaestria from '../../components/TrocarArmaMaestria';
-import styles from './PerfilTab.module.css';
+import type { Classe } from '../../../data/rulesets/dnd2024/classes';
+import { origens } from '../../../data/rulesets/dnd2024/origens';
+import { especies } from '../../../data/rulesets/dnd2024/especies';
+import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
+import { caracteristicasAcumuladas } from '../../../core/levelUp';
+import type { WizardSelection } from '../../../core/personagem';
 
 interface PerfilTabProps {
+  selecao: WizardSelection;
+  classe: Classe | null;
   nivel: number;
-  pvMax: number;
-  pvAtual: number;
-  ca: number | null;
-  iniciativa: number | null;
-  percepcaoPassiva: number | null;
-  bonusProficiencia: number;
-  explicacaoPv: ExplicacaoCalculo;
-  explicacaoCa: ExplicacaoCalculo;
-  explicacaoIniciativa: ExplicacaoCalculo;
-  explicacaoPercepcaoPassiva: ExplicacaoCalculo;
-  atributos: AtributoFinal[];
-  pericias: PericiaFinal[];
-  onDescansoLongo: () => void;
-  onDescansoCurto: () => void;
-  restStatus: string | null;
-  onAbrirLevelUp: () => void;
-  maestriaArma: string[];
-  armasParaMaestria: Arma[];
-  onTrocarArmaMaestria: (armaAntiga: string, armaNova: string) => void;
 }
 
-export default function PerfilTab({
-  nivel,
-  pvMax,
-  pvAtual,
-  ca,
-  iniciativa,
-  percepcaoPassiva,
-  bonusProficiencia,
-  explicacaoPv,
-  explicacaoCa,
-  explicacaoIniciativa,
-  explicacaoPercepcaoPassiva,
-  atributos,
-  pericias,
-  onDescansoLongo,
-  onDescansoCurto,
-  restStatus,
-  onAbrirLevelUp,
-  maestriaArma,
-  armasParaMaestria,
-  onTrocarArmaMaestria,
-}: PerfilTabProps) {
-  const { rolarD20 } = useRoll();
+export default function PerfilTab({ selecao, classe, nivel }: PerfilTabProps) {
+  const caracteristicasClasse = classe ? caracteristicasAcumuladas(classe, nivel) : [];
+  const origem = origens.find((o) => o.nome === selecao.origem) ?? null;
+  const talento = origem ? talentosOrigem.find((t) => t.id === origem.talentoOrigemId) ?? null : null;
+  const especie = especies.find((e) => e.nome === selecao.especie) ?? null;
 
   return (
     <>
-      <div className={`box-solid ${styles.levelBox}`}>
-        <div>
-          <div className="label">nível atual</div>
-          <div style={{ fontSize: 18 }}>{nivel}</div>
+      <div className="section-title">Classe{classe ? ` — ${classe.nome}` : ''}</div>
+      {caracteristicasClasse.length === 0 && (
+        <div className="label" style={{ marginBottom: 12 }}>
+          Nenhuma característica de classe ainda.
         </div>
-        <div className="btn btn-primary" style={{ padding: '8px 16px' }} onClick={onAbrirLevelUp}>
-          ⬆ Level Up
-        </div>
-      </div>
-
-      <div className="stat-grid">
-        {atributos.map((a) => (
-          <div
-            key={a.atributo}
-            className="box stat-box"
-            onClick={() => rolarD20({ label: a.atributo, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
-          >
-            <div className="stat-name">{a.atributo}</div>
-            <div className="stat-mod">
-              {a.mod >= 0 ? '+' : ''}
-              {a.mod}
+      )}
+      {caracteristicasClasse.map((c) => (
+        <div key={c.nome} className="opt-card" style={{ cursor: 'default' }}>
+          <div className="opt-card-name">{c.nome}</div>
+          {c.descricao ? (
+            <div className="opt-card-desc">{c.descricao}</div>
+          ) : (
+            <div className="opt-card-desc" style={{ color: 'var(--text-faint)' }}>
+              Descrição detalhada ainda não importada pra essa característica.
             </div>
-            <div className="stat-val">{a.valor}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.hpRow}>
-        <div className={`box ${styles.hpBox}`}>
-          <div className="label">
-            PV <InfoValor titulo="Pontos de Vida máximos" explicacao={explicacaoPv} />
-          </div>
-          <div className={styles.hpNum}>
-            {pvAtual}/{pvMax}
-          </div>
-        </div>
-        <div className={`box ${styles.hpBox}`}>
-          <div className="label">
-            CA <InfoValor titulo="Classe de Armadura" explicacao={explicacaoCa} />
-          </div>
-          <div className={styles.hpNum}>{ca ?? '—'}</div>
-        </div>
-        <div
-          className={`box ${styles.hpBox}`}
-          onClick={() =>
-            iniciativa !== null && rolarD20({ label: 'Iniciativa', formula: `1d20 + ${iniciativa}`, mod: iniciativa })
-          }
-        >
-          <div className="label">
-            Iniciativa <InfoValor titulo="Iniciativa" explicacao={explicacaoIniciativa} />
-          </div>
-          <div className={styles.hpNum}>
-            {iniciativa !== null ? `${iniciativa >= 0 ? '+' : ''}${iniciativa} 🎲` : '—'}
-          </div>
-        </div>
-      </div>
-
-      <div className="section-title">Perícias</div>
-      <div className={styles.skillRow}>
-        <span>Bônus de Proficiência</span>
-        <span>
-          {bonusProficiencia >= 0 ? '+' : ''}
-          {bonusProficiencia}
-        </span>
-      </div>
-      {pericias.map((p) => (
-        <div
-          key={p.nome}
-          className={styles.skillRow}
-          onClick={() => rolarD20({ label: p.nome, formula: `1d20 ${p.mod >= 0 ? '+' : '-'} ${Math.abs(p.mod)}`, mod: p.mod })}
-        >
-          <span>
-            {p.proficiente ? '⚫' : '⚪'} {p.especialista && '⭐ '}
-            {p.nome} ({p.atributo}) 🎲 <InfoValor titulo={p.nome} explicacao={p.explicacao} />
-          </span>
-          <span>
-            {p.mod >= 0 ? '+' : ''}
-            {p.mod}
-          </span>
+          )}
         </div>
       ))}
-      <div className={styles.skillRow}>
-        <span>
-          Percepção Passiva <InfoValor titulo="Percepção Passiva" explicacao={explicacaoPercepcaoPassiva} />
-        </span>
-        <span>{percepcaoPassiva ?? '—'}</span>
-      </div>
-      <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
-        toque num atributo, perícia ou iniciativa pra rolar o dado.
-      </div>
 
-      {maestriaArma.length > 0 && (
-        <>
-          <div className="section-title">Maestria em Arma</div>
-          {maestriaArma.map((nome) => {
-            const arma = armasParaMaestria.find((a) => a.nome === nome);
-            return (
-              <div key={nome} className={styles.maestriaRow}>
-                <div className={styles.maestriaTop}>
-                  <span>{nome}</span>
-                  <TrocarArmaMaestria
-                    armaAtual={nome}
-                    todasAsArmas={armasParaMaestria}
-                    jaEscolhidas={maestriaArma}
-                    onTrocar={(nova) => onTrocarArmaMaestria(nome, nova)}
-                  />
-                </div>
-                {arma && (
-                  <div className={styles.maestriaDetalhe}>
-                    {arma.dano} ·{' '}
-                    <ItemComDescricao nome={arma.maestria} descricao={buscarDescricaoMaestria(arma.maestria)} variante="icone" />
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          <div className="label" style={{ marginTop: 2, marginBottom: 12 }}>
-            você pode trocar 1 arma a cada Descanso Longo.
+      <div className="section-title" style={{ marginTop: 16 }}>
+        Origem{origem ? ` — ${origem.nome}` : ''}
+      </div>
+      {talento ? (
+        <div className="opt-card" style={{ cursor: 'default' }}>
+          <div className="opt-card-name">
+            {talento.nome}
+            {origem?.talentoOrigemVariante ? ` (${origem.talentoOrigemVariante})` : ''}
           </div>
-        </>
+          <div className="opt-card-desc">{talento.beneficios}</div>
+        </div>
+      ) : (
+        <div className="label" style={{ marginBottom: 12 }}>
+          Nenhum Talento de Origem ainda.
+        </div>
       )}
 
-      <div className="section-title">Descanso</div>
-      <div className={styles.actionGrid}>
-        <div className={`box ${styles.actionBtn}`} onClick={onDescansoCurto}>
-          <div className={styles.aName}>Descanso Curto</div>
-          <div className={styles.aType}>1 hora</div>
-        </div>
-        <div className={`box ${styles.actionBtn}`} onClick={onDescansoLongo}>
-          <div className={styles.aName}>Descanso Longo</div>
-          <div className={styles.aType}>8 horas</div>
-        </div>
+      <div className="section-title" style={{ marginTop: 16 }}>
+        Espécie{especie ? ` — ${especie.nome}` : ''}
       </div>
-      {restStatus && <div className={styles.restStatus}>{restStatus}</div>}
+      {especie && especie.traços.length > 0 ? (
+        especie.traços.map((t) => (
+          <div key={t.nome} className="opt-card" style={{ cursor: 'default' }}>
+            <div className="opt-card-name">{t.nome}</div>
+            <div className="opt-card-desc">{t.descricao}</div>
+          </div>
+        ))
+      ) : (
+        <div className="label" style={{ marginBottom: 12 }}>
+          Nenhum traço de espécie ainda.
+        </div>
+      )}
     </>
   );
 }
