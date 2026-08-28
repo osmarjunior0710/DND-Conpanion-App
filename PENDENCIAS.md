@@ -1092,3 +1092,25 @@ mostrar isso e linkar pra tela de correção certa — em vez de cada novo
 achado ganhar seu próprio código de detecção solto.
 
 **Data/origem:** 2026-08.
+
+## Cartão de seleção genérico — Classe/Subclasse/Origem/Espécie hoje duplicam o mesmo padrão
+
+**Achado do Osmar:** as 4 telas de escolha (Classe em `ClasseStep.tsx`,
+Subclasse no step do Level Up em `LevelUpShell.tsx`, Origem em
+`OrigemStep.tsx`, Espécie em `EspecieStep.tsx`) reimplementam cada uma
+por conta própria o mesmo miolo — `.opt-card` com `.opt-card-row`
+(ícone + `.opt-card-info` com nome/descrição) — mas com pequenas
+diferenças bobas entre elas (Classe/Subclasse usam `IconeClasse` com
+arte real; Origem/Espécie ainda usam um placeholder `🖼` genérico
+porque não têm arte própria; cada uma trata "(em breve)"/duplicidade/
+tags à sua moda). Ele quer um componente/padrão único de "cartão de
+seleção" que sirva pras 4 (e futuras, tipo Talentos), com:
+- **Destaque maior pro ícone** (hoje é pequeno e não é o foco visual
+  do cartão).
+- **Texto que caiba e faça sentido** por contexto — nome sempre,
+  descrição/tags variando conforme o que cada tipo de escolha
+  realmente tem pra mostrar (não forçar todo mundo no mesmo texto).
+
+**Não fazer agora** — só registrar. Quando entrar na fila, vale revisar
+as 4 implementações atuais junto (nenhuma delas deve virar a
+"referência" sem revisar as outras 3 primeiro).
