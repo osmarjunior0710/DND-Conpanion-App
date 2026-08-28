@@ -29,6 +29,11 @@ export interface PersonagemSalvo {
   surtoGasto?: number;
   espacosGastos?: number;
   inspiracaoGasto?: number;
+  /** Truques conhecidos DEPOIS da criação — cresce/troca no Level Up
+   * (Etapa 4.1). Ausente = personagem nunca passou por um Level Up
+   * com troca de Truques ainda; `FichaShell.tsx` cai pra
+   * `selecao.truquesEscolhidos` (retrato da criação) nesse caso. */
+  truquesAtual?: string[];
   /** Mochila como estado de verdade (ver DECISOES-DESIGN.md "Mochila
    * vira estado de verdade") — quando ausente (personagem salvo antes
    * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a

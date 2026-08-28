@@ -10,9 +10,10 @@ interface MagiasTabProps {
   nivel: number;
   espacosGastos: number;
   conjura: boolean;
+  truquesAtuais: string[];
 }
 
-export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conjura }: MagiasTabProps) {
+export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conjura, truquesAtuais }: MagiasTabProps) {
   if (!conjura) {
     return (
       <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 13, textAlign: 'center' }}>
@@ -22,7 +23,7 @@ export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conju
   }
 
   const espaco = espacoDeMagiaAtivo(classe, nivel);
-  const truques = truquesDoPersonagem(selecao);
+  const truques = truquesDoPersonagem(truquesAtuais);
   const preparadas = magiasPreparadasDoPersonagem(selecao);
 
   return (

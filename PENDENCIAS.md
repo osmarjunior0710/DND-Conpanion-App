@@ -111,7 +111,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 por tudo que fizemos"), que levantou as perguntas de equipamento —
 plano aprovado ("vamos de e1").
 
-## Bardo — próxima classe, plano em 5 etapas (Etapas 1, 2, 3 e 5 feitas — falta só a 4)
+## Bardo — próxima classe, plano em 5 etapas (falta só 4.2 e 4.3)
 
 **O que é:** depois do Plano de Equipamento fechado e das subclasses
 de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
@@ -158,12 +158,20 @@ subclasse (4 Colégios).
    círculo simultâneo — suficiente hoje porque Bardo nível 1 só tem o
    1º; vira limitação real só quando a Etapa 4 existir. Ver
    DECISOES-DESIGN.md "Bardo — Etapa 3.1".
-4. **Level Up** (falta) — truques/magias/espaços crescem por tabela;
-   nova categoria "troca opcional de 1 magia preparada por level-up"
-   (padrão A, ainda não existe no motor — motor hoje só conhece
-   Guerreiro, não-conjurador). Enquanto isso não existir, um Bardo
-   pode subir de nível (PV/ASI genéricos já funcionam) mas fica com os
-   truques/magias/espaços congelados no que foi escolhido na criação.
+4. **Level Up** — dividida em 3 sub-entregas:
+   - ~~**4.1 Truques**~~ — **feita**. Cresce/troca por level-up (lista
+     única pré-marcada, valida "só 1 trocado"). Ver DECISOES-DESIGN.md
+     "Bardo — Etapa 4.1".
+   - **4.2 Espaços de Magia multi-círculo** (falta) — hoje só rastreia
+     1 círculo por vez (`espacoDeMagiaAtivo`); quebra a partir do
+     nível 3 do Bardo (2º círculo desbloqueia junto do 1º). Pré-
+     requisito estrutural da 4.3.
+   - **4.3 Magias Preparadas** (falta) — mesmo padrão de tela da 4.1
+     (lista única pré-marcada, valida troca), mas as magias podem vir
+     de qualquer círculo com espaço — depende da 4.2 estar pronta.
+     Enquanto isso não existir, Magias Preparadas ficam congeladas no
+     que foi escolhido na criação (Truques já não tem mais esse
+     problema).
 5. ~~**Combat**~~ — **feita** (Etapa 3.2). "Usar Magia" lista Truques/
    Magias Preparadas reais (exclui as de Reação, que só aparecem no
    painel de Reação se existirem); gasta Espaço de Magia real; magia

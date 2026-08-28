@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { dadoVidaValor } from '../../../data/levelUpFixtures';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
+import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { caracteristicasDoNivel, niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel } from '../../../core/levelUp';
+import { valorRecursoClasse } from '../../../core/recursosClasse';
+import { contarTrocas } from '../../../core/magiasPersonagem';
+import { iconesMagia } from '../../../core/classificarMagia';
+import MagiaComDescricao from '../../components/MagiaComDescricao';
 import styles from './LevelUpShell.module.css';
 
 export interface PersonagemNivel {
@@ -23,6 +28,7 @@ interface LevelUpShellProps {
     pvGanho: number;
     subclasseEscolhida: string | null;
     estiloDeLutaEscolhido: string | null;
+    truquesEscolhidos: string[] | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -32,9 +38,14 @@ interface LevelUpShellProps {
   onHpModoChange: (modo: 'media' | 'rolar' | null) => void;
   hpRolado: number | null;
   onHpRoladoChange: (valor: number | null) => void;
+  /** Truques que o personagem já tem (pré-marcados na tela de escolha
+   * — Etapa 4.1). */
+  truquesAtuais: string[];
+  /** Catálogo completo de Truques da classe, pra escolher de/pra. */
+  truquesDaClasse: Magia[];
 }
 
-type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'asi' | 'dadivaEpica' | 'resumo';
+type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'truques' | 'asi' | 'dadivaEpica' | 'resumo';
 type FaseDramatica = 'idle' | 'rolando' | 'resultado';
 
 const NOMES_ATRIBUTOS = ['FOR', 'DES', 'CON', 'INT', 'SAB', 'CAR'];
@@ -49,12 +60,16 @@ export default function LevelUpShell({
   onHpModoChange,
   hpRolado,
   onHpRoladoChange,
+  truquesAtuais,
+  truquesDaClasse,
 }: LevelUpShellProps) {
   const novoNivel = personagem.nivel + 1;
+  const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', novoNivel);
 
   const luSteps: LuStep[] = ['pv', 'features'];
   if (classe.nivelSubclasse === novoNivel && !personagem.subclasse) luSteps.push('subclasse');
   if (temEstiloDeLutaTrocavel(classe, novoNivel)) luSteps.push('estiloDeLuta');
+  if (maxTruques > 0) luSteps.push('truques');
   if (niveisComASI(classe).includes(novoNivel)) luSteps.push('asi');
   if (niveisComDadivaEpica(classe).includes(novoNivel)) luSteps.push('dadivaEpica');
   luSteps.push('resumo');
@@ -68,6 +83,7 @@ export default function LevelUpShell({
   // um aviso, sem travar o avanço.
   const subclasseEscolhida: string | null = null;
   const [estiloDeLutaEscolhido, setEstiloDeLutaEscolhido] = useState<string | null>(personagem.estiloDeLuta);
+  const [truquesEscolhidos, setTruquesEscolhidos] = useState<string[]>(truquesAtuais);
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
   const [asiEscolhas, setAsiEscolhas] = useState<string[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -100,6 +116,18 @@ export default function LevelUpShell({
     setLuIndex((i) => i + 1);
   }
 
+  function toggleTruque(nome: string) {
+    const i = truquesEscolhidos.indexOf(nome);
+    if (i > -1) {
+      setTruquesEscolhidos((prev) => prev.filter((x) => x !== nome));
+      return;
+    }
+    if (truquesEscolhidos.length < maxTruques) setTruquesEscolhidos((prev) => [...prev, nome]);
+  }
+
+  const trocasDeTruque = contarTrocas(truquesAtuais, truquesEscolhidos);
+  const truquesValido = truquesEscolhidos.length === maxTruques && trocasDeTruque <= 1;
+
   function toggleAsi(a: string) {
     const total = asiEscolhas.length;
     const nesse = asiEscolhas.filter((x) => x === a).length;
@@ -117,6 +145,7 @@ export default function LevelUpShell({
     features: 'Novas Características',
     subclasse: 'Escolha de Subclasse',
     estiloDeLuta: 'Estilo de Luta',
+    truques: 'Truques',
     asi: 'Atributo ou Talento',
     dadivaEpica: 'Dádiva Épica',
     resumo: 'Resumo',
@@ -134,9 +163,23 @@ export default function LevelUpShell({
         return;
       }
     }
+    if (step === 'truques' && !truquesValido) {
+      setAviso(
+        trocasDeTruque > 1
+          ? 'Você só pode trocar 1 truque por level-up — desmarque menos truques que já tinha.'
+          : `Escolha exatamente ${maxTruques} truques antes de avançar.`,
+      );
+      return;
+    }
     setAviso(null);
     if (step === 'resumo') {
-      onConfirmar({ novoNivel, pvGanho: pvGanho ?? 0, subclasseEscolhida, estiloDeLutaEscolhido });
+      onConfirmar({
+        novoNivel,
+        pvGanho: pvGanho ?? 0,
+        subclasseEscolhida,
+        estiloDeLutaEscolhido,
+        truquesEscolhidos: luSteps.includes('truques') ? truquesEscolhidos : null,
+      });
       return;
     }
     setLuIndex((i) => i + 1);
@@ -289,6 +332,35 @@ export default function LevelUpShell({
           </>
         )}
 
+        {step === 'truques' && (
+          <>
+            <div className="section-title">
+              Truques — escolha {maxTruques} ({truquesEscolhidos.length}/{maxTruques})
+            </div>
+            <div className="label" style={{ marginBottom: 8 }}>
+              Regra oficial: a cada nível, você pode substituir 1 dos truques que já conhece por outro da lista —
+              não precisa mexer se não quiser.
+            </div>
+            {truquesDaClasse.map((m) => (
+              <div key={m.id} className="check-row" onClick={() => toggleTruque(m.nome)}>
+                <div className={`check-box ${truquesEscolhidos.includes(m.nome) ? 'checked' : ''}`} />
+                <span className="check-label">
+                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                  {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>
+                    ({m.escola}
+                    {truquesAtuais.includes(m.nome) ? ' · já conhece' : ''})
+                  </span>
+                </span>
+              </div>
+            ))}
+            {trocasDeTruque > 1 && (
+              <div className="label" style={{ color: 'var(--warn)', marginTop: 6 }}>
+                ⚠️ {trocasDeTruque} truques trocados — só pode trocar 1 por level-up.
+              </div>
+            )}
+          </>
+        )}
+
         {step === 'asi' && (
           <>
             <div className="section-title">Aumento de Atributo ou Talento</div>
@@ -358,6 +430,12 @@ export default function LevelUpShell({
               <div className="summary-row">
                 <span>Estilo de Luta</span>
                 <span>{estiloDeLutaEscolhido ?? 'nenhum escolhido'}</span>
+              </div>
+            )}
+            {luSteps.includes('truques') && (
+              <div className="summary-row">
+                <span>Truques</span>
+                <span>{trocasDeTruque > 0 ? `${trocasDeTruque} trocado(s)` : 'sem troca'}</span>
               </div>
             )}
             {asiModo === 'atributo' && (

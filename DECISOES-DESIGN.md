@@ -3490,3 +3490,66 @@ lembrete; não faz sentido "rolar" nada no momento da concessão.
 como "usada" e mostra o feedback correto.
 
 **Data/origem:** 2026-08.
+
+## Bardo — Etapa 4.1 (Level Up de Truques) feita
+
+Truques Conhecidos agora crescem/trocam de verdade no Level Up, em vez
+de ficar congelados no que foi escolhido na criação.
+
+**Design da interação** (discutido com o Osmar antes de codar): **uma
+lista só, um step só** — não um fluxo de "adicionar" separado de um
+fluxo de "trocar". A tela mostra o catálogo completo de Truques da
+classe, pré-marcado com os que o personagem já conhece (tag "· já
+conhece" ao lado da escola), limite de seleção = o máximo do NOVO
+nível. Isso resolve os 2 casos de regra com a mesma interação:
+- **Cresceu** (2→3 no nível 4): a lista já vem com 2 marcados; o slot
+  vazio força marcar +1 antes de avançar — "adicionar" sai de graça da
+  validação de contagem.
+- **Não cresceu** (a maioria dos níveis): já está no máximo, não
+  precisa mexer pra avançar; se quiser, pode desmarcar 1 antigo +
+  marcar 1 novo — isso já É a "troca" que o livro permite a cada
+  nível, sem UI própria pra "modo troca".
+
+**Validação da troca** (pergunta do Osmar: como garantir só 1 trocado,
+não vira bagunça): comparo a lista FINAL com a ORIGINAL (o que já
+tinha antes desse level-up) e conto quantos dos originais **sumiram**
+da seleção final (`contarTrocas`, `core/magiasPersonagem.ts`). Regra:
+- 0 removidos → só cresceu (ou nada mudou). OK.
+- 1 removido → 1 troca. OK (exatamente o que o livro permite).
+- 2+ removidos → bloqueia avançar, aviso "só pode trocar 1 truque por
+  level-up".
+
+A contagem de "quantos precisam ser adicionados" não tem lógica
+própria — sai de graça da álgebra: como o total final é sempre travado
+no novo máximo, (adicionados − removidos) sempre bate com o quanto a
+tabela cresceu naquele nível. Só a trava de "no máximo 1 removido"
+precisa de checagem explícita.
+
+**Mudança estrutural que isso trouxe:** `selecao.truquesEscolhidos`
+(campo de `WizardSelection`, imutável — retrato da criação) não é mais
+a fonte de verdade dos truques atuais do personagem. `FichaShell.tsx`
+ganhou `truquesAtuais` (estado próprio, `PersonagemSalvo.truquesAtual`
+persistido) — mesmo padrão já usado pra `maestriaArmaAtual`/
+`estiloDeLutaAtual`/`itensMochilaAtual` (retrato de criação + estado
+pós-criação em cima). `truquesDoPersonagem()` (`core/magiasPersonagem.ts`)
+mudou de assinatura — recebe `string[]` direto, não mais
+`WizardSelection` — porque agora tem 2 fontes possíveis (criação OU
+Level Up) e não faz sentido a função saber de qual.
+
+**Fora desta entrega:** Magias Preparadas (Etapa 4.3) e Espaços de
+Magia com múltiplos círculos simultâneos (Etapa 4.2) — o Bardo de
+teste chegou ao nível 4 com Magias Preparadas ainda travadas nas 4 da
+criação (Etapa 4.3 ainda não feita); Espaços de Magia (1º círculo)
+já cresce sozinho porque `espacoDeMagiaAtivo` já lia a tabela real
+desde a Etapa 3.1, não precisou de mudança.
+
+**Testado:** Playwright 390×844 — Bardo criado → Level Up nível 2
+(Truques "escolha 2 (2/2)", já satisfeito, passa direto) → nível 3
+(sem step de Truques nesse nível específico — tabela não cresce e a
+troca opcional não foi testada aqui) → nível 4 (Truques "escolha 3
+(2/3)", bloqueado até escolher +1; escolhido "Amigos"; aviso de
+bloqueio some depois de corrigir) → aba Magias confirma os 3 truques
+reais (2 antigos + 1 novo) e Espaços de Magia em 4/4 (tabela do nível
+4, sem mudança de código).
+
+**Data/origem:** 2026-08.

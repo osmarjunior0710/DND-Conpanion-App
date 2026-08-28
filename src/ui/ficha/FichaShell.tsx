@@ -48,6 +48,7 @@ import {
   numeroDeAtaques,
 } from '../../core/levelUp';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
+import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
 import PerfilTab from './tabs/PerfilTab';
@@ -115,6 +116,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
   const [maestriaArma, setMaestriaArma] = useState<string[]>(personagemSalvo.maestriaArmaAtual ?? selecao.maestriaArmaEscolhida);
+  const [truquesAtuais, setTruquesAtuais] = useState<string[]>(personagemSalvo.truquesAtual ?? selecao.truquesEscolhidos);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
@@ -150,7 +152,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
   const conjura = personagemConjura(classe);
   const espaco = espacoDeMagiaAtivo(classe, personagem.nivel);
-  const truques = truquesDoPersonagem(selecao);
+  const truques = truquesDoPersonagem(truquesAtuais);
   const magiasPreparadas = magiasPreparadasDoPersonagem(selecao);
   const magiasPreparadasReacao = magiasPreparadas.filter(ehMagiaDeReacao);
   const magiasPreparadasAcao = magiasPreparadas.filter((m) => !ehMagiaDeReacao(m));
@@ -205,6 +207,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       surtoGasto,
       espacosGastos,
       inspiracaoGasto,
+      truquesAtual: truquesAtuais,
       itensMochilaAtual: itensMochila,
       levelUpHpModo,
       levelUpHpRolado,
@@ -221,6 +224,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     surtoGasto,
     espacosGastos,
     inspiracaoGasto,
+    truquesAtuais,
     itensMochila,
     levelUpHpModo,
     levelUpHpRolado,
@@ -337,6 +341,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     pvGanho: number;
     subclasseEscolhida: string | null;
     estiloDeLutaEscolhido: string | null;
+    truquesEscolhidos: string[] | null;
   }) {
     setPersonagem((prev) => ({
       ...prev,
@@ -346,6 +351,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       estiloDeLuta: resultado.estiloDeLutaEscolhido ?? prev.estiloDeLuta,
     }));
     setPvAtual((v) => v + resultado.pvGanho);
+    if (resultado.truquesEscolhidos) setTruquesAtuais(resultado.truquesEscolhidos);
     setLevelUpHpModo(null);
     setLevelUpHpRolado(null);
     setLevelUpAberto(false);
@@ -372,6 +378,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         onHpModoChange={setLevelUpHpModo}
         hpRolado={levelUpHpRolado}
         onHpRoladoChange={setLevelUpHpRolado}
+        truquesAtuais={truquesAtuais}
+        truquesDaClasse={magiasDaClasse(classe.nome, 0)}
       />
     );
   }
@@ -439,7 +447,14 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
           />
         )}
         {tab === 'magias' && (
-          <MagiasTab selecao={selecao} classe={classe} nivel={personagem.nivel} espacosGastos={espacosGastos} conjura={conjura} />
+          <MagiasTab
+            selecao={selecao}
+            classe={classe}
+            nivel={personagem.nivel}
+            espacosGastos={espacosGastos}
+            conjura={conjura}
+            truquesAtuais={truquesAtuais}
+          />
         )}
         {tab === 'combat' && (
           <CombatTab

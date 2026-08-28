@@ -28,12 +28,13 @@ const REGEX_CIRCULO = /^Espaços de Magia — (\d+)º Círculo$/;
 /** O círculo de Espaço de Magia ativo no nível atual, ou null se a
  * classe não conjura (ou nenhum círculo tem espaço > 0 nesse nível).
  * Hoje só existe UM círculo ativo por vez pra qualquer personagem
- * alcançável no app (Bardo nível 1 só tem 1º círculo — 2º só destrava
- * no nível 3, e o Level Up ainda não sabe crescer Truques/Magias/
- * Espaços — ver PENDENCIAS.md "Etapa 4"). Se no futuro isso mudar
- * (2+ círculos com espaço > 0 ao mesmo tempo), esta função retorna só
- * o de menor círculo — vira limitação conhecida até a Etapa 4 tratar
- * múltiplos círculos simultâneos de verdade. */
+ * alcançável no app (Bardo só ganha o 2º círculo no nível 3, e o
+ * Level Up ainda não sabe crescer Espaços/Magias Preparadas pra mais
+ * de 1 círculo simultâneo — ver PENDENCIAS.md "Etapa 4.2"; Truques já
+ * cresce, Etapa 4.1). Se no futuro isso mudar (2+ círculos com espaço
+ * > 0 ao mesmo tempo), esta função retorna só o de menor círculo —
+ * vira limitação conhecida até a Etapa 4.2 tratar múltiplos círculos
+ * simultâneos de verdade. */
 export function espacoDeMagiaAtivo(classe: Classe | null, nivel: number): EspacoDeMagiaAtivo | null {
   if (!classe) return null;
   const candidatos = classe.recursos
@@ -58,14 +59,29 @@ function buscarMagiasPorNome(nomes: string[]): Magia[] {
   return nomes.map((nome) => magias.find((m) => m.nome === nome)).filter((m): m is Magia => m !== undefined);
 }
 
-/** Truques reais escolhidos na criação (nomes → objeto Magia completo). */
-export function truquesDoPersonagem(selecao: WizardSelection): Magia[] {
-  return buscarMagiasPorNome(selecao.truquesEscolhidos);
+/** Truques reais do personagem (nomes → objeto Magia completo). Recebe
+ * os nomes diretamente (não `WizardSelection`) porque, a partir da
+ * Etapa 4.1 (Level Up), a lista pode ter mudado depois da criação —
+ * `FichaShell` guarda isso em estado próprio (`truquesAtuais`), não
+ * mais direto de `selecao.truquesEscolhidos` (que é só o retrato da
+ * criação, congelado). */
+export function truquesDoPersonagem(nomes: string[]): Magia[] {
+  return buscarMagiasPorNome(nomes);
 }
 
-/** Magias preparadas reais escolhidas na criação. */
+/** Magias preparadas reais escolhidas na criação. Ainda lê direto de
+ * `selecao` — cresce/troca no Level Up é Etapa 4.3, não feita. */
 export function magiasPreparadasDoPersonagem(selecao: WizardSelection): Magia[] {
   return buscarMagiasPorNome(selecao.magiasPreparadasEscolhidas);
+}
+
+/** Quantos nomes da lista ORIGINAL não estão mais na lista FINAL —
+ * "trocas" feitas. Usado pra validar a regra "pode substituir 1 por
+ * level-up" (Truques hoje, Magias Preparadas na Etapa 4.3): o total
+ * final já é travado no máximo do nível pela própria tela de seleção,
+ * então só falta impedir mais de 1 removido. */
+export function contarTrocas(originais: string[], finais: string[]): number {
+  return originais.filter((nome) => !finais.includes(nome)).length;
 }
 
 /** Todas as magias marcadas com Tempo de Conjuração "Reação" começam
