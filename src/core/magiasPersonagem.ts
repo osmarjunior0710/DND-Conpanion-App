@@ -25,34 +25,25 @@ export interface EspacoDeMagiaAtivo {
 
 const REGEX_CIRCULO = /^Espaços de Magia — (\d+)º Círculo$/;
 
-/** O círculo de Espaço de Magia ativo no nível atual, ou null se a
- * classe não conjura (ou nenhum círculo tem espaço > 0 nesse nível).
- * Hoje só existe UM círculo ativo por vez pra qualquer personagem
- * alcançável no app (Bardo só ganha o 2º círculo no nível 3, e o
- * Level Up ainda não sabe crescer Espaços/Magias Preparadas pra mais
- * de 1 círculo simultâneo — ver PENDENCIAS.md "Etapa 4.2"; Truques já
- * cresce, Etapa 4.1). Se no futuro isso mudar (2+ círculos com espaço
- * > 0 ao mesmo tempo), esta função retorna só o de menor círculo —
- * vira limitação conhecida até a Etapa 4.2 tratar múltiplos círculos
- * simultâneos de verdade. */
-export function espacoDeMagiaAtivo(classe: Classe | null, nivel: number): EspacoDeMagiaAtivo | null {
-  if (!classe) return null;
-  const candidatos = classe.recursos
+/** TODOS os círculos de Espaço de Magia ativos no nível atual (Etapa
+ * 4.2) — array vazio se a classe não conjura. Bardo ganha o 2º
+ * círculo no nível 3 sem perder o 1º, então a partir daí isso retorna
+ * 2 entradas simultâneas; ordenado por círculo crescente. */
+export function espacosDeMagiaAtivos(classe: Classe | null, nivel: number): EspacoDeMagiaAtivo[] {
+  if (!classe) return [];
+  return classe.recursos
     .map((r): { circulo: number; recurso: RecursoClasse } | null => {
       const m = r.nome.match(REGEX_CIRCULO);
       return m ? { circulo: Number(m[1]), recurso: r } : null;
     })
     .filter((c): c is { circulo: number; recurso: RecursoClasse } => c !== null)
     .filter((c) => (c.recurso.valorPorNivel[nivel] ?? 0) > 0)
-    .sort((a, b) => a.circulo - b.circulo);
-
-  const ativo = candidatos[0];
-  if (!ativo) return null;
-  return {
-    circulo: ativo.circulo,
-    maximo: ativo.recurso.valorPorNivel[nivel] ?? 0,
-    recuperaNoDescansoCurto: (ativo.recurso.recuperaEm ?? '').toLowerCase().includes('curto'),
-  };
+    .sort((a, b) => a.circulo - b.circulo)
+    .map((c) => ({
+      circulo: c.circulo,
+      maximo: c.recurso.valorPorNivel[nivel] ?? 0,
+      recuperaNoDescansoCurto: (c.recurso.recuperaEm ?? '').toLowerCase().includes('curto'),
+    }));
 }
 
 function buscarMagiasPorNome(nomes: string[]): Magia[] {

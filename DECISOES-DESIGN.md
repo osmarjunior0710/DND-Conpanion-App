@@ -3621,3 +3621,46 @@ ou golpe corpo a corpo sem arma. Dano Contundente." no Ataque
 Desarmado; título confirmado sem "escolha uma".
 
 **Data/origem:** 2026-08.
+
+## Bardo — Etapa 4.2 (Espaços de Magia multi-círculo) feita
+
+Espaços de Magia passam a rastrear TODOS os círculos ativos ao mesmo
+tempo — antes só existia 1 círculo simultâneo possível
+(`espacoDeMagiaAtivo`, singular), o que funcionava enquanto o único
+nível alcançável era 1-2 (só 1º círculo do Bardo), mas quebrava a
+partir do nível 3, quando o 2º círculo desbloqueia SEM substituir o
+1º (os dois ficam ativos ao mesmo tempo, cada um com seu próprio
+contador de espaços gastos/máximo).
+
+- `core/magiasPersonagem.ts`: `espacoDeMagiaAtivo` (retornava só o
+  círculo de menor número) virou `espacosDeMagiaAtivos` (retorna a
+  lista completa, ordenada por círculo).
+- `FichaShell.tsx`: `espacosGastos` (1 número) virou
+  `espacosGastosPorCirculo` (`Record<círculo, gasto>`).
+  `gastarSlotCirculo(circulo)` é a operação primitiva agora; ganhou
+  também `gastarQualquerSlot()` (usa o de menor círculo com espaço
+  sobrando) pra ações que gastam "1 Espaço de Magia" sem se importar
+  de qual círculo (ex.: recuperar Inspiração de Bardo com Fonte de
+  Inspiração). Descanso Longo reseta todos os círculos; Descanso Curto
+  só os que têm `recuperaNoDescansoCurto` (nenhum caso real ainda no
+  Bardo, mas já fica certo se aparecer).
+- **Migração de personagem salvo antes dessa entrega:** campo antigo
+  `espacosGastos` (número único) é lido só na inicialização do estado
+  e convertido pro círculo que já estava ativo na época — nunca mais
+  escrito depois disso (documentado como `@deprecated` em
+  `armazenamentoPersonagens.ts`).
+- `MagiasTab.tsx`: um bloco de pips por círculo ativo (título "1º
+  círculo", "2º círculo"...), cada um com seu próprio "X/Y
+  disponíveis".
+- Combat "Usar Magia" (`AcaoPanelContent`/`ReacaoPanelContent`): o
+  contador de espaço também virou 1 linha por círculo; cada magia
+  preparada gasta o espaço do círculo DELA MESMA (sem upar de círculo
+  — regra separada, não implementada, registrada em PENDENCIAS.md).
+
+**Testado:** Playwright 390×844 — Bardo criado, Level Up até nível 3 →
+aba Magias mostra 2 blocos simultâneos (1º círculo 4/4, 2º círculo
+2/2) → Combat "Usar Magia" mostra os mesmos 2 contadores independentes
+→ conjurei uma magia de 1º círculo, confirmei que só o 1º círculo
+desceu (3/4) e o 2º ficou intacto (2/2).
+
+**Data/origem:** 2026-08.

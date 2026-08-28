@@ -3,6 +3,7 @@ import type { EstiloDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta'
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import type { CaracteristicaNivel } from '../../../core/levelUp';
 import type { AtaqueResolvido } from '../../../core/ataque';
+import type { EspacoDeMagiaAtivo } from '../../../core/magiasPersonagem';
 import { useRoll } from '../../roll/RollContext';
 import InfoChip from '../../components/InfoChip';
 import SidePanel from '../combat/SidePanel';
@@ -21,9 +22,9 @@ interface CombatTabProps {
   turnState: Record<RecursoTurno, EstadoRecurso>;
   onMarcarUsado: (categoria: RecursoTurno) => void;
   onFimDoTurno: () => void;
-  espacosGastos: number;
-  espacosMaximo: number;
-  onGastarSlot: () => boolean;
+  espacos: EspacoDeMagiaAtivo[];
+  espacosGastosPorCirculo: Record<number, number>;
+  onGastarSlotCirculo: (circulo: number) => boolean;
   estiloDeLuta: EstiloDeLuta | null;
   nivel: number;
   usosFolegoMaximo: number;
@@ -68,9 +69,9 @@ export default function CombatTab({
   turnState,
   onMarcarUsado,
   onFimDoTurno,
-  espacosGastos,
-  espacosMaximo,
-  onGastarSlot,
+  espacos,
+  espacosGastosPorCirculo,
+  onGastarSlotCirculo,
   estiloDeLuta,
   nivel,
   usosFolegoMaximo,
@@ -211,6 +212,8 @@ export default function CombatTab({
       mod: danoPendente.mod,
     });
   }
+
+  const temEspacoDisponivel = espacos.some((e) => (espacosGastosPorCirculo[e.circulo] ?? 0) < e.maximo);
 
   function ladoDoPainel(categoria: RecursoTurno): 'left' | 'right' | 'bottom' {
     if (categoria === 'acao') return 'left';
@@ -360,9 +363,9 @@ export default function CombatTab({
           <AcaoPanelContent
             onEscolher={(nome, desc, dano) => escolherNoPainel('acao', nome, desc, dano)}
             onAtacar={registrarAtaque}
-            gastarSlot={onGastarSlot}
-            espacosGastos={espacosGastos}
-            espacosMaximo={espacosMaximo}
+            gastarSlotCirculo={onGastarSlotCirculo}
+            espacos={espacos}
+            espacosGastosPorCirculo={espacosGastosPorCirculo}
             conjura={conjura}
             truques={truques}
             magiasPreparadas={magiasPreparadasAcao}
@@ -388,8 +391,7 @@ export default function CombatTab({
             usosInspiracaoRestantes={usosInspiracaoRestantes}
             tamanhoDadoInspiracao={tamanhoDadoInspiracao}
             fonteDeInspiracao={fonteDeInspiracao}
-            espacosGastos={espacosGastos}
-            espacosMaximo={espacosMaximo}
+            temEspacoDisponivel={temEspacoDisponivel}
             onUsarInspiracao={usarInspiracaoBardo}
             onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
             detalhesAtivo={detalhesAtivo}
@@ -398,7 +400,7 @@ export default function CombatTab({
         {painelAberto === 'reacao' && (
           <ReacaoPanelContent
             onEscolher={(nome, desc) => escolherNoPainel('reacao', nome, desc)}
-            gastarSlot={onGastarSlot}
+            gastarSlotCirculo={onGastarSlotCirculo}
             conjura={conjura}
             magiasReacao={magiasPreparadasReacao}
             modAcertoConjuracao={modAcertoConjuracao}

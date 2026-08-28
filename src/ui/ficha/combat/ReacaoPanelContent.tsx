@@ -7,7 +7,7 @@ import styles from './PanelRows.module.css';
 
 interface ReacaoPanelContentProps {
   onEscolher: (nome: string, desc: string) => void;
-  gastarSlot: () => boolean;
+  gastarSlotCirculo: (circulo: number) => boolean;
   conjura: boolean;
   magiasReacao: Magia[];
   modAcertoConjuracao: number | null;
@@ -16,7 +16,7 @@ interface ReacaoPanelContentProps {
 
 export default function ReacaoPanelContent({
   onEscolher,
-  gastarSlot,
+  gastarSlotCirculo,
   conjura,
   magiasReacao,
   modAcertoConjuracao,
@@ -27,9 +27,9 @@ export default function ReacaoPanelContent({
 
   function conjurarMagia(m: Magia) {
     if (m.circulo > 0) {
-      const ok = gastarSlot();
+      const ok = gastarSlotCirculo(m.circulo);
       if (!ok) {
-        setAviso('Sem Espaços de Magia disponíveis. Veja a aba Magias pra saber quando recupera.');
+        setAviso(`Sem Espaço de Magia de ${m.circulo}º círculo disponível. Veja a aba Magias pra saber quando recupera.`);
         return;
       }
     }

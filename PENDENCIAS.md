@@ -111,7 +111,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 por tudo que fizemos"), que levantou as perguntas de equipamento —
 plano aprovado ("vamos de e1").
 
-## Bardo — próxima classe, plano em 5 etapas (falta só 4.2 e 4.3)
+## Bardo — próxima classe, plano em 5 etapas (falta só 4.3)
 
 **O que é:** depois do Plano de Equipamento fechado e das subclasses
 de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
@@ -162,16 +162,21 @@ subclasse (4 Colégios).
    - ~~**4.1 Truques**~~ — **feita**. Cresce/troca por level-up (lista
      única pré-marcada, valida "só 1 trocado"). Ver DECISOES-DESIGN.md
      "Bardo — Etapa 4.1".
-   - **4.2 Espaços de Magia multi-círculo** (falta) — hoje só rastreia
-     1 círculo por vez (`espacoDeMagiaAtivo`); quebra a partir do
-     nível 3 do Bardo (2º círculo desbloqueia junto do 1º). Pré-
-     requisito estrutural da 4.3.
+   - ~~**4.2 Espaços de Magia multi-círculo**~~ — **feita**. Todos os
+     círculos ativos rastreados ao mesmo tempo (`espacosDeMagiaAtivos`,
+     `espacosGastosPorCirculo`), cada um com seu contador — resolve o
+     que quebrava a partir do nível 3 do Bardo (2º círculo desbloqueia
+     junto do 1º). Ver DECISOES-DESIGN.md "Bardo — Etapa 4.2".
    - **4.3 Magias Preparadas** (falta) — mesmo padrão de tela da 4.1
      (lista única pré-marcada, valida troca), mas as magias podem vir
-     de qualquer círculo com espaço — depende da 4.2 estar pronta.
-     Enquanto isso não existir, Magias Preparadas ficam congeladas no
-     que foi escolhido na criação (Truques já não tem mais esse
-     problema).
+     de qualquer círculo com espaço — a 4.2 (pré-requisito) já está
+     pronta. Enquanto isso não existir, Magias Preparadas ficam
+     congeladas no que foi escolhido na criação (Truques já não tem
+     mais esse problema).
+   - **Upar magia de círculo maior** (não escopado) — hoje cada magia
+     preparada só gasta o espaço do círculo dela mesma; a regra de
+     "gastar um espaço de círculo maior pra um efeito melhor" (upcast)
+     não existe. Fica pra quando alguém pedir.
 5. ~~**Combat**~~ — **feita** (Etapa 3.2). "Usar Magia" lista Truques/
    Magias Preparadas reais (exclui as de Reação, que só aparecem no
    painel de Reação se existirem); gasta Espaço de Magia real; magia
@@ -1016,17 +1021,6 @@ vai precisar tomar: quais magias preparadas cabem em cada painel
 "Reação" só entra no painel de Reação), e como ligar uma magia de
 ataque (`classificarMagia().ataque`) à rolagem de acerto/dano que já
 existe pra arma.
-
-## espacoDeMagiaAtivo só cobre 1 círculo simultâneo — falta a Etapa 4 (Level Up de magia)
-
-`core/magiasPersonagem.ts`'s `espacoDeMagiaAtivo` retorna só o círculo
-de MENOR número com espaço > 0 no nível atual. Funciona hoje porque
-nenhum personagem alcançável no app tem 2 círculos com espaço > 0 ao
-mesmo tempo (Bardo nível 1 só tem 1º círculo; Level Up não sabe
-crescer Truques/Magias Preparadas/Espaços — essa é a Etapa 4, ainda
-não feita). Quando a Etapa 4 existir e alguém levar um Bardo até
-nível 3+ (2º círculo destrava), essa função vai continuar mostrando só
-o 1º círculo — precisa virar lista de círculos ativos, não um só.
 
 ## Painel de Ação Bônus (Combat) ainda não tem integração de magia
 

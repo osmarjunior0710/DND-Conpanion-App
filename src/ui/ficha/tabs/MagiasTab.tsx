@@ -1,6 +1,6 @@
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import type { WizardSelection } from '../../../core/personagem';
-import { espacoDeMagiaAtivo, truquesDoPersonagem, magiasPreparadasDoPersonagem } from '../../../core/magiasPersonagem';
+import { espacosDeMagiaAtivos, truquesDoPersonagem, magiasPreparadasDoPersonagem } from '../../../core/magiasPersonagem';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import styles from './MagiasTab.module.css';
 
@@ -8,12 +8,12 @@ interface MagiasTabProps {
   selecao: WizardSelection;
   classe: Classe | null;
   nivel: number;
-  espacosGastos: number;
+  espacosGastosPorCirculo: Record<number, number>;
   conjura: boolean;
   truquesAtuais: string[];
 }
 
-export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conjura, truquesAtuais }: MagiasTabProps) {
+export default function MagiasTab({ selecao, classe, nivel, espacosGastosPorCirculo, conjura, truquesAtuais }: MagiasTabProps) {
   if (!conjura) {
     return (
       <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 13, textAlign: 'center' }}>
@@ -22,27 +22,34 @@ export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conju
     );
   }
 
-  const espaco = espacoDeMagiaAtivo(classe, nivel);
+  const espacos = espacosDeMagiaAtivos(classe, nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
   const preparadas = magiasPreparadasDoPersonagem(selecao);
 
   return (
     <>
-      {espaco && (
+      {espacos.length > 0 && (
         <>
           <div className="section-title">Espaços de Magia</div>
-          <div className="label">{espaco.circulo}º círculo</div>
-          <div className={styles.slotRow}>
-            {Array.from({ length: espaco.maximo }).map((_, i) => (
-              <div key={i} className={`${styles.slotPip} ${i < espacosGastos ? styles.slotPipGasto : ''}`}>
-                {i < espacosGastos ? '✓' : '①'}
+          {espacos.map((espaco) => {
+            const gasto = espacosGastosPorCirculo[espaco.circulo] ?? 0;
+            return (
+              <div key={espaco.circulo} style={{ marginBottom: 12 }}>
+                <div className="label">{espaco.circulo}º círculo</div>
+                <div className={styles.slotRow}>
+                  {Array.from({ length: espaco.maximo }).map((_, i) => (
+                    <div key={i} className={`${styles.slotPip} ${i < gasto ? styles.slotPipGasto : ''}`}>
+                      {i < gasto ? '✓' : '①'}
+                    </div>
+                  ))}
+                </div>
+                <div className="label">
+                  {espaco.maximo - gasto}/{espaco.maximo} disponíveis — recupera no{' '}
+                  {espaco.recuperaNoDescansoCurto ? 'Descanso Curto' : 'Descanso Longo'}.
+                </div>
               </div>
-            ))}
-          </div>
-          <div className="label" style={{ marginBottom: 12 }}>
-            {espaco.maximo - espacosGastos}/{espaco.maximo} disponíveis — recupera no{' '}
-            {espaco.recuperaNoDescansoCurto ? 'Descanso Curto' : 'Descanso Longo'}.
-          </div>
+            );
+          })}
         </>
       )}
 

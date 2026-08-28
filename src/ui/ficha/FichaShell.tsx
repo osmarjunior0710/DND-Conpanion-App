@@ -35,7 +35,7 @@ import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestri
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
 import {
-  espacoDeMagiaAtivo,
+  espacosDeMagiaAtivos,
   ehMagiaDeReacao,
   modAcertoConjuracao as calcularModAcertoConjuracao,
   truquesDoPersonagem,
@@ -124,7 +124,17 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [surtoUsadoTurno, setSurtoUsadoTurno] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
-  const [espacosGastos, setEspacosGastos] = useState(personagemSalvo.espacosGastos ?? 0);
+  const [espacosGastosPorCirculo, setEspacosGastosPorCirculo] = useState<Record<number, number>>(() => {
+    if (personagemSalvo.espacosGastosPorCirculo) return personagemSalvo.espacosGastosPorCirculo;
+    // Migração de personagem salvo antes da Etapa 4.2 (só existia 1
+    // círculo simultâneo possível) — o valor antigo vira o gasto do
+    // círculo que já estava ativo na época.
+    if (personagemSalvo.espacosGastos) {
+      const circuloAntigo = espacosDeMagiaAtivos(classeDaSelecao(selecao), personagemSalvo.nivel)[0]?.circulo;
+      if (circuloAntigo !== undefined) return { [circuloAntigo]: personagemSalvo.espacosGastos };
+    }
+    return {};
+  });
   const [itensMochila, setItensMochila] = useState<ItemMochila[]>(
     personagemSalvo.itensMochilaAtual ?? calcularItensIniciais(selecao),
   );
@@ -151,7 +161,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
   const conjura = personagemConjura(classe);
-  const espaco = espacoDeMagiaAtivo(classe, personagem.nivel);
+  const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
   const magiasPreparadas = magiasPreparadasDoPersonagem(selecao);
   const magiasPreparadasReacao = magiasPreparadas.filter(ehMagiaDeReacao);
@@ -205,7 +215,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       folegoGasto,
       indomavelGasto,
       surtoGasto,
-      espacosGastos,
+      espacosGastosPorCirculo,
       inspiracaoGasto,
       truquesAtual: truquesAtuais,
       itensMochilaAtual: itensMochila,
@@ -222,7 +232,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     folegoGasto,
     indomavelGasto,
     surtoGasto,
-    espacosGastos,
+    espacosGastosPorCirculo,
     inspiracaoGasto,
     truquesAtuais,
     itensMochila,
@@ -243,10 +253,23 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setSurtoUsadoTurno(false);
   }
 
-  function gastarSlot(): boolean {
-    if (!espaco || espacosGastos >= espaco.maximo) return false;
-    setEspacosGastos((v) => v + 1);
+  function gastarSlotCirculo(circulo: number): boolean {
+    const def = espacos.find((e) => e.circulo === circulo);
+    const gasto = espacosGastosPorCirculo[circulo] ?? 0;
+    if (!def || gasto >= def.maximo) return false;
+    setEspacosGastosPorCirculo((prev) => ({ ...prev, [circulo]: (prev[circulo] ?? 0) + 1 }));
     return true;
+  }
+
+  /** Pra ações que gastam "1 Espaço de Magia" sem se importar de qual
+   * círculo (ex: Fonte de Inspiração) — usa o de menor círculo com
+   * espaço sobrando. */
+  function gastarQualquerSlot(): boolean {
+    for (const e of espacos) {
+      const gasto = espacosGastosPorCirculo[e.circulo] ?? 0;
+      if (gasto < e.maximo) return gastarSlotCirculo(e.circulo);
+    }
+    return false;
   }
 
   function usarInspiracao(): boolean {
@@ -257,14 +280,14 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function recuperarInspiracaoComEspaco(): boolean {
     if (inspiracaoGasto <= 0) return false;
-    if (!gastarSlot()) return false;
+    if (!gastarQualquerSlot()) return false;
     setInspiracaoGasto((v) => Math.max(0, v - 1));
     return true;
   }
 
   function descansoLongo() {
     setPvAtual(personagem.pvMax);
-    setEspacosGastos(0);
+    setEspacosGastosPorCirculo({});
     setFolegoGasto(0);
     setIndomavelGasto(0);
     setSurtoGasto(0);
@@ -274,12 +297,18 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   }
 
   function descansoCurto() {
-    const recuperaMagia = espaco?.recuperaNoDescansoCurto === true;
-    if (recuperaMagia) setEspacosGastos(0);
+    const circulosQueRecuperam = espacos.filter((e) => e.recuperaNoDescansoCurto).map((e) => e.circulo);
+    if (circulosQueRecuperam.length > 0) {
+      setEspacosGastosPorCirculo((prev) => {
+        const proximo = { ...prev };
+        for (const c of circulosQueRecuperam) proximo[c] = 0;
+        return proximo;
+      });
+    }
     if (fonteDeInspiracao) setInspiracaoGasto(0);
     setFolegoGasto((v) => Math.max(0, v - 1));
     setRestStatus(
-      `Descanso Curto: ${recuperaMagia ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
+      `Descanso Curto: ${circulosQueRecuperam.length > 0 ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
     );
   }
 
@@ -451,7 +480,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             selecao={selecao}
             classe={classe}
             nivel={personagem.nivel}
-            espacosGastos={espacosGastos}
+            espacosGastosPorCirculo={espacosGastosPorCirculo}
             conjura={conjura}
             truquesAtuais={truquesAtuais}
           />
@@ -464,9 +493,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             turnState={turnState}
             onMarcarUsado={marcarUsado}
             onFimDoTurno={fimDoTurno}
-            espacosGastos={espacosGastos}
-            espacosMaximo={espaco?.maximo ?? 0}
-            onGastarSlot={gastarSlot}
+            espacos={espacos}
+            espacosGastosPorCirculo={espacosGastosPorCirculo}
+            onGastarSlotCirculo={gastarSlotCirculo}
             estiloDeLuta={estiloDeLuta}
             nivel={personagem.nivel}
             usosFolegoMaximo={usosFolegoMaximo}

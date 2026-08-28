@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { acoesBase, type AtaqueInfo } from '../../../data/exampleCombat';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import type { AtaqueResolvido } from '../../../core/ataque';
+import type { EspacoDeMagiaAtivo } from '../../../core/magiasPersonagem';
 import { classificarMagia, iconesMagia } from '../../../core/classificarMagia';
 import { useRoll } from '../../roll/RollContext';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
@@ -17,9 +18,9 @@ export interface DanoPendente {
 interface AcaoPanelContentProps {
   onEscolher: (nome: string, desc: string, dano?: DanoPendente) => void;
   onAtacar: (nome: string, desc: string, dano: DanoPendente) => void;
-  gastarSlot: () => boolean;
-  espacosGastos: number;
-  espacosMaximo: number;
+  gastarSlotCirculo: (circulo: number) => boolean;
+  espacos: EspacoDeMagiaAtivo[];
+  espacosGastosPorCirculo: Record<number, number>;
   conjura: boolean;
   truques: Magia[];
   magiasPreparadas: Magia[];
@@ -37,9 +38,9 @@ interface AcaoPanelContentProps {
 export default function AcaoPanelContent({
   onEscolher,
   onAtacar,
-  gastarSlot,
-  espacosGastos,
-  espacosMaximo,
+  gastarSlotCirculo,
+  espacos,
+  espacosGastosPorCirculo,
   conjura,
   truques,
   magiasPreparadas,
@@ -73,9 +74,9 @@ export default function AcaoPanelContent({
 
   function conjurarMagia(m: Magia) {
     if (m.circulo > 0) {
-      const ok = gastarSlot();
+      const ok = gastarSlotCirculo(m.circulo);
       if (!ok) {
-        setAvisoSlot('Sem Espaços de Magia disponíveis. Veja a aba Magias pra saber quando recupera.');
+        setAvisoSlot(`Sem Espaço de Magia de ${m.circulo}º círculo disponível. Veja a aba Magias pra saber quando recupera.`);
         return;
       }
     }
@@ -143,17 +144,20 @@ export default function AcaoPanelContent({
             {detalhesAtivo && <div className={styles.rowDesc}>Conjurar Truque ou Magia Preparada</div>}
           </div>
           <div className={`${styles.accordionBody} ${magiaAberta ? styles.accordionBodyOpen : ''}`}>
-            {espacosMaximo > 0 && (
-              <div className={styles.slotCounter}>
-                <span>Espaços de Magia:</span>
-                {Array.from({ length: espacosMaximo }).map((_, i) => (
-                  <div key={i} className={`${styles.slotPipLg} ${i < espacosGastos ? styles.slotPipLgGasto : ''}`} />
-                ))}
-                <span style={{ color: 'var(--text-faint)' }}>
-                  {espacosMaximo - espacosGastos}/{espacosMaximo} disponíveis
-                </span>
-              </div>
-            )}
+            {espacos.map((e) => {
+              const gasto = espacosGastosPorCirculo[e.circulo] ?? 0;
+              return (
+                <div key={e.circulo} className={styles.slotCounter}>
+                  <span>{e.circulo}º círculo:</span>
+                  {Array.from({ length: e.maximo }).map((_, i) => (
+                    <div key={i} className={`${styles.slotPipLg} ${i < gasto ? styles.slotPipLgGasto : ''}`} />
+                  ))}
+                  <span style={{ color: 'var(--text-faint)' }}>
+                    {e.maximo - gasto}/{e.maximo} disponíveis
+                  </span>
+                </div>
+              );
+            })}
             {avisoSlot && (
               <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>
                 {avisoSlot}

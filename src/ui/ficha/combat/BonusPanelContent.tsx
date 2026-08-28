@@ -11,8 +11,7 @@ interface BonusPanelContentProps {
   usosInspiracaoRestantes: number;
   tamanhoDadoInspiracao: number;
   fonteDeInspiracao: boolean;
-  espacosGastos: number;
-  espacosMaximo: number;
+  temEspacoDisponivel: boolean;
   onUsarInspiracao: () => void;
   onRecuperarInspiracaoComEspaco: () => void;
   detalhesAtivo: boolean;
@@ -28,8 +27,7 @@ export default function BonusPanelContent({
   usosInspiracaoRestantes,
   tamanhoDadoInspiracao,
   fonteDeInspiracao,
-  espacosGastos,
-  espacosMaximo,
+  temEspacoDisponivel,
   onUsarInspiracao,
   onRecuperarInspiracaoComEspaco,
   detalhesAtivo,
@@ -44,9 +42,8 @@ export default function BonusPanelContent({
 
   const semUsos = usosFolegoRestantes <= 0;
   const semUsosInspiracao = usosInspiracaoRestantes <= 0;
-  const semEspacoParaRecuperar = espacosMaximo - espacosGastos <= 0;
   const nadaParaRecuperar = usosInspiracaoRestantes >= usosInspiracaoMaximo;
-  const recuperarDesabilitado = semEspacoParaRecuperar || nadaParaRecuperar;
+  const recuperarDesabilitado = !temEspacoDisponivel || nadaParaRecuperar;
 
   return (
     <>
@@ -93,7 +90,7 @@ export default function BonusPanelContent({
           {semUsosInspiracao && (
             <div className="label" style={{ marginTop: 2, marginBottom: 6 }}>
               sem usos de Inspiração disponíveis — descanse pra recuperar
-              {fonteDeInspiracao && !semEspacoParaRecuperar ? ' ou gaste um Espaço de Magia acima' : ''}.
+              {fonteDeInspiracao && temEspacoDisponivel ? ' ou gaste um Espaço de Magia acima' : ''}.
             </div>
           )}
         </>

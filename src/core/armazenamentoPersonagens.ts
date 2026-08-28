@@ -27,7 +27,17 @@ export interface PersonagemSalvo {
   folegoGasto?: number;
   indomavelGasto?: number;
   surtoGasto?: number;
+  /** @deprecated Etapa 4.1 — só existia 1 círculo simultâneo possível.
+   * Substituído por `espacosGastosPorCirculo` (Etapa 4.2). Mantido só
+   * pra migrar personagens salvos antes dessa entrega (ver
+   * `FichaShell.tsx`) — nunca mais escrito. */
   espacosGastos?: number;
+  /** Espaços de Magia gastos, por círculo (Etapa 4.2 — Bardo pode ter
+   * 2+ círculos ativos ao mesmo tempo a partir do nível 3). Chave =
+   * número do círculo. Ausente = personagem nunca gastou espaço desde
+   * essa entrega; `FichaShell.tsx` migra de `espacosGastos` (campo
+   * antigo) nesse caso. */
+  espacosGastosPorCirculo?: Record<number, number>;
   inspiracaoGasto?: number;
   /** Truques conhecidos DEPOIS da criação — cresce/troca no Level Up
    * (Etapa 4.1). Ausente = personagem nunca passou por um Level Up
