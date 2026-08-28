@@ -16,6 +16,7 @@ import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
+import IconeClasse from '../../components/IconeClasse';
 import styles from './LevelUpShell.module.css';
 
 export interface PersonagemNivel {
@@ -431,7 +432,12 @@ export default function LevelUpShell({
                 className={`opt-card ${subclasseEscolhida === s.nome ? 'selected' : ''}`}
                 onClick={() => setSubclasseEscolhida(s.nome)}
               >
-                <div className="opt-card-name">{s.nome}</div>
+                <div className="opt-card-row">
+                  <IconeClasse id={s.id} />
+                  <div className="opt-card-info">
+                    <div className="opt-card-name">{s.nome}</div>
+                  </div>
+                </div>
               </div>
             ))}
           </>

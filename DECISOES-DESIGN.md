@@ -4082,3 +4082,13 @@ emoji colorida neste ambiente de teste headless — nada a ver com a
 troca de formato; confirmado pelo próprio Osmar.
 
 **Data/origem:** 2026-08.
+
+## Ícones dos Colégios também aparecem na tela de escolha (Level Up)
+
+Pedido rápido do Osmar: os 4 ícones novos (que já trocavam o avatar na
+Lista de Personagens depois de escolhida a subclasse) agora também
+aparecem nos próprios cards da tela "Escolha sua subclasse" — mesmo
+padrão `.opt-card-row` + `IconeClasse` já usado na seleção de Classe
+(`ClasseStep.tsx`), reaproveitado sem mudança nenhuma no componente.
+
+**Data/origem:** 2026-08.
