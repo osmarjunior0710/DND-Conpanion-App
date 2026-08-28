@@ -109,7 +109,7 @@
   left: var(--space-4);
   right: var(--space-4);
   bottom: 78px;
-  background: var(--warn);
+  background: var(--danger);
   color: #fff;
   font-size: 13px;
   padding: var(--space-3) var(--space-4);

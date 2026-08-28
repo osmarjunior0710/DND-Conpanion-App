@@ -60,7 +60,7 @@ export default function ReacaoPanelContent({
             </div>
           ))}
           {aviso && (
-            <div className="label" style={{ color: 'var(--warn)', marginBottom: 8, marginTop: 8 }}>
+            <div className="label" style={{ color: 'var(--danger)', marginBottom: 8, marginTop: 8 }}>
               {aviso}
             </div>
           )}

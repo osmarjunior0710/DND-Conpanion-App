@@ -3797,3 +3797,48 @@ preservadas. Tela Completar (déficit de Truques) também mostra "Truques
 (13)" com o mesmo agrupamento.
 
 **Data/origem:** 2026-08.
+
+## Ordem descendente por círculo + cabeçalho fixo em Magias Preparadas + erros de seleção sempre vermelhos
+
+**3 ajustes pedidos pelo Osmar depois de testar a entrega anterior:**
+
+**1. Ordem dos grupos:** `agruparMagiasPorCirculo()` (`core/magiasPersonagem.ts`)
+inverteu a ordenação — agora começa pelo círculo mais alto disponível e
+desce até Truques (círculo 0) por último. Motivo: o jogador normalmente
+está de olho no círculo que acabou de destravar no level-up, não no 1º.
+
+**2. Cabeçalho fixo específico da Magias Preparadas:** o título
+"Magias Preparadas — escolha N (X/N)" e o texto de regra saíram de
+dentro do corpo rolável (`.body`, onde sumiam ao rolar a lista) e viraram
+um bloco fixo (`.subHeader`, novo em `LevelUpShell.module.css`) entre o
+cabeçalho principal (Nível/progresso) e a lista — mesmo em CSS Modules
+comum, não `position: sticky`, porque o layout já é flex-coluna com
+`.body` como única área rolável (`overflow-y: auto`), então um irmão
+fora dela já fica sempre visível sem precisar de sticky. Pedido só pra
+esse step (não pro de Truques) — texto perdeu a frase final "— não
+precisa mexer se não quiser." por pedido direto.
+
+**3. Cor de erro de seleção:** todo aviso que representa uma seleção
+inválida/incompleta impedindo avançar (não um aviso informativo) virou
+`--danger` (vermelho) em vez de `--warn` (âmbar) — revisão da convenção
+registrada na entrega anterior ("`--warn` reservado pra
+aviso/criticidade"). Isso muda: o balão fixo "Escolha exatamente X
+antes de avançar" (`.warning` em `LevelUpShell.module.css` E
+`WizardShell.module.css` — mesmo componente, os dois tinham a cópia
+própria da classe), os avisos inline "N trocados — só pode trocar 1"
+(Truques e Magias Preparadas do Level Up), e os avisos "Sem Espaço de
+Magia disponível" nos painéis de Ação/Reação do Combat. **Não mudei**
+a borda tracejada `--warn` da Origem (colisão de Perícia — aviso
+informativo, não bloqueia nada) nem os usos estruturais de `--warn`
+sem ligação com erro (botão de Ação Bônus no Combat, indicador visual
+do CombatTab).
+
+**Testado:** Playwright 390×844 — Bardo nível 4→5 (Level Up), Magias
+Preparadas mostra "3º Círculo (18)" primeiro, depois "2º Círculo (25)",
+depois "1º Círculo (23)" — confirmado via DOM que a ordem é essa mesma
+sequência. Cabeçalho fixo confirmado (rolar a lista não move o texto
+"Magias Preparadas — escolha 9 (4/9)"). Provocado erro de "2 trocadas"
+em Truques e em Magias Preparadas — balão fixo e texto inline aparecem
+vermelhos nos dois casos.
+
+**Data/origem:** 2026-08.

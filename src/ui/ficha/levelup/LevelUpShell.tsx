@@ -276,6 +276,18 @@ export default function LevelUpShell({
         </div>
       </div>
 
+      {step === 'magiasPreparadas' && (
+        <div className={styles.subHeader}>
+          <div className="section-title" style={{ marginBottom: 4 }}>
+            Magias Preparadas — escolha {maxMagiasPreparadas} ({magiasPreparadasEscolhidas.length}/{maxMagiasPreparadas})
+          </div>
+          <div className="label">
+            Regra oficial: a cada nível, você pode substituir 1 das magias que já tem preparada por outra da lista
+            (de qualquer círculo pro qual você tenha espaço).
+          </div>
+        </div>
+      )}
+
       <div className={styles.body}>
         {step === 'pv' && (
           <>
@@ -405,7 +417,7 @@ export default function LevelUpShell({
               </GrupoMagiaColapsavel>
             ))}
             {trocasDeTruque > 1 && (
-              <div className="label" style={{ color: 'var(--warn)', marginTop: 6 }}>
+              <div className="label" style={{ color: 'var(--danger)', marginTop: 6 }}>
                 ⚠️ {trocasDeTruque} truques trocados — só pode trocar 1 por level-up.
               </div>
             )}
@@ -414,13 +426,6 @@ export default function LevelUpShell({
 
         {step === 'magiasPreparadas' && (
           <>
-            <div className="section-title">
-              Magias Preparadas — escolha {maxMagiasPreparadas} ({magiasPreparadasEscolhidas.length}/{maxMagiasPreparadas})
-            </div>
-            <div className="label" style={{ marginBottom: 8 }}>
-              Regra oficial: a cada nível, você pode substituir 1 das magias que já tem preparada por outra da lista
-              (de qualquer círculo pro qual você tenha espaço) — não precisa mexer se não quiser.
-            </div>
             {agruparMagiasPorCirculo(magiasPreparadasDaClasse).map((grupo) => (
               <GrupoMagiaColapsavel key={grupo.circulo} label={grupo.label} magias={grupo.magias}>
                 {(m) => {
@@ -447,7 +452,7 @@ export default function LevelUpShell({
               </GrupoMagiaColapsavel>
             ))}
             {trocasDeMagia > 1 && (
-              <div className="label" style={{ color: 'var(--warn)', marginTop: 6 }}>
+              <div className="label" style={{ color: 'var(--danger)', marginTop: 6 }}>
                 ⚠️ {trocasDeMagia} magias trocadas — só pode trocar 1 por level-up.
               </div>
             )}

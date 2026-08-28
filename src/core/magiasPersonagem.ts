@@ -103,10 +103,12 @@ export interface GrupoDeMagias {
 }
 
 /** Agrupa uma lista de magias por círculo — Truques (círculo 0) vira
- * um grupo próprio "Truques", os demais viram "Xº Círculo". Grupos em
- * ordem crescente de círculo, magias em ordem alfabética dentro de
- * cada grupo. Usado nas telas de escolha (Level Up e "completar")
- * pra não misturar círculos diferentes numa lista só. */
+ * um grupo próprio "Truques", os demais viram "Xº Círculo". Grupos do
+ * círculo mais alto disponível pro mais baixo (o jogador normalmente
+ * está de olho no que acabou de destravar), magias em ordem
+ * alfabética dentro de cada grupo. Usado nas telas de escolha (Level
+ * Up e "completar") pra não misturar círculos diferentes numa lista
+ * só. */
 export function agruparMagiasPorCirculo(magias: Magia[]): GrupoDeMagias[] {
   const porCirculo = new Map<number, Magia[]>();
   for (const m of magias) {
@@ -115,7 +117,7 @@ export function agruparMagiasPorCirculo(magias: Magia[]): GrupoDeMagias[] {
     porCirculo.set(m.circulo, lista);
   }
   return [...porCirculo.entries()]
-    .sort(([a], [b]) => a - b)
+    .sort(([a], [b]) => b - a)
     .map(([circulo, lista]) => ({
       circulo,
       label: circulo === 0 ? 'Truques' : `${circulo}º Círculo`,

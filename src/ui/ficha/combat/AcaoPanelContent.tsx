@@ -159,7 +159,7 @@ export default function AcaoPanelContent({
               );
             })}
             {avisoSlot && (
-              <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>
+              <div className="label" style={{ color: 'var(--danger)', marginBottom: 8 }}>
                 {avisoSlot}
               </div>
             )}
