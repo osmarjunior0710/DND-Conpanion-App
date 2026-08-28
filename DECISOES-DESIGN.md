@@ -3664,3 +3664,46 @@ aba Magias mostra 2 blocos simultâneos (1º círculo 4/4, 2º círculo
 desceu (3/4) e o 2º ficou intacto (2/2).
 
 **Data/origem:** 2026-08.
+
+## Bardo — Etapa 4.3 (Level Up de Magias Preparadas) feita — plano dos 5 fecha
+
+Magias Preparadas ganharam o mesmo tratamento de Level Up já feito
+pros Truques na Etapa 4.1: cresce e troca no mesmo step, mesma
+validação ("no máximo 1 removido"), mesma marcação visual persistente
+("já tinha" / "🔻 será removida" vermelho). Reaproveitado quase 1:1 —
+`core/magiasPersonagem.ts`'s `contarTrocas` já era genérico o
+suficiente pra servir os dois casos sem mudar nada nele.
+
+**Diferença real em relação aos Truques:** o catálogo pra escolher não
+é fixo — cresce junto com os círculos de Espaço de Magia disponíveis
+no NOVO nível (Etapa 4.2, já pronta). `LevelUpShell.tsx` calcula
+`circuloMaximoNovoNivel` via `espacosDeMagiaAtivos(classe, novoNivel)`
+e filtra o catálogo completo (`magiasDaClasseDisponiveis`, passado
+pronto de `FichaShell` — todas as magias de círculo > 0 da classe) por
+`circulo <= circuloMaximoNovoNivel`. Ex.: Bardo nível 3 já pode
+escolher magias de 1º OU 2º círculo (a regra do livro confirmada na
+característica "Conjuração": "sua lista de magias preparadas pode
+incluir seis magias de 1º ou 2º círculo em qualquer combinação").
+
+**Mesma mudança estrutural de `truquesAtuais` (Etapa 4.1) repetida
+aqui:** `selecao.magiasPreparadasEscolhidas` (retrato da criação,
+imutável) não é mais a fonte de verdade — `FichaShell.tsx` ganhou
+`magiasPreparadasAtuais` (estado próprio, persistido em
+`PersonagemSalvo.magiasPreparadasAtual`). `magiasPreparadasDoPersonagem()`
+mudou de assinatura pra receber `string[]` direto, mesma razão de
+`truquesDoPersonagem`.
+
+Com isso, os 5 passos do plano original do Bardo (Dados, Criação,
+Ficha/Magias, Level Up completo, Combat) estão feitos — só faltam as 4
+subclasses, que continuam deliberadamente fora de escopo até decisão
+em contrário.
+
+**Testado:** Playwright 390×844 — Bardo criado, Level Up nível 2 e 3
+seguidos. Nível 2: step "Magias Preparadas — escolha 5 (4/5)" força
+escolher +1. Nível 3: "escolha 6 (5/6)" — confirmado que o catálogo já
+oferece **25 opções de 2º círculo** nesse ponto (antes só existiam
+opções de 1º), junto das de 1º círculo com a marcação "já tinha"
+correta. Personagem final mostra 6 Magias Preparadas reais na aba
+Magias.
+
+**Data/origem:** 2026-08.

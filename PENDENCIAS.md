@@ -111,7 +111,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 por tudo que fizemos"), que levantou as perguntas de equipamento —
 plano aprovado ("vamos de e1").
 
-## Bardo — próxima classe, plano em 5 etapas (falta só 4.3)
+## Bardo — próxima classe, plano em 5 etapas (base completa — só as 4 subclasses ficaram de fora)
 
 **O que é:** depois do Plano de Equipamento fechado e das subclasses
 de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
@@ -167,12 +167,11 @@ subclasse (4 Colégios).
      `espacosGastosPorCirculo`), cada um com seu contador — resolve o
      que quebrava a partir do nível 3 do Bardo (2º círculo desbloqueia
      junto do 1º). Ver DECISOES-DESIGN.md "Bardo — Etapa 4.2".
-   - **4.3 Magias Preparadas** (falta) — mesmo padrão de tela da 4.1
-     (lista única pré-marcada, valida troca), mas as magias podem vir
-     de qualquer círculo com espaço — a 4.2 (pré-requisito) já está
-     pronta. Enquanto isso não existir, Magias Preparadas ficam
-     congeladas no que foi escolhido na criação (Truques já não tem
-     mais esse problema).
+   - ~~**4.3 Magias Preparadas**~~ — **feita**. Mesmo padrão de tela
+     da 4.1 (lista única pré-marcada, valida "só 1 trocada"), catálogo
+     filtrado pelos círculos com espaço no NOVO nível
+     (`espacosDeMagiaAtivos`, Etapa 4.2). Ver DECISOES-DESIGN.md
+     "Bardo — Etapa 4.3".
    - **Upar magia de círculo maior** (não escopado) — hoje cada magia
      preparada só gasta o espaço do círculo dela mesma; a regra de
      "gastar um espaço de círculo maior pra um efeito melhor" (upcast)

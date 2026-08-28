@@ -5,7 +5,7 @@ import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { caracteristicasDoNivel, niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel } from '../../../core/levelUp';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
-import { contarTrocas } from '../../../core/magiasPersonagem';
+import { contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import styles from './LevelUpShell.module.css';
@@ -29,6 +29,7 @@ interface LevelUpShellProps {
     subclasseEscolhida: string | null;
     estiloDeLutaEscolhido: string | null;
     truquesEscolhidos: string[] | null;
+    magiasPreparadasEscolhidas: string[] | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -43,9 +44,14 @@ interface LevelUpShellProps {
   truquesAtuais: string[];
   /** Catálogo completo de Truques da classe, pra escolher de/pra. */
   truquesDaClasse: Magia[];
+  /** Magias Preparadas que o personagem já tem (Etapa 4.3). */
+  magiasPreparadasAtuais: string[];
+  /** Catálogo de magias de círculo > 0 da classe (todos os círculos —
+   * filtrado por círculo ativo no nível novo aqui dentro). */
+  magiasDaClasseDisponiveis: Magia[];
 }
 
-type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'truques' | 'asi' | 'dadivaEpica' | 'resumo';
+type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'truques' | 'magiasPreparadas' | 'asi' | 'dadivaEpica' | 'resumo';
 type FaseDramatica = 'idle' | 'rolando' | 'resultado';
 
 const NOMES_ATRIBUTOS = ['FOR', 'DES', 'CON', 'INT', 'SAB', 'CAR'];
@@ -62,14 +68,20 @@ export default function LevelUpShell({
   onHpRoladoChange,
   truquesAtuais,
   truquesDaClasse,
+  magiasPreparadasAtuais,
+  magiasDaClasseDisponiveis,
 }: LevelUpShellProps) {
   const novoNivel = personagem.nivel + 1;
   const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', novoNivel);
+  const maxMagiasPreparadas = valorRecursoClasse(classe, 'Magias Preparadas', novoNivel);
+  const circuloMaximoNovoNivel = Math.max(0, ...espacosDeMagiaAtivos(classe, novoNivel).map((e) => e.circulo));
+  const magiasPreparadasDaClasse = magiasDaClasseDisponiveis.filter((m) => m.circulo <= circuloMaximoNovoNivel);
 
   const luSteps: LuStep[] = ['pv', 'features'];
   if (classe.nivelSubclasse === novoNivel && !personagem.subclasse) luSteps.push('subclasse');
   if (temEstiloDeLutaTrocavel(classe, novoNivel)) luSteps.push('estiloDeLuta');
   if (maxTruques > 0) luSteps.push('truques');
+  if (maxMagiasPreparadas > 0) luSteps.push('magiasPreparadas');
   if (niveisComASI(classe).includes(novoNivel)) luSteps.push('asi');
   if (niveisComDadivaEpica(classe).includes(novoNivel)) luSteps.push('dadivaEpica');
   luSteps.push('resumo');
@@ -84,6 +96,7 @@ export default function LevelUpShell({
   const subclasseEscolhida: string | null = null;
   const [estiloDeLutaEscolhido, setEstiloDeLutaEscolhido] = useState<string | null>(personagem.estiloDeLuta);
   const [truquesEscolhidos, setTruquesEscolhidos] = useState<string[]>(truquesAtuais);
+  const [magiasPreparadasEscolhidas, setMagiasPreparadasEscolhidas] = useState<string[]>(magiasPreparadasAtuais);
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
   const [asiEscolhas, setAsiEscolhas] = useState<string[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -128,6 +141,20 @@ export default function LevelUpShell({
   const trocasDeTruque = contarTrocas(truquesAtuais, truquesEscolhidos);
   const truquesValido = truquesEscolhidos.length === maxTruques && trocasDeTruque <= 1;
 
+  function toggleMagiaPreparada(nome: string) {
+    const i = magiasPreparadasEscolhidas.indexOf(nome);
+    if (i > -1) {
+      setMagiasPreparadasEscolhidas((prev) => prev.filter((x) => x !== nome));
+      return;
+    }
+    if (magiasPreparadasEscolhidas.length < maxMagiasPreparadas) {
+      setMagiasPreparadasEscolhidas((prev) => [...prev, nome]);
+    }
+  }
+
+  const trocasDeMagia = contarTrocas(magiasPreparadasAtuais, magiasPreparadasEscolhidas);
+  const magiasPreparadasValido = magiasPreparadasEscolhidas.length === maxMagiasPreparadas && trocasDeMagia <= 1;
+
   function toggleAsi(a: string) {
     const total = asiEscolhas.length;
     const nesse = asiEscolhas.filter((x) => x === a).length;
@@ -146,6 +173,7 @@ export default function LevelUpShell({
     subclasse: 'Escolha de Subclasse',
     estiloDeLuta: 'Estilo de Luta',
     truques: 'Truques',
+    magiasPreparadas: 'Magias Preparadas',
     asi: 'Atributo ou Talento',
     dadivaEpica: 'Dádiva Épica',
     resumo: 'Resumo',
@@ -171,6 +199,14 @@ export default function LevelUpShell({
       );
       return;
     }
+    if (step === 'magiasPreparadas' && !magiasPreparadasValido) {
+      setAviso(
+        trocasDeMagia > 1
+          ? 'Você só pode trocar 1 magia preparada por level-up — desmarque menos magias que já tinha.'
+          : `Escolha exatamente ${maxMagiasPreparadas} magias preparadas antes de avançar.`,
+      );
+      return;
+    }
     setAviso(null);
     if (step === 'resumo') {
       onConfirmar({
@@ -179,6 +215,7 @@ export default function LevelUpShell({
         subclasseEscolhida,
         estiloDeLutaEscolhido,
         truquesEscolhidos: luSteps.includes('truques') ? truquesEscolhidos : null,
+        magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
       });
       return;
     }
@@ -370,6 +407,44 @@ export default function LevelUpShell({
           </>
         )}
 
+        {step === 'magiasPreparadas' && (
+          <>
+            <div className="section-title">
+              Magias Preparadas — escolha {maxMagiasPreparadas} ({magiasPreparadasEscolhidas.length}/{maxMagiasPreparadas})
+            </div>
+            <div className="label" style={{ marginBottom: 8 }}>
+              Regra oficial: a cada nível, você pode substituir 1 das magias que já tem preparada por outra da lista
+              (de qualquer círculo pro qual você tenha espaço) — não precisa mexer se não quiser.
+            </div>
+            {magiasPreparadasDaClasse.map((m) => {
+              const jaTinha = magiasPreparadasAtuais.includes(m.nome);
+              const marcado = magiasPreparadasEscolhidas.includes(m.nome);
+              const removendo = jaTinha && !marcado;
+              return (
+                <div
+                  key={m.id}
+                  className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
+                  onClick={() => toggleMagiaPreparada(m.nome)}
+                >
+                  <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                  <span className="check-label">
+                    <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                    {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
+                      ({m.circulo}º círculo
+                      {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''})
+                    </span>
+                  </span>
+                </div>
+              );
+            })}
+            {trocasDeMagia > 1 && (
+              <div className="label" style={{ color: 'var(--warn)', marginTop: 6 }}>
+                ⚠️ {trocasDeMagia} magias trocadas — só pode trocar 1 por level-up.
+              </div>
+            )}
+          </>
+        )}
+
         {step === 'asi' && (
           <>
             <div className="section-title">Aumento de Atributo ou Talento</div>
@@ -445,6 +520,12 @@ export default function LevelUpShell({
               <div className="summary-row">
                 <span>Truques</span>
                 <span>{trocasDeTruque > 0 ? `${trocasDeTruque} trocado(s)` : 'sem troca'}</span>
+              </div>
+            )}
+            {luSteps.includes('magiasPreparadas') && (
+              <div className="summary-row">
+                <span>Magias Preparadas</span>
+                <span>{trocasDeMagia > 0 ? `${trocasDeMagia} trocada(s)` : 'sem troca'}</span>
               </div>
             )}
             {asiModo === 'atributo' && (

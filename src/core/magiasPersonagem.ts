@@ -60,10 +60,13 @@ export function truquesDoPersonagem(nomes: string[]): Magia[] {
   return buscarMagiasPorNome(nomes);
 }
 
-/** Magias preparadas reais escolhidas na criação. Ainda lê direto de
- * `selecao` — cresce/troca no Level Up é Etapa 4.3, não feita. */
-export function magiasPreparadasDoPersonagem(selecao: WizardSelection): Magia[] {
-  return buscarMagiasPorNome(selecao.magiasPreparadasEscolhidas);
+/** Magias preparadas reais do personagem. Recebe os nomes diretamente
+ * (mesma razão de `truquesDoPersonagem`) — a partir da Etapa 4.3 a
+ * lista pode ter mudado depois da criação (`FichaShell` guarda em
+ * `magiasPreparadasAtuais`, não mais direto de
+ * `selecao.magiasPreparadasEscolhidas`). */
+export function magiasPreparadasDoPersonagem(nomes: string[]): Magia[] {
+  return buscarMagiasPorNome(nomes);
 }
 
 /** Quantos nomes da lista ORIGINAL não estão mais na lista FINAL —

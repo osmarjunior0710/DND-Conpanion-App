@@ -1,19 +1,25 @@
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
-import type { WizardSelection } from '../../../core/personagem';
 import { espacosDeMagiaAtivos, truquesDoPersonagem, magiasPreparadasDoPersonagem } from '../../../core/magiasPersonagem';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import styles from './MagiasTab.module.css';
 
 interface MagiasTabProps {
-  selecao: WizardSelection;
   classe: Classe | null;
   nivel: number;
   espacosGastosPorCirculo: Record<number, number>;
   conjura: boolean;
   truquesAtuais: string[];
+  magiasPreparadasAtuais: string[];
 }
 
-export default function MagiasTab({ selecao, classe, nivel, espacosGastosPorCirculo, conjura, truquesAtuais }: MagiasTabProps) {
+export default function MagiasTab({
+  classe,
+  nivel,
+  espacosGastosPorCirculo,
+  conjura,
+  truquesAtuais,
+  magiasPreparadasAtuais,
+}: MagiasTabProps) {
   if (!conjura) {
     return (
       <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 13, textAlign: 'center' }}>
@@ -24,7 +30,7 @@ export default function MagiasTab({ selecao, classe, nivel, espacosGastosPorCirc
 
   const espacos = espacosDeMagiaAtivos(classe, nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
-  const preparadas = magiasPreparadasDoPersonagem(selecao);
+  const preparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
 
   return (
     <>
