@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { acoesBase, magiasExemplo, type AtaqueInfo, type MagiaExemplo } from '../../../data/exampleCombat';
+import { acoesBase, type AtaqueInfo } from '../../../data/exampleCombat';
+import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import type { AtaqueResolvido } from '../../../core/ataque';
+import { classificarMagia, iconesMagia } from '../../../core/classificarMagia';
 import { useRoll } from '../../roll/RollContext';
+import MagiaComDescricao from '../../components/MagiaComDescricao';
 import styles from './PanelRows.module.css';
 
 export interface DanoPendente {
@@ -18,6 +21,9 @@ interface AcaoPanelContentProps {
   espacosGastos: number;
   espacosMaximo: number;
   conjura: boolean;
+  truques: Magia[];
+  magiasPreparadas: Magia[];
+  modAcertoConjuracao: number | null;
   numAtaques: number;
   ataquesFeitos: number;
   surtoMax: number;
@@ -34,6 +40,9 @@ export default function AcaoPanelContent({
   espacosGastos,
   espacosMaximo,
   conjura,
+  truques,
+  magiasPreparadas,
+  modAcertoConjuracao,
   numAtaques,
   ataquesFeitos,
   surtoMax,
@@ -60,20 +69,26 @@ export default function AcaoPanelContent({
     });
   }
 
-  function escolherMagia(m: MagiaExemplo) {
+  function conjurarMagia(m: Magia) {
     if (m.circulo > 0) {
       const ok = gastarSlot();
       if (!ok) {
-        setAvisoSlot('Sem Espaços de Magia disponíveis. Faça um Descanso Curto pra recuperar.');
+        setAvisoSlot('Sem Espaços de Magia disponíveis. Veja a aba Magias pra saber quando recupera.');
         return;
       }
     }
     setAvisoSlot(null);
-    if (m.ataque) {
-      rolarAtaque(`[PH] ${m.nome}`, m.ataque, onEscolher);
+    const classificacao = classificarMagia(m);
+    if (classificacao.ataque && modAcertoConjuracao !== null) {
+      rolarD20({
+        label: `Ataque de Magia — ${m.nome}`,
+        formula: `1d20 + ${modAcertoConjuracao}`,
+        mod: modAcertoConjuracao,
+      });
+      onEscolher(`✨ ${m.nome}`, 'Rolagem de acerto feita. Veja a descrição da magia (ⓘ) pro dano.');
       return;
     }
-    onEscolher(`[PH] ✨ ${m.nome}`, m.descricao);
+    onEscolher(`✨ ${m.nome}`, m.descricaoCurta ?? '');
   }
 
   const surtoDesabilitado = surtoRestantes <= 0 || surtoUsadoTurno;
@@ -116,31 +131,39 @@ export default function AcaoPanelContent({
         <>
           <div className={styles.row} onClick={() => setMagiaAberta((v) => !v)}>
             <div className={styles.rowName}>✨ Usar Magia {magiaAberta ? '▴' : '▾'}</div>
-            <div className={styles.rowDesc}>Conjurar magia, usar item mágico ou característica mágica</div>
+            <div className={styles.rowDesc}>Conjurar Truque ou Magia Preparada</div>
           </div>
           <div className={`${styles.accordionBody} ${magiaAberta ? styles.accordionBodyOpen : ''}`}>
-            <div className="label" style={{ marginBottom: 6 }}>
-              [PH] lista de magias/espaços abaixo é fixture de exemplo — ainda não é a lista real da classe
-              conjuradora do personagem.
-            </div>
-            <div className={styles.slotCounter}>
-              <span>1º círculo:</span>
-              {Array.from({ length: espacosMaximo }).map((_, i) => (
-                <div key={i} className={`${styles.slotPipLg} ${i < espacosGastos ? styles.slotPipLgGasto : ''}`} />
-              ))}
-              <span style={{ color: 'var(--text-faint)' }}>
-                {espacosMaximo - espacosGastos}/{espacosMaximo} disponíveis
-              </span>
-            </div>
+            {espacosMaximo > 0 && (
+              <div className={styles.slotCounter}>
+                <span>Espaços de Magia:</span>
+                {Array.from({ length: espacosMaximo }).map((_, i) => (
+                  <div key={i} className={`${styles.slotPipLg} ${i < espacosGastos ? styles.slotPipLgGasto : ''}`} />
+                ))}
+                <span style={{ color: 'var(--text-faint)' }}>
+                  {espacosMaximo - espacosGastos}/{espacosMaximo} disponíveis
+                </span>
+              </div>
+            )}
             {avisoSlot && (
               <div className="label" style={{ color: 'var(--warn)', marginBottom: 8 }}>
                 {avisoSlot}
               </div>
             )}
-            {magiasExemplo.map((m) => (
-              <div key={m.nome} className={styles.spellMiniRow} onClick={() => escolherMagia(m)}>
-                <span>[PH] {m.nome}</span>
-                <span className="tag">{m.tipo}</span>
+            {truques.map((m) => (
+              <div key={m.id} className={styles.spellMiniRow} onClick={() => conjurarMagia(m)}>
+                <span>
+                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                </span>
+                <span className="tag">Truque</span>
+              </div>
+            ))}
+            {magiasPreparadas.map((m) => (
+              <div key={m.id} className={styles.spellMiniRow} onClick={() => conjurarMagia(m)}>
+                <span>
+                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                </span>
+                <span className="tag">{m.circulo}º círculo</span>
               </div>
             ))}
           </div>

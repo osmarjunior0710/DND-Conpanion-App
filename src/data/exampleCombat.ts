@@ -1,5 +1,6 @@
-// Dados de combate FIXOS pra Fase 0 — as 12 ações do Cap. 1 e as 5
-// magias de exemplo do Bruxo Tiefling do wireframe.
+// Dados de combate FIXOS pra Fase 0 — as 9 ações genéricas do Cap. 1
+// (não são placeholder, ver CLAUDE.md "Marcação de conteúdo
+// placeholder" — regra real, mesmo sem cálculo por trás ainda).
 
 export interface AcaoBase {
   nome: string;
@@ -26,34 +27,4 @@ export interface AtaqueInfo {
   danoMod: number;
   danoTipo: string;
 }
-
-export interface MagiaExemplo {
-  nome: string;
-  tipo: string;
-  circulo: number;
-  descricao: string;
-  ataque?: AtaqueInfo;
-}
-
-export const magiasExemplo: MagiaExemplo[] = [
-  {
-    nome: 'Chicote das Trevas',
-    tipo: 'Truque · Ação',
-    circulo: 0,
-    descricao: 'Ataque à distância: 1d20 + 4 pra acertar, 1d4 + 3 de dano necrótico.',
-    ataque: { modAcerto: 4, danoQuantidade: 1, danoLados: 4, danoMod: 3, danoTipo: 'necrótico' },
-  },
-  {
-    nome: 'Fogo Fátuo',
-    tipo: 'Truque · Ação',
-    circulo: 0,
-    descricao: 'Ataque à distância: 1d20 + 4 pra acertar, 1d4 de dano de fogo.',
-    ataque: { modAcerto: 4, danoQuantidade: 1, danoLados: 4, danoMod: 0, danoTipo: 'de fogo' },
-  },
-  { nome: 'Enfeitiçar Pessoa', tipo: '1º círculo · Ação', circulo: 1, descricao: 'O alvo faz um teste de resistência de Sabedoria (CD 13).' },
-  { nome: 'Escudo Arcano', tipo: '1º círculo · Reação', circulo: 1, descricao: '+5 na CA até o início do seu próximo turno.' },
-  { nome: 'Mãos Flamejantes', tipo: '1º círculo · Ação', circulo: 1, descricao: 'O alvo faz um teste de resistência de Destreza (CD 13).' },
-];
-
-export const espacosMagiaExemplo = { maximo: 1 };
 

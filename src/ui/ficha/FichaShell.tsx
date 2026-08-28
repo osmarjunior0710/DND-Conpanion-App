@@ -34,7 +34,13 @@ import { alternarSintonizacao } from '../../core/sintonizacao';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
-import { espacoDeMagiaAtivo } from '../../core/magiasPersonagem';
+import {
+  espacoDeMagiaAtivo,
+  ehMagiaDeReacao,
+  modAcertoConjuracao as calcularModAcertoConjuracao,
+  truquesDoPersonagem,
+  magiasPreparadasDoPersonagem,
+} from '../../core/magiasPersonagem';
 import {
   caracteristicaDesbloqueada,
   contarRepeticoesCaracteristica,
@@ -142,6 +148,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
   const conjura = personagemConjura(classe);
   const espaco = espacoDeMagiaAtivo(classe, personagem.nivel);
+  const truques = truquesDoPersonagem(selecao);
+  const magiasPreparadas = magiasPreparadasDoPersonagem(selecao);
+  const magiasPreparadasReacao = magiasPreparadas.filter(ehMagiaDeReacao);
+  const magiasPreparadasAcao = magiasPreparadas.filter((m) => !ehMagiaDeReacao(m));
+  const modAcertoConjuracao = calcularModAcertoConjuracao(selecao, classe, personagem.nivel);
   const numAtaques = classe ? numeroDeAtaques(classe, personagem.nivel) : 1;
   const indomavelMaximo = classe ? contarRepeticoesCaracteristica(classe, 'Indomável', personagem.nivel) : 0;
   const indomavelRestantes = Math.max(0, indomavelMaximo - indomavelGasto);
@@ -416,6 +427,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onMarcarUsado={marcarUsado}
             onFimDoTurno={fimDoTurno}
             espacosGastos={espacosGastos}
+            espacosMaximo={espaco?.maximo ?? 0}
             onGastarSlot={gastarSlot}
             estiloDeLuta={estiloDeLuta}
             nivel={personagem.nivel}
@@ -423,6 +435,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             usosFolegoRestantes={usosFolegoRestantes}
             onUsarUsoFolego={usarUsoFolego}
             conjura={conjura}
+            truques={truques}
+            magiasPreparadasAcao={magiasPreparadasAcao}
+            magiasPreparadasReacao={magiasPreparadasReacao}
+            modAcertoConjuracao={modAcertoConjuracao}
             numAtaques={numAtaques}
             indomavelMaximo={indomavelMaximo}
             indomavelRestantes={indomavelRestantes}

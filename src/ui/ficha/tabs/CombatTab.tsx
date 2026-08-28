@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { espacosMagiaExemplo } from '../../../data/exampleCombat';
 import type { EstiloDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
+import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import type { CaracteristicaNivel } from '../../../core/levelUp';
 import type { AtaqueResolvido } from '../../../core/ataque';
 import { useRoll } from '../../roll/RollContext';
@@ -22,6 +22,7 @@ interface CombatTabProps {
   onMarcarUsado: (categoria: RecursoTurno) => void;
   onFimDoTurno: () => void;
   espacosGastos: number;
+  espacosMaximo: number;
   onGastarSlot: () => boolean;
   estiloDeLuta: EstiloDeLuta | null;
   nivel: number;
@@ -29,6 +30,10 @@ interface CombatTabProps {
   usosFolegoRestantes: number;
   onUsarUsoFolego: () => boolean;
   conjura: boolean;
+  truques: Magia[];
+  magiasPreparadasAcao: Magia[];
+  magiasPreparadasReacao: Magia[];
+  modAcertoConjuracao: number | null;
   numAtaques: number;
   indomavelMaximo: number;
   indomavelRestantes: number;
@@ -58,6 +63,7 @@ export default function CombatTab({
   onMarcarUsado,
   onFimDoTurno,
   espacosGastos,
+  espacosMaximo,
   onGastarSlot,
   estiloDeLuta,
   nivel,
@@ -65,6 +71,10 @@ export default function CombatTab({
   usosFolegoRestantes,
   onUsarUsoFolego,
   conjura,
+  truques,
+  magiasPreparadasAcao,
+  magiasPreparadasReacao,
+  modAcertoConjuracao,
   numAtaques,
   indomavelMaximo,
   indomavelRestantes,
@@ -315,8 +325,11 @@ export default function CombatTab({
             onAtacar={registrarAtaque}
             gastarSlot={onGastarSlot}
             espacosGastos={espacosGastos}
-            espacosMaximo={espacosMagiaExemplo.maximo}
+            espacosMaximo={espacosMaximo}
             conjura={conjura}
+            truques={truques}
+            magiasPreparadas={magiasPreparadasAcao}
+            modAcertoConjuracao={modAcertoConjuracao}
             numAtaques={numAtaques}
             ataquesFeitos={ataquesFeitos}
             surtoMax={surtoMaximo}
@@ -340,6 +353,8 @@ export default function CombatTab({
             onEscolher={(nome, desc) => escolherNoPainel('reacao', nome, desc)}
             gastarSlot={onGastarSlot}
             conjura={conjura}
+            magiasReacao={magiasPreparadasReacao}
+            modAcertoConjuracao={modAcertoConjuracao}
           />
         )}
       </SidePanel>

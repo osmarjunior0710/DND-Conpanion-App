@@ -3383,3 +3383,50 @@ o emblema é uma arte bonita e merece aparecer bem — `object-fit: cover`
 preenche a caixa quadrada sem distorcer.
 
 **Data/origem:** 2026-08.
+
+## Bardo — Etapa 3.2 (Ficha, Combat "Usar Magia") feita: dado real no lugar do fixture de Bruxo
+
+Painel "Usar Magia" da aba Combat (Ação e Reação) usava fixture de
+Bruxo — trocado por dado real, junto com a Etapa 3.1 (aba Magias).
+
+- **Painel de Ação:** lista os Truques + Magias Preparadas reais do
+  personagem (excluindo as de Tempo de Conjuração "Reação" — essas só
+  aparecem no painel de Reação). Tocar numa magia de círculo > 0 gasta
+  Espaço de Magia (mesmo `gastarSlot` já usado na aba Magias); se não
+  tiver espaço, mostra aviso, sem travar a UI. Cada linha mostra os
+  ícones de `classificarMagia` (⚔️/❤️‍🩹/🪙) e abre o card
+  `MagiaComDescricao` pelo ⓘ.
+- **Ataque de magia:** se a magia for classificada como `ataque`
+  (`classificarMagia().ataque`), tocar nela já rola 1d20 + bônus de
+  acerto de conjuração (mod. do atributo primário + bônus de
+  proficiência — novo `core/magiasPersonagem.ts`'s
+  `modAcertoConjuracao`), igual já acontece pro ataque de arma. O
+  **dano não é rolado automaticamente** — a planilha não tem os dados
+  de dano estruturados por magia (só a descrição em texto livre), só
+  `descricaoCurta`/`descricaoCompleta`; o jogador vê o dado de dano no
+  card (ⓘ) e rola manualmente. Diferente do ataque de arma, que tem
+  dado/dano estruturado em `core/ataque.ts`.
+- **Painel de Reação:** só mostra a seção de magia se existir alguma
+  Magia Preparada real com Tempo de Conjuração começando com "Reação"
+  (`ehMagiaDeReacao`, novo). Bardo nível 1 normalmente não tem nenhuma
+  — nesse caso o painel mostra só "Ataque de Oportunidade", sem mais o
+  "Escudo Arcano" fixo (que era Bruxo-específico e não existe pra
+  Bardo).
+- **Simplificação aceita:** magias com Tempo de Conjuração "1 Ação
+  Bônus" (poucas — 6 no catálogo inteiro) continuam aparecendo no
+  painel de Ação por enquanto, não no de Ação Bônus (`BonusPanelContent`
+  ainda não tem integração de magia — fora do escopo desta entrega).
+  Registrado em PENDENCIAS.md.
+- `data/exampleCombat.ts`: removido o fixture `magiasExemplo`/
+  `espacosMagiaExemplo` (não usado em lugar nenhum depois desta
+  entrega) — só sobrou `acoesBase` (as 9 ações genéricas do Cap. 1,
+  que são regra real, não fixture) e o tipo `AtaqueInfo` (ainda usado
+  pro ataque de arma).
+
+**Testado:** Playwright 390×844 — Bardo criado, aba Combat → painel de
+Ação → "Usar Magia" mostra Truques/Magias Preparadas reais com ícones
+certos (ex.: "Curar Ferimentos" com ❤️‍🩹); tocar num truque não-ataque
+gasta 0 espaço e mostra a descrição real no feedback; painel de Reação
+mostra só "Ataque de Oportunidade" (sem "Escudo Arcano" fixo).
+
+**Data/origem:** 2026-08.

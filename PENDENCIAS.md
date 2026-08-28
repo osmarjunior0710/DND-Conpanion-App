@@ -1010,3 +1010,24 @@ crescer Truques/Magias Preparadas/Espaços — essa é a Etapa 4, ainda
 não feita). Quando a Etapa 4 existir e alguém levar um Bardo até
 nível 3+ (2º círculo destrava), essa função vai continuar mostrando só
 o 1º círculo — precisa virar lista de círculos ativos, não um só.
+
+## Painel de Ação Bônus (Combat) ainda não tem integração de magia
+
+`BonusPanelContent.tsx` continua sem gastarSlot/lista de magia —
+magias com Tempo de Conjuração "1 Ação Bônus" (poucas no catálogo, 6
+no total) aparecem hoje no painel de Ação (Etapa 3.2), não no de Ação
+Bônus, onde deveriam por regra. Simplificação aceita por ora (ver
+DECISOES-DESIGN.md "Etapa 3.2"); resolver quando o painel de Bônus
+ganhar suporte a magia de verdade.
+
+## Dano de magia não rola automaticamente — planilha não tem dado estruturado
+
+Diferente do ataque de arma (`core/ataque.ts`, dado/dano numérico
+estruturado), as 390 magias da planilha só têm o dano descrito em
+texto livre (`descricaoCurta`/`descricaoCompleta`, ex. "1d8 dano
+Radiante"). O painel "Usar Magia" do Combat (Etapa 3.2) já rola o
+acerto de magias de ataque automaticamente (1d20 + bônus de
+conjuração), mas o dano o jogador lê no card (ⓘ) e rola manualmente —
+diferente da arma, que tem o botão "🎲 Rolar Dano" automático. Resolver
+exigiria extrair e estruturar o dado de dano de cada magia da
+planilha/descrição — trabalho grande, não escopado ainda.

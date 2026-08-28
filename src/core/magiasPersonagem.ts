@@ -1,9 +1,21 @@
 // Leitura genérica de magia real do personagem — zero fixture, zero
 // constante de classe hardcoded. Complementa recursosClasse.ts.
 
+import type { Atributo } from '../data/wizardFixtures';
 import type { Classe, RecursoClasse } from '../data/rulesets/dnd2024/classes';
 import { magias, type Magia } from '../data/rulesets/dnd2024/magias';
-import type { WizardSelection } from './personagem';
+import { bonusProficiencia } from './calculoPersonagem';
+import { modificador, valorFinalAtributo, type WizardSelection } from './personagem';
+
+/** Nome completo (como aparece em `Classe.atributoPrimario`) → código
+ * de 3 letras. Só cobre os atributos que já apareceram como primário
+ * de conjuração de alguma classe com dado real importado — cresce
+ * conforme mais classes conjuradoras entrarem. Guerreiro
+ * ("Força ou Destreza") não bate com nenhuma entrada de propósito —
+ * não conjura, então não precisa de atributo de conjuração. */
+const ATRIBUTO_POR_NOME: Record<string, Atributo> = {
+  Carisma: 'CAR',
+};
 
 export interface EspacoDeMagiaAtivo {
   circulo: number;
@@ -54,4 +66,23 @@ export function truquesDoPersonagem(selecao: WizardSelection): Magia[] {
 /** Magias preparadas reais escolhidas na criação. */
 export function magiasPreparadasDoPersonagem(selecao: WizardSelection): Magia[] {
   return buscarMagiasPorNome(selecao.magiasPreparadasEscolhidas);
+}
+
+/** Todas as magias marcadas com Tempo de Conjuração "Reação" começam
+ * com esse texto na planilha (confirmado nas 4 ocorrências reais) —
+ * heurística simples, mesmo padrão de `classificarMagia`. */
+export function ehMagiaDeReacao(magia: Magia): boolean {
+  return (magia.tempoConjuracao ?? '').startsWith('Reação');
+}
+
+/** Bônus de acerto de conjuração (mod. do atributo + bônus de
+ * proficiência) — null se a classe não tiver atributo de conjuração
+ * mapeado (ver `ATRIBUTO_POR_NOME`). */
+export function modAcertoConjuracao(selecao: WizardSelection, classe: Classe | null, nivel: number): number | null {
+  if (!classe) return null;
+  const atributo = ATRIBUTO_POR_NOME[classe.atributoPrimario];
+  if (!atributo) return null;
+  const valor = valorFinalAtributo(selecao, atributo);
+  if (valor === null) return null;
+  return modificador(valor) + bonusProficiencia(classe, nivel);
 }
