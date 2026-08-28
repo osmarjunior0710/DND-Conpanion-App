@@ -3937,3 +3937,30 @@ de Proficiência (Pau pra Toda Obra, arredondado pra baixo) +1" na
 conta.
 
 **Data/origem:** 2026-08.
+
+## Bug: popup de PV na Ficha mostrava só o dado do nível 1
+
+**Achado do Osmar:** o número grande de PV na Ficha (`pvAtual/pvMax`)
+sempre esteve certo (soma tudo, cresce a cada Level Up), mas o popup ⓘ
+ao lado usava `explicarPvMaximoNivel1()` direto — função pensada só
+pro resumo do wizard na CRIAÇÃO (nível 1, antes de qualquer Level Up
+existir). Na Ficha, isso mostrava sempre só "Dado de Vida + mod. CON"
+do nível 1, nunca o que foi ganho depois.
+
+**Decisão:** nova função `explicarPvMaximo(selection, pvMaxAtual)` —
+mesma base do nível 1, mais uma linha "Ganho em Level Ups seguintes"
+com a diferença pro `pvMaxAtual` real (só aparece se for > 0). Não dá
+pra detalhar nível a nível (o histórico de quanto cada Level Up deu
+não fica guardado, só o total acumulado em `PersonagemSalvo.pvMax`),
+então a linha soma tudo de uma vez — mais honesto que fingir que tem
+detalhe que não existe. `explicarPvMaximoNivel1()` original continua
+intocada e em uso só no resumo do wizard (nível 1 é sempre o caso real
+lá).
+
+**Testado:** Playwright 390×844 — Guerreiro nível 1: popup mostra só
+"Nível 1 (d10 + mod. CON) = 11" (sem linha de ganho, correto pra
+personagem recém-criado). Level Up pro nível 2 (ganhou +7 de PV):
+popup passa a mostrar "Nível 1 → 11" + "Ganho em Level Ups seguintes →
++7" + total "18", batendo com o número grande da tela.
+
+**Data/origem:** 2026-08.

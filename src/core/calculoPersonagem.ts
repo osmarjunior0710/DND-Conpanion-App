@@ -288,6 +288,37 @@ export function explicarPvMaximoNivel1(selection: WizardSelection): ExplicacaoCa
   };
 }
 
+/** Explicação de PV pra Ficha (pós-criação) — diferente de
+ * `explicarPvMaximoNivel1` (usada só no resumo do wizard, nível 1),
+ * essa reflete o PV máximo ATUAL do personagem (`pvMaxAtual`, já
+ * somando todo Level Up feito). Bug reportado pelo Osmar: o popup ⓘ
+ * da Ficha usava a função de nível 1 direto, então sempre mostrava só
+ * o dado inicial mesmo com o personagem em nível mais alto. Não dá
+ * pra detalhar quanto cada Level Up individual deu (isso não fica
+ * guardado — só o total acumulado em `pvMaxAtual`), então a linha
+ * extra soma tudo depois do nível 1 num valor só. */
+export function explicarPvMaximo(selection: WizardSelection, pvMaxAtual: number): ExplicacaoCalculo {
+  const classe = classeDaSelecao(selection);
+  const conValor = valorFinalAtributo(selection, 'CON');
+  if (!classe || conValor === null) {
+    return { linhas: [], total: { label: 'Pontos de Vida máximos', valor: '—' } };
+  }
+  const dado = parseDadoDeVida(classe.dadoDeVida);
+  const conMod = modificador(conValor);
+  const baseNivel1 = dado + conMod;
+  const ganhoPosterior = pvMaxAtual - baseNivel1;
+  const linhas = [
+    { label: `Nível 1 (Dado de Vida máximo da classe (${classe.dadoDeVida}) + mod. Constituição)`, valor: `${baseNivel1}` },
+  ];
+  if (ganhoPosterior > 0) {
+    linhas.push({ label: 'Ganho em Level Ups seguintes', valor: fmtMod(ganhoPosterior) });
+  }
+  return {
+    linhas,
+    total: { label: 'Pontos de Vida máximos', valor: `${pvMaxAtual}` },
+  };
+}
+
 export function explicarCA(selection: WizardSelection): ExplicacaoCalculo {
   const desValor = valorFinalAtributo(selection, 'DES');
   if (desValor === null) return { linhas: [], total: { label: 'Classe de Armadura', valor: '—' } };

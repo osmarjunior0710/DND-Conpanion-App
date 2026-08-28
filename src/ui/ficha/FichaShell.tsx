@@ -13,7 +13,7 @@ import {
   explicarCAEquipado,
   explicarIniciativa,
   explicarPercepcaoPassiva,
-  explicarPvMaximoNivel1,
+  explicarPvMaximo,
   periciasProficientes,
 } from '../../core/calculoPersonagem';
 import { modificador, valorFinalAtributo } from '../../core/personagem';
@@ -166,7 +166,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const bonusProficienciaAtual = classe ? bonusProficiencia(classe, personagem.nivel) : 0;
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
-  const explicacaoPv = explicarPvMaximoNivel1(selecao);
+  const explicacaoPv = explicarPvMaximo(selecao, personagem.pvMax);
   const explicacaoCa = explicarCAEquipado(itensMochila, desValor);
   const explicacaoIniciativa = explicarIniciativa(selecao);
   const explicacaoPercepcaoPassiva = explicarPercepcaoPassiva(selecao, personagem.nivel);
