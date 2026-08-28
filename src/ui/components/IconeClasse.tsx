@@ -1,15 +1,18 @@
-const iconeModulos = import.meta.glob('../../assets/icones-classes/*.png', {
+// WebP em vez de PNG (Osmar pediu compressão — mesmas artes 512×512,
+// ~82% menores sem perda visível no tamanho de emblema exibido; ver
+// DECISOES-DESIGN.md "Ícones de classe/subclasse viram WebP").
+const iconeModulos = import.meta.glob('../../assets/icones-classes/*.webp', {
   eager: true,
   import: 'default',
 }) as Record<string, string>;
 
 function iconePng(id: string): string | undefined {
-  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}.png`));
+  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}.webp`));
   return entrada?.[1];
 }
 
 function bannerPng(id: string): string | undefined {
-  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}-banner.png`));
+  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}-banner.webp`));
   return entrada?.[1];
 }
 

@@ -4045,3 +4045,40 @@ o ícone do dançarino (antes mostrava o emblema genérico de Bardo).
 persistido.
 
 **Data/origem:** 2026-08.
+
+## Ícones de classe/subclasse viram WebP (compressão, ~82% menores)
+
+**Achado do Osmar:** os ícones 512×512 (Bardo + 4 Colégios novos)
+deixaram o bundle bem mais pesado — perguntou se dava pra comprimir
+sem precisar reimportar as artes originais.
+
+**Decisão:** convertidos de PNG pra WebP (`Pillow`, qualidade 85,
+`method=6`) — mesma resolução 512×512, ~82% menores (ex.: Bardo
+435KB → 81KB; os 4 Colégios ficaram entre 82-89KB cada, contra
+452-474KB em PNG). PNG puro com `optimize=True` (lossless) quase não
+ajudou (~3-4%) — a arte gerada por IA já vinha perto do limite de
+compressão sem perda; WebP com perda leve (qualidade 85) foi a troca
+que realmente valeu, sem degradação visível no tamanho de emblema
+exibido (~64px na Lista, ~48-72px nos cards de seleção).
+
+**`IconeClasse.tsx`** — único lugar que referenciava esses arquivos —
+trocou o glob de `*.png` pra `*.webp`; resto do componente (lookup por
+`{id}-banner.webp` / `{id}.webp`) idêntico, zero mudança de API.
+
+**Achado no processo:** Vite deduplica arquivos de conteúdo
+idêntico no build — as 10 classes "em breve" (cópias do emblema do
+Guerreiro) e o Guerreiro real acabam virando FISICAMENTE 1 arquivo só
+no `dist/` (nome do hash reflete só uma delas), então o ganho real de
+espaço no app publicado já era menor do que a soma ingênua dos 16
+arquivos sugeria — mas a compressão ainda ajuda bastante nos arquivos
+que são conteúdo único (Bardo + 4 Colégios).
+
+**Testado:** Playwright 390×844 — comparação visual direta do arquivo
+WebP isolado (sem UI por perto) confirma nitidez igual ao original.
+Um "ícone quebrado" aparente na tela de seleção de Classe foi
+investigado a fundo (`elementFromPoint`) e identificado como o botão
+flutuante 🔀 ("Sortear tudo desta etapa") renderizado sem fonte de
+emoji colorida neste ambiente de teste headless — nada a ver com a
+troca de formato; confirmado pelo próprio Osmar.
+
+**Data/origem:** 2026-08.

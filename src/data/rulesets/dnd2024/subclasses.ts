@@ -2,7 +2,7 @@
 // (D&D 5e 2024) — só o nome, sem as características mecânicas ainda
 // (essas ficam pra quando a subclasse for implementada de verdade, ver
 // PENDENCIAS.md "Escolha de subclasse — versão placeholder"). Cada
-// `id` bate com o arquivo `{id}-banner.png` em `assets/icones-classes/`.
+// `id` bate com o arquivo `{id}-banner.webp` em `assets/icones-classes/`.
 
 export interface Subclasse {
   id: string;
