@@ -4117,3 +4117,64 @@ Erro de validação disparado (avançar sem escolher classe) e cronometrado
 até sumir sozinho: ~2,8s (dentro da margem do timer de 3s + polling).
 
 **Data/origem:** 2026-08.
+
+## Combat "Usar Magia" (Ação) — fluxo de 2 telas com upcast real (Fase A)
+
+**Problema:** o acordeão único de "Usar Magia" empilhava Truques +
+Magias Preparadas numa lista só, sem parar — algumas classes chegam a
+20+ magias preparadas em níveis altos. O Osmar pediu um fluxo em
+telas, e aproveitou pra fechar o upcast de verdade (que nunca existiu
+— `gastarSlotCirculo` só aceitava o círculo exato da magia).
+
+**Regra de upcast confirmada com o Osmar (regra real do livro):** uma
+magia NUNCA cabe num Espaço de Magia de círculo MENOR que o dela, mas
+cabe no dela ou em qualquer um MAIOR, contanto que sobre espaço —
+mesmo até círculo 9 (classes full-caster). `core/magiasPersonagem.ts`
+ganhou `circulosDisponiveisParaConjurar(magiaCirculo, espacos,
+espacosGastosPorCirculo)`, genérica pra qualquer classe/círculo, sem
+hardcode.
+
+**Fluxo em 2 telas cheias (mesmo padrão `.screen`/`.header`/`.body`/
+`.navLayer` de `LevelUpShell.module.css`, reaproveitado — nenhum CSS
+novo pro esqueleto):**
+- **Tela 2** (`SelecionarMagiaShell.tsx`): Truques + Magias Preparadas
+  agrupados por círculo (`GrupoMagiaColapsavel`, mesmo componente do
+  Level Up — do círculo mais alto pro mais baixo, Truques sempre
+  disponíveis). Magia de círculo N fica esmaecida/sem clique só quando
+  NENHUM espaço ≥ N sobra.
+- **Tela 3** (`EscolherCirculoShell.tsx`): só aparece quando a magia
+  tem mais de 1 círculo disponível pra upar — mostra o card da magia
+  (com o texto que já tem "Upcast: +Xd8 por círculo" pras ~131 magias
+  que escalam) e uma opção por círculo com os espaços disponíveis.
+  Com só 1 círculo possível, pula direto pra conjurar (não faz
+  sentido perguntar sem escolha real).
+
+**Decisão consciente de escopo — Fase A vs B:** por enquanto a Tela 3
+mostra só o TEXTO da magia (já suficiente, o jogador lê e calcula),
+não um número calculado por círculo escolhido — isso viraria "Cura
+1d8" na opção de 1º círculo, "2d8" na de 2º, etc., mas exigiria mapear
+a fórmula de upcast estruturada de cada magia (trabalho de planilha
+grande). Registrado em PENDENCIAS.md "Upcast — efeito calculado por
+círculo" — Osmar quer fechar Talentos antes de voltar nisso.
+
+**Também decidido não fazer agora:** o "empilhar telas com offset
+lateral" que o Osmar sugeriu como visual fica pra quando ele decidir
+como quer deixar isso "interessante" — a Fase A entregou o
+comportamento (telas cheias sequenciais, mesmo padrão já usado em
+Level Up), não o polish visual do empilhamento.
+
+**Só o painel de Ação ganhou o picker novo** — Reação continua com a
+lista simples antiga (registrado em PENDENCIAS.md; normalmente tem
+poucas magias qualificadas, o problema de lista infinita não bate tão
+forte lá).
+
+**Testado:** Playwright 390×844 — Bardo nível 5 (1º: 4 espaços, 2º: 3,
+3º: 2), 1º círculo esgotado manualmente. Tela 2 mostrou "Curar
+Ferimentos" (1º círculo) ainda clicável; Tela 3 ofereceu só 2º e 3º
+círculo (1º corretamente ausente); escolhido 2º círculo, confirmado
+que gastou um espaço de 2º (não de 1º, que já estava zerado) —
+`espacosGastosPorCirculo` final `{"1":4,"2":1}`. Testado também o
+caminho de 1 círculo só (Bardo nível 1): clicar na magia conjura
+direto, sem passar pela Tela 3.
+
+**Data/origem:** 2026-08.

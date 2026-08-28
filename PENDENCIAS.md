@@ -1049,6 +1049,38 @@ diferente da arma, que tem o botão "🎲 Rolar Dano" automático. Resolver
 exigiria extrair e estruturar o dado de dano de cada magia da
 planilha/descrição — trabalho grande, não escopado ainda.
 
+## Upcast — efeito calculado por círculo (Fase B do fluxo "Usar Magia")
+
+**Contexto:** o fluxo "Usar Magia" do Combat (Ação) ganhou upcast de
+verdade — Tela 2 lista Truques/Magias Preparadas agrupadas por círculo
+com disponibilidade real (`core/magiasPersonagem.ts`'s
+`circulosDisponiveisParaConjurar` — uma magia nunca cabe num espaço
+menor que o dela, mas cabe no dela ou em qualquer um maior, até
+círculo 9 pras classes que chegam lá), e Tela 3 deixa escolher em qual
+círculo gastar quando há mais de 1 opção.
+
+**O que falta (Fase B, decisão consciente do Osmar de adiar):** a Tela
+3 mostra hoje só o texto livre da magia (`descricaoCurta`, que já traz
+"Upcast: +Xd8 por círculo" pras ~131 magias que escalam — confirmado
+na planilha) — não um número calculado por círculo (ex. "2d8" na
+opção de 1º círculo, "4d8" na de 2º). Pra isso funcionar de verdade
+precisa mapear, magia por magia, a fórmula de upcast estruturada (não
+só o texto) — trabalho de planilha grande, correlato ao já registrado
+"Dano de magia não rola automaticamente" (mesma cesta de dado
+faltando). **Fica pra depois — o Osmar quer resolver Talentos antes
+de voltar nisso.**
+
+## Painel de Reação ainda usa a lista plana antiga de magias (não ganhou o picker novo)
+
+`ReacaoPanelContent.tsx` continua com a lista simples de magias de
+Reação (sem upcast, sem Tela 2/3) — o picker novo (`SelecionarMagiaShell`/
+`EscolherCirculoShell`) só foi ligado no painel de Ação por ora. Como
+Reação normalmente tem poucas magias qualificadas (a maioria dos
+personagens tem 0-2), o problema de "lista infinita" que motivou o
+picker novo não bate tão forte aqui — mas pra ficar consistente
+(upcast deveria valer em Reação também) e não ter 2 comportamentos
+diferentes, replicar o mesmo componente aqui é trabalho pendente.
+
 ## Detector genérico de "ficha atrasada/faltando algo" — pendência importante, vai crescer
 
 **Achado do Osmar:** se um Level Up passar sem escolher Truques/Magias

@@ -3,9 +3,10 @@ import { acoesBase, type AtaqueInfo } from '../../../data/exampleCombat';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import type { AtaqueResolvido } from '../../../core/ataque';
 import type { EspacoDeMagiaAtivo } from '../../../core/magiasPersonagem';
-import { classificarMagia, iconesMagia } from '../../../core/classificarMagia';
+import { classificarMagia } from '../../../core/classificarMagia';
 import { useRoll } from '../../roll/RollContext';
-import MagiaComDescricao from '../../components/MagiaComDescricao';
+import SelecionarMagiaShell from './SelecionarMagiaShell';
+import EscolherCirculoShell from './EscolherCirculoShell';
 import styles from './PanelRows.module.css';
 
 export interface DanoPendente {
@@ -54,8 +55,7 @@ export default function AcaoPanelContent({
   ataqueAtual,
   detalhesAtivo,
 }: AcaoPanelContentProps) {
-  const [magiaAberta, setMagiaAberta] = useState(false);
-  const [avisoSlot, setAvisoSlot] = useState<string | null>(null);
+  const [telaMagia, setTelaMagia] = useState<'lista' | { magia: Magia; circulos: number[] } | null>(null);
   const { rolarD20 } = useRoll();
 
   function rolarAtaque(nome: string, ataque: AtaqueInfo, finalizar: (nome: string, desc: string, dano: DanoPendente) => void) {
@@ -72,15 +72,15 @@ export default function AcaoPanelContent({
     });
   }
 
-  function conjurarMagia(m: Magia) {
-    if (m.circulo > 0) {
-      const ok = gastarSlotCirculo(m.circulo);
-      if (!ok) {
-        setAvisoSlot(`Sem Espaço de Magia de ${m.circulo}º círculo disponível. Veja a aba Magias pra saber quando recupera.`);
-        return;
-      }
+  /** `circulo` é o espaço a gastar — pode ser maior que `m.circulo`
+   * (upcast, ver `EscolherCirculoShell`); truque passa `null` (não
+   * gasta espaço nenhum). */
+  function conjurarMagia(m: Magia, circulo: number | null) {
+    if (circulo !== null) {
+      const ok = gastarSlotCirculo(circulo);
+      if (!ok) return;
     }
-    setAvisoSlot(null);
+    setTelaMagia(null);
     const classificacao = classificarMagia(m);
     if (classificacao.ataque && modAcertoConjuracao !== null) {
       rolarD20({
@@ -95,6 +95,40 @@ export default function AcaoPanelContent({
   }
 
   const surtoDesabilitado = surtoRestantes <= 0 || surtoUsadoTurno;
+
+  if (telaMagia === 'lista') {
+    return (
+      <SelecionarMagiaShell
+        titulo="Usar Magia"
+        truques={truques}
+        magiasPreparadas={magiasPreparadas}
+        espacos={espacos}
+        espacosGastosPorCirculo={espacosGastosPorCirculo}
+        onFechar={() => setTelaMagia(null)}
+        onEscolherTruque={(m) => conjurarMagia(m, null)}
+        onEscolherMagia={(m, circulosDisponiveis) => {
+          if (circulosDisponiveis.length === 1) {
+            conjurarMagia(m, circulosDisponiveis[0]);
+            return;
+          }
+          setTelaMagia({ magia: m, circulos: circulosDisponiveis });
+        }}
+      />
+    );
+  }
+
+  if (telaMagia) {
+    return (
+      <EscolherCirculoShell
+        magia={telaMagia.magia}
+        circulosDisponiveis={telaMagia.circulos}
+        espacos={espacos}
+        espacosGastosPorCirculo={espacosGastosPorCirculo}
+        onVoltar={() => setTelaMagia('lista')}
+        onConjurar={(circulo) => conjurarMagia(telaMagia.magia, circulo)}
+      />
+    );
+  }
 
   return (
     <>
@@ -138,49 +172,10 @@ export default function AcaoPanelContent({
       )}
 
       {conjura && (
-        <>
-          <div className={styles.row} onClick={() => setMagiaAberta((v) => !v)}>
-            <div className={styles.rowName}>✨ Usar Magia {magiaAberta ? '▴' : '▾'}</div>
-            {detalhesAtivo && <div className={styles.rowDesc}>Conjurar Truque ou Magia Preparada</div>}
-          </div>
-          <div className={`${styles.accordionBody} ${magiaAberta ? styles.accordionBodyOpen : ''}`}>
-            {espacos.map((e) => {
-              const gasto = espacosGastosPorCirculo[e.circulo] ?? 0;
-              return (
-                <div key={e.circulo} className={styles.slotCounter}>
-                  <span>{e.circulo}º círculo:</span>
-                  {Array.from({ length: e.maximo }).map((_, i) => (
-                    <div key={i} className={`${styles.slotPipLg} ${i < gasto ? styles.slotPipLgGasto : ''}`} />
-                  ))}
-                  <span style={{ color: 'var(--text-faint)' }}>
-                    {e.maximo - gasto}/{e.maximo} disponíveis
-                  </span>
-                </div>
-              );
-            })}
-            {avisoSlot && (
-              <div className="label" style={{ color: 'var(--danger)', marginBottom: 8 }}>
-                {avisoSlot}
-              </div>
-            )}
-            {truques.map((m) => (
-              <div key={m.id} className={styles.spellMiniRow} onClick={() => conjurarMagia(m)}>
-                <span>
-                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                </span>
-                <span className="tag">Truque</span>
-              </div>
-            ))}
-            {magiasPreparadas.map((m) => (
-              <div key={m.id} className={styles.spellMiniRow} onClick={() => conjurarMagia(m)}>
-                <span>
-                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                </span>
-                <span className="tag">{m.circulo}º círculo</span>
-              </div>
-            ))}
-          </div>
-        </>
+        <div className={styles.row} onClick={() => setTelaMagia('lista')}>
+          <div className={styles.rowName}>✨ Usar Magia</div>
+          {detalhesAtivo && <div className={styles.rowDesc}>Conjurar Truque ou Magia Preparada</div>}
+        </div>
       )}
 
       <div

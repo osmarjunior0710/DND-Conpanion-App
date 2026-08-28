@@ -21,16 +21,6 @@
   line-height: 1.4;
 }
 
-.accordionBody {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height var(--motion-standard) var(--ease-standard);
-}
-
-.accordionBodyOpen {
-  max-height: 600px;
-}
-
 .slotCounter {
   display: flex;
   align-items: center;

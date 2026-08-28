@@ -47,6 +47,23 @@ export function espacosDeMagiaAtivos(classe: Classe | null, nivel: number): Espa
     }));
 }
 
+/** Círculos em que dá pra conjurar uma magia de círculo `magiaCirculo`
+ * agora — regra real do livro: uma magia nunca cabe num Espaço de
+ * Magia de círculo MENOR que o dela, mas cabe no dela ou em qualquer
+ * um maior (upcast) contanto que sobre espaço. Array vazio = não dá
+ * pra conjurar agora (nenhum espaço ≥ o círculo da magia sobrando).
+ * Truque (círculo 0) não usa isso — está sempre disponível. */
+export function circulosDisponiveisParaConjurar(
+  magiaCirculo: number,
+  espacos: EspacoDeMagiaAtivo[],
+  espacosGastosPorCirculo: Record<number, number>,
+): number[] {
+  return espacos
+    .filter((e) => e.circulo >= magiaCirculo && (espacosGastosPorCirculo[e.circulo] ?? 0) < e.maximo)
+    .map((e) => e.circulo)
+    .sort((a, b) => a - b);
+}
+
 function buscarMagiasPorNome(nomes: string[]): Magia[] {
   return nomes.map((nome) => magias.find((m) => m.nome === nome)).filter((m): m is Magia => m !== undefined);
 }
