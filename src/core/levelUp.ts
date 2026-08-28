@@ -91,6 +91,19 @@ export function contarRepeticoesCaracteristica(classe: Classe, nome: string, niv
   return classe.progressao.filter((p) => p.nivel <= nivelAtual && p.caracteristicas.includes(nome)).length;
 }
 
+/** Níveis em que a classe concede a escolha de perícias Especialista
+ * (dobra o Bônus de Proficiência) — Bardo nos níveis 2 e 9. A
+ * planilha mestra usa nomes diferentes de característica pros dois
+ * (\"Especialista\" no nível 2, \"Especialização\" no nível 9) mesmo
+ * sendo a mesma mecânica (confirmado com o Osmar) — por isso os dois
+ * nomes contam aqui, em vez de assumir que a característica sempre se
+ * chama igual em todo nível que a concede. */
+const NOMES_ESPECIALISTA = ['Especialista', 'Especialização'];
+
+export function niveisComEspecialista(classe: Classe): number[] {
+  return classe.progressao.filter((p) => p.caracteristicas.some((c) => NOMES_ESPECIALISTA.includes(c))).map((p) => p.nivel);
+}
+
 /** Nº de ataques concedidos pela ação Atacar no nível atual — deriva do
  * padrão "muda de nome a cada salto" (convenção 2 da mesma decisão):
  * "Ataque Extra" (2), "Dois Ataques Extras" (3), "Três Ataques Extras"

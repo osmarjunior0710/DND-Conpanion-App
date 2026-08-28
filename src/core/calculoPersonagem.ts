@@ -202,15 +202,28 @@ export interface PericiaFinal {
   nome: string;
   atributo: Atributo;
   mod: number;
+  especialista: boolean;
   explicacao: ExplicacaoCalculo;
 }
 
-/** Perícias de Origem (fixas) + Classe (escolhidas), com o bônus de proficiência já somado. */
-export function calcularPericias(selection: WizardSelection, nivel: number): PericiaFinal[] {
-  const classe = classeDaSelecao(selection);
+/** Nomes das perícias em que o personagem é proficiente (Origem fixa +
+ * escolha de Classe) — mesmo conjunto usado por `calcularPericias`,
+ * exposto à parte porque o Level Up (Etapa "Especialista" do Bardo)
+ * precisa saber quais perícias dá pra escolher pra Especialização sem
+ * duplicar essa lógica. */
+export function periciasProficientes(selection: WizardSelection): string[] {
   const origem = origens.find((o) => o.nome === selection.origem);
+  return [...new Set<string>([...(origem?.pericias ?? []), ...selection.periciasClasseEscolhidas])];
+}
+
+/** Perícias de Origem (fixas) + Classe (escolhidas), com o bônus de
+ * proficiência já somado — dobrado pras perícias marcadas como
+ * Especialista (`periciasEspecialista`, vazio se a classe não tiver
+ * essa característica ou o personagem ainda não tiver escolhido). */
+export function calcularPericias(selection: WizardSelection, nivel: number, periciasEspecialista: string[] = []): PericiaFinal[] {
+  const classe = classeDaSelecao(selection);
   if (!classe) return [];
-  const nomes = new Set<string>([...(origem?.pericias ?? []), ...selection.periciasClasseEscolhidas]);
+  const nomes = periciasProficientes(selection);
   const bonus = bonusProficiencia(classe, nivel);
   const resultado: PericiaFinal[] = [];
   for (const nome of nomes) {
@@ -219,16 +232,22 @@ export function calcularPericias(selection: WizardSelection, nivel: number): Per
     const valorAtributo = atributo ? valorFinalAtributo(selection, atributo) : null;
     if (!atributo || valorAtributo === null) continue;
     const atribMod = modificador(valorAtributo);
+    const especialista = periciasEspecialista.includes(nome);
+    const bonusFinal = especialista ? bonus * 2 : bonus;
     resultado.push({
       nome,
       atributo,
-      mod: atribMod + bonus,
+      mod: atribMod + bonusFinal,
+      especialista,
       explicacao: {
         linhas: [
           { label: `mod. ${atributo}`, valor: fmtMod(atribMod) },
-          { label: 'Bônus de Proficiência (proficiente)', valor: fmtMod(bonus) },
+          {
+            label: especialista ? 'Bônus de Proficiência (Especialista, dobrado)' : 'Bônus de Proficiência (proficiente)',
+            valor: fmtMod(bonusFinal),
+          },
         ],
-        total: { label: nome, valor: fmtMod(atribMod + bonus) },
+        total: { label: nome, valor: fmtMod(atribMod + bonusFinal) },
       },
     });
   }

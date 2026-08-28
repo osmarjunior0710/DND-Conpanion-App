@@ -50,6 +50,12 @@ export interface PersonagemSalvo {
    * ainda; `FichaShell.tsx` cai pra `selecao.magiasPreparadasEscolhidas`
    * (retrato da criação) nesse caso. */
   magiasPreparadasAtual?: string[];
+  /** Perícias escolhidas pra Especialização (dobra o Bônus de
+   * Proficiência) — característica "Especialista" do Bardo, ganha nos
+   * níveis 2 e 9 (2 escolhas por vez, acumulativas, sem troca — ver
+   * `core/levelUp.ts` `niveisComEspecialista`). Ausente/vazio =
+   * personagem ainda não passou por um desses níveis. */
+  periciasEspecialistaAtual?: string[];
   /** Mochila como estado de verdade (ver DECISOES-DESIGN.md "Mochila
    * vira estado de verdade") — quando ausente (personagem salvo antes
    * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a

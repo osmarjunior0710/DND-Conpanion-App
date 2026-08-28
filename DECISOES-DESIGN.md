@@ -3842,3 +3842,54 @@ em Truques e em Magias Preparadas — balão fixo e texto inline aparecem
 vermelhos nos dois casos.
 
 **Data/origem:** 2026-08.
+
+## Bardo — Especialista (dobra Bônus de Proficiência em 2 perícias, níveis 2 e 9)
+
+**Achado de dado ao implementar:** a planilha mestra nomeia a
+característica como "Especialista" na coluna de progressão do nível 2,
+mas como "Especialização" no nível 9 — nomes diferentes pra mesma
+mecânica (confirmado com o Osmar antes de codar). `core/levelUp.ts`
+ganhou `niveisComEspecialista(classe)`, que aceita os dois nomes em vez
+de assumir que a característica sempre se chama igual em todo nível que
+a concede — mesmo cuidado já registrado antes pra "Ataque Extra"/"Dois
+Ataques Extras" etc.
+
+**Decisão de arquitetura:** o "+2 perícias por gatilho" não vem de uma
+coluna numérica em `classes.ts` (diferente de Truques Conhecidos/Magias
+Preparadas, que têm tabela por nível) — é só texto na descrição da
+característica ("duas... mais duas"). Por isso `LevelUpShell.tsx` usa
+um incremento fixo de 2 hardcoded (comentado explicando a razão), em
+vez de tentar ler de uma tabela que não existe pra esse dado.
+
+**Mecânica — só ADIÇÃO, nunca troca:** diferente de Truques/Magias
+Preparadas (que podem substituir 1 por level-up), a regra real não
+menciona troca pra Especialista — uma vez escolhida, a perícia fica
+especializada pra sempre. O step novo (`step === 'especialista'` em
+`LevelUpShell.tsx`) trava as perícias vindas de um nível anterior
+(mesmo padrão de "já tinha" de Truques, mas sem opção de desmarcar) e
+só deixa escolher a diferença até bater o novo total.
+
+**Cálculo:** `calcularPericias()` (`core/calculoPersonagem.ts`) ganhou
+o parâmetro opcional `periciasEspecialista: string[]` — dobra o Bônus
+de Proficiência (não o mod. de atributo) nas perícias marcadas, com a
+explicação do popup ⓘ mostrando "Bônus de Proficiência (Especialista,
+dobrado)". `PericiaFinal` ganhou o campo `especialista: boolean`, usado
+por `PerfilTab.tsx` só pra acender um ⭐ ao lado do nome — a lista
+completa das 18 perícias/3º estado visual genérico continuam de fora
+(pendência separada, já registrada).
+
+**Persistência:** `PersonagemSalvo.periciasEspecialistaAtual`, mesmo
+padrão de `truquesAtual`/`magiasPreparadasAtual`.
+
+**Testado:** Playwright 390×844 — Bardo nível 1→2 (Level Up). Truques
+já estava no máximo do nível (2/2, sem interação), Magias Preparadas
+pediu +1 (preenchido), Especialista mostrou "escolha 2 (0/2)" com as 5
+perícias proficientes do personagem (Acrobacia, Percepção, Persuasão,
+Atletismo, História — Origem + Classe). Tentativa de avançar vazio deu
+erro vermelho; escolhidas Acrobacia e Percepção, resumo mostrou a linha
+"Especialista → Acrobacia, Percepção". Depois de confirmar, aba Perfil
+mostrou as duas com ⭐ e o bônus dobrado certo (Acrobacia mod DES +2 +
+bônus dobrado +4 = +6; Percepção mod SAB +1 + bônus dobrado +4 = +5;
+as outras 3 perícias sem ⭐, bônus normal).
+
+**Data/origem:** 2026-08.

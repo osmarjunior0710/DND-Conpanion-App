@@ -13,6 +13,7 @@ import {
   explicarIniciativa,
   explicarPercepcaoPassiva,
   explicarPvMaximoNivel1,
+  periciasProficientes,
 } from '../../core/calculoPersonagem';
 import { modificador, valorFinalAtributo } from '../../core/personagem';
 import {
@@ -123,6 +124,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [magiasPreparadasAtuais, setMagiasPreparadasAtuais] = useState<string[]>(
     personagemSalvo.magiasPreparadasAtual ?? selecao.magiasPreparadasEscolhidas,
   );
+  const [periciasEspecialistaAtuais, setPericiasEspecialistaAtuais] = useState<string[]>(
+    personagemSalvo.periciasEspecialistaAtual ?? [],
+  );
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
@@ -157,7 +161,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const iniciativa = calcularIniciativa(selecao);
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
-  const pericias = calcularPericias(selecao, personagem.nivel);
+  const pericias = calcularPericias(selecao, personagem.nivel, periciasEspecialistaAtuais);
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
   const explicacaoPv = explicarPvMaximoNivel1(selecao);
@@ -228,6 +232,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       inspiracaoGasto,
       truquesAtual: truquesAtuais,
       magiasPreparadasAtual: magiasPreparadasAtuais,
+      periciasEspecialistaAtual: periciasEspecialistaAtuais,
       itensMochilaAtual: itensMochila,
       levelUpHpModo,
       levelUpHpRolado,
@@ -246,6 +251,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     inspiracaoGasto,
     truquesAtuais,
     magiasPreparadasAtuais,
+    periciasEspecialistaAtuais,
     itensMochila,
     levelUpHpModo,
     levelUpHpRolado,
@@ -383,6 +389,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     estiloDeLutaEscolhido: string | null;
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
+    periciasEspecialistaEscolhidas: string[] | null;
   }) {
     setPersonagem((prev) => ({
       ...prev,
@@ -394,6 +401,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setPvAtual((v) => v + resultado.pvGanho);
     if (resultado.truquesEscolhidos) setTruquesAtuais(resultado.truquesEscolhidos);
     if (resultado.magiasPreparadasEscolhidas) setMagiasPreparadasAtuais(resultado.magiasPreparadasEscolhidas);
+    if (resultado.periciasEspecialistaEscolhidas) setPericiasEspecialistaAtuais(resultado.periciasEspecialistaEscolhidas);
     setLevelUpHpModo(null);
     setLevelUpHpRolado(null);
     setLevelUpAberto(false);
@@ -424,6 +432,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         truquesDaClasse={magiasDaClasse(classe.nome, 0)}
         magiasPreparadasAtuais={magiasPreparadasAtuais}
         magiasDaClasseDisponiveis={magiasDaClasse(classe.nome).filter((m) => m.circulo > 0)}
+        periciasEspecialistaAtuais={periciasEspecialistaAtuais}
+        periciasProficientesDoPersonagem={periciasProficientes(selecao)}
       />
     );
   }

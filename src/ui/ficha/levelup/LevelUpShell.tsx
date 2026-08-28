@@ -3,7 +3,13 @@ import { dadoVidaValor } from '../../../data/levelUpFixtures';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
-import { caracteristicasDoNivel, niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel } from '../../../core/levelUp';
+import {
+  caracteristicasDoNivel,
+  niveisComASI,
+  niveisComDadivaEpica,
+  niveisComEspecialista,
+  temEstiloDeLutaTrocavel,
+} from '../../../core/levelUp';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
 import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
 import { iconesMagia } from '../../../core/classificarMagia';
@@ -31,6 +37,7 @@ interface LevelUpShellProps {
     estiloDeLutaEscolhido: string | null;
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
+    periciasEspecialistaEscolhidas: string[] | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -50,9 +57,26 @@ interface LevelUpShellProps {
   /** Catálogo de magias de círculo > 0 da classe (todos os círculos —
    * filtrado por círculo ativo no nível novo aqui dentro). */
   magiasDaClasseDisponiveis: Magia[];
+  /** Perícias já escolhidas pra Especialização (dobra o Bônus de
+   * Proficiência) — característica "Especialista" do Bardo. */
+  periciasEspecialistaAtuais: string[];
+  /** Perícias em que o personagem é proficiente — de onde a escolha
+   * de Especialista pode vir (só dá pra especializar o que já é
+   * proficiente). */
+  periciasProficientesDoPersonagem: string[];
 }
 
-type LuStep = 'pv' | 'features' | 'subclasse' | 'estiloDeLuta' | 'truques' | 'magiasPreparadas' | 'asi' | 'dadivaEpica' | 'resumo';
+type LuStep =
+  | 'pv'
+  | 'features'
+  | 'subclasse'
+  | 'estiloDeLuta'
+  | 'truques'
+  | 'magiasPreparadas'
+  | 'especialista'
+  | 'asi'
+  | 'dadivaEpica'
+  | 'resumo';
 type FaseDramatica = 'idle' | 'rolando' | 'resultado';
 
 const NOMES_ATRIBUTOS = ['FOR', 'DES', 'CON', 'INT', 'SAB', 'CAR'];
@@ -71,18 +95,27 @@ export default function LevelUpShell({
   truquesDaClasse,
   magiasPreparadasAtuais,
   magiasDaClasseDisponiveis,
+  periciasEspecialistaAtuais,
+  periciasProficientesDoPersonagem,
 }: LevelUpShellProps) {
   const novoNivel = personagem.nivel + 1;
   const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', novoNivel);
   const maxMagiasPreparadas = valorRecursoClasse(classe, 'Magias Preparadas', novoNivel);
   const circuloMaximoNovoNivel = Math.max(0, ...espacosDeMagiaAtivos(classe, novoNivel).map((e) => e.circulo));
   const magiasPreparadasDaClasse = magiasDaClasseDisponiveis.filter((m) => m.circulo <= circuloMaximoNovoNivel);
+  // Especialista não é uma tabela por nível (não tem coluna numérica
+  // na planilha) — a regra real é sempre "+2 perícias por gatilho"
+  // (confirmado na descrição da característica), por isso o incremento
+  // fixo em vez de ler de `recursos`.
+  const especialistaDisparaAgora = niveisComEspecialista(classe).includes(novoNivel);
+  const maxEspecialista = periciasEspecialistaAtuais.length + (especialistaDisparaAgora ? 2 : 0);
 
   const luSteps: LuStep[] = ['pv', 'features'];
   if (classe.nivelSubclasse === novoNivel && !personagem.subclasse) luSteps.push('subclasse');
   if (temEstiloDeLutaTrocavel(classe, novoNivel)) luSteps.push('estiloDeLuta');
   if (maxTruques > 0) luSteps.push('truques');
   if (maxMagiasPreparadas > 0) luSteps.push('magiasPreparadas');
+  if (especialistaDisparaAgora) luSteps.push('especialista');
   if (niveisComASI(classe).includes(novoNivel)) luSteps.push('asi');
   if (niveisComDadivaEpica(classe).includes(novoNivel)) luSteps.push('dadivaEpica');
   luSteps.push('resumo');
@@ -98,6 +131,7 @@ export default function LevelUpShell({
   const [estiloDeLutaEscolhido, setEstiloDeLutaEscolhido] = useState<string | null>(personagem.estiloDeLuta);
   const [truquesEscolhidos, setTruquesEscolhidos] = useState<string[]>(truquesAtuais);
   const [magiasPreparadasEscolhidas, setMagiasPreparadasEscolhidas] = useState<string[]>(magiasPreparadasAtuais);
+  const [especialistaEscolhidas, setEspecialistaEscolhidas] = useState<string[]>(periciasEspecialistaAtuais);
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
   const [asiEscolhas, setAsiEscolhas] = useState<string[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
@@ -156,6 +190,22 @@ export default function LevelUpShell({
   const trocasDeMagia = contarTrocas(magiasPreparadasAtuais, magiasPreparadasEscolhidas);
   const magiasPreparadasValido = magiasPreparadasEscolhidas.length === maxMagiasPreparadas && trocasDeMagia <= 1;
 
+  // Especialista é só ADIÇÃO — nunca substitui uma perícia já
+  // especializada (diferente de Truques/Magias Preparadas, que podem
+  // trocar 1 por level-up), então `toggle` nem deixa desmarcar o que
+  // já veio de um nível anterior.
+  function toggleEspecialista(nome: string) {
+    if (periciasEspecialistaAtuais.includes(nome)) return;
+    const i = especialistaEscolhidas.indexOf(nome);
+    if (i > -1) {
+      setEspecialistaEscolhidas((prev) => prev.filter((x) => x !== nome));
+      return;
+    }
+    if (especialistaEscolhidas.length < maxEspecialista) setEspecialistaEscolhidas((prev) => [...prev, nome]);
+  }
+
+  const especialistaValido = especialistaEscolhidas.length === maxEspecialista;
+
   function toggleAsi(a: string) {
     const total = asiEscolhas.length;
     const nesse = asiEscolhas.filter((x) => x === a).length;
@@ -175,6 +225,7 @@ export default function LevelUpShell({
     estiloDeLuta: 'Estilo de Luta',
     truques: 'Truques',
     magiasPreparadas: 'Magias Preparadas',
+    especialista: 'Especialista',
     asi: 'Atributo ou Talento',
     dadivaEpica: 'Dádiva Épica',
     resumo: 'Resumo',
@@ -208,6 +259,10 @@ export default function LevelUpShell({
       );
       return;
     }
+    if (step === 'especialista' && !especialistaValido) {
+      setAviso(`Escolha exatamente ${maxEspecialista - periciasEspecialistaAtuais.length} perícia(s) pra Especialista antes de avançar.`);
+      return;
+    }
     setAviso(null);
     if (step === 'resumo') {
       onConfirmar({
@@ -217,6 +272,7 @@ export default function LevelUpShell({
         estiloDeLutaEscolhido,
         truquesEscolhidos: luSteps.includes('truques') ? truquesEscolhidos : null,
         magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
+        periciasEspecialistaEscolhidas: luSteps.includes('especialista') ? especialistaEscolhidas : null,
       });
       return;
     }
@@ -459,6 +515,37 @@ export default function LevelUpShell({
           </>
         )}
 
+        {step === 'especialista' && (
+          <>
+            <div className="section-title">
+              Especialista — escolha {maxEspecialista - periciasEspecialistaAtuais.length} (
+              {especialistaEscolhidas.length - periciasEspecialistaAtuais.length}/{maxEspecialista - periciasEspecialistaAtuais.length})
+            </div>
+            <div className="label" style={{ marginBottom: 8 }}>
+              Dobra o Bônus de Proficiência nas perícias escolhidas — só dá pra escolher entre as que você já é
+              proficiente. As que vieram de um nível anterior ficam marcadas e travadas.
+            </div>
+            {periciasProficientesDoPersonagem.map((nome) => {
+              const travada = periciasEspecialistaAtuais.includes(nome);
+              const marcada = travada || especialistaEscolhidas.includes(nome);
+              return (
+                <div
+                  key={nome}
+                  className={`check-row ${travada ? styles.truqueAtual : ''}`}
+                  style={travada ? { cursor: 'default' } : undefined}
+                  onClick={() => toggleEspecialista(nome)}
+                >
+                  <div className={`check-box ${marcada ? 'checked' : ''}`} />
+                  <span className="check-label">
+                    {nome}
+                    {travada && <span style={{ color: 'var(--text-faint)', fontSize: 12 }}> (já era)</span>}
+                  </span>
+                </div>
+              );
+            })}
+          </>
+        )}
+
         {step === 'asi' && (
           <>
             <div className="section-title">Aumento de Atributo ou Talento</div>
@@ -540,6 +627,12 @@ export default function LevelUpShell({
               <div className="summary-row">
                 <span>Magias Preparadas</span>
                 <span>{trocasDeMagia > 0 ? `${trocasDeMagia} trocada(s)` : 'sem troca'}</span>
+              </div>
+            )}
+            {luSteps.includes('especialista') && (
+              <div className="summary-row">
+                <span>Especialista</span>
+                <span>{especialistaEscolhidas.slice(periciasEspecialistaAtuais.length).join(', ') || 'nenhuma escolhida'}</span>
               </div>
             )}
             {asiModo === 'atributo' && (
