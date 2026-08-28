@@ -10,6 +10,7 @@ import { pericias } from '../data/rulesets/dnd2024/pericias';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { modificador, valorFinalAtributo, type WizardSelection } from './personagem';
 import { resumoEquipado } from './equipamento';
+import { caracteristicaDesbloqueada } from './levelUp';
 import type { ItemMochila } from './mochila';
 
 const ATRIBUTO_POR_NOME_COMPLETO: Record<string, Atributo> = {
@@ -202,6 +203,7 @@ export interface PericiaFinal {
   nome: string;
   atributo: Atributo;
   mod: number;
+  proficiente: boolean;
   especialista: boolean;
   explicacao: ExplicacaoCalculo;
 }
@@ -216,38 +218,51 @@ export function periciasProficientes(selection: WizardSelection): string[] {
   return [...new Set<string>([...(origem?.pericias ?? []), ...selection.periciasClasseEscolhidas])];
 }
 
-/** Perícias de Origem (fixas) + Classe (escolhidas), com o bônus de
- * proficiência já somado — dobrado pras perícias marcadas como
- * Especialista (`periciasEspecialista`, vazio se a classe não tiver
- * essa característica ou o personagem ainda não tiver escolhido). */
+/** As 18 perícias do jogo, sempre — não só as proficientes. Cada uma
+ * traz o Bônus de Proficiência certo pro estado do personagem:
+ * dobrado se for Especialista, inteiro se só proficiente, metade
+ * (arredondado pra baixo) se a classe tiver "Pau pra Toda Obra"
+ * (Bardo nível 2 — característica genérica por nome, igual
+ * `niveisComEspecialista`, não hardcoded pra Bardo) e não for
+ * proficiente, ou nenhum bônus nos outros casos. */
 export function calcularPericias(selection: WizardSelection, nivel: number, periciasEspecialista: string[] = []): PericiaFinal[] {
   const classe = classeDaSelecao(selection);
   if (!classe) return [];
-  const nomes = periciasProficientes(selection);
+  const proficientes = new Set(periciasProficientes(selection));
   const bonus = bonusProficiencia(classe, nivel);
+  const temPauParaTodaObra = caracteristicaDesbloqueada(classe, 'Pau pra Toda Obra', nivel) !== null;
   const resultado: PericiaFinal[] = [];
-  for (const nome of nomes) {
-    const pericia = pericias.find((p) => p.nome === nome);
-    const atributo = pericia ? ATRIBUTO_POR_NOME_COMPLETO[pericia.atributo] : undefined;
+  for (const pericia of pericias) {
+    const atributo = ATRIBUTO_POR_NOME_COMPLETO[pericia.atributo];
     const valorAtributo = atributo ? valorFinalAtributo(selection, atributo) : null;
     if (!atributo || valorAtributo === null) continue;
     const atribMod = modificador(valorAtributo);
-    const especialista = periciasEspecialista.includes(nome);
-    const bonusFinal = especialista ? bonus * 2 : bonus;
+    const proficiente = proficientes.has(pericia.nome);
+    const especialista = proficiente && periciasEspecialista.includes(pericia.nome);
+    let bonusFinal = 0;
+    let labelBonus = 'Sem proficiência';
+    if (especialista) {
+      bonusFinal = bonus * 2;
+      labelBonus = 'Bônus de Proficiência (Especialista, dobrado)';
+    } else if (proficiente) {
+      bonusFinal = bonus;
+      labelBonus = 'Bônus de Proficiência (proficiente)';
+    } else if (temPauParaTodaObra) {
+      bonusFinal = Math.floor(bonus / 2);
+      labelBonus = 'Metade do Bônus de Proficiência (Pau pra Toda Obra, arredondado pra baixo)';
+    }
     resultado.push({
-      nome,
+      nome: pericia.nome,
       atributo,
       mod: atribMod + bonusFinal,
+      proficiente,
       especialista,
       explicacao: {
         linhas: [
           { label: `mod. ${atributo}`, valor: fmtMod(atribMod) },
-          {
-            label: especialista ? 'Bônus de Proficiência (Especialista, dobrado)' : 'Bônus de Proficiência (proficiente)',
-            valor: fmtMod(bonusFinal),
-          },
+          ...(bonusFinal !== 0 ? [{ label: labelBonus, valor: fmtMod(bonusFinal) }] : []),
         ],
-        total: { label: nome, valor: fmtMod(atribMod + bonusFinal) },
+        total: { label: pericia.nome, valor: fmtMod(atribMod + bonusFinal) },
       },
     });
   }

@@ -3893,3 +3893,47 @@ bônus dobrado +4 = +6; Percepção mod SAB +1 + bônus dobrado +4 = +5;
 as outras 3 perícias sem ⭐, bônus normal).
 
 **Data/origem:** 2026-08.
+
+## Perfil — lista completa das 18 Perícias, marcador de proficiência, Pau pra Toda Obra, Bônus de Proficiência visível
+
+**Fecha a pendência "Ficha/Perfil — Perícias mostram só as proficientes"** registrada desde o Especialista.
+
+**Decisão de marcador visual:** ⚫ (proficiente) / ⚪ (sem proficiência)
+antes do nome, ⭐ extra pra Especialista — o Osmar pediu emoji de
+círculo preto/branco em vez de caractere puro (mais fácil de bater o
+olho no celular). `core/calculoPersonagem.ts`'s `calcularPericias`
+agora sempre itera as 18 `pericias` (não mais só as proficientes) e
+`PericiaFinal` ganhou `proficiente: boolean` — `especialista` já
+existia da entrega anterior.
+
+**Pau pra Toda Obra implementado junto** (característica real de Bardo
+nível 2, já tinha o dado na planilha, só não estava ligada): metade do
+Bônus de Proficiência (arredondado pra baixo) nas perícias SEM
+proficiência. Detectado via `caracteristicaDesbloqueada(classe, 'Pau
+pra Toda Obra', nivel)` — mesmo helper genérico já usado por outras
+características, sem hardcode de Bardo no cálculo em si. Prioridade do
+bônus por perícia: Especialista (dobrado) > proficiente (inteiro) >
+Pau pra Toda Obra (metade) > nenhum.
+
+**Bônus de Proficiência virou linha própria** ("Bônus de Proficiência
++X") logo abaixo do título "Perícias" — mais simples que encaixar
+numa 4ª caixa no grid de PV/CA/Iniciativa (que é fixo em 3 colunas).
+
+**Rolar dado já funcionava pra todo mundo** — o `onClick` do
+`.skillRow` sempre foi genérico (`rolarD20` com o `p.mod` calculado),
+então assim que as 18 perícias passaram a vir preenchidas com o mod
+certo (incluindo +0 ou metade de bônus), o dado passou a funcionar
+igual pras não-proficientes sem precisar mexer na função de rolagem.
+
+**Testado:** Playwright 390×844 — Bardo nível 1: 18 linhas de perícia
++ "Bônus de Proficiência +2" + Percepção Passiva, todas com ⚫/⚪
+corretos, não-proficientes mostrando só o mod. do atributo (Pau pra
+Toda Obra ainda não desbloqueado). Level Up pro nível 2 (que também
+concede Pau pra Toda Obra, junto do Especialista): não-proficientes de
+DES/INT/CAR subiram exatamente +1 (metade de +2, arredondado pra
+baixo) — ex. Acrobacia foi de +1 pra +2, Enganação de +1 pra +2. Popup
+ⓘ de uma perícia não-proficiente confirmado mostrando "Metade do Bônus
+de Proficiência (Pau pra Toda Obra, arredondado pra baixo) +1" na
+conta.
+
+**Data/origem:** 2026-08.

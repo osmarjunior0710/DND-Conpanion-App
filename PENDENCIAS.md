@@ -1042,34 +1042,6 @@ diferente da arma, que tem o botão "🎲 Rolar Dano" automático. Resolver
 exigiria extrair e estruturar o dado de dano de cada magia da
 planilha/descrição — trabalho grande, não escopado ainda.
 
-## Ficha/Perfil — Perícias mostram só as proficientes; falta lista completa, marcação de proficiência e Bônus de Proficiência visível
-
-Achado do Osmar depois de plugar Inspiração de Bardo/Level Up de
-Truques. Hoje (`core/calculoPersonagem.ts`'s `calcularPericias` +
-`PerfilTab.tsx`) a aba Perfil só lista as perícias em que o personagem
-É proficiente (Origem + escolha de Classe) — as outras 16-e-poucas não
-aparecem em lugar nenhum. Falta:
-
-1. **Lista completa das 18 perícias**, sempre — não só as
-   proficientes.
-2. **Marcação visual de proficiente vs não-proficiente** em cada uma
-   (a não-proficiente ainda rola normal, só sem o bônus de
-   proficiência somado).
-3. ~~**Especialista/Expertise**~~ — **feita.** Level Up nível 2 e 9
-   (Bardo) escolhe 2 perícias proficientes pra Especialização (dobra o
-   Bônus de Proficiência), acumulativo, sem troca. Ver
-   DECISOES-DESIGN.md "Bardo — Especialista".
-4. **Bônus de Proficiência visível como stat próprio** — hoje só
-   existe embutido silenciosamente dentro do cálculo de cada perícia/
-   percepção passiva/iniciativa (`bonusProficiencia(classe, nivel)`,
-   já genérico e correto), nunca mostrado como número próprio na tela
-   (ex.: "+2" no nível 1-4, "+3" no 5-8...). Osmar pediu pra aparecer
-   visível, crescendo com o nível.
-
-Os itens 1/2/4 não são específicos de Bardo — Guerreiro também só
-mostra as proficientes hoje. Não escopado/priorizado ainda; aguardando
-decisão de quando entrar na fila.
-
 ## Detector genérico de "ficha atrasada/faltando algo" — pendência importante, vai crescer
 
 **Achado do Osmar:** se um Level Up passar sem escolher Truques/Magias

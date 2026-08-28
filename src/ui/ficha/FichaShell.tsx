@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
 import {
+  bonusProficiencia,
   calcularAtributosFinais,
   calcularCAEquipado,
   calcularIniciativa,
@@ -162,6 +163,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
   const pericias = calcularPericias(selecao, personagem.nivel, periciasEspecialistaAtuais);
+  const bonusProficienciaAtual = classe ? bonusProficiencia(classe, personagem.nivel) : 0;
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
   const explicacaoPv = explicarPvMaximoNivel1(selecao);
@@ -502,6 +504,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             ca={ca}
             iniciativa={iniciativa}
             percepcaoPassiva={percepcaoPassiva}
+            bonusProficiencia={bonusProficienciaAtual}
             explicacaoPv={explicacaoPv}
             explicacaoCa={explicacaoCa}
             explicacaoIniciativa={explicacaoIniciativa}

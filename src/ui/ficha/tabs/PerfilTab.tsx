@@ -14,6 +14,7 @@ interface PerfilTabProps {
   ca: number | null;
   iniciativa: number | null;
   percepcaoPassiva: number | null;
+  bonusProficiencia: number;
   explicacaoPv: ExplicacaoCalculo;
   explicacaoCa: ExplicacaoCalculo;
   explicacaoIniciativa: ExplicacaoCalculo;
@@ -36,6 +37,7 @@ export default function PerfilTab({
   ca,
   iniciativa,
   percepcaoPassiva,
+  bonusProficiencia,
   explicacaoPv,
   explicacaoCa,
   explicacaoIniciativa,
@@ -112,6 +114,13 @@ export default function PerfilTab({
       </div>
 
       <div className="section-title">Perícias</div>
+      <div className={styles.skillRow}>
+        <span>Bônus de Proficiência</span>
+        <span>
+          {bonusProficiencia >= 0 ? '+' : ''}
+          {bonusProficiencia}
+        </span>
+      </div>
       {pericias.map((p) => (
         <div
           key={p.nome}
@@ -119,7 +128,7 @@ export default function PerfilTab({
           onClick={() => rolarD20({ label: p.nome, formula: `1d20 ${p.mod >= 0 ? '+' : '-'} ${Math.abs(p.mod)}`, mod: p.mod })}
         >
           <span>
-            {p.especialista && '⭐ '}
+            {p.proficiente ? '⚫' : '⚪'} {p.especialista && '⭐ '}
             {p.nome} ({p.atributo}) 🎲 <InfoValor titulo={p.nome} explicacao={p.explicacao} />
           </span>
           <span>
