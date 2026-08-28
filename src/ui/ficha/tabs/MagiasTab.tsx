@@ -51,7 +51,7 @@ export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conju
           {truques.map((m) => (
             <div key={m.id} className={styles.spellRow}>
               <div className={styles.spellName}>
-                <MagiaComDescricao magia={m} />
+                <MagiaComDescricao magia={m} variante="icone" />
               </div>
               <span className="label">{m.escola}</span>
             </div>
@@ -65,7 +65,7 @@ export default function MagiasTab({ selecao, classe, nivel, espacosGastos, conju
           {preparadas.map((m) => (
             <div key={m.id} className={styles.spellRow}>
               <div className={styles.spellName}>
-                <MagiaComDescricao magia={m} />
+                <MagiaComDescricao magia={m} variante="icone" />
               </div>
               <span className="label">{m.circulo}º círculo</span>
             </div>
