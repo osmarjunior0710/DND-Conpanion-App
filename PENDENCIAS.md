@@ -1048,3 +1048,37 @@ conjuração), mas o dano o jogador lê no card (ⓘ) e rola manualmente —
 diferente da arma, que tem o botão "🎲 Rolar Dano" automático. Resolver
 exigiria extrair e estruturar o dado de dano de cada magia da
 planilha/descrição — trabalho grande, não escopado ainda.
+
+## Ficha/Perfil — Perícias mostram só as proficientes; falta lista completa, marcação de proficiência, Especialista e Bônus de Proficiência visível
+
+Achado do Osmar depois de plugar Inspiração de Bardo/Level Up de
+Truques. Hoje (`core/calculoPersonagem.ts`'s `calcularPericias` +
+`PerfilTab.tsx`) a aba Perfil só lista as perícias em que o personagem
+É proficiente (Origem + escolha de Classe) — as outras 16-e-poucas não
+aparecem em lugar nenhum. Falta:
+
+1. **Lista completa das 18 perícias**, sempre — não só as
+   proficientes.
+2. **Marcação visual de proficiente vs não-proficiente** em cada uma
+   (a não-proficiente ainda rola normal, só sem o bônus de
+   proficiência somado).
+3. **Especialista/Expertise** — característica real de Bardo
+   confirmada na planilha (`caracteristicasClasse.ts`, "Especialista",
+   nível 2 da progressão): dobra o Bônus de Proficiência em 2
+   perícias proficientes à escolha do jogador (mais 2 no nível 9).
+   Isso precisa de uma escolha nova (provavelmente um step de Level Up
+   nível 2 e 9, mesmo padrão já usado pra Truques — Etapa 4.1) e um
+   3º estado visual pra perícia (não-proficiente / proficiente /
+   especialista), além do cálculo em `calcularPericias` saber dobrar o
+   bônus quando aplicável.
+4. **Bônus de Proficiência visível como stat próprio** — hoje só
+   existe embutido silenciosamente dentro do cálculo de cada perícia/
+   percepção passiva/iniciativa (`bonusProficiencia(classe, nivel)`,
+   já genérico e correto), nunca mostrado como número próprio na tela
+   (ex.: "+2" no nível 1-4, "+3" no 5-8...). Osmar pediu pra aparecer
+   visível, crescendo com o nível.
+
+Nenhuma dessas 4 coisas é específica de Bardo — Guerreiro também só
+mostra as proficientes hoje —, mas Bardo é quem primeiro expôs o
+problema por causa do Especialista. Não escopado/priorizado ainda;
+aguardando decisão de quando entrar na fila.
