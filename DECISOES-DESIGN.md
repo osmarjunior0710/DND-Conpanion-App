@@ -3430,3 +3430,23 @@ gasta 0 espaço e mostra a descrição real no feedback; painel de Reação
 mostra só "Ataque de Oportunidade" (sem "Escudo Arcano" fixo).
 
 **Data/origem:** 2026-08.
+
+## Combate — Reação vira botão baixo/compacto, não mais mesmo tamanho de Ação/Bônus
+
+Ajuste pedido pelo Osmar sobre o Layout C: Ação e Ação Bônus continuam
+lado a lado, tamanho grande (76px, ícone empilhado). Reação virou uma
+barra horizontal baixa (`--touch-target-min`, ícone+nome+estado numa
+linha só) embaixo das outras duas — usada com bem menos frequência
+numa sessão normal de mesa, não precisa do mesmo destaque visual.
+Comportamento (estado ativo/usada, painel deslizante de baixo) não
+mudou, só o tamanho/formato do botão-gatilho.
+
+**Cogitado e descartado nessa conversa:** adicionar uma 4ª categoria
+"Grátis" (ações que não gastam nenhum dos 3 recursos — trocar de arma
+equipada, etc.), numa grade 2×2. Osmar decidiu não seguir por ora —
+prefere manter só as 3 categorias já existentes, com a Reação só
+menor. Se "ações grátis" virar necessidade real de novo, reabrir como
+proposta nova (a planilha precisaria mapear quais ações realmente são
+grátis — não é regra pra inventar de memória).
+
+**Data/origem:** 2026-08.

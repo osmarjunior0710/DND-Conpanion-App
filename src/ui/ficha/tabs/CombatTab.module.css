@@ -38,6 +38,29 @@
   margin: var(--space-1) 0 var(--space-2);
 }
 
+.splitBtnSmall {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  min-height: var(--touch-target-min);
+  margin-bottom: var(--space-3);
+  transition:
+    opacity var(--motion-standard) var(--ease-standard),
+    filter var(--motion-standard) var(--ease-standard);
+}
+
+.splitBtnSmall .sbLabel {
+  margin-top: 0;
+}
+
+.splitBtnSmall .sbState {
+  margin-top: 0;
+  margin-left: auto;
+}
+
 .splitBtn {
   flex: 1;
   padding: var(--space-4) var(--space-2);

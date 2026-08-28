@@ -271,10 +271,10 @@ export default function CombatTab({
 
       <div className="section-title">Ação · Ação Bônus · Reação — estado do turno</div>
       <div className={styles.splitBtns}>
-        {(['acao', 'bonus', 'reacao'] as RecursoTurno[]).map((categoria) => (
+        {(['acao', 'bonus'] as RecursoTurno[]).map((categoria) => (
           <div
             key={categoria}
-            className={`${styles.splitBtn} ${styles[`splitBtn${categoria === 'acao' ? 'Acao' : categoria === 'bonus' ? 'Bonus' : 'Reacao'}`]} ${
+            className={`${styles.splitBtn} ${styles[`splitBtn${categoria === 'acao' ? 'Acao' : 'Bonus'}`]} ${
               turnState[categoria] === 'usada' ? styles.splitBtnUsada : ''
             }`}
             onClick={() => abrirPainel(categoria)}
@@ -284,6 +284,14 @@ export default function CombatTab({
             <div className={styles.sbState}>{turnState[categoria] === 'usada' ? 'usada' : 'ativo'}</div>
           </div>
         ))}
+      </div>
+      <div
+        className={`${styles.splitBtnSmall} ${styles.splitBtnReacao} ${turnState.reacao === 'usada' ? styles.splitBtnUsada : ''}`}
+        onClick={() => abrirPainel('reacao')}
+      >
+        <div className={styles.sbIcon}>{LABELS.reacao.icone}</div>
+        <div className={styles.sbLabel}>{LABELS.reacao.nome}</div>
+        <div className={styles.sbState}>{turnState.reacao === 'usada' ? 'usada' : 'ativo'}</div>
       </div>
 
       <div
