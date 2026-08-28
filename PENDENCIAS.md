@@ -485,12 +485,13 @@ Escudo Arcano do mesmo jeito.
   existe no app; depende da Mochila ganhar suporte a "item com cargas"
   primeiro.
 
-## Faltam 11 classes (só Guerreiro importado)
+## Faltam 10 classes (só Guerreiro e Bardo importados)
 
 **O que é:** Guerreiro foi a classe-piloto (mais simples: sem magia,
-sem subclasse até nível 3). As outras 11 (Bárbaro, Bardo, Bruxo,
-Clérigo, Druida, Feiticeiro, Guardião, Ladino, Mago, Monge, Paladino)
-ficam "(em breve)" na lista de Classe do wizard.
+sem subclasse até nível 3); Bardo foi a segunda (conjurador completo).
+As outras 10 (Bárbaro, Bruxo, Clérigo, Druida, Feiticeiro, Guardião,
+Ladino, Mago, Monge, Paladino) ficam "(em breve)" na lista de Classe
+do wizard.
 
 **O que falta pra resolver:** pra cada classe nova, repetir o mesmo
 processo do Guerreiro — 1) importar núcleo + progressão da planilha
@@ -1026,20 +1027,6 @@ só nome + descrição corrida). Pendência: quando mexer nesses outros
 tipos de novo, avaliar replicar o mesmo padrão de card fixo (campos
 próprios de cada tipo — ex. Arma teria Dano/Propriedades/Maestria em
 vez de Tempo/Alcance/Componentes/Duração).
-
-## Combat "Usar Magia" (Ação/Reação) ainda usa fixture de Bruxo — Etapa 3.2 do Bardo
-
-`AcaoPanelContent.tsx`/`ReacaoPanelContent.tsx` (aba Combat) continuam
-usando `magiasExemplo`/`espacosMagiaExemplo` de `data/exampleCombat.ts`
-— "Escudo Arcano" na Reação não existe pra Bardo, e a lista de magias
-do painel de Ação não é a real do personagem. `MagiasTab.tsx` já foi
-corrigido (Etapa 3.1, ver DECISOES-DESIGN.md) — falta replicar o mesmo
-uso de `core/magiasPersonagem.ts` no Combat. Decisões que essa entrega
-vai precisar tomar: quais magias preparadas cabem em cada painel
-(Ação/Bônus/Reação — provavelmente por `tempoConjuracao` da magia, ex.
-"Reação" só entra no painel de Reação), e como ligar uma magia de
-ataque (`classificarMagia().ataque`) à rolagem de acerto/dano que já
-existe pra arma.
 
 ## Painel de Ação Bônus (Combat) ainda não tem integração de magia
 
