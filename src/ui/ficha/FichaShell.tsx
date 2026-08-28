@@ -40,6 +40,8 @@ import {
   modAcertoConjuracao as calcularModAcertoConjuracao,
   truquesDoPersonagem,
   magiasPreparadasDoPersonagem,
+  deficitTruques,
+  deficitMagiasPreparadas,
 } from '../../core/magiasPersonagem';
 import { usosInspiracaoMaximo, dadoInspiracao, fonteDeInspiracaoDesbloqueada } from '../../core/inspiracaoBardo';
 import {
@@ -56,6 +58,7 @@ import MochilaTab from './tabs/MochilaTab';
 import MagiasTab from './tabs/MagiasTab';
 import CombatTab, { type EstadoRecurso, type RecursoTurno } from './tabs/CombatTab';
 import LevelUpShell, { type PersonagemNivel } from './levelup/LevelUpShell';
+import CompletarMagiasShell from './levelup/CompletarMagiasShell';
 
 type TabName = 'perfil' | 'mochila' | 'magias' | 'combat';
 
@@ -142,6 +145,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo.itensMochilaAtual ?? calcularItensIniciais(selecao),
   );
   const [levelUpAberto, setLevelUpAberto] = useState(false);
+  const [completarAberto, setCompletarAberto] = useState<'truques' | 'magiasPreparadas' | null>(null);
   const [levelUpHpModo, setLevelUpHpModo] = useState<'media' | 'rolar' | null>(personagemSalvo.levelUpHpModo ?? null);
   const [levelUpHpRolado, setLevelUpHpRolado] = useState<number | null>(personagemSalvo.levelUpHpRolado ?? null);
   const [itensDetalhados, setItensDetalhados] = useState(false);
@@ -167,6 +171,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
   const magiasPreparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
+  const faltamTruques = deficitTruques(classe, personagem.nivel, truquesAtuais);
+  const faltamMagiasPreparadas = deficitMagiasPreparadas(classe, personagem.nivel, magiasPreparadasAtuais);
   const magiasPreparadasReacao = magiasPreparadas.filter(ehMagiaDeReacao);
   const magiasPreparadasAcao = magiasPreparadas.filter((m) => !ehMagiaDeReacao(m));
   const modAcertoConjuracao = calcularModAcertoConjuracao(selecao, classe, personagem.nivel);
@@ -422,6 +428,39 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     );
   }
 
+  if (completarAberto === 'truques' && classe) {
+    return (
+      <CompletarMagiasShell
+        titulo="Truques"
+        atuais={truquesAtuais}
+        catalogo={magiasDaClasse(classe.nome, 0)}
+        deficit={faltamTruques}
+        onFechar={() => setCompletarAberto(null)}
+        onConfirmar={(novaLista) => {
+          setTruquesAtuais(novaLista);
+          setCompletarAberto(null);
+        }}
+      />
+    );
+  }
+
+  if (completarAberto === 'magiasPreparadas' && classe) {
+    const circuloMaximo = Math.max(0, ...espacosDeMagiaAtivos(classe, personagem.nivel).map((e) => e.circulo));
+    return (
+      <CompletarMagiasShell
+        titulo="Magias Preparadas"
+        atuais={magiasPreparadasAtuais}
+        catalogo={magiasDaClasse(classe.nome).filter((m) => m.circulo > 0 && m.circulo <= circuloMaximo)}
+        deficit={faltamMagiasPreparadas}
+        onFechar={() => setCompletarAberto(null)}
+        onConfirmar={(novaLista) => {
+          setMagiasPreparadasAtuais(novaLista);
+          setCompletarAberto(null);
+        }}
+      />
+    );
+  }
+
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -492,6 +531,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             conjura={conjura}
             truquesAtuais={truquesAtuais}
             magiasPreparadasAtuais={magiasPreparadasAtuais}
+            faltamTruques={faltamTruques}
+            faltamMagiasPreparadas={faltamMagiasPreparadas}
+            onCompletarTruques={() => setCompletarAberto('truques')}
+            onCompletarMagiasPreparadas={() => setCompletarAberto('magiasPreparadas')}
           />
         )}
         {tab === 'combat' && (

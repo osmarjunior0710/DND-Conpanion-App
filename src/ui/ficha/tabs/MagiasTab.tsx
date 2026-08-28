@@ -10,6 +10,10 @@ interface MagiasTabProps {
   conjura: boolean;
   truquesAtuais: string[];
   magiasPreparadasAtuais: string[];
+  faltamTruques: number;
+  faltamMagiasPreparadas: number;
+  onCompletarTruques: () => void;
+  onCompletarMagiasPreparadas: () => void;
 }
 
 export default function MagiasTab({
@@ -19,6 +23,10 @@ export default function MagiasTab({
   conjura,
   truquesAtuais,
   magiasPreparadasAtuais,
+  faltamTruques,
+  faltamMagiasPreparadas,
+  onCompletarTruques,
+  onCompletarMagiasPreparadas,
 }: MagiasTabProps) {
   if (!conjura) {
     return (
@@ -59,9 +67,14 @@ export default function MagiasTab({
         </>
       )}
 
-      {truques.length > 0 && (
+      {(truques.length > 0 || faltamTruques > 0) && (
         <>
           <div className="section-title">Truques</div>
+          {faltamTruques > 0 && (
+            <div className={styles.avisoFaltando} onClick={onCompletarTruques}>
+              ⚠️ Faltam {faltamTruques} truque{faltamTruques > 1 ? 's' : ''} pro seu nível — toque pra escolher
+            </div>
+          )}
           {truques.map((m) => (
             <div key={m.id} className={styles.spellRow}>
               <div className={styles.spellName}>
@@ -73,9 +86,15 @@ export default function MagiasTab({
         </>
       )}
 
-      {preparadas.length > 0 && (
+      {(preparadas.length > 0 || faltamMagiasPreparadas > 0) && (
         <>
           <div className="section-title">Magias Preparadas</div>
+          {faltamMagiasPreparadas > 0 && (
+            <div className={styles.avisoFaltando} onClick={onCompletarMagiasPreparadas}>
+              ⚠️ Faltam {faltamMagiasPreparadas} magia{faltamMagiasPreparadas > 1 ? 's' : ''} preparada
+              {faltamMagiasPreparadas > 1 ? 's' : ''} pro seu nível — toque pra escolher
+            </div>
+          )}
           {preparadas.map((m) => (
             <div key={m.id} className={styles.spellRow}>
               <div className={styles.spellName}>

@@ -3707,3 +3707,55 @@ correta. Personagem final mostra 6 Magias Preparadas reais na aba
 Magias.
 
 **Data/origem:** 2026-08.
+
+## Detector de déficit de Truques/Magias Preparadas + tela "Completar"
+
+**Achado do Osmar:** se um Level Up passar sem escolher Truques/Magias
+Preparadas (bug, ou personagem que subiu de nível antes dessa
+funcionalidade existir), a ficha fica "atrasada" em relação à tabela
+da classe — e não havia como perceber isso nem corrigir, porque a
+tela de escolha só aparecia DURANTE a transição de nível.
+
+**Decisão — comparação simples, não mecanismo genérico:**
+`core/magiasPersonagem.ts` ganhou `deficitTruques()` e
+`deficitMagiasPreparadas()`: `valorRecursoClasse(classe, <recurso>,
+nivel)` (quanto a tabela da classe diz que deveria ter NO NÍVEL ATUAL)
+menos o tamanho da lista atual, nunca negativo. `MagiasTab.tsx` mostra
+uma linha de aviso (vermelha, `--danger` — mesma convenção de
+"problema na ficha" já usada pro "🔻 será removida" do Level Up,
+distinto do `--warn` âmbar reservado pra validação bloqueante) sempre
+que o déficit é maior que zero, mesmo se a seção "Truques"/"Magias
+Preparadas" estivesse vazia (mudou a condição de exibição da seção de
+`lista.length > 0` pra `lista.length > 0 || deficit > 0`).
+
+**Tela "Completar" (`levelup/CompletarMagiasShell.tsx`) — nova,
+deliberadamente diferente do step de Level Up:** reaproveita os
+estilos de `LevelUpShell.module.css` (mesmo `.screen`/`.header`/
+`.body`/`.navLayer`/`.pill`/`.truqueAtual`), mas **não permite
+remover nada** — os itens que o personagem já tem ficam travados
+(`toggle()` ignora clique neles), só dá pra adicionar até fechar
+exatamente o déficit. Diferente do Level Up (que permite trocar 1),
+porque isso não é uma escolha de subida de nível — é só preencher uma
+lacuna que já deveria estar preenchida. Catálogo de Magias Preparadas
+usa o círculo máximo do NÍVEL ATUAL (`espacosDeMagiaAtivos(classe,
+nivel)`), não do nível seguinte como no Level Up.
+
+**Registrado como pendência maior (ver `PENDENCIAS.md`):** o Osmar
+pediu explicitamente pra isso virar um mecanismo genérico depois
+("tenho certeza que vamos descobrir coisas no caminho") — essa entrega
+resolveu só o caso de Truques/Magias Preparadas, por decisão dele
+("por enquanto vamos revisar as magias").
+
+**Testado:** Playwright 390×844 — Bardo criado nível 1 via wizard,
+nível forçado pra 6 direto no `localStorage` (simulando o bug
+descrito), reload. Aba Magias mostrou os 2 avisos ("Faltam 1 truque" e
+"Faltam 6 magias preparadas pro seu nível"), cada um levando pra
+`CompletarMagiasShell` com os itens atuais marcados "já tinha" e
+travados (clique neles não faz nada) e o botão Confirmar desabilitado
+até preencher a conta exata. Depois de completar os dois, os avisos
+somem e as listas mostram os itens novos junto dos antigos. Reload da
+página confirma que a correção persiste (`truquesAtual`/
+`magiasPreparadasAtual` salvos). Aba Combat testada em seguida sem
+nenhuma regressão.
+
+**Data/origem:** 2026-08.

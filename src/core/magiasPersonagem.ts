@@ -6,6 +6,7 @@ import type { Classe, RecursoClasse } from '../data/rulesets/dnd2024/classes';
 import { magias, type Magia } from '../data/rulesets/dnd2024/magias';
 import { bonusProficiencia } from './calculoPersonagem';
 import { modificador, valorFinalAtributo, type WizardSelection } from './personagem';
+import { valorRecursoClasse } from './recursosClasse';
 
 /** Nome completo (como aparece em `Classe.atributoPrimario`) → código
  * de 3 letras. Só cobre os atributos que já apareceram como primário
@@ -76,6 +77,23 @@ export function magiasPreparadasDoPersonagem(nomes: string[]): Magia[] {
  * então só falta impedir mais de 1 removido. */
 export function contarTrocas(originais: string[], finais: string[]): number {
   return originais.filter((nome) => !finais.includes(nome)).length;
+}
+
+/** Quantos Truques/Magias Preparadas estão faltando pro nível atual —
+ * "deveria ter" (tabela real da classe) menos "tem de verdade". Nunca
+ * negativo. Detecta personagem "atrasado" (ex: Level Up que passou
+ * sem escolher Truques/Magias, por bug ou por ter subido de nível
+ * antes dessa tela existir) — ver PENDENCIAS.md "Detector genérico de
+ * ficha atrasada" pro contexto maior (isso aqui é só o caso de
+ * Truques/Magias, não um mecanismo genérico ainda). */
+export function deficitTruques(classe: Classe | null, nivel: number, truquesAtuais: string[]): number {
+  if (!classe) return 0;
+  return Math.max(0, valorRecursoClasse(classe, 'Truques Conhecidos', nivel) - truquesAtuais.length);
+}
+
+export function deficitMagiasPreparadas(classe: Classe | null, nivel: number, magiasPreparadasAtuais: string[]): number {
+  if (!classe) return 0;
+  return Math.max(0, valorRecursoClasse(classe, 'Magias Preparadas', nivel) - magiasPreparadasAtuais.length);
 }
 
 /** Todas as magias marcadas com Tempo de Conjuração "Reação" começam

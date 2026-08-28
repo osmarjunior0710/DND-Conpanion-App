@@ -38,3 +38,17 @@
 .spellName {
   font-size: 14px;
 }
+
+.avisoFaltando {
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--danger);
+  border-radius: var(--shape-xs);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  font-size: 13px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}

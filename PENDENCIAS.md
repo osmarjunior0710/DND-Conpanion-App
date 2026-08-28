@@ -1075,3 +1075,34 @@ Nenhuma dessas 4 coisas é específica de Bardo — Guerreiro também só
 mostra as proficientes hoje —, mas Bardo é quem primeiro expôs o
 problema por causa do Especialista. Não escopado/priorizado ainda;
 aguardando decisão de quando entrar na fila.
+
+## Detector genérico de "ficha atrasada/faltando algo" — pendência importante, vai crescer
+
+**Achado do Osmar:** se um Level Up passar sem escolher Truques/Magias
+Preparadas (bug, ou personagem que subiu de nível antes dessa
+funcionalidade existir), o personagem fica com menos do que devia pro
+nível dele — e hoje não tem nenhum jeito de perceber isso nem de
+corrigir, porque a tela de escolha só aparece DURANTE a transição de
+nível, não como checagem contra o estado atual.
+
+**Resolvido agora (ver entrega abaixo) só pra Truques e Magias
+Preparadas** — comparação simples "quanto deveria ter no nível atual"
+vs "quanto tem de verdade", com aviso + tela de completar quando
+faltando.
+
+**Mas o Osmar pediu pra registrar isso como pendência maior:**
+precisamos de um mecanismo **genérico** pra esse tipo de checagem, não
+uma solução ad-hoc por campo. Motivo: é quase certo que vamos achar
+mais casos assim conforme o app cresce — já existe pelo menos 1
+suspeito conhecido (Aumento de Valor de Atributo do Level Up não
+aplica de verdade em `selecao.atributos`, só fica guardado em estado
+solto do `LevelUpShell` — precisa verificar se é isso mesmo quando for
+mexer). Ideia de formato (não decidido ainda, só registrado): uma
+função central tipo `verificarPendenciasDoPersonagem(selecao, classe,
+nivel, estadoAtual)` que devolve uma lista de "coisas que deveriam
+estar diferentes" (nome do campo, esperado vs real), e uma UI padrão
+(banner/linha de aviso) reaproveitável em qualquer aba da Ficha pra
+mostrar isso e linkar pra tela de correção certa — em vez de cada novo
+achado ganhar seu próprio código de detecção solto.
+
+**Data/origem:** 2026-08.
