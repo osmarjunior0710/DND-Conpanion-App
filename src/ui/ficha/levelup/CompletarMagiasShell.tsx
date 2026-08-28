@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
+import { agruparMagiasPorCirculo } from '../../../core/magiasPersonagem';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
+import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
 import styles from './LevelUpShell.module.css';
 
 interface CompletarMagiasShellProps {
@@ -52,27 +54,31 @@ export default function CompletarMagiasShell({ titulo, atuais, catalogo, deficit
           (provavelmente um Level Up passou sem essa escolha). Os que você já tem ficam marcados e travados — só
           falta escolher o restante.
         </div>
-        {catalogo.map((m) => {
-          const travado = atuais.includes(m.nome);
-          const marcado = travado || escolhidas.includes(m.nome);
-          return (
-            <div
-              key={m.id}
-              className={`check-row ${travado ? styles.truqueAtual : ''}`}
-              style={travado ? { cursor: 'default' } : undefined}
-              onClick={() => toggle(m.nome)}
-            >
-              <div className={`check-box ${marcado ? 'checked' : ''}`} />
-              <span className="check-label">
-                <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>
-                  ({m.circulo === 0 ? m.escola : `${m.circulo}º círculo`}
-                  {travado ? ' · já tinha' : ''})
-                </span>
-              </span>
-            </div>
-          );
-        })}
+        {agruparMagiasPorCirculo(catalogo).map((grupo) => (
+          <GrupoMagiaColapsavel key={grupo.circulo} label={grupo.label} magias={grupo.magias}>
+            {(m) => {
+              const travado = atuais.includes(m.nome);
+              const marcado = travado || escolhidas.includes(m.nome);
+              return (
+                <div
+                  key={m.id}
+                  className={`check-row ${travado ? styles.truqueAtual : ''}`}
+                  style={travado ? { cursor: 'default' } : undefined}
+                  onClick={() => toggle(m.nome)}
+                >
+                  <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                  <span className="check-label">
+                    <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                    {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>
+                      ({m.circulo === 0 ? m.escola : `${m.circulo}º círculo`}
+                      {travado ? ' · já tinha' : ''})
+                    </span>
+                  </span>
+                </div>
+              );
+            }}
+          </GrupoMagiaColapsavel>
+        ))}
       </div>
 
       <div className={styles.navLayer}>

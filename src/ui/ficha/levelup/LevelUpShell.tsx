@@ -5,9 +5,10 @@ import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import { caracteristicasDoNivel, niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel } from '../../../core/levelUp';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
-import { contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
+import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
+import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
 import styles from './LevelUpShell.module.css';
 
 export interface PersonagemNivel {
@@ -378,27 +379,31 @@ export default function LevelUpShell({
               Regra oficial: a cada nível, você pode substituir 1 dos truques que já conhece por outro da lista —
               não precisa mexer se não quiser.
             </div>
-            {truquesDaClasse.map((m) => {
-              const jaTinha = truquesAtuais.includes(m.nome);
-              const marcado = truquesEscolhidos.includes(m.nome);
-              const removendo = jaTinha && !marcado;
-              return (
-                <div
-                  key={m.id}
-                  className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
-                  onClick={() => toggleTruque(m.nome)}
-                >
-                  <div className={`check-box ${marcado ? 'checked' : ''}`} />
-                  <span className="check-label">
-                    <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                    {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
-                      ({m.escola}
-                      {removendo ? ' · 🔻 será removido' : jaTinha ? ' · já tinha' : ''})
-                    </span>
-                  </span>
-                </div>
-              );
-            })}
+            {agruparMagiasPorCirculo(truquesDaClasse).map((grupo) => (
+              <GrupoMagiaColapsavel key={grupo.circulo} label={grupo.label} magias={grupo.magias}>
+                {(m) => {
+                  const jaTinha = truquesAtuais.includes(m.nome);
+                  const marcado = truquesEscolhidos.includes(m.nome);
+                  const removendo = jaTinha && !marcado;
+                  return (
+                    <div
+                      key={m.id}
+                      className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
+                      onClick={() => toggleTruque(m.nome)}
+                    >
+                      <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                      <span className="check-label">
+                        <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                        {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
+                          ({m.escola}
+                          {removendo ? ' · 🔻 será removido' : jaTinha ? ' · já tinha' : ''})
+                        </span>
+                      </span>
+                    </div>
+                  );
+                }}
+              </GrupoMagiaColapsavel>
+            ))}
             {trocasDeTruque > 1 && (
               <div className="label" style={{ color: 'var(--warn)', marginTop: 6 }}>
                 ⚠️ {trocasDeTruque} truques trocados — só pode trocar 1 por level-up.
@@ -416,27 +421,31 @@ export default function LevelUpShell({
               Regra oficial: a cada nível, você pode substituir 1 das magias que já tem preparada por outra da lista
               (de qualquer círculo pro qual você tenha espaço) — não precisa mexer se não quiser.
             </div>
-            {magiasPreparadasDaClasse.map((m) => {
-              const jaTinha = magiasPreparadasAtuais.includes(m.nome);
-              const marcado = magiasPreparadasEscolhidas.includes(m.nome);
-              const removendo = jaTinha && !marcado;
-              return (
-                <div
-                  key={m.id}
-                  className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
-                  onClick={() => toggleMagiaPreparada(m.nome)}
-                >
-                  <div className={`check-box ${marcado ? 'checked' : ''}`} />
-                  <span className="check-label">
-                    <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                    {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
-                      ({m.circulo}º círculo
-                      {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''})
-                    </span>
-                  </span>
-                </div>
-              );
-            })}
+            {agruparMagiasPorCirculo(magiasPreparadasDaClasse).map((grupo) => (
+              <GrupoMagiaColapsavel key={grupo.circulo} label={grupo.label} magias={grupo.magias}>
+                {(m) => {
+                  const jaTinha = magiasPreparadasAtuais.includes(m.nome);
+                  const marcado = magiasPreparadasEscolhidas.includes(m.nome);
+                  const removendo = jaTinha && !marcado;
+                  return (
+                    <div
+                      key={m.id}
+                      className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
+                      onClick={() => toggleMagiaPreparada(m.nome)}
+                    >
+                      <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                      <span className="check-label">
+                        <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                        {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
+                          ({m.circulo}º círculo
+                          {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''})
+                        </span>
+                      </span>
+                    </div>
+                  );
+                }}
+              </GrupoMagiaColapsavel>
+            ))}
             {trocasDeMagia > 1 && (
               <div className="label" style={{ color: 'var(--warn)', marginTop: 6 }}>
                 ⚠️ {trocasDeMagia} magias trocadas — só pode trocar 1 por level-up.

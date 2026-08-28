@@ -96,6 +96,33 @@ export function deficitMagiasPreparadas(classe: Classe | null, nivel: number, ma
   return Math.max(0, valorRecursoClasse(classe, 'Magias Preparadas', nivel) - magiasPreparadasAtuais.length);
 }
 
+export interface GrupoDeMagias {
+  circulo: number;
+  label: string;
+  magias: Magia[];
+}
+
+/** Agrupa uma lista de magias por círculo — Truques (círculo 0) vira
+ * um grupo próprio "Truques", os demais viram "Xº Círculo". Grupos em
+ * ordem crescente de círculo, magias em ordem alfabética dentro de
+ * cada grupo. Usado nas telas de escolha (Level Up e "completar")
+ * pra não misturar círculos diferentes numa lista só. */
+export function agruparMagiasPorCirculo(magias: Magia[]): GrupoDeMagias[] {
+  const porCirculo = new Map<number, Magia[]>();
+  for (const m of magias) {
+    const lista = porCirculo.get(m.circulo) ?? [];
+    lista.push(m);
+    porCirculo.set(m.circulo, lista);
+  }
+  return [...porCirculo.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([circulo, lista]) => ({
+      circulo,
+      label: circulo === 0 ? 'Truques' : `${circulo}º Círculo`,
+      magias: [...lista].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR')),
+    }));
+}
+
 /** Todas as magias marcadas com Tempo de Conjuração "Reação" começam
  * com esse texto na planilha (confirmado nas 4 ocorrências reais) —
  * heurística simples, mesmo padrão de `classificarMagia`. */

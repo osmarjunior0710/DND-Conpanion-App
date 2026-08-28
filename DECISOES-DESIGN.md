@@ -3759,3 +3759,41 @@ página confirma que a correção persiste (`truquesAtual`/
 nenhuma regressão.
 
 **Data/origem:** 2026-08.
+
+## Listas de Truques/Magias Preparadas agrupadas por círculo, colapsáveis
+
+**Achado do Osmar:** nas telas de escolha (Level Up e a tela "Completar"
+que detecta déficit), a lista de magias vinha toda misturada — Truques,
+1º círculo, 2º círculo etc. sem separação, difícil de escanear numa
+lista de 20+ opções.
+
+**Decisão:** `core/magiasPersonagem.ts` ganhou `agruparMagiasPorCirculo()`
+— agrupa por círculo (0 = "Truques", N = "Nº Círculo"), grupos em ordem
+crescente, magias dentro de cada grupo em ordem alfabética
+(`localeCompare` com locale `pt-BR`, pra acentuação correta). Componente
+novo `ui/components/GrupoMagiaColapsavel.tsx` — cabeçalho clicável com
+nome + contador (mesmo padrão visual de `.grupoHeader` já usado nos
+grupos da Mochila) que expande/colapsa a lista abaixo; recebe a lista de
+magias do grupo e uma função de renderização por linha (render-prop),
+já que cada tela (Level Up truques/magiasPreparadas, tela Completar)
+marca cada linha de um jeito diferente ("já tinha", "será removido",
+"travado") e não fazia sentido forçar isso dentro do componente de
+agrupamento.
+
+**Aplicado nos 3 lugares que usam essa lista** (por pedido explícito do
+Osmar, mesmo sendo 3 entregas técnicas numa só): step "Truques" do Level
+Up (vira 1 grupo só, "Truques (N)", mas com o mesmo cabeçalho por
+consistência visual), step "Magias Preparadas" do Level Up (aqui é onde
+o agrupamento faz diferença de verdade — círculos diferentes ficam
+separados), e a tela "Completar" (déficit) pros dois casos.
+
+**Testado:** Playwright 390×844 — Bardo nível 4, step Truques mostra
+"Truques (13)" com Amigos/Fagulha Estelar/Golpe Certeiro/Ilusão
+Menor/Luz/... em ordem alfabética; clique no cabeçalho colapsa (lista
+some, seleção marcada continua intacta) e reexpande. Bardo nível 2→3,
+step Magias Preparadas mostra "1º Círculo (23)" com Amizade
+Animal/Comando/Compreender Idiomas/... alfabético, marcações "já tinha"
+preservadas. Tela Completar (déficit de Truques) também mostra "Truques
+(13)" com o mesmo agrupamento.
+
+**Data/origem:** 2026-08.
