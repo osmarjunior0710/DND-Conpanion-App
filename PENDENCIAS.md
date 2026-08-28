@@ -111,7 +111,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 por tudo que fizemos"), que levantou as perguntas de equipamento —
 plano aprovado ("vamos de e1").
 
-## Bardo — próxima classe, plano em 5 etapas (Etapas 1-2 feitas)
+## Bardo — próxima classe, plano em 5 etapas (Etapas 1, 2, 3 e 5 feitas — falta só a 4)
 
 **O que é:** depois do Plano de Equipamento fechado e das subclasses
 de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
@@ -152,15 +152,24 @@ subclasse (4 Colégios).
    "Bardo — Etapa 2". Dados de perícia/ferramenta/equipamento inicial
    transcritos do Cap. 3 (PDF "Bárbaro a Feiticeiro" que o Osmar já
    tinha enviado).
-3. **Ficha/aba Magias** (falta) — suportar múltiplos círculos simultâneos
-   (hoje só tem 1 círculo, prototipado pro Bruxo/fixture).
-4. **Level Up** — truques/magias/espaços crescem por tabela; nova
-   categoria "troca opcional de 1 magia preparada por level-up"
+3. ~~**Ficha/aba Magias**~~ — **feita** (Etapa 3.1). Truques/Magias
+   Preparadas reais, Espaços de Magia lidos de `classes.ts` (círculo/
+   máximo/recuperação reais, não mais fixture de Bruxo). Só cobre 1
+   círculo simultâneo — suficiente hoje porque Bardo nível 1 só tem o
+   1º; vira limitação real só quando a Etapa 4 existir. Ver
+   DECISOES-DESIGN.md "Bardo — Etapa 3.1".
+4. **Level Up** (falta) — truques/magias/espaços crescem por tabela;
+   nova categoria "troca opcional de 1 magia preparada por level-up"
    (padrão A, ainda não existe no motor — motor hoje só conhece
-   Guerreiro, não-conjurador).
-5. **Combat** — "Usar Magia" passa a listar as magias preparadas
-   reais do Bardo (tira o `[PH]`/fixture atual), gasto de espaço
-   generalizado pra N círculos independentes.
+   Guerreiro, não-conjurador). Enquanto isso não existir, um Bardo
+   pode subir de nível (PV/ASI genéricos já funcionam) mas fica com os
+   truques/magias/espaços congelados no que foi escolhido na criação.
+5. ~~**Combat**~~ — **feita** (Etapa 3.2). "Usar Magia" lista Truques/
+   Magias Preparadas reais (exclui as de Reação, que só aparecem no
+   painel de Reação se existirem); gasta Espaço de Magia real; magia
+   de ataque rola acerto automático (dano fica manual — planilha não
+   tem dado de dano estruturado). Ver DECISOES-DESIGN.md "Bardo —
+   Etapa 3.2".
 
 **Antes de começar a codar:** propor o plano de entregas pequenas pro
 Osmar e esperar confirmação (regra 6 do CLAUDE.md) — as 5 etapas
