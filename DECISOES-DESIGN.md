@@ -4092,3 +4092,28 @@ padrão `.opt-card-row` + `IconeClasse` já usado na seleção de Classe
 (`ClasseStep.tsx`), reaproveitado sem mudança nenhuma no componente.
 
 **Data/origem:** 2026-08.
+
+## Botão 🔀 vai pro lado direito (perto do Avançar); tarja de erro some sozinha
+
+**2 ajustes pedidos pelo Osmar:**
+
+1. `.randomFab` (botão "Sortear tudo desta etapa" do wizard) trocou
+   `left` por `right` no CSS — fica flutuando acima do "Avançar →" em
+   vez do "← Voltar".
+
+2. A tarja fixa de erro (`.warning`, usada no Wizard e no Level Up)
+   nunca teve timer — ficava na tela até o jogador corrigir e tentar
+   avançar de novo, o que o Osmar achou demorado demais. Novo hook
+   `ui/hooks/useAvisoTemporario.ts` — mesma API de `useState`, mas some
+   sozinha 3s depois de aparecer (`setAviso(null)` continua funcionando
+   pra limpar na hora, ex: ao corrigir e avançar com sucesso).
+   Reaproveitado nos dois lugares que tinham essa tarja (`WizardShell.tsx`,
+   `LevelUpShell.tsx`) — os avisos inline do Combat (`aviso`/`avisoSlot`
+   dos painéis de Ação/Reação) não usam essa tarja fixa, ficaram de
+   fora por enquanto.
+
+**Testado:** Playwright 390×844 — botão confirmado do lado direito.
+Erro de validação disparado (avançar sem escolher classe) e cronometrado
+até sumir sozinho: ~2,8s (dentro da margem do timer de 3s + polling).
+
+**Data/origem:** 2026-08.

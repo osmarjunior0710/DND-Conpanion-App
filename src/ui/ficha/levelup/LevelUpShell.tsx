@@ -17,6 +17,7 @@ import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
 import IconeClasse from '../../components/IconeClasse';
+import { useAvisoTemporario } from '../../hooks/useAvisoTemporario';
 import styles from './LevelUpShell.module.css';
 
 export interface PersonagemNivel {
@@ -137,7 +138,7 @@ export default function LevelUpShell({
   const [especialistaEscolhidas, setEspecialistaEscolhidas] = useState<string[]>(periciasEspecialistaAtuais);
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
   const [asiEscolhas, setAsiEscolhas] = useState<string[]>([]);
-  const [aviso, setAviso] = useState<string | null>(null);
+  const [aviso, setAviso] = useAvisoTemporario();
 
   const media = dadoVidaValor[personagem.dadoVida] + personagem.conMod;
   const pvGanho = hpModo === 'media' ? media : hpModo === 'rolar' ? (hpRolado !== null ? hpRolado + personagem.conMod : null) : null;

@@ -15,6 +15,7 @@ import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../core/maestria
 import { valorRecursoClasse } from '../../core/recursosClasse';
 import { temEstiloDeLutaTrocavel } from '../../core/levelUp';
 import { armazenamentoPersonagens, gerarIdPersonagem } from '../../core/armazenamentoPersonagens';
+import { useAvisoTemporario } from '../hooks/useAvisoTemporario';
 import styles from './WizardShell.module.css';
 import ClasseStep from './steps/ClasseStep';
 import ClasseEscolhasStep from './steps/ClasseEscolhasStep';
@@ -60,7 +61,7 @@ export default function WizardShell() {
   const [wizIndex, setWizIndex] = useState(0);
   const [selection, setSelection] = useState<WizardSelection>(criarSelecaoInicial());
   const [valorSelecionado, setValorSelecionado] = useState<number | null>(null);
-  const [aviso, setAviso] = useState<string | null>(null);
+  const [aviso, setAviso] = useAvisoTemporario();
 
   function update(patch: Partial<WizardSelection>) {
     setAviso(null);

@@ -83,7 +83,7 @@
    telas com mais conteúdo (ex: Escolhas da Origem). */
 .randomFab {
   position: fixed;
-  left: var(--space-4);
+  right: var(--space-4);
   bottom: calc(96px + var(--space-2));
   width: var(--touch-target-min);
   height: var(--touch-target-min);
