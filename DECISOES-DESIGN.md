@@ -3361,3 +3361,25 @@ batendo com o que foi sorteado na criação), popup de magia abre com
 os campos certos.
 
 **Data/origem:** 2026-08.
+
+## Lista de Personagens usa o emblema da Classe no lugar do 👤 genérico
+
+A pedido do Osmar: enquanto o upload de imagem de avatar não existe de
+verdade (só um placeholder na tela de Resumo do wizard, agora marcado
+`[PH]`), a Lista de Personagens preenche o espaço de avatar com o
+emblema redondo da Classe do personagem — a mesma arte já usada na
+tela de escolher Classe do wizard.
+
+`IconeClasse` (componente que já existia dentro de `ClasseStep.tsx`)
+virou compartilhado (`ui/components/IconeClasse.tsx`) pra poder ser
+reaproveitado aqui sem duplicar a lógica de `import.meta.glob` dos
+arquivos `-banner.png`. `CharacterList.tsx` busca o `id` da classe do
+personagem em `classes.ts` pelo nome salvo e passa pro componente; sem
+classe reconhecida (não deveria acontecer, mas por segurança), cai de
+volta no 👤 antigo.
+
+**Espaço do avatar aumentado** (48px → 64px) a pedido do Osmar, já que
+o emblema é uma arte bonita e merece aparecer bem — `object-fit: cover`
+preenche a caixa quadrada sem distorcer.
+
+**Data/origem:** 2026-08.

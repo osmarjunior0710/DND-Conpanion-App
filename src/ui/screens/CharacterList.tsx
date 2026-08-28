@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { armazenamentoPersonagens } from '../../core/armazenamentoPersonagens';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
+import { classes } from '../../data/rulesets/dnd2024/classes';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
+import IconeClasse from '../components/IconeClasse';
 import styles from './CharacterList.module.css';
 
 const PALAVRA_CONFIRMACAO = 'apagar';
@@ -19,6 +21,7 @@ export default function CharacterList() {
     nome: p.selecao.nome || '(sem nome)',
     especie: p.selecao.especie ?? '—',
     classe: p.selecao.classe ?? '—',
+    classeId: classes.find((c) => c.nome === p.selecao.classe)?.id ?? null,
     nivel: p.nivel,
     pvAtual: p.pvAtual,
     pvMax: calcularPvMaximoNivel1(p.selecao) ?? p.pvAtual,
@@ -65,7 +68,7 @@ export default function CharacterList() {
 
       {personagens.map((c) => (
         <div key={c.id} className={`box ${styles.card}`} onClick={() => navigate(`/ficha/${c.id}`)}>
-          <div className={styles.avatar}>👤</div>
+          <div className={styles.avatar}>{c.classeId ? <IconeClasse id={c.classeId} /> : '👤'}</div>
           <div className={styles.info}>
             <div className={styles.name}>{c.nome}</div>
             <div className={styles.meta}>

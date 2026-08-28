@@ -110,7 +110,8 @@ export default function ResumoStep({ selection, update }: StepProps) {
 
       <div className="section-title">Avatar</div>
       <div className="box" style={{ padding: 16, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
-        ＋ enviar imagem (opcional)
+        [PH] ＋ enviar imagem (opcional) — ainda não funciona, por enquanto a Lista de Personagens usa o emblema da
+        Classe no lugar
       </div>
     </>
   );

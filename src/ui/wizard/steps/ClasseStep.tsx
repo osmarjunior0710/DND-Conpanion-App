@@ -1,36 +1,6 @@
 import { classes } from '../../../data/rulesets/dnd2024/classes';
+import IconeClasse from '../../components/IconeClasse';
 import type { StepProps } from './StepProps';
-
-const iconeModulos = import.meta.glob('../../../assets/icones-classes/*.png', {
-  eager: true,
-  import: 'default',
-}) as Record<string, string>;
-
-function iconeClasse(id: string): string | undefined {
-  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}.png`));
-  return entrada?.[1];
-}
-
-function bannerClasse(id: string): string | undefined {
-  const entrada = Object.entries(iconeModulos).find(([caminho]) => caminho.endsWith(`/${id}-banner.png`));
-  return entrada?.[1];
-}
-
-// Ícones novos (emblema redondo) substituem os estandartes antigos —
-// mesmo arquivo `-banner.png`, mas exibidos na caixa quadrada padrão
-// (`.opt-card-img`) em vez da caixa alta/estreita de antes, porque o
-// formato redondo cabe melhor nela. Classes sem arte própria ainda
-// usam uma cópia do emblema do Guerreiro como placeholder — trocar
-// pelo emblema real assim que existir (ver DECISOES-DESIGN.md).
-function IconeClasse({ id }: { id: string }) {
-  const banner = bannerClasse(id);
-  if (banner) return <img src={banner} alt="" className="opt-card-img-emblema" />;
-  return (
-    <div className="opt-card-img">
-      {iconeClasse(id) ? <img src={iconeClasse(id)} alt="" /> : '🖼'}
-    </div>
-  );
-}
 
 const CLASSES_EM_BREVE = [
   { nome: 'Bárbaro', id: 'barbaro' },
