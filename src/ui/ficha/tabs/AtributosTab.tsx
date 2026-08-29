@@ -74,11 +74,11 @@ export default function AtributosTab({
             onClick={() => rolarD20({ label: a.atributo, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
           >
             <div className="stat-name">{a.atributo}</div>
-            <div className="stat-mod">
+            <div className="stat-mod">{a.valor}</div>
+            <div className="stat-val">
               {a.mod >= 0 ? '+' : ''}
               {a.mod}
             </div>
-            <div className="stat-val">{a.valor}</div>
           </div>
         ))}
       </div>
