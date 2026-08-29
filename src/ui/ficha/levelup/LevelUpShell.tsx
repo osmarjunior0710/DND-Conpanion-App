@@ -658,54 +658,62 @@ export default function LevelUpShell({
             </div>
             <div className="label" style={{ marginBottom: 8 }}>
               Dobra o Bônus de Proficiência nas perícias escolhidas — só dá pra escolher entre as que você já é
-              proficiente. As que vieram de um nível anterior ficam marcadas e travadas.
+              proficiente.
             </div>
-            {periciasProficientesDoPersonagem.map((nome) => {
-              const travada = periciasEspecialistaAtuais.includes(nome);
-              const marcada = travada || especialistaEscolhidas.includes(nome);
-              return (
-                <div
-                  key={nome}
-                  className={`check-row ${travada ? styles.truqueAtual : ''}`}
-                  style={travada ? { cursor: 'default' } : undefined}
-                  onClick={() => toggleEspecialista(nome)}
-                >
-                  <div className={`check-box ${marcada ? 'checked' : ''}`} />
-                  <span className="check-label">
-                    {nome}
-                    {travada && <span style={{ color: 'var(--text-faint)', fontSize: 12 }}> (já era)</span>}
-                  </span>
-                </div>
-              );
-            })}
+            {periciasEspecialistaAtuais.length > 0 && (
+              <>
+                <div className={styles.subHeader}>Selecionadas previamente</div>
+                {periciasProficientesDoPersonagem
+                  .filter((nome) => periciasEspecialistaAtuais.includes(nome))
+                  .map((nome) => (
+                    <div key={nome} className={`check-row ${styles.truqueAtual}`} style={{ cursor: 'default' }}>
+                      <div className="check-box checked" />
+                      <span className="check-label">{nome}</span>
+                    </div>
+                  ))}
+                <div className={styles.subHeader}>Disponíveis</div>
+              </>
+            )}
+            {periciasProficientesDoPersonagem
+              .filter((nome) => !periciasEspecialistaAtuais.includes(nome))
+              .map((nome) => {
+                const marcada = especialistaEscolhidas.includes(nome);
+                return (
+                  <div key={nome} className="check-row" onClick={() => toggleEspecialista(nome)}>
+                    <div className={`check-box ${marcada ? 'checked' : ''}`} />
+                    <span className="check-label">{nome}</span>
+                  </div>
+                );
+              })}
           </>
         )}
 
         {step === 'asi' && (
           <>
             <div className="section-title">Aumento de Atributo ou Talento</div>
-            <div className={`opt-card ${asiModo === 'atributo' ? 'selected' : ''}`} onClick={() => { setAsiModo('atributo'); setAsiEscolhas([]); }}>
+            <div
+              className={`opt-card ${asiModo === 'atributo' ? 'selected' : ''}`}
+              onClick={() => {
+                if (asiModo !== 'atributo') {
+                  setAsiModo('atributo');
+                  setAsiEscolhas([]);
+                }
+                setTelaAsi(true);
+              }}
+            >
               <div className="opt-card-name">Aumentar Atributos</div>
-              <div className="opt-card-desc">+2 em um atributo, ou +1 em dois atributos (máx. 20)</div>
+              <div className="opt-card-desc">
+                {asiModo === 'atributo' && pontosAsiGastos > 0
+                  ? NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
+                      .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
+                      .join(', ')
+                  : '+2 em um atributo, ou +1 em dois atributos (máx. 20) — toque pra distribuir'}
+              </div>
             </div>
             <div className={`opt-card ${asiModo === 'talento' ? 'selected' : ''}`} onClick={() => { setAsiModo('talento'); setAsiEscolhas([]); }}>
               <div className="opt-card-name">Escolher um Talento</div>
               <div className="opt-card-desc">Lista completa de talentos (Cap. 5) entra numa próxima entrega</div>
             </div>
-            {asiModo === 'atributo' && (
-              <div className="opt-card" style={{ cursor: 'pointer' }} onClick={() => setTelaAsi(true)}>
-                <div className="opt-card-name">
-                  {pontosAsiGastos === 0 ? 'Distribuir pontos' : 'Editar distribuição'}
-                </div>
-                <div className="opt-card-desc">
-                  {pontosAsiGastos === 0
-                    ? `Toque pra distribuir ${PONTOS_ASI} pontos entre os atributos.`
-                    : NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
-                        .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
-                        .join(', ')}
-                </div>
-              </div>
-            )}
             {asiModo === 'talento' && (
               <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
                 ＋ lista de talentos entra numa próxima entrega

@@ -4276,3 +4276,60 @@ foi de +2 pra +3). Reload da página confirmou persistência
 (`selecao.atributos.FOR` = 16 no localStorage).
 
 **Data/origem:** 2026-08.
+
+## Ajustes finos pós-ASI: Espaços de Magia colapsável, Especialista com "Selecionadas previamente", ASI sem card redundante
+
+3 ajustes pequenos pedidos pelo Osmar enquanto testava o fix do ASI acima.
+
+**Espaços de Magia (aba Magias) — 1 linha por círculo, colapsável e
+lembrando o estado:** antes cada círculo ocupava 3 linhas (nome +
+ticks + texto "X/Y disponíveis — recupera no..."). Virou 1 linha só
+(nome do círculo à esquerda, `TickPips` à direita, linha cinza fina
+entre círculos via `border-top`), e o texto de recuperação virou um
+aviso único logo abaixo do título "Espaços de Magia" (calculado uma
+vez, olhando se ALGUM círculo recupera no Descanso Curto — cobre o
+caso raro de mistura, embora na prática nenhuma classe hoje misture).
+A seção inteira (todos os círculos juntos) agora é colapsável,
+clicando no título — não cada círculo individualmente, o pedido era
+"não precisa de tanta linha assim" quando a pessoa não está olhando
+pra isso. Estado aberto/fechado persiste entre sessões via
+`localStorage`, mas por um hook novo (`ui/hooks/useColapsavel.ts`),
+não pela interface `ArmazenamentoPersonagens` — é preferência de UI
+(qual seção o jogador prefere ver fechada), não dado de personagem,
+não faz sentido ir pro schema de `PersonagemSalvo` nem sincronizar
+pra nuvem na Fase 5.
+
+**Especialista, 2ª escolha em diante — "Selecionadas previamente"
+separado:** quando o Bardo já tinha escolhido Especialista antes (ex.
+nível 2) e chega no próximo gatilho (nível 9), a tela antes misturava
+as perícias já travadas com as ainda disponíveis na mesma lista linear
+(só um texto "(já era)" diferenciava). Virou 2 seções com cabeçalho
+próprio — "Selecionadas previamente" (as travadas, mostradas já
+marcadas, sem interação) em cima, "Disponíveis" (as que ainda dá pra
+escolher) embaixo. Não muda a regra (Especialista continua só
+adição, nunca substitui), só deixa mais fácil de ler numa lista que
+cresce a cada gatilho.
+
+**ASI — removido o 3º card redundante:** a tela "Aumento de Atributo
+ou Talento" tinha 3 cards quando "Aumentar Atributos" estava
+selecionado (Aumentar Atributos / Escolher um Talento / Distribuir
+pontos-Editar distribuição) — o 3º card só existia pra abrir a tela de
+distribuição, um clique a mais sem necessidade. Agora clicar direto no
+card "Aumentar Atributos" já abre a tela de distribuição (mesma
+lógica de quando o jogador clica "Avançar" com pontos sobrando); o
+próprio card passa a mostrar o resumo da distribuição (ex. "FOR +2")
+quando já tem algo escolhido, em vez de precisar de um card
+separado pra isso.
+
+**Testado:** Playwright 390×844, personagem Bardo. (1) Nível 3→4:
+tela "Aumento de Atributo ou Talento" mostrando só 2 cards; clique em
+"Aumentar Atributos" abriu a tela de distribuição de 2 pontos direto.
+(2) Nível 8→9 com `periciasEspecialistaAtual` pré-preenchido
+(Arcanismo, Religião): tela mostrou "Selecionadas previamente" com as
+2 perícias marcadas/travadas e "Disponíveis" com as 3 restantes.
+(3) Aba Magias, Bardo nível 12: 6 círculos em 1 linha cada, aviso
+único "Recupera no Descanso Longo." abaixo do título, clique no
+título colapsa/expande a seção inteira; F5 na página manteve o estado
+colapsado.
+
+**Data/origem:** 2026-08.

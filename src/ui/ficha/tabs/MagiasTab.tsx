@@ -2,6 +2,7 @@ import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import { espacosDeMagiaAtivos, truquesDoPersonagem, magiasPreparadasDoPersonagem } from '../../../core/magiasPersonagem';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TickPips from '../../components/TickPips';
+import { useColapsavel } from '../../hooks/useColapsavel';
 import styles from './MagiasTab.module.css';
 
 interface MagiasTabProps {
@@ -40,25 +41,41 @@ export default function MagiasTab({
   const espacos = espacosDeMagiaAtivos(classe, nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
   const preparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
+  const [espacosExpandido, setEspacosExpandido] = useColapsavel('espacos-de-magia', true);
+
+  const temCurto = espacos.some((e) => e.recuperaNoDescansoCurto);
+  const temLongo = espacos.some((e) => !e.recuperaNoDescansoCurto);
+  const avisoRecuperacao =
+    temCurto && temLongo
+      ? 'Recupera no Descanso Curto ou Longo, conforme o círculo.'
+      : temCurto
+        ? 'Recupera no Descanso Curto.'
+        : 'Recupera no Descanso Longo.';
 
   return (
     <>
       {espacos.length > 0 && (
         <>
-          <div className="section-title">Espaços de Magia</div>
-          {espacos.map((espaco) => {
-            const gasto = espacosGastosPorCirculo[espaco.circulo] ?? 0;
-            return (
-              <div key={espaco.circulo} style={{ marginBottom: 12 }}>
-                <div className="label">{espaco.circulo}º círculo</div>
-                <TickPips total={espaco.maximo} usados={gasto} tamanho="lg" />
-                <div className="label">
-                  {espaco.maximo - gasto}/{espaco.maximo} disponíveis — recupera no{' '}
-                  {espaco.recuperaNoDescansoCurto ? 'Descanso Curto' : 'Descanso Longo'}.
-                </div>
+          <div className={styles.grupoHeader} onClick={() => setEspacosExpandido(!espacosExpandido)}>
+            <span>Espaços de Magia</span>
+            <span>{espacosExpandido ? '▾' : '▸'}</span>
+          </div>
+          {espacosExpandido && (
+            <>
+              <div className="label" style={{ margin: '0 0 var(--space-2)' }}>
+                {avisoRecuperacao}
               </div>
-            );
-          })}
+              {espacos.map((espaco, i) => {
+                const gasto = espacosGastosPorCirculo[espaco.circulo] ?? 0;
+                return (
+                  <div key={espaco.circulo} className={styles.espacoRow} style={i === 0 ? { borderTop: 'none' } : undefined}>
+                    <span>{espaco.circulo}º círculo</span>
+                    <TickPips total={espaco.maximo} usados={gasto} tamanho="lg" />
+                  </div>
+                );
+              })}
+            </>
+          )}
         </>
       )}
 
