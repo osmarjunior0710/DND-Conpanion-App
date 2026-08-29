@@ -4336,39 +4336,21 @@ colapsado.
 
 ## Talentos Fase 1 — dado importado, schema de ASI unificado
 
-A planilha (`dnd-master-referencia.xlsx`, agora versionada no repo —
-ver seção 3 do CLAUDE.md) foi conferida linha a linha na aba
-"Talentos": 85 linhas, 75 oficiais (Geral 43, Dádiva Épica 12, Origem
-10, Estilo de Luta 10) + 10 "Talento Selvagem" (UA Psiônico 2025, não
-oficial). `data/rulesets/dnd2024/talentos.ts` foi regerado por script
-(Python + openpyxl, mesmo padrão de sempre) a partir dela.
+`data/rulesets/dnd2024/talentos.ts` gerado por script (Python +
+openpyxl, mesmo padrão de sempre) a partir da aba "Talentos" da
+planilha — panorama de dado (categorias, contagens, regras de ASI e
+pré-requisito) em `DND-Regras.md` > Talentos, não repetido aqui.
 
 **Schema de ASI virou 2 tipos, não 4** — o plano original (baseado só
 em contar colunas de ASI marcadas: 0/1/2-3/6) sugeria 4 padrões de UI,
 mas ao olhar os VALORES reais das colunas, só existem 2 comportamentos
-distintos:
-- `escolha-unica`: +1 num único atributo à escolha, dentre uma lista
-  (`atributos: Atributo[]`) — cobre igualmente talento com 1 atributo
-  fixo (lista de 1, sem escolha real), 2-3 (lista pequena) e 6
-  ("qualquer atributo", ex. Especialista em Perícia, Dádivas Épicas).
-- `distribuir-dois`: +2 num só ou +1 em dois, dentre a lista — hoje só
-  1 talento ("Aumento no Valor de Atributo"), reaproveita o MESMO
-  seletor de ASI genérico já construído pro Level Up (ver decisão
-  acima "Aumento de Valor de Atributo agora aplica de verdade").
-`maximo` (20 normal, 30 pra Dádiva Épica) é um campo à parte, não um
-3º/4º tipo — evita duplicar a lógica de "escolha entre N" só porque o
-teto do atributo muda.
-
-**Pré-requisito de Atributo Mínimo NÃO foi importado** — as colunas
-"Força Mín."..."Carisma Mín." da planilha nunca trazem uma pontuação
-real (sempre repetem o valor da coluna de ASI da mesma linha, ex.
-"+1"), então `PrerequisitosTalento` só tem `nivelMinimo` (número real,
-confiável) e `outro` (texto livre pro "Outro Pré-requisito", vira
-aviso não-bloqueante nas fases seguintes). Ver PENDENCIAS.md "Talentos
-— colunas de Atributo Mínimo não trazem dado real" — avisado ao Osmar
-em vez de construir validação em cima de dado que não existe de
-verdade (regra nova do CLAUDE.md seção 3, adicionada nesta mesma
-entrega).
+distintos: `escolha-unica` (+1 num único atributo à escolha, dentre
+uma lista — `atributos: Atributo[]`, cobre igualmente lista de 1/2-3/6)
+e `distribuir-dois` (+2 num só ou +1 em dois — reaproveita o MESMO
+seletor de ASI genérico já construído pro Level Up, ver decisão acima
+"Aumento de Valor de Atributo agora aplica de verdade"). `maximo` (20
+ou 30) é um campo à parte, não um 3º/4º tipo — evita duplicar a lógica
+de "escolha entre N" só porque o teto do atributo muda.
 
 **`talentosOrigem` virou derivado, não duplicado** — os 2 consumidores
 existentes (`OrigemEscolhasStep.tsx`, `PerfilTab.tsx`) só liam
@@ -4376,54 +4358,31 @@ existentes (`OrigemEscolhasStep.tsx`, `PerfilTab.tsx`) só liam
 `TalentoOrigem` separada, `talentosOrigem` agora é
 `talentos.filter(t => t.categoria === 'Origem')` — mesmo array, tipo
 `Talento[]` completo, zero mudança nos 2 arquivos que já consumiam.
-Os 10 IDs batem exatamente com os já referenciados em `origens.ts`
-(conferido, nenhuma origem ficou com talento não encontrado).
-
-**Ainda faltam (Fases 2-4, ver PENDENCIAS.md):** classificar o texto
-de "Benefícios" em Ação/Bônus/Reação/Passiva, oferecer a escolha de
-Talento de verdade no Level Up (hoje continua placeholder), e aplicar
-efeito mecânico real — nenhum talento Geral/Dádiva Épica afeta nada
-na Ficha ainda, é só catálogo de dados.
+Os 10 IDs batem exatamente com os já referenciados em `origens.ts`.
 
 **Testado:** `npm run build` limpo. Playwright 390×844 — Bardo criado
 do zero, tela "2b. Escolhas da Origem" mostrou o talento de Origem
 ("Sortudo") certo com descrição; aba Perfil da Ficha carregou sem
-erro. Contagem: 85 IDs únicos totais, 75 em `talentos` (10 deles
-`categoria: 'Origem'`, batendo com os 10 IDs já usados em
-`origens.ts`), 10 em `talentosSelvagens`.
+erro.
 
 **Data/origem:** 2026-08.
 
 ## Talentos — pré-requisito de Atributo Mínimo importado (planilha corrigida pelo Osmar)
 
-O Osmar refez a `dnd-master-referencia.xlsx` e confirmou, talento por
-talento (lendo a página renderizada do livro pra cada um, não em
-massa), a suspeita registrada na Fase 1: as colunas "Força
-Mín."..."Carisma Mín." da aba Talentos tinham um bug — traziam o valor
-da coluna de ASI (`+1`) em vez do pré-requisito real. Corrigidas: 17
-talentos têm pré-requisito de atributo de verdade (valor único `13`,
-nunca outro número — Agressor, Analítico, Atleta, Ator, Conjurador
-Ritualista, Duelista Defensivo, Especialista Ambidestro, Especialista
-em Besta, Imobilizador, Líder Inspirador, Mente Aguçada, Mestre em
-Armas de Haste, Mestre em Armas Grandes, Mestre-Atirador, Sentinela,
-Sorrateiro, Velocista), 21 não têm pré-requisito de atributo nenhum
-(coluna limpa, tinha `+1` por engano).
+**Decisão:** `PrerequisitosTalento` ganhou `atributosMinimos:
+Atributo[]` — sem mapa de valor por atributo, já que o valor mínimo
+real é sempre 13 em toda a planilha (fato de regra, ver
+`DND-Regras.md` > Talentos). `talentos.ts` regerado a partir da
+planilha corrigida pelo Osmar (ele conferiu talento por talento,
+lendo a página do livro, em vez de corrigir em massa).
 
-**Verificação da planilha nova:** comparei célula a célula (script
-Python) a planilha nova contra a anterior versionada no repo — **só a
-aba Talentos mudou** (38 linhas, batendo exatamente com o número de
-talentos que tinham alguma coluna Mín. marcada), todas as outras 39
-abas ficaram idênticas linha a linha. Isso confirma que nenhum outro
-dado já importado (Guerreiro, Bardo, Origens, Espécies) precisa de
-reconciliação nesta entrega — só Talentos.
-
-**Mudança no schema:** `PrerequisitosTalento` ganhou `atributosMinimos:
-Atributo[]` (lista de atributos que precisam estar em 13+ — sem mapa
-de valor por atributo, já que o valor é sempre 13 em toda a planilha).
-`talentos.ts` regerado a partir da planilha nova; nenhum consumidor
-existente lê esse campo ainda (Fase 3, ainda não feita), então não
-muda comportamento visível nesta entrega — só corrige o dado de base
-pra quando a validação de atributo mínimo for construída.
+**Técnica de verificação que vale reaproveitar em atualizações de
+planilha futuras:** comparar célula a célula (script Python) a
+planilha nova contra a versão anterior versionada no repo, em vez de
+assumir o que mudou — nessa entrega confirmou que só a aba Talentos
+tinha mudado (38 linhas), as outras 39 abas idênticas, então nenhum
+outro dado já importado (Guerreiro, Bardo, Origens, Espécies)
+precisava de reconciliação.
 
 **Testado:** `npm run build` limpo. Conferido programaticamente:
 Agressor com `atributosMinimos: ['FOR', 'DES']`, Chef e Resistente com
@@ -4450,9 +4409,9 @@ heurística sobre o texto puro, computada on-the-fly — não precomputada
 e salva no dado, para nunca ficar dessincronizada de `beneficios`).
 Prioridade de match por frase: `Reação` > `Ação Bônus` > `Ação` >
 `Passiva` (fallback). O texto de "Benefícios" é quebrado em frases
-antes de classificar (`split` por fim de frase + próxima maiúscula),
-porque um talento pode ter mais de 1 efeito na mesma célula (ex:
-Conjurador Bélico).
+antes de classificar (`split` por fim de frase + próxima maiúscula) —
+ver `DND-Regras.md` > Talentos pro porquê (um talento pode ter mais de
+1 efeito na mesma célula).
 
 **Achado de dado ao testar:** o divisor de frases inicial quebrava
 errado em 2 abreviações usadas no texto de Talentos — "Salv." (de

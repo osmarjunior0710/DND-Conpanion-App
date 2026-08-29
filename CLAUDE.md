@@ -8,6 +8,9 @@
 > frequência. Decisões de design que evoluem com o tempo ficam em
 > `DECISOES-DESIGN.md` — leia esse arquivo também, e **atualize-o** sempre
 > que tomar ou aprender algo sobre uma decisão de design (ver seção 7).
+> Fatos de regra de D&D já confirmados (catálogo, valores,
+> pré-requisitos) ficam em `DND-Regras.md`, organizados por tópico —
+> leia esse também antes de mexer em dado de regra (ver seção 3.1).
 > Coisas adiadas de propósito (ainda não resolvidas) ficam em
 > `PENDENCIAS.md` — leia esse também, e **atualize-o** sempre que adiar
 > algo ou resolver algo que estava lá (ver seção 11).
@@ -57,6 +60,34 @@ a planilha não. Se encontrar diferença entre o que está importado e o
 que a planilha tem agora, trate como um bug de dado desatualizado:
 avise o Osmar, não silenciosamente ignore nem silenciosamente
 sobrescreva sem dizer o que mudou.
+
+### 3.1 Regra de jogo confirmada vs. decisão de design — arquivos separados
+
+`DND-Regras.md` guarda **fatos de regra de D&D já confirmados**
+(catálogo, valores, exceções, pré-requisitos) organizados por tópico.
+`DECISOES-DESIGN.md` guarda só decisão de arquitetura/UI/processo do
+app (ver seção 7). Antes desta regra, os dois ficavam misturados no
+mesmo arquivo, que cresceu demais e virou difícil de reler.
+
+- **Ordem de consulta pra regra de jogo:** primeiro `DND-Regras.md`;
+  enquanto a migração não estiver marcada como concluída lá (ver o
+  aviso "Status da migração" no topo daquele arquivo), também confira
+  `DECISOES-DESIGN.md`, que ainda pode ter regra de jogo não migrada.
+  Quando `DND-Regras.md` marcar a migração como concluída, pare de
+  checar `DECISOES-DESIGN.md` pra regra de jogo — só decisão de design
+  continua lá.
+- **Sempre que, lendo ou escrevendo em `DECISOES-DESIGN.md`, você
+  encontrar ou for registrar um fato de regra de D&D** (não uma
+  decisão de arquitetura/UI) — verifique se `DND-Regras.md` já tem um
+  tópico onde esse fato se encaixa; se tiver, agrupe lá; se não tiver,
+  crie um tópico novo. Depois de mover, apague o fato de
+  `DECISOES-DESIGN.md`, deixando lá só a decisão de design que
+  eventualmente dependia dele (referencie o tópico de `DND-Regras.md`
+  em vez de repetir o fato).
+- Migração é incremental, tópico por tópico — não precisa migrar tudo
+  de uma vez. Cada tópico só sai da lista de "ainda em
+  DECISOES-DESIGN.md" quando alguém (Osmar ou Claude Code) mover de
+  verdade o conteúdo.
 
 ## 4. Arquitetura em camadas — não negociável
 

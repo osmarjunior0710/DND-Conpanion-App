@@ -1,0 +1,79 @@
+# DND-Regras.md
+
+> Este arquivo guarda **fatos de regra de D&D 5e (2024) já confirmados**
+> na planilha (`dnd-master-referencia.xlsx`) ou no livro — não decisão
+> de arquitetura, UI ou processo do projeto (isso continua em
+> `DECISOES-DESIGN.md`). É uma base de referência por **tópico**, não
+> um histórico cronológico de entregas.
+>
+> Formato de cada tópico: fatos confirmados em bullet, direto ao ponto.
+> Cite a fonte quando não for óbvio (aba da planilha, capítulo do
+> livro). Sem "Contexto"/"Testado"/data de entrega — isso é rastro de
+> decisão do app, não regra de jogo, e fica em `DECISOES-DESIGN.md`.
+>
+> **Regra de uso:** antes de propor algo que dependa de uma regra de
+> D&D, procure aqui primeiro. Ao encontrar (ou confirmar) um fato de
+> regra em qualquer lugar — inclusive dentro de uma entrada de
+> `DECISOES-DESIGN.md` — verifique se já existe um tópico aqui que
+> agrupe esse fato; se não existir, crie um tópico novo. Depois de
+> mover o fato pra cá, apague-o de `DECISOES-DESIGN.md`, deixando lá
+> só a decisão de design/arquitetura (ver seção 3 do `CLAUDE.md`).
+>
+> **Status da migração:** em andamento, começando pelo tópico
+> Talentos. Enquanto não estiver 100% migrado, `DECISOES-DESIGN.md`
+> ainda pode conter regra de jogo não extraída — ver `CLAUDE.md` seção
+> 3 pra ordem de consulta.
+
+---
+
+## Talentos
+
+**Catálogo (aba "Talentos" da planilha):** 85 linhas — 75 oficiais +
+10 "Talento Selvagem" (Unearthed Arcana Psiônico 2025, não-oficial,
+isolado do catálogo principal, mesmo tratamento das magias UA Psion).
+
+**4 categorias oficiais**, com comportamento de ASI bem diferente:
+
+| Categoria | Qtd | Concede ASI? |
+|---|---|---|
+| Geral | 43 | Varia — ver abaixo |
+| Dádiva Épica | 12 | Quase sempre sim |
+| Origem | 10 | Nunca |
+| Estilo de Luta | 10 | Nunca |
+
+**ASI (Aumento de Valor de Atributo) por talento — só 2 comportamentos
+reais** (não 4, como uma leitura rápida das colunas da planilha
+sugeria — o que importa é o VALOR da célula, não só quantas colunas
+vêm marcadas):
+- A maioria dá **+1 num único atributo, à escolha entre uma lista**
+  (a lista pode ter 1 atributo só — sem escolha real —, 2-3, ou os 6).
+- Só **"Aumento no Valor de Atributo"** segue a regra genérica de ASI:
+  **+2 num atributo só, ou +1 em dois**.
+- Teto do atributo: **20** normalmente, **30** pros talentos de
+  categoria Dádiva Épica.
+
+**Pré-requisito de Nível Mínimo:** campo numérico confiável na
+planilha — Geral = nível 4+; Dádiva Épica = nível 19+.
+
+**Pré-requisito de Atributo Mínimo:** quando existe, o valor é sempre
+**13** (nunca outro número, confirmado talento por talento pelo Osmar
+lendo a página do livro). 17 talentos oficiais têm esse pré-requisito:
+Agressor, Analítico, Atleta, Ator, Conjurador Ritualista, Duelista
+Defensivo, Especialista Ambidestro, Especialista em Besta,
+Imobilizador, Líder Inspirador, Mente Aguçada, Mestre em Armas de
+Haste, Mestre em Armas Grandes, Mestre-Atirador, Sentinela, Sorrateiro,
+Velocista. Os outros 21 talentos com essa coluna preenchida na
+planilha bruta **não têm** pré-requisito de atributo de verdade (era
+bug de extração — coluna vinha com o valor de ASI, não de pré-requisito).
+
+**Pré-requisito "Outro":** texto livre (ex: "Característica Conjuração
+ou Magia de Pacto", "Treinamento com Armadura Leve", "Característica
+de Estilo de Luta") — não é um valor estruturado, não dá pra validar
+automaticamente contra a ficha.
+
+**Um talento pode ter mais de 1 efeito de jogo na mesma
+descrição/célula de "Benefícios"** (ex: Conjurador Bélico = efeito
+Passivo + Reação + Passivo na mesma célula de texto) — nunca assumir
+"1 talento = 1 categoria de ação" ao ler a coluna de Benefícios.
+
+Fonte: `dnd-master-referencia.xlsx`, aba "Talentos".
