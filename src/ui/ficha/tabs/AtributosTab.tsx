@@ -128,7 +128,7 @@ export default function AtributosTab({
           onClick={() => rolarD20({ label: p.nome, formula: `1d20 ${p.mod >= 0 ? '+' : '-'} ${Math.abs(p.mod)}`, mod: p.mod })}
         >
           <span>
-            {p.proficiente ? '⚫' : '⚪'} {p.especialista && '⭐ '}
+            {p.proficiente ? '🔵' : '⚫'} {p.especialista && '⭐ '}
             {p.nome} ({p.atributo}) 🎲 <InfoValor titulo={p.nome} explicacao={p.explicacao} />
           </span>
           <span>
