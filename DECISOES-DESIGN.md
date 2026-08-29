@@ -4178,3 +4178,45 @@ caminho de 1 círculo só (Bardo nível 1): clicar na magia conjura
 direto, sem passar pela Tela 3.
 
 **Data/origem:** 2026-08.
+
+## Ticks/pips padronizados: sempre esvazia de trás pra frente ("tanque de combustível")
+
+**Regra única pedida pelo Osmar, pra todo lugar que mostra "N usos,
+alguns já gastos"** (Espaços de Magia, Recuperar Fôlego, Inspiração de
+Bardo, Espaço de Magia por círculo no fluxo de upcast): quadradinho
+azul = disponível; quando o jogador usa 1, o ÚLTIMO quadradinho vira
+cinza (não o primeiro) — array de N sempre preenchido da esquerda,
+esvaziando pela direita. Achado ao mexer: o app já tinha as DUAS
+convenções coexistindo — `BonusPanelContent.tsx` (Fôlego/Inspiração)
+já usava `i >= restantes` (esvazia pela direita, certo), mas
+`MagiasTab.tsx` (Espaços de Magia) usava `i < gasto` (esvaziava pela
+esquerda, errado/inconsistente).
+
+**Componente novo único:** `ui/components/TickPips.tsx` —
+`{ total, usados, tamanho }`, `usados` sempre conta de trás pra frente
+(`i >= total - usados`). Substituiu as 2 implementações duplicadas
+(`.slotPip`/`.slotPipGasto` de `MagiasTab.module.css` e
+`.slotPipLg`/`.slotPipLgGasto` de `PanelRows.module.css`, ambas
+removidas — CSS morto). Também usado na Tela 3 do fluxo de upcast
+(`EscolherCirculoShell.tsx`), que antes mostrava só o texto "X/Y
+espaços disponíveis" — agora mostra os ticks, mais fácil de bater o
+olho.
+
+## Tela 3 do upcast sempre aparece, mesmo com 1 círculo só disponível
+
+**Pedido do Osmar:** mesmo quando a magia só tem 1 círculo possível
+pra gastar (ex: Bardo com uma única magia de 2º círculo — não tem
+"escolha" real), a Tela 3 (`EscolherCirculoShell`) continua aparecendo
+antes de conjurar, em vez de pular direto — importante o jogador ver
+qual espaço tá sendo gasto, mesmo sem opção. Removido o atalho que
+existia em `AcaoPanelContent.tsx` (`if (circulosDisponiveis.length ===
+1) conjurarMagia(...)`).
+
+**Testado:** Playwright 390×844 — aba Magias com 1º círculo 3/4 (3
+azuis + 1 cinza no fim), 2º círculo 1/3 (1 azul + 2 cinzas no fim), 3º
+círculo 2/2 (ambos azuis) — confirma esvaziamento pela direita em
+todos os tamanhos. Tela 3 do upcast confirmada mostrando os ticks por
+círculo em vez de texto, e aparecendo mesmo com só 1 círculo
+disponível.
+
+**Data/origem:** 2026-08.

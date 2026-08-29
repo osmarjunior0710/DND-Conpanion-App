@@ -1,4 +1,5 @@
 import type { AtaqueResolvido } from '../../../core/ataque';
+import TickPips from '../../components/TickPips';
 import styles from './PanelRows.module.css';
 
 interface BonusPanelContentProps {
@@ -51,9 +52,7 @@ export default function BonusPanelContent({
         <>
           <div className={styles.slotCounter}>
             <span>Inspiração de Bardo (d{tamanhoDadoInspiracao}):</span>
-            {Array.from({ length: usosInspiracaoMaximo }).map((_, i) => (
-              <div key={i} className={`${styles.slotPipLg} ${i >= usosInspiracaoRestantes ? styles.slotPipLgGasto : ''}`} />
-            ))}
+            <TickPips total={usosInspiracaoMaximo} usados={usosInspiracaoMaximo - usosInspiracaoRestantes} />
             <span style={{ color: 'var(--text-faint)' }}>
               {usosInspiracaoRestantes}/{usosInspiracaoMaximo} disponíveis
             </span>
@@ -108,9 +107,7 @@ export default function BonusPanelContent({
         <>
           <div className={styles.slotCounter}>
             <span>Recuperar Fôlego:</span>
-            {Array.from({ length: usosFolegoMaximo }).map((_, i) => (
-              <div key={i} className={`${styles.slotPipLg} ${i >= usosFolegoRestantes ? styles.slotPipLgGasto : ''}`} />
-            ))}
+            <TickPips total={usosFolegoMaximo} usados={usosFolegoMaximo - usosFolegoRestantes} />
             <span style={{ color: 'var(--text-faint)' }}>
               {usosFolegoRestantes}/{usosFolegoMaximo} disponíveis
             </span>

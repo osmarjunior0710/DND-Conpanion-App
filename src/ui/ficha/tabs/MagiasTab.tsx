@@ -1,6 +1,7 @@
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import { espacosDeMagiaAtivos, truquesDoPersonagem, magiasPreparadasDoPersonagem } from '../../../core/magiasPersonagem';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
+import TickPips from '../../components/TickPips';
 import styles from './MagiasTab.module.css';
 
 interface MagiasTabProps {
@@ -50,13 +51,7 @@ export default function MagiasTab({
             return (
               <div key={espaco.circulo} style={{ marginBottom: 12 }}>
                 <div className="label">{espaco.circulo}º círculo</div>
-                <div className={styles.slotRow}>
-                  {Array.from({ length: espaco.maximo }).map((_, i) => (
-                    <div key={i} className={`${styles.slotPip} ${i < gasto ? styles.slotPipGasto : ''}`}>
-                      {i < gasto ? '✓' : '①'}
-                    </div>
-                  ))}
-                </div>
+                <TickPips total={espaco.maximo} usados={gasto} tamanho="lg" />
                 <div className="label">
                   {espaco.maximo - gasto}/{espaco.maximo} disponíveis — recupera no{' '}
                   {espaco.recuperaNoDescansoCurto ? 'Descanso Curto' : 'Descanso Longo'}.

@@ -106,13 +106,7 @@ export default function AcaoPanelContent({
         espacosGastosPorCirculo={espacosGastosPorCirculo}
         onFechar={() => setTelaMagia(null)}
         onEscolherTruque={(m) => conjurarMagia(m, null)}
-        onEscolherMagia={(m, circulosDisponiveis) => {
-          if (circulosDisponiveis.length === 1) {
-            conjurarMagia(m, circulosDisponiveis[0]);
-            return;
-          }
-          setTelaMagia({ magia: m, circulos: circulosDisponiveis });
-        }}
+        onEscolherMagia={(m, circulosDisponiveis) => setTelaMagia({ magia: m, circulos: circulosDisponiveis })}
       />
     );
   }

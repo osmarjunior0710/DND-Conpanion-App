@@ -33,18 +33,6 @@
   flex-wrap: wrap;
 }
 
-.slotPipLg {
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--accent);
-  border-radius: var(--shape-xs);
-}
-
-.slotPipLgGasto {
-  background: var(--line-soft);
-  border-color: var(--line-soft);
-}
-
 .spellMiniRow {
   display: flex;
   justify-content: space-between;

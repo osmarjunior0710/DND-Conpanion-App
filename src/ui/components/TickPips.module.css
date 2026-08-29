@@ -1,0 +1,25 @@
+.row {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.pip {
+  background: var(--accent);
+  border-radius: var(--shape-xs);
+  transition: background var(--motion-standard) var(--ease-standard);
+}
+
+.sm {
+  width: 16px;
+  height: 16px;
+}
+
+.lg {
+  width: 22px;
+  height: 22px;
+}
+
+.pipUsado {
+  background: var(--line-soft);
+}
