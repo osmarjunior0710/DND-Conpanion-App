@@ -1,14 +1,26 @@
+import { useState } from 'react';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
-import { espacosDeMagiaAtivos, truquesDoPersonagem, magiasPreparadasDoPersonagem } from '../../../core/magiasPersonagem';
+import type { Magia } from '../../../data/rulesets/dnd2024/magias';
+import {
+  espacosDeMagiaAtivos,
+  truquesDoPersonagem,
+  magiasPreparadasDoPersonagem,
+  circulosDisponiveisParaConjurar,
+} from '../../../core/magiasPersonagem';
+import { classificarMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TickPips from '../../components/TickPips';
 import { useColapsavel } from '../../hooks/useColapsavel';
+import { useRoll } from '../../roll/RollContext';
+import EscolherCirculoShell from '../combat/EscolherCirculoShell';
 import styles from './MagiasTab.module.css';
 
 interface MagiasTabProps {
   classe: Classe | null;
   nivel: number;
   espacosGastosPorCirculo: Record<number, number>;
+  onGastarSlotCirculo: (circulo: number) => boolean;
+  modAcertoConjuracao: number | null;
   conjura: boolean;
   truquesAtuais: string[];
   magiasPreparadasAtuais: string[];
@@ -22,6 +34,8 @@ export default function MagiasTab({
   classe,
   nivel,
   espacosGastosPorCirculo,
+  onGastarSlotCirculo,
+  modAcertoConjuracao,
   conjura,
   truquesAtuais,
   magiasPreparadasAtuais,
@@ -30,6 +44,9 @@ export default function MagiasTab({
   onCompletarTruques,
   onCompletarMagiasPreparadas,
 }: MagiasTabProps) {
+  const { rolarD20 } = useRoll();
+  const [telaCirculo, setTelaCirculo] = useState<{ magia: Magia; circulos: number[] } | null>(null);
+
   if (!conjura) {
     return (
       <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 13, textAlign: 'center' }}>
@@ -42,6 +59,43 @@ export default function MagiasTab({
   const truques = truquesDoPersonagem(truquesAtuais);
   const preparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
   const [espacosExpandido, setEspacosExpandido] = useColapsavel('espacos-de-magia', true);
+
+  function rolarAtaqueSeForMagiaDeAtaque(m: Magia) {
+    if (classificarMagia(m).ataque && modAcertoConjuracao !== null) {
+      rolarD20({
+        label: `Ataque de Magia — ${m.nome}`,
+        formula: `1d20 + ${modAcertoConjuracao}`,
+        mod: modAcertoConjuracao,
+      });
+    }
+  }
+
+  function usarMagia(m: Magia) {
+    if (m.circulo === 0) {
+      rolarAtaqueSeForMagiaDeAtaque(m);
+      return;
+    }
+    const circulosDisponiveis = circulosDisponiveisParaConjurar(m.circulo, espacos, espacosGastosPorCirculo);
+    if (circulosDisponiveis.length === 0) return;
+    setTelaCirculo({ magia: m, circulos: circulosDisponiveis });
+  }
+
+  if (telaCirculo) {
+    return (
+      <EscolherCirculoShell
+        magia={telaCirculo.magia}
+        circulosDisponiveis={telaCirculo.circulos}
+        espacos={espacos}
+        espacosGastosPorCirculo={espacosGastosPorCirculo}
+        onVoltar={() => setTelaCirculo(null)}
+        onConjurar={(circulo) => {
+          const ok = onGastarSlotCirculo(circulo);
+          setTelaCirculo(null);
+          if (ok) rolarAtaqueSeForMagiaDeAtaque(telaCirculo.magia);
+        }}
+      />
+    );
+  }
 
   const temCurto = espacos.some((e) => e.recuperaNoDescansoCurto);
   const temLongo = espacos.some((e) => !e.recuperaNoDescansoCurto);
@@ -92,7 +146,10 @@ export default function MagiasTab({
               <div className={styles.spellName}>
                 <MagiaComDescricao magia={m} variante="icone" />
               </div>
-              <span className="label">{m.escola}</span>
+              <span className={styles.spellCirculo}>Truque</span>
+              <div className={styles.usarBtn} onClick={() => usarMagia(m)}>
+                Usar
+              </div>
             </div>
           ))}
         </>
@@ -107,19 +164,29 @@ export default function MagiasTab({
               {faltamMagiasPreparadas > 1 ? 's' : ''} pro seu nível — toque pra escolher
             </div>
           )}
-          {preparadas.map((m) => (
-            <div key={m.id} className={styles.spellRow}>
-              <div className={styles.spellName}>
-                <MagiaComDescricao magia={m} variante="icone" />
+          {preparadas.map((m) => {
+            const semEspaco = circulosDisponiveisParaConjurar(m.circulo, espacos, espacosGastosPorCirculo).length === 0;
+            return (
+              <div key={m.id} className={styles.spellRow}>
+                <div className={styles.spellName}>
+                  <MagiaComDescricao magia={m} variante="icone" />
+                </div>
+                <span className={styles.spellCirculo}>{m.circulo}º círculo</span>
+                <div
+                  className={`${styles.usarBtn} ${semEspaco ? styles.usarBtnDesabilitado : ''}`}
+                  onClick={() => usarMagia(m)}
+                >
+                  Usar
+                </div>
               </div>
-              <span className="label">{m.circulo}º círculo</span>
-            </div>
-          ))}
+            );
+          })}
         </>
       )}
 
       <div className="label" style={{ marginTop: 8 }}>
-        Conjurar de verdade (gastar espaço, rolar ataque/dano) acontece pela aba Combat, dentro do painel de Ação.
+        Usar aqui gasta o espaço de magia de verdade (com upcast, igual a aba Combat) — útil pra conjurar fora do
+        seu turno, no meio da campanha.
       </div>
     </>
   );

@@ -571,6 +571,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             classe={classe}
             nivel={personagem.nivel}
             espacosGastosPorCirculo={espacosGastosPorCirculo}
+            onGastarSlotCirculo={gastarSlotCirculo}
+            modAcertoConjuracao={modAcertoConjuracao}
             conjura={conjura}
             truquesAtuais={truquesAtuais}
             magiasPreparadasAtuais={magiasPreparadasAtuais}

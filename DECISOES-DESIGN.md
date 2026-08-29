@@ -4484,3 +4484,45 @@ Arcano" → confirmado → aba Perfil mostrou a seção "Talentos" com o
 `[PH]` → F5 na página manteve tudo (persistência confirmada).
 
 **Data/origem:** 2026-08.
+
+## Aba Magias ganha conjuração de verdade (não só a aba Combat)
+
+**Decisão:** a lista de Truques/Magias Preparadas na aba Magias virou
+uma grade de 3 colunas — Nome | Círculo (ou "Truque") | botão "Usar" —
+em vez de nome + escola/círculo como texto solto sem ação nenhuma.
+"Usar" reaproveita o mesmo mecanismo já construído pro painel de Ação
+do Combat: truque conjura na hora (sem gastar espaço); magia de
+círculo 1+ abre `EscolherCirculoShell` (a mesma Tela 3 do Combat, com
+upcast real) antes de gastar o espaço. Rola ataque de magia via
+`RollContext` (contexto global, funciona em qualquer aba) quando
+`classificarMagia(m).ataque` for true, exatamente como o Combat já
+fazia.
+
+**Contexto:** pedido do Osmar — o jogador pode querer conjurar uma
+magia fora do fluxo estrito de turno de combate (ex: uso utilitário
+no meio da campanha), e a aba Magias existia só como catálogo de
+leitura, sem nenhuma ação de verdade.
+
+**Reuso, não duplicação:** `EscolherCirculoShell` já vivia em
+`ui/ficha/combat/` mas não tem nada específico de Combat — é só um
+componente de UI que recebe `magia`/`espacos`/callbacks, então
+`MagiasTab.tsx` importa direto de lá em vez de duplicar o componente.
+`gastarSlotCirculo` (função de `FichaShell.tsx`) e `modAcertoConjuracao`
+já existiam pro Combat — só precisaram ser passados como prop novo pra
+`MagiasTab` também.
+
+**O que NÃO mudou:** o painel de Ação do Combat continua com seu
+próprio fluxo de 2 telas (`SelecionarMagiaShell` + `EscolherCirculoShell`)
+pra listar/filtrar — a aba Magias não precisa da 1ª tela porque já
+lista tudo direto (não tem problema de rolagem infinita ali, a lista já
+existe agrupada por Truques/Preparadas).
+
+**Testado:** Playwright 390×844, Bardo nível 5. Layout de 3 colunas
+confirmado. "Usar" numa magia preparada de 1º círculo abriu a Tela 3
+com os 3 círculos disponíveis (upcast); escolhido 1º círculo, o pip
+correspondente ficou gasto (4/4 → 3/4) e persistiu. "Usar" num truque
+não-ofensivo (Zombaria Perversa — na real é magia de salvaguarda, não
+de ataque, `classificarMagia` corretamente não rolou nada) não abriu
+popup nenhum, como esperado pra truque.
+
+**Data/origem:** 2026-08.
