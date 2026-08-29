@@ -4430,3 +4430,48 @@ Agressor com `atributosMinimos: ['FOR', 'DES']`, Chef e Resistente com
 `atributosMinimos: []` (bate com a correção do Osmar).
 
 **Data/origem:** 2026-08.
+
+## Talentos Fase 2 — classificador de Benefícios não reaproveita nada existente, é novo
+
+O plano original (`talentos-plano-implementacao.md`) descrevia a Fase
+2 como "reaproveitar o classificador de Ação/Ação Bônus/Reação/Passiva
+que já existe, usado em características de classe". **Isso não existe
+como código no app** — a coluna "Tipo de Ação (auto, revisar)" de
+`Características de Classe`/`Subclasses` na planilha foi gerada por
+um processo externo (rodado uma vez, fora deste repositório, sobre o
+texto do livro) e só é *lida* como dado pronto por
+`caracteristicasClasse.ts` (`tipoAcao: string`) — não existe uma
+função reutilizável de classificação de texto em lugar nenhum do
+`core/`.
+
+**Decisão:** escrever um classificador novo, `core/classificarTalento.ts`,
+seguindo o mesmo padrão já usado em `classificarMagia.ts` (regex
+heurística sobre o texto puro, computada on-the-fly — não precomputada
+e salva no dado, para nunca ficar dessincronizada de `beneficios`).
+Prioridade de match por frase: `Reação` > `Ação Bônus` > `Ação` >
+`Passiva` (fallback). O texto de "Benefícios" é quebrado em frases
+antes de classificar (`split` por fim de frase + próxima maiúscula),
+porque um talento pode ter mais de 1 efeito na mesma célula (ex:
+Conjurador Bélico).
+
+**Achado de dado ao testar:** o divisor de frases inicial quebrava
+errado em 2 abreviações usadas no texto de Talentos — "Salv." (de
+Salvaguarda) e "mod." (de modificador), ex. "cura extra = mod.
+Constituição..." virava 2 frases erradas. Corrigido com uma exceção no
+regex de split pra essas 2 abreviações especificamente (únicas
+encontradas em toda a aba Talentos que colidiam com fim de frase).
+
+**Testado:** os 2 exemplos combinados com o Osmar bateram exatos —
+Atirador Arcano (3 frases, todas Passiva) e Conjurador Bélico
+(Passiva + Reação + Passiva). Rodado nos 75 talentos oficiais: 151
+frases totais → 124 Passiva, 12 Ação Bônus, 7 Reação, 3 Ação (números
+antes da correção de abreviação eram levemente diferentes — conferido
+visualmente o dump completo das 75 classificações, nenhuma quebra de
+frase estranha sobrou).
+
+**Pendência que continua em aberto:** a tag "afeta cálculo" por
+talento (Fase 4) ainda precisa de revisão manual — o classificador só
+diz "isso parece Ação/Bônus/Reação/Passiva pelo texto", não garante
+que o efeito realmente muda um número que o app calcula.
+
+**Data/origem:** 2026-08.

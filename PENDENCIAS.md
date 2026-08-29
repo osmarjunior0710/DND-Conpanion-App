@@ -612,39 +612,39 @@ motivou o pedido.
   ainda, exceto Guerreiro nível 1, que já está limpo). Aplicar o mesmo
   tratamento de Espécies quando fizer sentido pra tela em questão.
 
-## Talentos — Fases 2, 3 e 4 ainda faltam (Fase 1/Dados já feita, ver DECISOES-DESIGN.md)
+## Talentos — Fases 3 e 4 ainda faltam (Fases 1/Dados e 2/Classificação já feitas, ver DECISOES-DESIGN.md)
 
 **O que é:** a Fase 1 (importar os 75 talentos oficiais + 10 UA de
 `dnd-master-referencia.xlsx` pra `data/rulesets/dnd2024/talentos.ts`)
-está feita — ver DECISOES-DESIGN.md pro schema completo. Mas o Level
-Up ainda não *usa* esse catálogo: a opção "Escolher um Talento" no
-passo de ASI continua como placeholder ("entra numa próxima entrega"),
-sem travar o avanço do Level Up.
+e a Fase 2 (classificar o texto de "Benefícios" em Ação/Ação
+Bônus/Reação/Passiva, `core/classificarTalento.ts`) estão feitas — ver
+DECISOES-DESIGN.md pros detalhes. Mas o Level Up ainda não *usa* nada
+disso: a opção "Escolher um Talento" no passo de ASI continua como
+placeholder ("entra numa próxima entrega"), sem travar o avanço do
+Level Up.
 
 **O que falta, nessa ordem (plano original do Osmar,
 `talentos-plano-implementacao.md`):**
 
-1. **Fase 2 — Classificação automática do texto de Benefícios**:
-   rodar o classificador de Ação/Ação Bônus/Reação/Passiva que já
-   existe (usado em características de classe) em cima da coluna
-   `beneficios` de cada talento, quebrando em frases quando o talento
-   tiver múltiplos efeitos (ex: Conjurador Bélico = Passiva + Reação +
-   Passiva — um talento pode gerar efeito em mais de uma categoria na
-   mesma célula). Critério de conclusão: Atirador Arcano e Conjurador
-   Bélico (os 2 exemplos discutidos com o Osmar) classificados certo.
-2. **Fase 3 — Seleção de talento no Level Up** (sem efeito mecânico
+1. **Fase 3 — Seleção de talento no Level Up** (sem efeito mecânico
    ainda): UI na tela de ASI que já existe, oferecendo Atributo OU
-   Talento; valida Nível Mín. automaticamente (dado real, existe);
-   mostra "Outro Pré-requisito" como aviso não-bloqueante (texto
-   livre, não dá pra validar automático); reaproveita o seletor de ASI
-   genérico do Level Up pro caso `distribuir-dois`; talento fica salvo
-   e mostrado na Ficha como InfoChip, `[PH]` (sem afetar número
-   nenhum ainda). Critério: escolher um talento e ver salvo/mostrado.
-3. **Fase 4 — Aplicar efeito de verdade, em lotes pequenos** (5-10 por
+   Talento; valida Nível Mín. e Atributo Mínimo automaticamente (os 2
+   são dado real hoje — ver DECISOES-DESIGN.md); mostra "Outro
+   Pré-requisito" como aviso não-bloqueante (texto livre, não dá pra
+   validar automático); reaproveita o seletor de ASI genérico do Level
+   Up pro caso `distribuir-dois`; talento fica salvo e mostrado na
+   Ficha como InfoChip, `[PH]` (sem afetar número nenhum ainda).
+   Critério: escolher um talento e ver salvo/mostrado.
+2. **Fase 4 — Aplicar efeito de verdade, em lotes pequenos** (5-10 por
    vez) — ordem sugerida: primeiro ASI puro sem regra, depois 1 número
    isolado (ex: Alerta → Iniciativa), por último múltiplos
    efeitos/Reação (ex: Conjurador Bélico). Cada talento sai do `[PH]`
-   ao ser implementado.
+   ao ser implementado. A classificação da Fase 2
+   (`classificarTalento.ts`) ajuda a decidir em qual painel de Combat
+   (Ação/Bônus/Reação) cada efeito deve aparecer quando chegar a vez
+   dele, mas ainda precisa de tag manual "afeta cálculo" por talento —
+   o classificador é heurístico (regex), erra ocasionalmente, não é
+   fonte de verdade sozinho.
 
 Ideia extra do Osmar (registrada, sem decisão ainda — é decisão de
 produto, não de dado/regra): uma aba de anotações de talento; se for
