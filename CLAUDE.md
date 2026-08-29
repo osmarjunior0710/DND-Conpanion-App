@@ -40,11 +40,23 @@ claro no wireframe, pergunte — não assuma.
 
 ## 3. Fonte de verdade de dados: a planilha, nunca os PDFs
 
-`dnd-master-referencia.xlsx` é a fonte de dados de regras (classes,
-magias, talentos, equipamento, condições). Os PDFs originais dos livros
-**não existem neste repositório** de propósito. Nunca tente buscar regra
-em outro lugar (memória própria, web) — se a planilha não tiver algo, pare
-e avise exatamente o que está faltando.
+`dnd-master-referencia.xlsx`, na raiz do repositório, é a fonte de dados
+de regras (classes, magias, talentos, equipamento, condições). Os PDFs
+originais dos livros **não existem neste repositório** de propósito.
+Nunca tente buscar regra em outro lugar (memória própria, web) — se a
+planilha não tiver algo, pare e avise exatamente o que está faltando.
+
+**Antes de começar qualquer entrega que toque em dado de regra**
+(classes, subclasses, origens, espécies, talentos, magias, equipamento,
+condições, progressão) — mesmo que pareça que o dado já foi importado
+antes — **abra `dnd-master-referencia.xlsx` e confira a aba relevante
+primeiro**, comparando com o que já existe em `src/data/`. O Osmar edita
+essa planilha por fora das conversas com o Claude Code (corrige,
+completa, reorganiza abas) — o histórico de chat perde essa evolução,
+a planilha não. Se encontrar diferença entre o que está importado e o
+que a planilha tem agora, trate como um bug de dado desatualizado:
+avise o Osmar, não silenciosamente ignore nem silenciosamente
+sobrescreva sem dizer o que mudou.
 
 ## 4. Arquitetura em camadas — não negociável
 
