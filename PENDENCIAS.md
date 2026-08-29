@@ -504,6 +504,18 @@ inicial de classe (mesma exceção documentada usada no Guerreiro).
 Guardião e Paladino compartilham a tabela de conjuração (ver
 DECISOES-DESIGN.md) — importar uma vez só quando chegar a vez delas.
 
+**Material de apoio já pronto do Osmar (fora deste repositório, ele
+guarda em documentos próprios):** decupagem nível a nível completa de
+Bárbaro (4 Trilhas) e guia de implementação de Golias (espécie) já
+existem, com achados específicos (Fúria precisa de temporizador de
+turno com extensão automática; Ancestralidade Gigante do Golias muda
+de categoria de ação conforme a escolha do jogador; interações
+Golias+Bárbaro testadas). Também tem mapeamento de progressão de
+Maestria em Arma por nível pendente pra Bárbaro/Guardião/Ladino/
+Paladino (só Guerreiro está documentado hoje). Pedir esses documentos
+ao Osmar quando a vez de cada uma dessas entregas chegar, em vez de
+redescobrir do zero.
+
 ## Características de Guerreiro nos níveis 2, 5, 20 tiveram texto de tabela removido na importação
 
 **O que é:** na planilha, as descrições de "Mente Tática" (nível 2),
@@ -638,29 +650,6 @@ Ideia extra do Osmar (registrada, sem decisão ainda — é decisão de
 produto, não de dado/regra): uma aba de anotações de talento; se for
 pra frente, reaproveitaria `ItemComDescricao`/`MagiaComDescricao`, não
 precisa de componente novo.
-
-## Talentos — colunas de Atributo Mínimo não trazem dado real
-
-**O que é:** na aba "Talentos" da planilha, as colunas "Força
-Mín."..."Carisma Mín." (pré-requisito de pontuação de atributo, ex.
-"Força 13+") **nunca têm um valor de pontuação real** — em toda a
-aba (73 células não-vazias conferidas), o valor sempre é idêntico ao
-da coluna de ASI correspondente na mesma linha (ex: "Ator" tem
-"Carisma Mín. = +1" e "ASI Carisma = +1" — "+1" não faz sentido como
-pontuação mínima de atributo). Parece um vazamento/cópia acidental da
-coluna de ASI pra essa coluna na extração da planilha, não um pré-
-requisito de verdade. Por isso `talentos.ts` (Fase 1) **não importou**
-essas colunas — `PrerequisitosTalento` só tem `nivelMinimo` e `outro`,
-sem `atributosMinimos`.
-
-**O que falta pra resolver:** confirmar com o Osmar se isso é
-esperado (ex: regras 2024 realmente não têm mais pré-requisito de
-pontuação de atributo em talento nenhum, e a coluna é só resquício de
-uma versão antiga da planilha) ou se é bug de extração que vale a pena
-ele corrigir na planilha. Se ele confirmar que existe pré-requisito de
-atributo de verdade em algum talento, a Fase 3 (seleção no Level Up)
-precisa adicionar a validação — hoje ela não bloqueia nada por
-atributo, só por nível.
 
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 

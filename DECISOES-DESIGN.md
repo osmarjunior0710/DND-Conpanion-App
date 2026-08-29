@@ -4393,3 +4393,40 @@ erro. Contagem: 85 IDs únicos totais, 75 em `talentos` (10 deles
 `origens.ts`), 10 em `talentosSelvagens`.
 
 **Data/origem:** 2026-08.
+
+## Talentos — pré-requisito de Atributo Mínimo importado (planilha corrigida pelo Osmar)
+
+O Osmar refez a `dnd-master-referencia.xlsx` e confirmou, talento por
+talento (lendo a página renderizada do livro pra cada um, não em
+massa), a suspeita registrada na Fase 1: as colunas "Força
+Mín."..."Carisma Mín." da aba Talentos tinham um bug — traziam o valor
+da coluna de ASI (`+1`) em vez do pré-requisito real. Corrigidas: 17
+talentos têm pré-requisito de atributo de verdade (valor único `13`,
+nunca outro número — Agressor, Analítico, Atleta, Ator, Conjurador
+Ritualista, Duelista Defensivo, Especialista Ambidestro, Especialista
+em Besta, Imobilizador, Líder Inspirador, Mente Aguçada, Mestre em
+Armas de Haste, Mestre em Armas Grandes, Mestre-Atirador, Sentinela,
+Sorrateiro, Velocista), 21 não têm pré-requisito de atributo nenhum
+(coluna limpa, tinha `+1` por engano).
+
+**Verificação da planilha nova:** comparei célula a célula (script
+Python) a planilha nova contra a anterior versionada no repo — **só a
+aba Talentos mudou** (38 linhas, batendo exatamente com o número de
+talentos que tinham alguma coluna Mín. marcada), todas as outras 39
+abas ficaram idênticas linha a linha. Isso confirma que nenhum outro
+dado já importado (Guerreiro, Bardo, Origens, Espécies) precisa de
+reconciliação nesta entrega — só Talentos.
+
+**Mudança no schema:** `PrerequisitosTalento` ganhou `atributosMinimos:
+Atributo[]` (lista de atributos que precisam estar em 13+ — sem mapa
+de valor por atributo, já que o valor é sempre 13 em toda a planilha).
+`talentos.ts` regerado a partir da planilha nova; nenhum consumidor
+existente lê esse campo ainda (Fase 3, ainda não feita), então não
+muda comportamento visível nesta entrega — só corrige o dado de base
+pra quando a validação de atributo mínimo for construída.
+
+**Testado:** `npm run build` limpo. Conferido programaticamente:
+Agressor com `atributosMinimos: ['FOR', 'DES']`, Chef e Resistente com
+`atributosMinimos: []` (bate com a correção do Osmar).
+
+**Data/origem:** 2026-08.
