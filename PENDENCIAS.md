@@ -600,6 +600,26 @@ motivou o pedido.
   ainda, exceto Guerreiro nível 1, que já está limpo). Aplicar o mesmo
   tratamento de Espécies quando fizer sentido pra tela em questão.
 
+## Talentos Gerais (Cap. 5) — ainda não importados, bloqueia a opção "Escolher um Talento" do ASI
+
+**O que é:** no Level Up, nos níveis de Aumento de Valor de Atributo
+(ASI), a regra real dá 2 opções — aumentar atributos (já funciona de
+verdade, ver DECISOES-DESIGN.md) ou escolher um Talento Geral do
+Cap. 5. Hoje só existem os "Talentos de Origem" importados
+(`data/rulesets/dnd2024/talentos.ts`, `talentosOrigem`, filtrados da
+planilha por Categoria = "Origem") — os Talentos Gerais (categoria
+diferente, escolhidos em ASI) não estão na planilha que o Claude Code
+consegue acessar neste ambiente.
+
+**Bloqueado em:** confirmar com o Osmar se a `dnd-master-referencia.xlsx`
+já tem essa lista numa aba/categoria ainda não puxada, ou se precisa
+extrair de novo (PDF do Cap. 5, "Talentos" — já existe no
+repositório de referências do projeto). Sem isso, a opção "Escolher um
+Talento" continua como placeholder ("entra numa próxima entrega"),
+sem travar o avanço do Level Up (mesmo padrão de outras pendências de
+dado faltando — não impede o jogador de terminar o Level Up, só não
+oferece essa opção de verdade ainda).
+
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 
 **O que é:** dos 10 Talentos de Origem usados nas 16 origens do Livro do
@@ -1098,11 +1118,11 @@ faltando.
 **Mas o Osmar pediu pra registrar isso como pendência maior:**
 precisamos de um mecanismo **genérico** pra esse tipo de checagem, não
 uma solução ad-hoc por campo. Motivo: é quase certo que vamos achar
-mais casos assim conforme o app cresce — já existe pelo menos 1
-suspeito conhecido (Aumento de Valor de Atributo do Level Up não
-aplica de verdade em `selecao.atributos`, só fica guardado em estado
-solto do `LevelUpShell` — precisa verificar se é isso mesmo quando for
-mexer). Ideia de formato (não decidido ainda, só registrado): uma
+mais casos assim conforme o app cresce — o suspeito que tinha sido
+anotado aqui (Aumento de Valor de Atributo do Level Up não aplicava de
+verdade em `selecao.atributos`) se confirmou e já foi corrigido — ver
+DECISOES-DESIGN.md "Level Up: Aumento de Valor de Atributo agora
+aplica de verdade". Ideia de formato (não decidido ainda, só registrado): uma
 função central tipo `verificarPendenciasDoPersonagem(selecao, classe,
 nivel, estadoAtual)` que devolve uma lista de "coisas que deveriam
 estar diferentes" (nome do campo, esperado vs real), e uma UI padrão

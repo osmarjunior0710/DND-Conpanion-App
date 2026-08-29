@@ -16,7 +16,8 @@ import {
   explicarPvMaximo,
   periciasProficientes,
 } from '../../core/calculoPersonagem';
-import { modificador, valorFinalAtributo } from '../../core/personagem';
+import { aumentarAtributos, modificador, valorFinalAtributo, type WizardSelection } from '../../core/personagem';
+import type { Atributo } from '../../data/wizardFixtures';
 import {
   calcularCapacidadeMaxima,
   calcularItensIniciais,
@@ -108,7 +109,7 @@ export default function FichaShell() {
 
 function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }) {
   const navigate = useNavigate();
-  const selecao = personagemSalvo.selecao;
+  const [selecao, setSelecao] = useState<WizardSelection>(personagemSalvo.selecao);
   const classe = classeDaSelecao(selecao);
   const conValor = selecao.atributos.CON;
 
@@ -224,6 +225,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   useEffect(() => {
     armazenamentoPersonagens.salvar({
       ...personagemSalvo,
+      selecao,
       nivel: personagem.nivel,
       pvAtual,
       pvMax: personagem.pvMax,
@@ -244,6 +246,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     });
   }, [
     personagemSalvo,
+    selecao,
     personagem.nivel,
     personagem.pvMax,
     personagem.subclasse,
@@ -396,13 +399,20 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
+    atributosAumentados: Atributo[] | null;
   }) {
+    const novosAtributos = resultado.atributosAumentados
+      ? aumentarAtributos(selecao.atributos, resultado.atributosAumentados)
+      : null;
+    if (novosAtributos) setSelecao((prev) => ({ ...prev, atributos: novosAtributos }));
+    const novoConValor = novosAtributos?.CON;
     setPersonagem((prev) => ({
       ...prev,
       nivel: resultado.novoNivel,
       pvMax: prev.pvMax + resultado.pvGanho,
       subclasse: resultado.subclasseEscolhida ?? prev.subclasse,
       estiloDeLuta: resultado.estiloDeLutaEscolhido ?? prev.estiloDeLuta,
+      conMod: novoConValor !== null && novoConValor !== undefined ? modificador(novoConValor) : prev.conMod,
     }));
     setPvAtual((v) => v + resultado.pvGanho);
     if (resultado.truquesEscolhidos) setTruquesAtuais(resultado.truquesEscolhidos);
@@ -440,6 +450,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         magiasDaClasseDisponiveis={magiasDaClasse(classe.nome).filter((m) => m.circulo > 0)}
         periciasEspecialistaAtuais={periciasEspecialistaAtuais}
         periciasProficientesDoPersonagem={periciasProficientes(selecao)}
+        atributosAtuais={selecao.atributos}
       />
     );
   }

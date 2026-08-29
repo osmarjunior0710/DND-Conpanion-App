@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { dadoVidaValor } from '../../../data/levelUpFixtures';
+import type { Atributo } from '../../../data/wizardFixtures';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
+import { modificador, type WizardSelection } from '../../../core/personagem';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import { subclasses } from '../../../data/rulesets/dnd2024/subclasses';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
@@ -41,6 +43,7 @@ interface LevelUpShellProps {
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
+    atributosAumentados: Atributo[] | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -67,6 +70,10 @@ interface LevelUpShellProps {
    * de Especialista pode vir (só dá pra especializar o que já é
    * proficiente). */
   periciasProficientesDoPersonagem: string[];
+  /** Atributos atuais do personagem (já com Level Ups anteriores
+   * aplicados) — pra mostrar base/mod real na tela de Aumento de
+   * Atributo. */
+  atributosAtuais: WizardSelection['atributos'];
 }
 
 type LuStep =
@@ -100,6 +107,7 @@ export default function LevelUpShell({
   magiasDaClasseDisponiveis,
   periciasEspecialistaAtuais,
   periciasProficientesDoPersonagem,
+  atributosAtuais,
 }: LevelUpShellProps) {
   const novoNivel = personagem.nivel + 1;
   const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', novoNivel);
@@ -137,7 +145,8 @@ export default function LevelUpShell({
   const [magiasPreparadasEscolhidas, setMagiasPreparadasEscolhidas] = useState<string[]>(magiasPreparadasAtuais);
   const [especialistaEscolhidas, setEspecialistaEscolhidas] = useState<string[]>(periciasEspecialistaAtuais);
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
-  const [asiEscolhas, setAsiEscolhas] = useState<string[]>([]);
+  const [asiEscolhas, setAsiEscolhas] = useState<Atributo[]>([]);
+  const [telaAsi, setTelaAsi] = useState(false);
   const [aviso, setAviso] = useAvisoTemporario();
 
   const media = dadoVidaValor[personagem.dadoVida] + personagem.conMod;
@@ -210,15 +219,28 @@ export default function LevelUpShell({
 
   const especialistaValido = especialistaEscolhidas.length === maxEspecialista;
 
-  function toggleAsi(a: string) {
-    const total = asiEscolhas.length;
-    const nesse = asiEscolhas.filter((x) => x === a).length;
-    if (nesse > 0) {
-      const idx = asiEscolhas.indexOf(a);
-      setAsiEscolhas((prev) => prev.filter((_, i) => i !== idx));
-      return;
-    }
-    if (total < 2) setAsiEscolhas((prev) => [...prev, a]);
+  const PONTOS_ASI = 2;
+  const pontosAsiGastos = asiEscolhas.length;
+  const pontosAsiRestantes = PONTOS_ASI - pontosAsiGastos;
+
+  function pontosNoAtributo(a: Atributo): number {
+    return asiEscolhas.filter((x) => x === a).length;
+  }
+
+  /** Regra real: +2 num atributo só, ou +1 em dois — nunca mais de 2
+   * no mesmo, nunca passa de 20 no total, nunca mais de 2 pontos
+   * gastos no total. */
+  function incrementarAsi(a: Atributo) {
+    const nesse = pontosNoAtributo(a);
+    const base = atributosAtuais[a] ?? 10;
+    if (pontosAsiRestantes <= 0 || nesse >= 2 || base + nesse >= 20) return;
+    setAsiEscolhas((prev) => [...prev, a]);
+  }
+
+  function decrementarAsi(a: Atributo) {
+    const idx = asiEscolhas.indexOf(a);
+    if (idx === -1) return;
+    setAsiEscolhas((prev) => prev.filter((_, i) => i !== idx));
   }
 
   const step = luSteps[luIndex];
@@ -271,6 +293,16 @@ export default function LevelUpShell({
       setAviso(`Escolha exatamente ${maxEspecialista - periciasEspecialistaAtuais.length} perícia(s) pra Especialista antes de avançar.`);
       return;
     }
+    if (step === 'asi') {
+      if (asiModo === null) {
+        setAviso('Escolha Aumentar Atributos ou um Talento antes de avançar.');
+        return;
+      }
+      if (asiModo === 'atributo' && pontosAsiRestantes > 0) {
+        setTelaAsi(true);
+        return;
+      }
+    }
     setAviso(null);
     if (step === 'resumo') {
       onConfirmar({
@@ -281,6 +313,7 @@ export default function LevelUpShell({
         truquesEscolhidos: luSteps.includes('truques') ? truquesEscolhidos : null,
         magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
         periciasEspecialistaEscolhidas: luSteps.includes('especialista') ? especialistaEscolhidas : null,
+        atributosAumentados: luSteps.includes('asi') && asiModo === 'atributo' ? asiEscolhas : null,
       });
       return;
     }
@@ -321,6 +354,81 @@ export default function LevelUpShell({
             </div>
           </>
         )}
+      </div>
+    );
+  }
+
+  if (telaAsi) {
+    return (
+      <div className={styles.screen}>
+        <div className={styles.header}>
+          <div className={styles.titleRow}>
+            <div className={styles.stepName}>Aumentar Atributos</div>
+          </div>
+        </div>
+
+        <div className={styles.body}>
+          <div className="label" style={{ marginBottom: 10 }}>
+            Distribua {PONTOS_ASI} pontos — no máximo 2 no mesmo atributo (regra real: +2 num só, ou +1 em dois).
+            Faltam {pontosAsiRestantes}.
+          </div>
+          <div className={styles.asiHeaderRow}>
+            <span>Atributo</span>
+            <span>ASI</span>
+            <span>Total</span>
+          </div>
+          {NOMES_ATRIBUTOS.map((nome) => {
+            const a = nome as Atributo;
+            const base = atributosAtuais[a] ?? 10;
+            const nesse = pontosNoAtributo(a);
+            const total = base + nesse;
+            return (
+              <div key={a} className={styles.asiRow}>
+                <span>
+                  {a} {base} ({modificador(base) >= 0 ? '+' : ''}
+                  {modificador(base)})
+                </span>
+                <span className={styles.asiStepper}>
+                  <div
+                    className={styles.asiBtn}
+                    style={nesse === 0 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
+                    onClick={() => decrementarAsi(a)}
+                  >
+                    −
+                  </div>
+                  <span>{nesse}</span>
+                  <div
+                    className={styles.asiBtn}
+                    style={pontosAsiRestantes === 0 || nesse >= 2 || base + nesse >= 20 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
+                    onClick={() => incrementarAsi(a)}
+                  >
+                    +
+                  </div>
+                </span>
+                <span>
+                  {total} ({modificador(total) >= 0 ? '+' : ''}
+                  {modificador(total)})
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.navLayer}>
+          <div className={`btn ${styles.pill}`} onClick={() => setTelaAsi(false)}>
+            ← Voltar
+          </div>
+          <div
+            className={`btn btn-primary ${styles.pill}`}
+            style={pontosAsiRestantes === 0 ? undefined : { opacity: 0.5, pointerEvents: 'none' }}
+            onClick={() => {
+              setTelaAsi(false);
+              setLuIndex((i) => i + 1);
+            }}
+          >
+            Confirmar ✓
+          </div>
+        </div>
       </div>
     );
   }
@@ -585,19 +693,18 @@ export default function LevelUpShell({
               <div className="opt-card-desc">Lista completa de talentos (Cap. 5) entra numa próxima entrega</div>
             </div>
             {asiModo === 'atributo' && (
-              <>
-                <div className="label" style={{ margin: '10px 0 6px' }}>
-                  toque em até 2 atributos (cada toque = +1, máx. 2 no mesmo)
+              <div className="opt-card" style={{ cursor: 'pointer' }} onClick={() => setTelaAsi(true)}>
+                <div className="opt-card-name">
+                  {pontosAsiGastos === 0 ? 'Distribuir pontos' : 'Editar distribuição'}
                 </div>
-                <div className="stat-grid">
-                  {NOMES_ATRIBUTOS.map((a) => (
-                    <div key={a} className="box stat-box" onClick={() => toggleAsi(a)}>
-                      <div className="stat-name">{a}</div>
-                      <div className="stat-mod">{asiEscolhas.filter((x) => x === a).length > 0 ? `+${asiEscolhas.filter((x) => x === a).length}` : '—'}</div>
-                    </div>
-                  ))}
+                <div className="opt-card-desc">
+                  {pontosAsiGastos === 0
+                    ? `Toque pra distribuir ${PONTOS_ASI} pontos entre os atributos.`
+                    : NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
+                        .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
+                        .join(', ')}
                 </div>
-              </>
+              </div>
             )}
             {asiModo === 'talento' && (
               <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
@@ -665,7 +772,11 @@ export default function LevelUpShell({
             {asiModo === 'atributo' && (
               <div className="summary-row">
                 <span>Atributos</span>
-                <span>{asiEscolhas.join(', ') || 'nenhum escolhido'}</span>
+                <span>
+                  {NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
+                    .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
+                    .join(', ') || 'nenhum escolhido'}
+                </span>
               </div>
             )}
             {asiModo === 'talento' && (

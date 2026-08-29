@@ -73,6 +73,19 @@ export function modFmt(valor: number): string {
   return mod >= 0 ? `+${mod}` : `${mod}`;
 }
 
+/** Aplica um Aumento no Valor de Atributo (Level Up) — cada código em
+ * `codigos` soma +1 (repetido 2x no mesmo = +2), capado em 20 (máximo
+ * de atributo, regra real). `codigos` vem de `LevelUpShell`'s
+ * `asiEscolhas` — 1 entrada por ponto distribuído. */
+export function aumentarAtributos(atributos: Record<Atributo, number | null>, codigos: Atributo[]): Record<Atributo, number | null> {
+  const atualizado = { ...atributos };
+  for (const codigo of codigos) {
+    const atual = atualizado[codigo] ?? 0;
+    atualizado[codigo] = Math.min(20, atual + 1);
+  }
+  return atualizado;
+}
+
 export function valorFinalAtributo(selection: WizardSelection, atributo: Atributo): number | null {
   const base = selection.atributos[atributo];
   if (base === null || base === undefined) return null;

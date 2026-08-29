@@ -4220,3 +4220,59 @@ círculo em vez de texto, e aparecendo mesmo com só 1 círculo
 disponível.
 
 **Data/origem:** 2026-08.
+
+## Level Up: Aumento de Valor de Atributo agora aplica de verdade (bug corrigido)
+
+**Achado do Osmar:** o step "Aumento de Atributo ou Talento" do Level
+Up deixava escolher +2/+1+1 nos atributos, mas isso nunca era
+aplicado — `asiEscolhas` só existia em estado solto do `LevelUpShell`,
+nunca chegava no `onConfirmar`, nunca era salvo. Também não havia
+validação nenhuma bloqueando avançar sem escolher — suspeito já
+registrado em PENDENCIAS.md ("Detector genérico de ficha atrasada"),
+confirmado agora ao investigar.
+
+**Decisão de arquitetura — `selecao` vira estado de verdade na
+Ficha:** até agora `FichaShell.tsx` tratava `personagemSalvo.selecao`
+como somente-leitura (as listas "Atuais" — truques, magias, perícias —
+viviam PARALELAS a ela, nunca a modificavam). Pra atributo, isso não
+dá — `valorFinalAtributo()` e toda a cadeia de cálculo (CA, perícias,
+PV, iniciativa) leem `selecao.atributos` direto em dezenas de lugares;
+duplicar um "atributosAsiAtuais" separado exigiria replumbing de tudo
+isso. Solução: `selecao` virou `useState` (inicializado de
+`personagemSalvo.selecao`, persistido no mesmo `useEffect` de sempre)
+— o texto do resumo do Level Up já dizia "a edição livre de valores
+base trava a partir daí", confirmando que a intenção sempre foi
+`selecao` evoluir com o personagem, só não editável livremente pelo
+jogador depois que a ficha tem XP.
+
+**`core/personagem.ts` ganha `aumentarAtributos(atributos, codigos)`**
+— +1 por código repetido (2x no mesmo = +2), capado em 20 (regra
+real). `FichaShell.tsx`'s `confirmarLevelUp` aplica isso e também
+atualiza `personagem.conMod` na hora (se CON mudou, PV de Level Ups
+seguintes precisa do mod novo, não do congelado na criação).
+
+**Tela nova de distribuição, pedida com layout específico pelo
+Osmar** — 3 colunas (Atributo com valor+mod atual | stepper -/+ com
+o ASI daquele atributo | Total com valor+mod final), reaproveitando o
+padrão `.screen`/`.header`/`.body`/`.navLayer` já usado em toda tela
+cheia do Level Up. Abre ao clicar "Avançar" com "Aumentar Atributos"
+escolhido e a distribuição incompleta (2 pontos, não trava exigindo
+"ao selecionar o modo" — só quando o jogador tenta seguir em frente).
+Regras aplicadas nos botões +/-: nunca mais de 2 pontos no total,
+nunca mais de 2 no mesmo atributo, nunca passa de 20.
+
+**Talento continua bloqueado** (Cap. 5, dado não disponível neste
+ambiente — ver PENDENCIAS.md "Talentos Gerais") — escolher esse modo
+não trava o avanço, mesmo padrão de antes.
+
+**Testado:** Playwright 390×844 — Guerreiro nível 3→4 (ASI real).
+Escolhido "Aumentar Atributos", tentativa de avançar sem distribuir
+abriu a tela nova; 2 cliques em "+" de FOR (14→16, mod +2→+3);
+Confirmar habilitado só com os 2 pontos gastos. Resumo mostrou
+"Atributos → FOR +2". Depois de confirmar o Level Up, aba Atributos
+confirmou FOR 17 (+3) — 16 de base + 1 de bônus de espécie/origem já
+existente (CA e Perícias recalculados certos também, ex. Atletismo
+foi de +2 pra +3). Reload da página confirmou persistência
+(`selecao.atributos.FOR` = 16 no localStorage).
+
+**Data/origem:** 2026-08.
