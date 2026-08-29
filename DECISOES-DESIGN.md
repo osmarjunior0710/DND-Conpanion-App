@@ -4333,3 +4333,63 @@ título colapsa/expande a seção inteira; F5 na página manteve o estado
 colapsado.
 
 **Data/origem:** 2026-08.
+
+## Talentos Fase 1 — dado importado, schema de ASI unificado
+
+A planilha (`dnd-master-referencia.xlsx`, agora versionada no repo —
+ver seção 3 do CLAUDE.md) foi conferida linha a linha na aba
+"Talentos": 85 linhas, 75 oficiais (Geral 43, Dádiva Épica 12, Origem
+10, Estilo de Luta 10) + 10 "Talento Selvagem" (UA Psiônico 2025, não
+oficial). `data/rulesets/dnd2024/talentos.ts` foi regerado por script
+(Python + openpyxl, mesmo padrão de sempre) a partir dela.
+
+**Schema de ASI virou 2 tipos, não 4** — o plano original (baseado só
+em contar colunas de ASI marcadas: 0/1/2-3/6) sugeria 4 padrões de UI,
+mas ao olhar os VALORES reais das colunas, só existem 2 comportamentos
+distintos:
+- `escolha-unica`: +1 num único atributo à escolha, dentre uma lista
+  (`atributos: Atributo[]`) — cobre igualmente talento com 1 atributo
+  fixo (lista de 1, sem escolha real), 2-3 (lista pequena) e 6
+  ("qualquer atributo", ex. Especialista em Perícia, Dádivas Épicas).
+- `distribuir-dois`: +2 num só ou +1 em dois, dentre a lista — hoje só
+  1 talento ("Aumento no Valor de Atributo"), reaproveita o MESMO
+  seletor de ASI genérico já construído pro Level Up (ver decisão
+  acima "Aumento de Valor de Atributo agora aplica de verdade").
+`maximo` (20 normal, 30 pra Dádiva Épica) é um campo à parte, não um
+3º/4º tipo — evita duplicar a lógica de "escolha entre N" só porque o
+teto do atributo muda.
+
+**Pré-requisito de Atributo Mínimo NÃO foi importado** — as colunas
+"Força Mín."..."Carisma Mín." da planilha nunca trazem uma pontuação
+real (sempre repetem o valor da coluna de ASI da mesma linha, ex.
+"+1"), então `PrerequisitosTalento` só tem `nivelMinimo` (número real,
+confiável) e `outro` (texto livre pro "Outro Pré-requisito", vira
+aviso não-bloqueante nas fases seguintes). Ver PENDENCIAS.md "Talentos
+— colunas de Atributo Mínimo não trazem dado real" — avisado ao Osmar
+em vez de construir validação em cima de dado que não existe de
+verdade (regra nova do CLAUDE.md seção 3, adicionada nesta mesma
+entrega).
+
+**`talentosOrigem` virou derivado, não duplicado** — os 2 consumidores
+existentes (`OrigemEscolhasStep.tsx`, `PerfilTab.tsx`) só liam
+`.id`/`.nome`/`.beneficios`, então em vez de manter uma interface
+`TalentoOrigem` separada, `talentosOrigem` agora é
+`talentos.filter(t => t.categoria === 'Origem')` — mesmo array, tipo
+`Talento[]` completo, zero mudança nos 2 arquivos que já consumiam.
+Os 10 IDs batem exatamente com os já referenciados em `origens.ts`
+(conferido, nenhuma origem ficou com talento não encontrado).
+
+**Ainda faltam (Fases 2-4, ver PENDENCIAS.md):** classificar o texto
+de "Benefícios" em Ação/Bônus/Reação/Passiva, oferecer a escolha de
+Talento de verdade no Level Up (hoje continua placeholder), e aplicar
+efeito mecânico real — nenhum talento Geral/Dádiva Épica afeta nada
+na Ficha ainda, é só catálogo de dados.
+
+**Testado:** `npm run build` limpo. Playwright 390×844 — Bardo criado
+do zero, tela "2b. Escolhas da Origem" mostrou o talento de Origem
+("Sortudo") certo com descrição; aba Perfil da Ficha carregou sem
+erro. Contagem: 85 IDs únicos totais, 75 em `talentos` (10 deles
+`categoria: 'Origem'`, batendo com os 10 IDs já usados em
+`origens.ts`), 10 em `talentosSelvagens`.
+
+**Data/origem:** 2026-08.

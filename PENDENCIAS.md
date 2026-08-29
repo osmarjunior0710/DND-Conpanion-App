@@ -600,83 +600,67 @@ motivou o pedido.
   ainda, exceto Guerreiro nível 1, que já está limpo). Aplicar o mesmo
   tratamento de Espécies quando fizer sentido pra tela em questão.
 
-## Talentos Gerais (Cap. 5) — ainda não importados, bloqueia a opção "Escolher um Talento" do ASI
+## Talentos — Fases 2, 3 e 4 ainda faltam (Fase 1/Dados já feita, ver DECISOES-DESIGN.md)
 
-**O que é:** no Level Up, nos níveis de Aumento de Valor de Atributo
-(ASI), a regra real dá 2 opções — aumentar atributos (já funciona de
-verdade, ver DECISOES-DESIGN.md) ou escolher um Talento Geral do
-Cap. 5. Hoje só existem os "Talentos de Origem" importados
-(`data/rulesets/dnd2024/talentos.ts`, `talentosOrigem`, filtrados da
-planilha por Categoria = "Origem") — os Talentos Gerais (categoria
-diferente, escolhidos em ASI) não estão na planilha que o Claude Code
-consegue acessar neste ambiente.
+**O que é:** a Fase 1 (importar os 75 talentos oficiais + 10 UA de
+`dnd-master-referencia.xlsx` pra `data/rulesets/dnd2024/talentos.ts`)
+está feita — ver DECISOES-DESIGN.md pro schema completo. Mas o Level
+Up ainda não *usa* esse catálogo: a opção "Escolher um Talento" no
+passo de ASI continua como placeholder ("entra numa próxima entrega"),
+sem travar o avanço do Level Up.
 
-**Bloqueado em:** o Osmar já confirmou (documento
-`talentos-plano-implementacao.md`, entregue por ele) que a
-`dnd-master-referencia.xlsx` **já tem** a lista de Talentos completa e
-bem estruturada — só falta transferir o arquivo/aba pra dentro desta
-sessão do Claude Code pra Fase 1 (ver plano abaixo) poder começar. Sem
-isso, a opção "Escolher um Talento" continua como placeholder ("entra
-numa próxima entrega"), sem travar o avanço do Level Up (mesmo padrão
-de outras pendências de dado faltando — não impede o jogador de
-terminar o Level Up, só não oferece essa opção de verdade ainda).
+**O que falta, nessa ordem (plano original do Osmar,
+`talentos-plano-implementacao.md`):**
 
-**Plano de implementação já desenhado (resumo do documento do Osmar,
-guardado aqui pra sobreviver a perda de contexto do chat):**
+1. **Fase 2 — Classificação automática do texto de Benefícios**:
+   rodar o classificador de Ação/Ação Bônus/Reação/Passiva que já
+   existe (usado em características de classe) em cima da coluna
+   `beneficios` de cada talento, quebrando em frases quando o talento
+   tiver múltiplos efeitos (ex: Conjurador Bélico = Passiva + Reação +
+   Passiva — um talento pode gerar efeito em mais de uma categoria na
+   mesma célula). Critério de conclusão: Atirador Arcano e Conjurador
+   Bélico (os 2 exemplos discutidos com o Osmar) classificados certo.
+2. **Fase 3 — Seleção de talento no Level Up** (sem efeito mecânico
+   ainda): UI na tela de ASI que já existe, oferecendo Atributo OU
+   Talento; valida Nível Mín. automaticamente (dado real, existe);
+   mostra "Outro Pré-requisito" como aviso não-bloqueante (texto
+   livre, não dá pra validar automático); reaproveita o seletor de ASI
+   genérico do Level Up pro caso `distribuir-dois`; talento fica salvo
+   e mostrado na Ficha como InfoChip, `[PH]` (sem afetar número
+   nenhum ainda). Critério: escolher um talento e ver salvo/mostrado.
+3. **Fase 4 — Aplicar efeito de verdade, em lotes pequenos** (5-10 por
+   vez) — ordem sugerida: primeiro ASI puro sem regra, depois 1 número
+   isolado (ex: Alerta → Iniciativa), por último múltiplos
+   efeitos/Reação (ex: Conjurador Bélico). Cada talento sai do `[PH]`
+   ao ser implementado.
 
-- **Panorama:** 85 talentos na planilha, só 75 oficiais (10 são
-  "Talento Selvagem", UA Psiônico 2025 não-oficial — mesmo tratamento
-  que já demos a magias UA Psion: isolar fora do catálogo principal,
-  filtro por Categoria ≠ "Talento Selvagem", sem precisar mexer na
-  planilha).
-- **4 categorias oficiais, ASI bem diferente entre elas:** Geral (43,
-  ASI varia — ver abaixo), Dádiva Épica (12, quase sempre ASI livre até
-  30), Origem (10, nunca dá ASI), Estilo de Luta (10, nunca dá ASI).
-- **Formato de ASI dos Talentos Gerais — 4 padrões pelas colunas
-  marcadas na planilha:** 0 colunas = sem ASI (1 talento); 1 coluna =
-  ASI fixo num atributo só, sem escolha (9 talentos); 2-3 colunas = ASI
-  de escolha entre um conjunto pequeno marcado (31 talentos); 6 colunas
-  = ASI de escolha livre entre qualquer atributo — **reaproveita o
-  seletor de ASI genérico que já existe** no motor de Level Up, sem UI
-  nova (2 talentos).
-- **Pré-requisitos, 3 tipos:** Nível mínimo e Atributo mínimo — fáceis,
-  validação automática comparando com nível/atributo final calculado;
-  "Outro Pré-requisito" (texto livre, ex: "Característica Conjuração")
-  — não valida automático, vira aviso não-bloqueante em vez de travar a
-  escolha.
-- **Classificação do texto de "Benefícios":** reaproveita o
-  classificador de Ação/Ação Bônus/Reação/Passiva que já existe (usado
-  em características de classe) — mas um talento pode gerar efeitos em
-  mais de uma categoria na mesma célula de texto (ex: Conjurador
-  Bélico = Passiva + Reação + Passiva), então o classificador precisa
-  quebrar o texto em frases, não assumir 1 talento = 1 categoria.
-- **Fases propostas (pequenas, testáveis, mesmo formato de sempre):**
-  1. **Dados** — importar `talentos.ts` (nome, categoria, repetível,
-     pré-requisitos, ASI conforme os 4 padrões acima, benefícios em
-     texto bruto), isolar as 10 linhas de UA numa constante separada.
-     Critério de conclusão: 75 talentos oficiais no catálogo.
-  2. **Classificação automática do texto de Benefícios** — rodar o
-     classificador existente por frase, marcar manualmente numa 1ª
-     leva pequena quais frases "afetam cálculo" de verdade (o
-     classificador sozinho não garante isso). Critério: Atirador
-     Arcano e Conjurador Bélico (os 2 exemplos discutidos) classificados
-     certo.
-  3. **Seleção de talento no Level Up** (sem efeito mecânico ainda) —
-     UI na tela de ASI que já existe, oferecendo Atributo OU Talento;
-     valida Nível/Atributo automaticamente, mostra aviso pro "Outro
-     Pré-requisito"; reaproveita o seletor de ASI genérico pro caso de
-     6 colunas; talento fica salvo e mostrado na Ficha como InfoChip,
-     `[PH]` (sem afetar número nenhum ainda). Critério: escolher e ver
-     salvo/mostrado.
-  4. **Aplicar efeito de verdade, em lotes pequenos** (5-10 por vez) —
-     ordem sugerida: primeiro ASI puro sem regra, depois 1 número
-     isolado (ex: Alerta → Iniciativa), por último múltiplos
-     efeitos/Reação (ex: Conjurador Bélico). Cada talento sai do
-     `[PH]` ao ser implementado.
-- Ideia extra do Osmar (registrada, sem decisão ainda — é decisão de
-  produto, não de dado/regra): uma aba de anotações de talento; se for
-  pra frente, reaproveitaria `ItemComDescricao`/`MagiaComDescricao`, não
-  precisa de componente novo.
+Ideia extra do Osmar (registrada, sem decisão ainda — é decisão de
+produto, não de dado/regra): uma aba de anotações de talento; se for
+pra frente, reaproveitaria `ItemComDescricao`/`MagiaComDescricao`, não
+precisa de componente novo.
+
+## Talentos — colunas de Atributo Mínimo não trazem dado real
+
+**O que é:** na aba "Talentos" da planilha, as colunas "Força
+Mín."..."Carisma Mín." (pré-requisito de pontuação de atributo, ex.
+"Força 13+") **nunca têm um valor de pontuação real** — em toda a
+aba (73 células não-vazias conferidas), o valor sempre é idêntico ao
+da coluna de ASI correspondente na mesma linha (ex: "Ator" tem
+"Carisma Mín. = +1" e "ASI Carisma = +1" — "+1" não faz sentido como
+pontuação mínima de atributo). Parece um vazamento/cópia acidental da
+coluna de ASI pra essa coluna na extração da planilha, não um pré-
+requisito de verdade. Por isso `talentos.ts` (Fase 1) **não importou**
+essas colunas — `PrerequisitosTalento` só tem `nivelMinimo` e `outro`,
+sem `atributosMinimos`.
+
+**O que falta pra resolver:** confirmar com o Osmar se isso é
+esperado (ex: regras 2024 realmente não têm mais pré-requisito de
+pontuação de atributo em talento nenhum, e a coluna é só resquício de
+uma versão antiga da planilha) ou se é bug de extração que vale a pena
+ele corrigir na planilha. Se ele confirmar que existe pré-requisito de
+atributo de verdade em algum talento, a Fase 3 (seleção no Level Up)
+precisa adicionar a validação — hoje ela não bloqueia nada por
+atributo, só por nível.
 
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 
