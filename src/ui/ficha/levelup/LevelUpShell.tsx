@@ -20,6 +20,8 @@ import MagiaComDescricao from '../../components/MagiaComDescricao';
 import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
 import IconeClasse from '../../components/IconeClasse';
 import { useAvisoTemporario } from '../../hooks/useAvisoTemporario';
+import { talentos } from '../../../data/rulesets/dnd2024/talentos';
+import TelaEscolherTalento from './TelaEscolherTalento';
 import styles from './LevelUpShell.module.css';
 
 export interface PersonagemNivel {
@@ -44,6 +46,7 @@ interface LevelUpShellProps {
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
+    talentoGeralEscolhido: string | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -74,6 +77,13 @@ interface LevelUpShellProps {
    * aplicados) — pra mostrar base/mod real na tela de Aumento de
    * Atributo. */
   atributosAtuais: WizardSelection['atributos'];
+  /** Atributos FINAIS (base + bônus de espécie/origem/ASI já
+   * aplicados) — usado só pra validar Atributo Mínimo de Talentos
+   * (regra real checa a pontuação total, não a base). */
+  atributosFinaisAtuais: Record<Atributo, number>;
+  /** Talentos Gerais já escolhidos em Level Ups anteriores — Fase 3 do
+   * plano de Talentos (ver DECISOES-DESIGN.md/PENDENCIAS.md). */
+  talentosGeraisAtuais: string[];
 }
 
 type LuStep =
@@ -108,6 +118,8 @@ export default function LevelUpShell({
   periciasEspecialistaAtuais,
   periciasProficientesDoPersonagem,
   atributosAtuais,
+  atributosFinaisAtuais,
+  talentosGeraisAtuais,
 }: LevelUpShellProps) {
   const novoNivel = personagem.nivel + 1;
   const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', novoNivel);
@@ -147,6 +159,8 @@ export default function LevelUpShell({
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
   const [asiEscolhas, setAsiEscolhas] = useState<Atributo[]>([]);
   const [telaAsi, setTelaAsi] = useState(false);
+  const [talentoEscolhido, setTalentoEscolhido] = useState<string | null>(null);
+  const [telaTalento, setTelaTalento] = useState(false);
   const [aviso, setAviso] = useAvisoTemporario();
 
   const media = dadoVidaValor[personagem.dadoVida] + personagem.conMod;
@@ -302,6 +316,10 @@ export default function LevelUpShell({
         setTelaAsi(true);
         return;
       }
+      if (asiModo === 'talento' && talentoEscolhido === null) {
+        setAviso('Escolha um Talento antes de avançar.');
+        return;
+      }
     }
     setAviso(null);
     if (step === 'resumo') {
@@ -314,6 +332,7 @@ export default function LevelUpShell({
         magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
         periciasEspecialistaEscolhidas: luSteps.includes('especialista') ? especialistaEscolhidas : null,
         atributosAumentados: luSteps.includes('asi') && asiModo === 'atributo' ? asiEscolhas : null,
+        talentoGeralEscolhido: luSteps.includes('asi') && asiModo === 'talento' ? talentoEscolhido : null,
       });
       return;
     }
@@ -355,6 +374,21 @@ export default function LevelUpShell({
           </>
         )}
       </div>
+    );
+  }
+
+  if (telaTalento) {
+    return (
+      <TelaEscolherTalento
+        nivelAtual={novoNivel}
+        atributosFinais={atributosFinaisAtuais}
+        talentosGeraisAtuais={talentosGeraisAtuais}
+        onEscolher={(id) => {
+          setTalentoEscolhido(id);
+          setTelaTalento(false);
+        }}
+        onFechar={() => setTelaTalento(false)}
+      />
     );
   }
 
@@ -697,6 +731,7 @@ export default function LevelUpShell({
                 if (asiModo !== 'atributo') {
                   setAsiModo('atributo');
                   setAsiEscolhas([]);
+                  setTalentoEscolhido(null);
                 }
                 setTelaAsi(true);
               }}
@@ -710,15 +745,23 @@ export default function LevelUpShell({
                   : '+2 em um atributo, ou +1 em dois atributos (máx. 20) — toque pra distribuir'}
               </div>
             </div>
-            <div className={`opt-card ${asiModo === 'talento' ? 'selected' : ''}`} onClick={() => { setAsiModo('talento'); setAsiEscolhas([]); }}>
+            <div
+              className={`opt-card ${asiModo === 'talento' ? 'selected' : ''}`}
+              onClick={() => {
+                if (asiModo !== 'talento') {
+                  setAsiModo('talento');
+                  setAsiEscolhas([]);
+                }
+                setTelaTalento(true);
+              }}
+            >
               <div className="opt-card-name">Escolher um Talento</div>
-              <div className="opt-card-desc">Lista completa de talentos (Cap. 5) entra numa próxima entrega</div>
-            </div>
-            {asiModo === 'talento' && (
-              <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
-                ＋ lista de talentos entra numa próxima entrega
+              <div className="opt-card-desc">
+                {asiModo === 'talento' && talentoEscolhido
+                  ? (talentos.find((t) => t.id === talentoEscolhido)?.nome ?? talentoEscolhido)
+                  : 'Talentos Gerais (Cap. 5) — toque pra escolher'}
               </div>
-            )}
+            </div>
           </>
         )}
 
@@ -790,7 +833,7 @@ export default function LevelUpShell({
             {asiModo === 'talento' && (
               <div className="summary-row">
                 <span>Talento</span>
-                <span>(a definir numa próxima entrega)</span>
+                <span>{(talentoEscolhido && talentos.find((t) => t.id === talentoEscolhido)?.nome) ?? 'nenhum escolhido'}</span>
               </div>
             )}
             <div className="label" style={{ marginTop: 10 }}>

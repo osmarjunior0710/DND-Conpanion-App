@@ -4475,3 +4475,53 @@ diz "isso parece Ação/Bônus/Reação/Passiva pelo texto", não garante
 que o efeito realmente muda um número que o app calcula.
 
 **Data/origem:** 2026-08.
+
+## Talentos Fase 3 (parte 1) — seleção de Talento Geral no Level Up
+
+**Decisão:** no passo de ASI do Level Up, "Escolher um Talento" agora
+abre uma tela cheia nova (`TelaEscolherTalento.tsx`, mesmo padrão
+visual de `SelecionarMagiaShell.tsx` — reaproveita
+`LevelUpShell.module.css`) listando só os talentos `categoria: 'Geral'`
+(43 no catálogo). Mesmo padrão de clique-abre-direto já estabelecido
+pro card "Aumentar Atributos": tocar em "Escolher um Talento" já abre
+a lista, sem etapa intermediária.
+
+**Validação:** `nivelMinimo` e `atributosMinimos` (os 2 campos reais
+importados na Fase 1) travam a opção — card fica com opacidade
+reduzida, `pointer-events: none`, e mostra o motivo em vermelho (ex:
+"Requer DES 13+"). Atributo Mínimo é checado contra o valor FINAL do
+atributo (`valorFinalAtributo`, com bônus de espécie/origem/ASI já
+aplicados), não a base — é isso que a regra real de pré-requisito
+verifica. `outro` (pré-requisito em texto livre, ex: "Característica
+Conjuração ou Magia de Pacto") aparece como aviso `⚠️` não-bloqueante
+embaixo do talento, nunca trava a escolha — exatamente como o plano
+original pedia.
+
+**Repetição:** talentos não-repetíveis já escolhidos em Level Ups
+anteriores somem da lista (`talentosGeraisAtuais`, novo campo em
+`PersonagemSalvo`); repetíveis (ex: "Adepto Elemental", "Habilidoso")
+continuam aparecendo.
+
+**O que NÃO foi feito nesta entrega, de propósito (ver PENDENCIAS.md):**
+o talento escolhido pode conceder ASI (`concedeAsi.tipo !== 'nenhum'`)
+— isso não é aplicado ainda. Só o nome do talento é salvo. O Osmar
+pediu pra dividir a Fase 3 em 2 partes; essa é a 1ª (lista +
+validação + salvar/mostrar). A 2ª (aplicar o ASI do próprio talento,
+reaproveitando a tela de distribuição de 2 pontos pro caso
+`distribuir-dois`) fica pra próxima entrega.
+
+**Onde aparece na Ficha:** aba Perfil ganhou uma seção nova
+"Talentos" (entre Classe e Origem), listando cada talento escolhido
+como `opt-card` com o texto prefixado `[PH] sem efeito mecânico
+ainda —` (regra do CLAUDE.md seção 12, prefixo `[PH]` pra conteúdo
+sem lógica real por trás ainda).
+
+**Testado:** Playwright 390×844, Bardo nível 3→4. Lista mostrou
+"Agressor"/"Analítico"/"Atleta" travados com "Requer DES/SAB 13+"
+(atributos abaixo de 13 no personagem gerado) e "Atirador Arcano"
+disponível com aviso não-bloqueante de "Característica Conjuração".
+Escolhido Atirador Arcano → resumo mostrou "Talento: Atirador
+Arcano" → confirmado → aba Perfil mostrou a seção "Talentos" com o
+`[PH]` → F5 na página manteve tudo (persistência confirmada).
+
+**Data/origem:** 2026-08.

@@ -1,7 +1,7 @@
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { especies } from '../../../data/rulesets/dnd2024/especies';
-import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
+import { talentos, talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
 import { caracteristicasAcumuladas } from '../../../core/levelUp';
 import type { WizardSelection } from '../../../core/personagem';
 
@@ -9,13 +9,17 @@ interface PerfilTabProps {
   selecao: WizardSelection;
   classe: Classe | null;
   nivel: number;
+  talentosGeraisAtuais: string[];
 }
 
-export default function PerfilTab({ selecao, classe, nivel }: PerfilTabProps) {
+export default function PerfilTab({ selecao, classe, nivel, talentosGeraisAtuais }: PerfilTabProps) {
   const caracteristicasClasse = classe ? caracteristicasAcumuladas(classe, nivel) : [];
   const origem = origens.find((o) => o.nome === selecao.origem) ?? null;
   const talento = origem ? talentosOrigem.find((t) => t.id === origem.talentoOrigemId) ?? null : null;
   const especie = especies.find((e) => e.nome === selecao.especie) ?? null;
+  const talentosGeraisEscolhidos = talentosGeraisAtuais
+    .map((id) => talentos.find((t) => t.id === id))
+    .filter((t) => t !== undefined);
 
   return (
     <>
@@ -37,6 +41,20 @@ export default function PerfilTab({ selecao, classe, nivel }: PerfilTabProps) {
           )}
         </div>
       ))}
+
+      {talentosGeraisEscolhidos.length > 0 && (
+        <>
+          <div className="section-title" style={{ marginTop: 16 }}>
+            Talentos
+          </div>
+          {talentosGeraisEscolhidos.map((t, i) => (
+            <div key={`${t.id}-${i}`} className="opt-card" style={{ cursor: 'default' }}>
+              <div className="opt-card-name">{t.nome}</div>
+              <div className="opt-card-desc">[PH] sem efeito mecânico ainda — {t.beneficios}</div>
+            </div>
+          ))}
+        </>
+      )}
 
       <div className="section-title" style={{ marginTop: 16 }}>
         Origem{origem ? ` — ${origem.nome}` : ''}

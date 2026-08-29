@@ -612,29 +612,27 @@ motivou o pedido.
   ainda, exceto Guerreiro nível 1, que já está limpo). Aplicar o mesmo
   tratamento de Espécies quando fizer sentido pra tela em questão.
 
-## Talentos — Fases 3 e 4 ainda faltam (Fases 1/Dados e 2/Classificação já feitas, ver DECISOES-DESIGN.md)
+## Talentos — ASI embutido no talento escolhido + Fase 4 ainda faltam
 
-**O que é:** a Fase 1 (importar os 75 talentos oficiais + 10 UA de
-`dnd-master-referencia.xlsx` pra `data/rulesets/dnd2024/talentos.ts`)
-e a Fase 2 (classificar o texto de "Benefícios" em Ação/Ação
-Bônus/Reação/Passiva, `core/classificarTalento.ts`) estão feitas — ver
-DECISOES-DESIGN.md pros detalhes. Mas o Level Up ainda não *usa* nada
-disso: a opção "Escolher um Talento" no passo de ASI continua como
-placeholder ("entra numa próxima entrega"), sem travar o avanço do
-Level Up.
+**O que é:** Fases 1 (dado), 2 (classificação de texto) e a 1ª metade
+da Fase 3 (seleção de Talento Geral no Level Up, com validação de
+Nível/Atributo Mínimo, salva e mostra na Ficha como InfoChip `[PH]`)
+estão feitas — ver DECISOES-DESIGN.md pros detalhes. Level Up já
+oferece "Escolher um Talento" de verdade no passo de ASI.
 
-**O que falta, nessa ordem (plano original do Osmar,
-`talentos-plano-implementacao.md`):**
+**O que falta:**
 
-1. **Fase 3 — Seleção de talento no Level Up** (sem efeito mecânico
-   ainda): UI na tela de ASI que já existe, oferecendo Atributo OU
-   Talento; valida Nível Mín. e Atributo Mínimo automaticamente (os 2
-   são dado real hoje — ver DECISOES-DESIGN.md); mostra "Outro
-   Pré-requisito" como aviso não-bloqueante (texto livre, não dá pra
-   validar automático); reaproveita o seletor de ASI genérico do Level
-   Up pro caso `distribuir-dois`; talento fica salvo e mostrado na
-   Ficha como InfoChip, `[PH]` (sem afetar número nenhum ainda).
-   Critério: escolher um talento e ver salvo/mostrado.
+1. **ASI embutido no talento escolhido (2ª metade da Fase 3, adiada de
+   propósito nesta entrega):** hoje, ao escolher um talento com
+   `concedeAsi.tipo !== 'nenhum'` (ex: "Aumento no Valor de Atributo",
+   que é `distribuir-dois`, ou "Atirador Arcano", que é
+   `escolha-unica` entre INT/SAB/CAR), **nenhum atributo é alterado**
+   — só o nome do talento é salvo. Falta: se `distribuir-dois`, abrir
+   a mesma tela de distribuição de 2 pontos que o ASI genérico já usa
+   (`TelaEscolherTalento` → `telaAsi`, reaproveitando
+   `aumentarAtributos`); se `escolha-unica` com mais de 1 atributo na
+   lista, pedir qual dos elegíveis; se só 1 (ou nenhum), aplicar
+   direto sem pedir escolha.
 2. **Fase 4 — Aplicar efeito de verdade, em lotes pequenos** (5-10 por
    vez) — ordem sugerida: primeiro ASI puro sem regra, depois 1 número
    isolado (ex: Alerta → Iniciativa), por último múltiplos

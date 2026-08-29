@@ -61,6 +61,13 @@ export interface PersonagemSalvo {
    * `core/levelUp.ts` `niveisComEspecialista`). Ausente/vazio =
    * personagem ainda não passou por um desses níveis. */
   periciasEspecialistaAtual?: string[];
+  /** IDs dos Talentos Gerais escolhidos nos níveis de ASI/Talento (ver
+   * `core/levelUp.ts` `niveisComASI`, `data/rulesets/dnd2024/talentos.ts`)
+   * — acumula 1 por nível em que o jogador escolheu "Talento" em vez de
+   * "Aumentar Atributos". Fase 3 do plano de Talentos (ver
+   * DECISOES-DESIGN.md/PENDENCIAS.md): só salva e mostra o talento,
+   * `[PH]` — nenhum efeito mecânico de verdade ainda (Fase 4). */
+  talentosGeraisAtual?: string[];
   /** Mochila como estado de verdade (ver DECISOES-DESIGN.md "Mochila
    * vira estado de verdade") — quando ausente (personagem salvo antes
    * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a

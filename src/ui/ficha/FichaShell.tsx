@@ -17,7 +17,7 @@ import {
   periciasProficientes,
 } from '../../core/calculoPersonagem';
 import { aumentarAtributos, modificador, valorFinalAtributo, type WizardSelection } from '../../core/personagem';
-import type { Atributo } from '../../data/wizardFixtures';
+import { atributosOrdem, type Atributo } from '../../data/wizardFixtures';
 import {
   calcularCapacidadeMaxima,
   calcularItensIniciais,
@@ -131,6 +131,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [periciasEspecialistaAtuais, setPericiasEspecialistaAtuais] = useState<string[]>(
     personagemSalvo.periciasEspecialistaAtual ?? [],
   );
+  const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
@@ -165,6 +166,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const iniciativa = calcularIniciativa(selecao);
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
+  const atributosFinaisAtuais = Object.fromEntries(
+    atributosOrdem.map((a) => [a, valorFinalAtributo(selecao, a) ?? 10]),
+  ) as Record<Atributo, number>;
   const pericias = calcularPericias(selecao, personagem.nivel, periciasEspecialistaAtuais);
   const bonusProficienciaAtual = classe ? bonusProficiencia(classe, personagem.nivel) : 0;
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
@@ -240,6 +244,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       truquesAtual: truquesAtuais,
       magiasPreparadasAtual: magiasPreparadasAtuais,
       periciasEspecialistaAtual: periciasEspecialistaAtuais,
+      talentosGeraisAtual: talentosGeraisAtuais,
       itensMochilaAtual: itensMochila,
       levelUpHpModo,
       levelUpHpRolado,
@@ -261,6 +266,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     truquesAtuais,
     magiasPreparadasAtuais,
     periciasEspecialistaAtuais,
+    talentosGeraisAtuais,
     itensMochila,
     levelUpHpModo,
     levelUpHpRolado,
@@ -400,6 +406,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
+    talentoGeralEscolhido: string | null;
   }) {
     const novosAtributos = resultado.atributosAumentados
       ? aumentarAtributos(selecao.atributos, resultado.atributosAumentados)
@@ -418,6 +425,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (resultado.truquesEscolhidos) setTruquesAtuais(resultado.truquesEscolhidos);
     if (resultado.magiasPreparadasEscolhidas) setMagiasPreparadasAtuais(resultado.magiasPreparadasEscolhidas);
     if (resultado.periciasEspecialistaEscolhidas) setPericiasEspecialistaAtuais(resultado.periciasEspecialistaEscolhidas);
+    if (resultado.talentoGeralEscolhido) {
+      setTalentosGeraisAtuais((prev) => [...prev, resultado.talentoGeralEscolhido!]);
+    }
     setLevelUpHpModo(null);
     setLevelUpHpRolado(null);
     setLevelUpAberto(false);
@@ -451,6 +461,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         periciasEspecialistaAtuais={periciasEspecialistaAtuais}
         periciasProficientesDoPersonagem={periciasProficientes(selecao)}
         atributosAtuais={selecao.atributos}
+        atributosFinaisAtuais={atributosFinaisAtuais}
+        talentosGeraisAtuais={talentosGeraisAtuais}
       />
     );
   }
@@ -535,7 +547,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onTrocarArmaMaestria={trocarArmaMaestria}
           />
         )}
-        {tab === 'perfil' && <PerfilTab selecao={selecao} classe={classe} nivel={personagem.nivel} />}
+        {tab === 'perfil' && (
+          <PerfilTab selecao={selecao} classe={classe} nivel={personagem.nivel} talentosGeraisAtuais={talentosGeraisAtuais} />
+        )}
         {tab === 'mochila' && (
           <MochilaTab
             itens={itensMochila}
