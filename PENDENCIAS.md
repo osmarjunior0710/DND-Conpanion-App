@@ -611,14 +611,72 @@ planilha por Categoria = "Origem") — os Talentos Gerais (categoria
 diferente, escolhidos em ASI) não estão na planilha que o Claude Code
 consegue acessar neste ambiente.
 
-**Bloqueado em:** confirmar com o Osmar se a `dnd-master-referencia.xlsx`
-já tem essa lista numa aba/categoria ainda não puxada, ou se precisa
-extrair de novo (PDF do Cap. 5, "Talentos" — já existe no
-repositório de referências do projeto). Sem isso, a opção "Escolher um
-Talento" continua como placeholder ("entra numa próxima entrega"),
-sem travar o avanço do Level Up (mesmo padrão de outras pendências de
-dado faltando — não impede o jogador de terminar o Level Up, só não
-oferece essa opção de verdade ainda).
+**Bloqueado em:** o Osmar já confirmou (documento
+`talentos-plano-implementacao.md`, entregue por ele) que a
+`dnd-master-referencia.xlsx` **já tem** a lista de Talentos completa e
+bem estruturada — só falta transferir o arquivo/aba pra dentro desta
+sessão do Claude Code pra Fase 1 (ver plano abaixo) poder começar. Sem
+isso, a opção "Escolher um Talento" continua como placeholder ("entra
+numa próxima entrega"), sem travar o avanço do Level Up (mesmo padrão
+de outras pendências de dado faltando — não impede o jogador de
+terminar o Level Up, só não oferece essa opção de verdade ainda).
+
+**Plano de implementação já desenhado (resumo do documento do Osmar,
+guardado aqui pra sobreviver a perda de contexto do chat):**
+
+- **Panorama:** 85 talentos na planilha, só 75 oficiais (10 são
+  "Talento Selvagem", UA Psiônico 2025 não-oficial — mesmo tratamento
+  que já demos a magias UA Psion: isolar fora do catálogo principal,
+  filtro por Categoria ≠ "Talento Selvagem", sem precisar mexer na
+  planilha).
+- **4 categorias oficiais, ASI bem diferente entre elas:** Geral (43,
+  ASI varia — ver abaixo), Dádiva Épica (12, quase sempre ASI livre até
+  30), Origem (10, nunca dá ASI), Estilo de Luta (10, nunca dá ASI).
+- **Formato de ASI dos Talentos Gerais — 4 padrões pelas colunas
+  marcadas na planilha:** 0 colunas = sem ASI (1 talento); 1 coluna =
+  ASI fixo num atributo só, sem escolha (9 talentos); 2-3 colunas = ASI
+  de escolha entre um conjunto pequeno marcado (31 talentos); 6 colunas
+  = ASI de escolha livre entre qualquer atributo — **reaproveita o
+  seletor de ASI genérico que já existe** no motor de Level Up, sem UI
+  nova (2 talentos).
+- **Pré-requisitos, 3 tipos:** Nível mínimo e Atributo mínimo — fáceis,
+  validação automática comparando com nível/atributo final calculado;
+  "Outro Pré-requisito" (texto livre, ex: "Característica Conjuração")
+  — não valida automático, vira aviso não-bloqueante em vez de travar a
+  escolha.
+- **Classificação do texto de "Benefícios":** reaproveita o
+  classificador de Ação/Ação Bônus/Reação/Passiva que já existe (usado
+  em características de classe) — mas um talento pode gerar efeitos em
+  mais de uma categoria na mesma célula de texto (ex: Conjurador
+  Bélico = Passiva + Reação + Passiva), então o classificador precisa
+  quebrar o texto em frases, não assumir 1 talento = 1 categoria.
+- **Fases propostas (pequenas, testáveis, mesmo formato de sempre):**
+  1. **Dados** — importar `talentos.ts` (nome, categoria, repetível,
+     pré-requisitos, ASI conforme os 4 padrões acima, benefícios em
+     texto bruto), isolar as 10 linhas de UA numa constante separada.
+     Critério de conclusão: 75 talentos oficiais no catálogo.
+  2. **Classificação automática do texto de Benefícios** — rodar o
+     classificador existente por frase, marcar manualmente numa 1ª
+     leva pequena quais frases "afetam cálculo" de verdade (o
+     classificador sozinho não garante isso). Critério: Atirador
+     Arcano e Conjurador Bélico (os 2 exemplos discutidos) classificados
+     certo.
+  3. **Seleção de talento no Level Up** (sem efeito mecânico ainda) —
+     UI na tela de ASI que já existe, oferecendo Atributo OU Talento;
+     valida Nível/Atributo automaticamente, mostra aviso pro "Outro
+     Pré-requisito"; reaproveita o seletor de ASI genérico pro caso de
+     6 colunas; talento fica salvo e mostrado na Ficha como InfoChip,
+     `[PH]` (sem afetar número nenhum ainda). Critério: escolher e ver
+     salvo/mostrado.
+  4. **Aplicar efeito de verdade, em lotes pequenos** (5-10 por vez) —
+     ordem sugerida: primeiro ASI puro sem regra, depois 1 número
+     isolado (ex: Alerta → Iniciativa), por último múltiplos
+     efeitos/Reação (ex: Conjurador Bélico). Cada talento sai do
+     `[PH]` ao ser implementado.
+- Ideia extra do Osmar (registrada, sem decisão ainda — é decisão de
+  produto, não de dado/regra): uma aba de anotações de talento; se for
+  pra frente, reaproveitaria `ItemComDescricao`/`MagiaComDescricao`, não
+  precisa de componente novo.
 
 ## Origens com seleção extra no Talento de Origem (Habilidoso, Iniciado em Magia)
 
