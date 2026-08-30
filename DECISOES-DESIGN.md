@@ -4606,3 +4606,32 @@ aplicado, resumo mostrou "ASI do talento: FOR +2", confirmado e
 persistido.
 
 **Data/origem:** 2026-08.
+
+## Talentos — card "Escolher um Talento" deixa claro quando falta escolher o atributo
+
+**Contexto:** o Osmar escolheu um talento com escolha de atributo
+(Esmagador, FOR/CON) e saiu da tela de "Escolher Atributo" sem
+terminar (voltou). O card "Escolher um Talento" continuou mostrando
+só o nome do talento ("Esmagador"), sem indicar que faltava concluir
+— parecia que a escolha já tinha sido "fechada" no clique, mesmo sem
+ter avançado. Testado e confirmado que o fluxo **não trava**: o
+"Avançar" do passo já reabre a tela de escolher atributo se ela não
+foi concluída (validação que já existia desde a Fase 3 parte 2) — o
+problema era só a falta de clareza visual antes disso.
+
+**Decisão:** 2 ajustes pequenos, sem mudar a regra:
+1. O texto do card passa a avisar explicitamente quando fica pendente:
+   "Esmagador — falta escolher o atributo, toque pra continuar" (em
+   vez de só "Esmagador", que parecia completo).
+2. Clicar de novo no card nesse estado retoma direto a tela de
+   escolher o atributo daquele talento (`aplicarAsiDoTalento` de
+   novo), em vez de reabrir a lista inteira dos 43 talentos — não faz
+   sentido escolher outro talento de novo só porque esqueceu de
+   terminar o atributo do que já tinha escolhido.
+
+**Testado:** Playwright 390×844 — escolher Esmagador, voltar sem
+escolher atributo, card mostra o aviso certo; clicar de novo no card
+abre a tela de atributo direto (não a lista); escolher CON aplicou
++1 de verdade e persistiu.
+
+**Data/origem:** 2026-08.

@@ -850,6 +850,16 @@ export default function LevelUpShell({
                 if (asiModo !== 'talento') {
                   setAsiModo('talento');
                   setAsiEscolhas([]);
+                  setTelaTalento(true);
+                  return;
+                }
+                // Talento já escolhido mas o ASI dele ainda não foi
+                // completado (jogador voltou sem terminar) — retoma
+                // direto na tela certa, em vez de reabrir a lista
+                // inteira de talentos de novo.
+                if (talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo !== 'nenhum' && asiEscolhas.length === 0) {
+                  aplicarAsiDoTalento(talentoObjEscolhido);
+                  return;
                 }
                 setTelaTalento(true);
               }}
@@ -863,7 +873,9 @@ export default function LevelUpShell({
                           NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
                             .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
                             .join(', ')
-                        : ''
+                        : talentoObjEscolhido.concedeAsi.tipo !== 'nenhum'
+                          ? ' — falta escolher o atributo, toque pra continuar'
+                          : ''
                     }`
                   : 'Talentos Gerais (Cap. 5) — toque pra escolher'}
               </div>
