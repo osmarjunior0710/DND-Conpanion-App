@@ -4526,3 +4526,40 @@ de ataque, `classificarMagia` corretamente não rolou nada) não abriu
 popup nenhum, como esperado pra truque.
 
 **Data/origem:** 2026-08.
+
+## Level Up — passo de "Novas Características" não duplica característica com tela própria
+
+**Decisão:** o passo "Novas Características" (logo depois de PV) não
+mostra mais o card de uma característica que já ganha uma tela
+interativa própria mais adiante no mesmo Level Up — Subclasse,
+Estilo de Luta, Especialista, Aumento de Valor de Atributo/Talento,
+Dádiva Épica. `LevelUpShell.tsx` monta um `Set` de nomes a excluir
+(`nomesComTelaPropria`), condicionado a cada passo já estar presente
+em `luSteps` (a mesma checagem que decide se o passo interativo
+existe esse nível), e filtra `caracteristicasDoNivel(...)` por esse
+Set antes de exibir. Característica passiva sem tela própria (ex:
+"Ataque Extra" do Guerreiro) continua aparecendo normalmente — esse
+passo é o único lugar que mostra ela.
+
+**Contexto:** o Osmar notou, olhando o nível 4 de Bardo, que o passo
+"Novas Características" mostrava um card de texto só anunciando
+"Aumento no Valor de Atributo" e, poucas telas depois no mesmo
+Level Up, a tela de escolha de verdade (Atributo ou Talento)
+aparecia de novo — redundante. Ele propôs 2 opções (tirar o passo, ou
+virar um hub/resumo com navegação pra cada sub-processo); optamos
+pela entrega menor: manter o fluxo linear atual (bolinhas de
+progresso, Voltar/Avançar), só filtrando a duplicata. Um hub de
+navegação ficaria pra uma reforma maior, se um dia fizer sentido.
+
+**Nível sem nenhuma característica de verdade** (ex: nível 4 de Bardo,
+cuja única entrada era "Aumento no Valor de Atributo") agora mostra o
+fallback que já existia — "Nenhuma característica nova nesse nível" —
+em vez do card redundante.
+
+**Testado:** Playwright 390×844, Bardo. Nível 3→4: card "Aumento no
+Valor de Atributo" some, mostra o fallback de nível vazio. Nível 1→2
+(dispara Especialista): card "Especialista" some, mas "Pau pra Toda
+Obra" (outra característica do mesmo nível, sem tela própria) continua
+aparecendo normalmente.
+
+**Data/origem:** 2026-08.

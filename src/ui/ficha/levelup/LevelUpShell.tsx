@@ -12,6 +12,7 @@ import {
   niveisComDadivaEpica,
   niveisComEspecialista,
   temEstiloDeLutaTrocavel,
+  NOMES_ESPECIALISTA,
 } from '../../../core/levelUp';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
 import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
@@ -143,6 +144,20 @@ export default function LevelUpShell({
   if (niveisComASI(classe).includes(novoNivel)) luSteps.push('asi');
   if (niveisComDadivaEpica(classe).includes(novoNivel)) luSteps.push('dadivaEpica');
   luSteps.push('resumo');
+
+  // Características que já ganham uma tela própria mais adiante nesse
+  // mesmo Level Up não aparecem de novo como card no passo "Novas
+  // Características" — evita repetir a mesma coisa 2x (ver
+  // DECISOES-DESIGN.md "Level Up — passo de Novas Características não
+  // duplica característica com tela própria"). Uma característica
+  // passiva sem tela própria (ex: "Ataque Extra") continua aparecendo
+  // normalmente — esse passo é o único lugar que mostra ela.
+  const nomesComTelaPropria = new Set<string>();
+  if (luSteps.includes('subclasse')) nomesComTelaPropria.add(`Subclasse de ${classe.nome}`);
+  if (luSteps.includes('estiloDeLuta')) nomesComTelaPropria.add('Estilo de Luta');
+  if (luSteps.includes('especialista')) NOMES_ESPECIALISTA.forEach((n) => nomesComTelaPropria.add(n));
+  if (luSteps.includes('asi')) nomesComTelaPropria.add('Aumento no Valor de Atributo');
+  if (luSteps.includes('dadivaEpica')) nomesComTelaPropria.add('Dádiva Épica');
 
   const [luIndex, setLuIndex] = useState(0);
   const [faseDramatica, setFaseDramatica] = useState<FaseDramatica>('idle');
@@ -348,7 +363,7 @@ export default function LevelUpShell({
     setLuIndex((i) => i - 1);
   }
 
-  const features = caracteristicasDoNivel(classe, novoNivel);
+  const features = caracteristicasDoNivel(classe, novoNivel).filter((f) => !nomesComTelaPropria.has(f.nome));
   const dadivaEpica = caracteristicasDoNivel(classe, novoNivel).find((f) => f.nome === 'Dádiva Épica');
 
   if (faseDramatica !== 'idle') {

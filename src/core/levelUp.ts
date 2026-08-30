@@ -118,7 +118,7 @@ export function contarRepeticoesCaracteristica(classe: Classe, nome: string, niv
  * sendo a mesma mecânica (confirmado com o Osmar) — por isso os dois
  * nomes contam aqui, em vez de assumir que a característica sempre se
  * chama igual em todo nível que a concede. */
-const NOMES_ESPECIALISTA = ['Especialista', 'Especialização'];
+export const NOMES_ESPECIALISTA = ['Especialista', 'Especialização'];
 
 export function niveisComEspecialista(classe: Classe): number[] {
   return classe.progressao.filter((p) => p.caracteristicas.some((c) => NOMES_ESPECIALISTA.includes(c))).map((p) => p.nivel);
