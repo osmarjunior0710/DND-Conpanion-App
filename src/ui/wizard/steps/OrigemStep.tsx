@@ -1,7 +1,16 @@
 import { origens } from '../../../data/rulesets/dnd2024/origens';
-import { descricoesOrigens } from '../../../data/rulesets/dnd2024/descricoesOrigens';
+import { descricoesOrigensCurtas } from '../../../data/rulesets/dnd2024/descricoesOrigensCurtas';
+import { talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
+import { pericias } from '../../../data/rulesets/dnd2024/pericias';
+import { buscarDescricaoFerramenta } from '../../../data/rulesets/dnd2024/buscarDescricaoFerramenta';
 import { nomesDuplicados } from '../../../core/duplicidadeSelecao';
+import InfoChip from '../../components/InfoChip';
 import type { StepProps } from './StepProps';
+
+function descricaoPericia(nome: string): string | null {
+  const p = pericias.find((x) => x.nome === nome);
+  return p ? `${p.atributo} — ${p.exemplo}` : null;
+}
 
 export default function OrigemStep({ selection, update }: StepProps) {
   // Marcação de duplicidade — só Perícias por enquanto (única sobreposição
@@ -15,6 +24,8 @@ export default function OrigemStep({ selection, update }: StepProps) {
       {origens.map((o) => {
         const duplicadas = nomesDuplicados(selection.periciasClasseEscolhidas, o.pericias);
         const duplicada = duplicadas.size > 0;
+        const talento = talentosOrigem.find((t) => t.id === o.talentoOrigemId);
+        const nomeTalento = `${talento?.nome ?? o.talentoOrigemId}${o.talentoOrigemVariante ? ` (${o.talentoOrigemVariante})` : ''}`;
         return (
           <div
             key={o.id}
@@ -28,12 +39,32 @@ export default function OrigemStep({ selection, update }: StepProps) {
                   {o.nome}
                   {!o.disponivel && <span className="tag" style={{ marginLeft: 6 }}>(em breve)</span>}
                 </div>
-                <div className="opt-card-desc">{descricoesOrigens[o.id]}</div>
+                <div className="opt-card-desc">{descricoesOrigensCurtas[o.id]}</div>
                 {duplicada && (
                   <div className="opt-card-desc" style={{ color: 'var(--warn)' }}>
                     ⚠️ {[...duplicadas].join(', ')} já escolhida na Classe
                   </div>
                 )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+                  <span className="label">Perícias</span>
+                  <InfoChip nome={o.pericias[0]} descricao={descricaoPericia(o.pericias[0])} />
+                  <InfoChip nome={o.pericias[1]} descricao={descricaoPericia(o.pericias[1])} />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+                  <span className="label">Ferramenta</span>
+                  {o.ferramenta.categoria === 'fixa' ? (
+                    <InfoChip nome={o.ferramenta.nome} descricao={buscarDescricaoFerramenta(o.ferramenta.nome)} />
+                  ) : (
+                    <span className="label">escolha 1 de {o.ferramenta.grupo}</span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+                  <span className="label">Talento</span>
+                  <InfoChip
+                    nome={nomeTalento}
+                    descricao={talento?.beneficios ?? '⚠️ Talento não encontrado nos dados importados — avise o Osmar.'}
+                  />
+                </div>
               </div>
             </div>
           </div>

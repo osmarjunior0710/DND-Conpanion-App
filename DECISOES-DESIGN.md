@@ -4888,3 +4888,37 @@ mexe no acerto, só no dano, mesmo caminho de código do bônus de
 Arquearia já validado).
 
 **Data/origem:** 2026-08.
+
+## Origem — card de seleção resumido, com Perícias/Ferramenta/Talento visíveis
+
+**Contexto:** o card de cada Origem na tela "2. Origem" do wizard só
+mostrava a descrição narrativa completa (3-5 frases, texto do livro)
+— pra saber o que a Origem realmente concede (Perícias, Ferramenta,
+Talento) o jogador precisava avançar pra tela seguinte
+(`OrigemEscolhasStep`). O Osmar pediu pra resolver isso direto no
+card de seleção.
+
+**Decisão:**
+1. Nova descrição de 1 frase por Origem, em
+   `data/rulesets/dnd2024/descricoesOrigensCurtas.ts` — resumo próprio
+   (não é trecho literal do livro, diferente de `descricoesOrigens.ts`,
+   que continua sendo usado por inteiro na tela seguinte, essa não
+   mudou).
+2. O card ganhou 3 linhas novas, reaproveitando o mesmo padrão de
+   `OrigemEscolhasStep.tsx` (chip `InfoChip`, toque abre popup com a
+   descrição completa — perícia, ferramenta ou talento): Perícias (2),
+   Ferramenta (nome fixo, ou "escolha 1 de {grupo}" quando é
+   `categoria: 'escolha'`, já que nesse card ainda não existe uma
+   ferramenta escolhida) e Talento (nome + variante entre parênteses,
+   quando houver).
+3. `InfoChip` já usa `e.stopPropagation()` no toque — importante
+   porque o card inteiro tem `onClick` pra selecionar a Origem; tocar
+   num chip só abre o popup, não seleciona a Origem por engano.
+
+**Testado:** Playwright 390×844 — card mostra Perícias/Ferramenta/
+Talento corretos (ex: Andarilho → Furtividade/Intuição, Ferramentas de
+Ladrão, Sortudo); toque no chip "Sortudo" abre o popup sem marcar o
+card como selecionado; aviso de perícia duplicada com a Classe
+continua funcionando.
+
+**Data/origem:** 2026-08.
