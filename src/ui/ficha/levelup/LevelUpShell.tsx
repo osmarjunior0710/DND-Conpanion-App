@@ -173,11 +173,7 @@ export default function LevelUpShell({
   const [especialistaEscolhidas, setEspecialistaEscolhidas] = useState<string[]>(periciasEspecialistaAtuais);
   const [asiModo, setAsiModo] = useState<'atributo' | 'talento' | null>(null);
   const [asiEscolhas, setAsiEscolhas] = useState<Atributo[]>([]);
-  const [telaAsi, setTelaAsi] = useState(false);
   const [talentoEscolhido, setTalentoEscolhido] = useState<string | null>(null);
-  const [telaTalento, setTelaTalento] = useState(false);
-  const [telaEscolhaAtributoTalento, setTelaEscolhaAtributoTalento] = useState<Atributo[] | null>(null);
-  const [atributoTalentoTemp, setAtributoTalentoTemp] = useState<Atributo | null>(null);
   const [aviso, setAviso] = useAvisoTemporario();
 
   const media = dadoVidaValor[personagem.dadoVida] + personagem.conMod;
@@ -278,9 +274,11 @@ export default function LevelUpShell({
 
   /** Ao escolher um talento com `concedeAsi`, decide o que fazer com o
    * ASI que ele concede — mesmo padrão do ASI genérico: `distribuir-dois`
-   * reaproveita a tela de distribuição (`telaAsi`); `escolha-unica` com
-   * 1 atributo só aplica direto (sem escolha real); com 2+ atributos
-   * abre uma tela pra escolher qual. Ver DECISOES-DESIGN.md. */
+   * mostra a mesma tabela de distribuição (inline, embaixo da lista de
+   * talentos); `escolha-unica` com 1 atributo só aplica direto (sem
+   * escolha real); com 2+ atributos mostra a lista pra escolher qual —
+   * tudo dentro do mesmo passo 'asi', sem trocar de tela. Ver
+   * DECISOES-DESIGN.md. */
   function aplicarAsiDoTalento(t: (typeof talentos)[number]) {
     if (t.concedeAsi.tipo === 'nenhum') {
       setAsiEscolhas([]);
@@ -288,15 +286,12 @@ export default function LevelUpShell({
     }
     if (t.concedeAsi.tipo === 'distribuir-dois') {
       setAsiEscolhas([]);
-      setTelaAsi(true);
       return;
     }
     if (t.concedeAsi.atributos.length === 1) {
       setAsiEscolhas([t.concedeAsi.atributos[0]]);
     } else {
       setAsiEscolhas([]);
-      setAtributoTalentoTemp(null);
-      setTelaEscolhaAtributoTalento(t.concedeAsi.atributos);
     }
   }
 
@@ -356,7 +351,7 @@ export default function LevelUpShell({
         return;
       }
       if (asiModo === 'atributo' && pontosAsiRestantes > 0) {
-        setTelaAsi(true);
+        setAviso(`Distribua os ${PONTOS_ASI} pontos de atributo antes de avançar.`);
         return;
       }
       if (asiModo === 'talento' && talentoEscolhido === null) {
@@ -364,7 +359,7 @@ export default function LevelUpShell({
         return;
       }
       if (asiModo === 'talento' && talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && pontosAsiRestantes > 0) {
-        setTelaAsi(true);
+        setAviso(`Distribua os ${PONTOS_ASI} pontos do talento antes de avançar.`);
         return;
       }
       if (
@@ -374,8 +369,7 @@ export default function LevelUpShell({
         talentoObjEscolhido.concedeAsi.atributos.length > 1 &&
         asiEscolhas.length === 0
       ) {
-        setAtributoTalentoTemp(null);
-        setTelaEscolhaAtributoTalento(talentoObjEscolhido.concedeAsi.atributos);
+        setAviso('Escolha o atributo do talento antes de avançar.');
         return;
       }
     }
@@ -435,153 +429,58 @@ export default function LevelUpShell({
     );
   }
 
-  if (telaTalento) {
+  /** Tabela de distribuir 2 pontos de ASI — reaproveitada tanto pro modo
+   * "Aumentar Atributos" quanto pra um talento com `concedeAsi.tipo ===
+   * 'distribuir-dois'`. Só marca/desmarca (+/-); quem confirma e avança
+   * é sempre o "Avançar" do passo, igual todo o resto do wizard. */
+  function renderDistribuirPontos() {
     return (
-      <TelaEscolherTalento
-        nivelAtual={novoNivel}
-        atributosFinais={atributosFinaisAtuais}
-        talentosGeraisAtuais={talentosGeraisAtuais}
-        talentoSelecionadoInicial={talentoEscolhido}
-        onEscolher={(id) => {
-          setTalentoEscolhido(id);
-          setTelaTalento(false);
-          const t = talentos.find((x) => x.id === id);
-          if (t) aplicarAsiDoTalento(t);
-        }}
-        onFechar={() => setTelaTalento(false)}
-      />
-    );
-  }
-
-  if (telaEscolhaAtributoTalento) {
-    return (
-      <div className={styles.screen}>
-        <div className={styles.header}>
-          <div className={styles.titleRow}>
-            <div className={styles.stepName}>Escolher Atributo</div>
-          </div>
+      <>
+        <div className="label" style={{ marginTop: 14, marginBottom: 10 }}>
+          Distribua {PONTOS_ASI} pontos — no máximo 2 no mesmo atributo (regra real: +2 num só, ou +1 em dois).
+          Faltam {pontosAsiRestantes}.
         </div>
-
-        <div className={styles.body}>
-          <div className="label" style={{ marginBottom: 10 }}>
-            {talentoObjEscolhido?.nome} dá +1 num desses atributos, à sua escolha.
-          </div>
-          {telaEscolhaAtributoTalento.map((a) => {
-            const base = atributosAtuais[a] ?? 10;
-            const maximo = talentoObjEscolhido?.concedeAsi.tipo !== 'nenhum' ? (talentoObjEscolhido?.concedeAsi.maximo ?? 20) : 20;
-            return (
-              <div
-                key={a}
-                className={`opt-card ${atributoTalentoTemp === a ? 'selected' : ''}`}
-                onClick={() => setAtributoTalentoTemp(a)}
-              >
-                <div className="opt-card-name">
-                  {a} {base} → {Math.min(base + 1, maximo)}
+        <div className={styles.asiHeaderRow}>
+          <span>Atributo</span>
+          <span>ASI</span>
+          <span>Total</span>
+        </div>
+        {NOMES_ATRIBUTOS.map((nome) => {
+          const a = nome as Atributo;
+          const base = atributosAtuais[a] ?? 10;
+          const nesse = pontosNoAtributo(a);
+          const total = base + nesse;
+          return (
+            <div key={a} className={styles.asiRow}>
+              <span>
+                {a} {base} ({modificador(base) >= 0 ? '+' : ''}
+                {modificador(base)})
+              </span>
+              <span className={styles.asiStepper}>
+                <div
+                  className={styles.asiBtn}
+                  style={nesse === 0 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
+                  onClick={() => decrementarAsi(a)}
+                >
+                  −
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className={styles.navLayer}>
-          <div
-            className={`btn ${styles.pill}`}
-            onClick={() => {
-              setAtributoTalentoTemp(null);
-              setTelaEscolhaAtributoTalento(null);
-            }}
-          >
-            ← Voltar
-          </div>
-          <div
-            className={`btn btn-primary ${styles.pill} ${atributoTalentoTemp === null ? 'btn-disabled' : ''}`}
-            style={atributoTalentoTemp === null ? { pointerEvents: 'none' } : undefined}
-            onClick={() => {
-              if (atributoTalentoTemp === null) return;
-              setAsiEscolhas([atributoTalentoTemp]);
-              setAtributoTalentoTemp(null);
-              setTelaEscolhaAtributoTalento(null);
-            }}
-          >
-            Confirmar ✓
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (telaAsi) {
-    return (
-      <div className={styles.screen}>
-        <div className={styles.header}>
-          <div className={styles.titleRow}>
-            <div className={styles.stepName}>Aumentar Atributos</div>
-          </div>
-        </div>
-
-        <div className={styles.body}>
-          <div className="label" style={{ marginBottom: 10 }}>
-            Distribua {PONTOS_ASI} pontos — no máximo 2 no mesmo atributo (regra real: +2 num só, ou +1 em dois).
-            Faltam {pontosAsiRestantes}.
-          </div>
-          <div className={styles.asiHeaderRow}>
-            <span>Atributo</span>
-            <span>ASI</span>
-            <span>Total</span>
-          </div>
-          {NOMES_ATRIBUTOS.map((nome) => {
-            const a = nome as Atributo;
-            const base = atributosAtuais[a] ?? 10;
-            const nesse = pontosNoAtributo(a);
-            const total = base + nesse;
-            return (
-              <div key={a} className={styles.asiRow}>
-                <span>
-                  {a} {base} ({modificador(base) >= 0 ? '+' : ''}
-                  {modificador(base)})
-                </span>
-                <span className={styles.asiStepper}>
-                  <div
-                    className={styles.asiBtn}
-                    style={nesse === 0 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
-                    onClick={() => decrementarAsi(a)}
-                  >
-                    −
-                  </div>
-                  <span>{nesse}</span>
-                  <div
-                    className={styles.asiBtn}
-                    style={pontosAsiRestantes === 0 || nesse >= 2 || base + nesse >= 20 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
-                    onClick={() => incrementarAsi(a)}
-                  >
-                    +
-                  </div>
-                </span>
-                <span>
-                  {total} ({modificador(total) >= 0 ? '+' : ''}
-                  {modificador(total)})
-                </span>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className={styles.navLayer}>
-          <div className={`btn ${styles.pill}`} onClick={() => setTelaAsi(false)}>
-            ← Voltar
-          </div>
-          <div
-            className={`btn btn-primary ${styles.pill} ${pontosAsiRestantes === 0 ? '' : 'btn-disabled'}`}
-            style={pontosAsiRestantes === 0 ? undefined : { pointerEvents: 'none' }}
-            onClick={() => {
-              setTelaAsi(false);
-              setLuIndex((i) => i + 1);
-            }}
-          >
-            Confirmar ✓
-          </div>
-        </div>
-      </div>
+                <span>{nesse}</span>
+                <div
+                  className={styles.asiBtn}
+                  style={pontosAsiRestantes === 0 || nesse >= 2 || base + nesse >= 20 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
+                  onClick={() => incrementarAsi(a)}
+                >
+                  +
+                </div>
+              </span>
+              <span>
+                {total} ({modificador(total) >= 0 ? '+' : ''}
+                {modificador(total)})
+              </span>
+            </div>
+          );
+        })}
+      </>
     );
   }
 
@@ -846,59 +745,71 @@ export default function LevelUpShell({
             <div
               className={`opt-card ${asiModo === 'atributo' ? 'selected' : ''}`}
               onClick={() => {
-                if (asiModo !== 'atributo') {
-                  setAsiModo('atributo');
-                  setAsiEscolhas([]);
-                  setTalentoEscolhido(null);
-                }
-                setTelaAsi(true);
+                if (asiModo === 'atributo') return;
+                setAsiModo('atributo');
+                setAsiEscolhas([]);
+                setTalentoEscolhido(null);
               }}
             >
               <div className="opt-card-name">Aumentar Atributos</div>
-              <div className="opt-card-desc">
-                {asiModo === 'atributo' && pontosAsiGastos > 0
-                  ? NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
-                      .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
-                      .join(', ')
-                  : '+2 em um atributo, ou +1 em dois atributos (máx. 20) — toque pra distribuir'}
-              </div>
+              <div className="opt-card-desc">+2 em um atributo, ou +1 em dois atributos (máx. 20)</div>
             </div>
             <div
               className={`opt-card ${asiModo === 'talento' ? 'selected' : ''}`}
               onClick={() => {
-                if (asiModo !== 'talento') {
-                  setAsiModo('talento');
-                  setAsiEscolhas([]);
-                  setTelaTalento(true);
-                  return;
-                }
-                // Talento já escolhido mas o ASI dele ainda não foi
-                // completado (jogador voltou sem terminar) — retoma
-                // direto na tela certa, em vez de reabrir a lista
-                // inteira de talentos de novo.
-                if (talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo !== 'nenhum' && asiEscolhas.length === 0) {
-                  aplicarAsiDoTalento(talentoObjEscolhido);
-                  return;
-                }
-                setTelaTalento(true);
+                if (asiModo === 'talento') return;
+                setAsiModo('talento');
+                setAsiEscolhas([]);
+                setTalentoEscolhido(null);
               }}
             >
               <div className="opt-card-name">Escolher um Talento</div>
-              <div className="opt-card-desc">
-                {asiModo === 'talento' && talentoObjEscolhido
-                  ? `${talentoObjEscolhido.nome}${
-                      asiEscolhas.length > 0
-                        ? ' — ' +
-                          NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
-                            .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
-                            .join(', ')
-                        : talentoObjEscolhido.concedeAsi.tipo !== 'nenhum'
-                          ? ' — falta escolher o atributo, toque pra continuar'
-                          : ''
-                    }`
-                  : 'Talentos Gerais (Cap. 5) — toque pra escolher'}
-              </div>
+              <div className="opt-card-desc">Talentos Gerais (Cap. 5)</div>
             </div>
+
+            {asiModo === 'atributo' && renderDistribuirPontos()}
+
+            {asiModo === 'talento' && (
+              <>
+                <TelaEscolherTalento
+                  nivelAtual={novoNivel}
+                  atributosFinais={atributosFinaisAtuais}
+                  talentosGeraisAtuais={talentosGeraisAtuais}
+                  selecionado={talentoEscolhido}
+                  onSelecionar={(id) => {
+                    if (id === talentoEscolhido) return;
+                    setTalentoEscolhido(id);
+                    const t = talentos.find((x) => x.id === id);
+                    if (t) aplicarAsiDoTalento(t);
+                  }}
+                />
+                {talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && renderDistribuirPontos()}
+                {talentoObjEscolhido &&
+                  talentoObjEscolhido.concedeAsi.tipo === 'escolha-unica' &&
+                  talentoObjEscolhido.concedeAsi.atributos.length > 1 && (
+                    <>
+                      <div className="label" style={{ marginTop: 14, marginBottom: 10 }}>
+                        {talentoObjEscolhido.nome} dá +1 num desses atributos, à sua escolha.
+                      </div>
+                      {talentoObjEscolhido.concedeAsi.atributos.map((a) => {
+                        const base = atributosAtuais[a] ?? 10;
+                        const maximo = talentoObjEscolhido.concedeAsi.tipo !== 'nenhum' ? talentoObjEscolhido.concedeAsi.maximo : 20;
+                        return (
+                          <div
+                            key={a}
+                            className={`opt-card ${asiEscolhas[0] === a ? 'selected' : ''}`}
+                            onClick={() => setAsiEscolhas([a])}
+                          >
+                            <div className="opt-card-name">
+                              {a} {base} → {Math.min(base + 1, maximo)}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+              </>
+            )}
           </>
         )}
 

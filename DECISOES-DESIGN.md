@@ -4705,3 +4705,58 @@ clique forçado (`{force:true}`) não navega. Screenshot confirma
 visual agora igual ao "← Voltar" (claramente esmaecido).
 
 **Data/origem:** 2026-08.
+
+## Talentos/ASI — correção definitiva: sem tela própria, sem botão "Confirmar" — só o "Avançar" do passo
+
+**Contexto:** as duas correções anteriores (texto mais claro, depois
+botão "Confirmar" com bloqueio de verdade) ainda erravam o problema
+de raiz. Feedback do Osmar, bem direto: (1) o app inteiro usa um
+único fluxo — "Avançar" no rodapé fixo do passo é quem confirma e
+navega; eu inventei um botão "Confirmar" **só** pra essas 3 telas
+(lista de talentos, escolha de atributo do talento, distribuição de
+ASI), quebrando a consistência sem motivo. (2) essas 3 telas também
+eram **telas cheias separadas** (`telaTalento`, `telaAsi`,
+`telaEscolhaAtributoTalento` — cada uma um `return` antecipado
+substituindo a tela toda), diferente de todo outro passo do Level Up
+(ex: "Escolha sua subclasse", "Estilo de Luta"), que renderizam a
+escolha **dentro do mesmo passo**, com o "Avançar" do passo (já
+existente, fixo no rodapé) sendo o único ponto de confirmação.
+
+**Decisão:** as 3 telas deixam de existir como telas separadas.
+Viram conteúdo condicional dentro do próprio passo `'asi'`, exatamente
+como "subclasse"/"estiloDeLuta"/etc já funcionavam:
+- Os 2 cards "Aumentar Atributos" / "Escolher um Talento" agora só
+  marcam `asiModo` (nunca abrem tela nem tela nova) — mesmo padrão de
+  card-de-modo usado em outro lugar do app.
+- Escolhido `asiModo === 'atributo'`, a tabela de distribuir 2 pontos
+  aparece **logo abaixo**, no mesmo scroll do passo (função
+  `renderDistribuirPontos()`, reaproveitada também pro caso de talento
+  com `concedeAsi.tipo === 'distribuir-dois'` — mesma tabela, dois
+  lugares).
+- Escolhido `asiModo === 'talento'`, a lista de talentos
+  (`TelaEscolherTalento`, agora um componente de lista simples — sem
+  header, sem nav própria, só os `opt-card`s controlados pelo pai)
+  aparece embaixo; tocar num talento só marca `talentoEscolhido`. Se o
+  talento escolhido concede ASI com mais de 1 atributo possível
+  (`escolha-unica` com 2+ opções), a lista de atributo aparece
+  **embaixo dessa lista**, no mesmo passo — tocar só marca
+  `asiEscolhas`.
+- `avancar()` (a função que já existia pro "Avançar" de todo passo)
+  ganhou as mesmas validações de antes, mas agora só mostram aviso
+  (nunca abrem tela) quando algo falta: modo não escolhido, pontos de
+  atributo não completos, talento não escolhido, ASI do talento não
+  completo.
+- Nenhum botão "Confirmar" extra sobrou — o "Confirmar ✓" que existe
+  no rodapé é só o de sempre (aparece apenas no último passo,
+  "Resumo", mesmo padrão do resto do app).
+
+**Testado:** Playwright 390×844 — confirmado que não existe mais
+botão "Confirmar" na tela de ASI/Talento; marcar o modo "Talento" não
+navega (lista aparece inline na mesma tela); "Avançar" sem escolher
+talento mostra aviso e não navega; marcar Esmagador não navega
+(escolha de atributo aparece inline); "Avançar" sem escolher o
+atributo mostra aviso; marcar CON não navega; só depois de tudo
+escolhido o "Avançar" de fato sai do passo. Estado final persistido
+correto (CON +1, talento "esmagador" salvo).
+
+**Data/origem:** 2026-08.
