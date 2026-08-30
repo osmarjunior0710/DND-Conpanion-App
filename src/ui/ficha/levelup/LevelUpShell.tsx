@@ -176,6 +176,7 @@ export default function LevelUpShell({
   const [telaAsi, setTelaAsi] = useState(false);
   const [talentoEscolhido, setTalentoEscolhido] = useState<string | null>(null);
   const [telaTalento, setTelaTalento] = useState(false);
+  const [telaEscolhaAtributoTalento, setTelaEscolhaAtributoTalento] = useState<Atributo[] | null>(null);
   const [aviso, setAviso] = useAvisoTemporario();
 
   const media = dadoVidaValor[personagem.dadoVida] + personagem.conMod;
@@ -272,6 +273,31 @@ export default function LevelUpShell({
     setAsiEscolhas((prev) => prev.filter((_, i) => i !== idx));
   }
 
+  const talentoObjEscolhido = talentoEscolhido ? (talentos.find((t) => t.id === talentoEscolhido) ?? null) : null;
+
+  /** Ao escolher um talento com `concedeAsi`, decide o que fazer com o
+   * ASI que ele concede — mesmo padrão do ASI genérico: `distribuir-dois`
+   * reaproveita a tela de distribuição (`telaAsi`); `escolha-unica` com
+   * 1 atributo só aplica direto (sem escolha real); com 2+ atributos
+   * abre uma tela pra escolher qual. Ver DECISOES-DESIGN.md. */
+  function aplicarAsiDoTalento(t: (typeof talentos)[number]) {
+    if (t.concedeAsi.tipo === 'nenhum') {
+      setAsiEscolhas([]);
+      return;
+    }
+    if (t.concedeAsi.tipo === 'distribuir-dois') {
+      setAsiEscolhas([]);
+      setTelaAsi(true);
+      return;
+    }
+    if (t.concedeAsi.atributos.length === 1) {
+      setAsiEscolhas([t.concedeAsi.atributos[0]]);
+    } else {
+      setAsiEscolhas([]);
+      setTelaEscolhaAtributoTalento(t.concedeAsi.atributos);
+    }
+  }
+
   const step = luSteps[luIndex];
   const nomesStep: Record<LuStep, string> = {
     pv: 'Pontos de Vida',
@@ -335,6 +361,20 @@ export default function LevelUpShell({
         setAviso('Escolha um Talento antes de avançar.');
         return;
       }
+      if (asiModo === 'talento' && talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && pontosAsiRestantes > 0) {
+        setTelaAsi(true);
+        return;
+      }
+      if (
+        asiModo === 'talento' &&
+        talentoObjEscolhido &&
+        talentoObjEscolhido.concedeAsi.tipo === 'escolha-unica' &&
+        talentoObjEscolhido.concedeAsi.atributos.length > 1 &&
+        asiEscolhas.length === 0
+      ) {
+        setTelaEscolhaAtributoTalento(talentoObjEscolhido.concedeAsi.atributos);
+        return;
+      }
     }
     setAviso(null);
     if (step === 'resumo') {
@@ -346,7 +386,7 @@ export default function LevelUpShell({
         truquesEscolhidos: luSteps.includes('truques') ? truquesEscolhidos : null,
         magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
         periciasEspecialistaEscolhidas: luSteps.includes('especialista') ? especialistaEscolhidas : null,
-        atributosAumentados: luSteps.includes('asi') && asiModo === 'atributo' ? asiEscolhas : null,
+        atributosAumentados: luSteps.includes('asi') && (asiModo === 'atributo' || asiModo === 'talento') && asiEscolhas.length > 0 ? asiEscolhas : null,
         talentoGeralEscolhido: luSteps.includes('asi') && asiModo === 'talento' ? talentoEscolhido : null,
       });
       return;
@@ -401,9 +441,53 @@ export default function LevelUpShell({
         onEscolher={(id) => {
           setTalentoEscolhido(id);
           setTelaTalento(false);
+          const t = talentos.find((x) => x.id === id);
+          if (t) aplicarAsiDoTalento(t);
         }}
         onFechar={() => setTelaTalento(false)}
       />
+    );
+  }
+
+  if (telaEscolhaAtributoTalento) {
+    return (
+      <div className={styles.screen}>
+        <div className={styles.header}>
+          <div className={styles.titleRow}>
+            <div className={styles.stepName}>Escolher Atributo</div>
+          </div>
+        </div>
+
+        <div className={styles.body}>
+          <div className="label" style={{ marginBottom: 10 }}>
+            {talentoObjEscolhido?.nome} dá +1 num desses atributos, à sua escolha.
+          </div>
+          {telaEscolhaAtributoTalento.map((a) => {
+            const base = atributosAtuais[a] ?? 10;
+            const maximo = talentoObjEscolhido?.concedeAsi.tipo !== 'nenhum' ? (talentoObjEscolhido?.concedeAsi.maximo ?? 20) : 20;
+            return (
+              <div
+                key={a}
+                className="opt-card"
+                onClick={() => {
+                  setAsiEscolhas([a]);
+                  setTelaEscolhaAtributoTalento(null);
+                }}
+              >
+                <div className="opt-card-name">
+                  {a} {base} → {Math.min(base + 1, maximo)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.navLayer}>
+          <div className={`btn ${styles.pill}`} onClick={() => setTelaEscolhaAtributoTalento(null)}>
+            ← Voltar
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -772,8 +856,15 @@ export default function LevelUpShell({
             >
               <div className="opt-card-name">Escolher um Talento</div>
               <div className="opt-card-desc">
-                {asiModo === 'talento' && talentoEscolhido
-                  ? (talentos.find((t) => t.id === talentoEscolhido)?.nome ?? talentoEscolhido)
+                {asiModo === 'talento' && talentoObjEscolhido
+                  ? `${talentoObjEscolhido.nome}${
+                      asiEscolhas.length > 0
+                        ? ' — ' +
+                          NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
+                            .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
+                            .join(', ')
+                        : ''
+                    }`
                   : 'Talentos Gerais (Cap. 5) — toque pra escolher'}
               </div>
             </div>
@@ -848,7 +939,17 @@ export default function LevelUpShell({
             {asiModo === 'talento' && (
               <div className="summary-row">
                 <span>Talento</span>
-                <span>{(talentoEscolhido && talentos.find((t) => t.id === talentoEscolhido)?.nome) ?? 'nenhum escolhido'}</span>
+                <span>{talentoObjEscolhido?.nome ?? 'nenhum escolhido'}</span>
+              </div>
+            )}
+            {asiModo === 'talento' && asiEscolhas.length > 0 && (
+              <div className="summary-row">
+                <span>ASI do talento</span>
+                <span>
+                  {NOMES_ATRIBUTOS.filter((a) => pontosNoAtributo(a as Atributo) > 0)
+                    .map((a) => `${a} +${pontosNoAtributo(a as Atributo)}`)
+                    .join(', ')}
+                </span>
               </div>
             )}
             <div className="label" style={{ marginTop: 10 }}>

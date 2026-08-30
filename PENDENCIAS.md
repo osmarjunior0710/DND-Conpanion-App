@@ -612,37 +612,27 @@ motivou o pedido.
   ainda, exceto Guerreiro nível 1, que já está limpo). Aplicar o mesmo
   tratamento de Espécies quando fizer sentido pra tela em questão.
 
-## Talentos — ASI embutido no talento escolhido + Fase 4 ainda faltam
+## Talentos — Fase 4 ainda falta (Fases 1, 2 e 3 completas)
 
-**O que é:** Fases 1 (dado), 2 (classificação de texto) e a 1ª metade
-da Fase 3 (seleção de Talento Geral no Level Up, com validação de
-Nível/Atributo Mínimo, salva e mostra na Ficha como InfoChip `[PH]`)
-estão feitas — ver DECISOES-DESIGN.md pros detalhes. Level Up já
-oferece "Escolher um Talento" de verdade no passo de ASI.
+**O que é:** Fases 1 (dado), 2 (classificação de texto) e 3 completa
+(seleção de Talento Geral no Level Up com validação de Nível/Atributo
+Mínimo + ASI embutido do próprio talento aplicado de verdade) estão
+feitas — ver DECISOES-DESIGN.md pros detalhes. Talento fica salvo e
+mostrado na Ficha como `[PH]` — só falta o efeito mecânico de verdade.
 
 **O que falta:**
 
-1. **ASI embutido no talento escolhido (2ª metade da Fase 3, adiada de
-   propósito nesta entrega):** hoje, ao escolher um talento com
-   `concedeAsi.tipo !== 'nenhum'` (ex: "Aumento no Valor de Atributo",
-   que é `distribuir-dois`, ou "Atirador Arcano", que é
-   `escolha-unica` entre INT/SAB/CAR), **nenhum atributo é alterado**
-   — só o nome do talento é salvo. Falta: se `distribuir-dois`, abrir
-   a mesma tela de distribuição de 2 pontos que o ASI genérico já usa
-   (`TelaEscolherTalento` → `telaAsi`, reaproveitando
-   `aumentarAtributos`); se `escolha-unica` com mais de 1 atributo na
-   lista, pedir qual dos elegíveis; se só 1 (ou nenhum), aplicar
-   direto sem pedir escolha.
-2. **Fase 4 — Aplicar efeito de verdade, em lotes pequenos** (5-10 por
-   vez) — ordem sugerida: primeiro ASI puro sem regra, depois 1 número
-   isolado (ex: Alerta → Iniciativa), por último múltiplos
-   efeitos/Reação (ex: Conjurador Bélico). Cada talento sai do `[PH]`
-   ao ser implementado. A classificação da Fase 2
-   (`classificarTalento.ts`) ajuda a decidir em qual painel de Combat
-   (Ação/Bônus/Reação) cada efeito deve aparecer quando chegar a vez
-   dele, mas ainda precisa de tag manual "afeta cálculo" por talento —
-   o classificador é heurístico (regex), erra ocasionalmente, não é
-   fonte de verdade sozinho.
+1. **Fase 4 — Aplicar efeito de verdade, em lotes pequenos** (5-10 por
+   vez) — ordem sugerida: primeiro ASI puro sem regra (já cobertos
+   automaticamente pela Fase 3 — só falta os que têm regra extra além
+   do ASI), depois 1 número isolado (ex: Alerta → Iniciativa), por
+   último múltiplos efeitos/Reação (ex: Conjurador Bélico). Cada
+   talento sai do `[PH]` ao ser implementado. A classificação da
+   Fase 2 (`classificarTalento.ts`) ajuda a decidir em qual painel de
+   Combat (Ação/Bônus/Reação) cada efeito deve aparecer quando chegar
+   a vez dele, mas ainda precisa de tag manual "afeta cálculo" por
+   talento — o classificador é heurístico (regex), erra ocasionalmente,
+   não é fonte de verdade sozinho.
 
 Ideia extra do Osmar (registrada, sem decisão ainda — é decisão de
 produto, não de dado/regra): uma aba de anotações de talento; se for

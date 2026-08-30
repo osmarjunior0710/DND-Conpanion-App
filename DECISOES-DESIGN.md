@@ -4563,3 +4563,46 @@ Obra" (outra característica do mesmo nível, sem tela própria) continua
 aparecendo normalmente.
 
 **Data/origem:** 2026-08.
+
+## Talentos Fase 3 (parte 2) — ASI do próprio talento aplicado de verdade
+
+**Decisão:** ao escolher um talento no Level Up que concede ASI
+(`concedeAsi.tipo !== 'nenhum'`), o bônus de atributo é aplicado de
+verdade agora, não só o nome salvo. Reaproveita o que já existia:
+
+- `distribuir-dois` (só "Aumento no Valor de Atributo" hoje): abre a
+  mesma tela de distribuição de 2 pontos (`telaAsi`) já usada pelo ASI
+  genérico — zero UI nova, só troca o gatilho de abertura.
+- `escolha-unica` com 1 atributo só na lista: aplica direto, sem
+  pedir escolha (não tem escolha real).
+- `escolha-unica` com 2+ atributos (ex: Atirador Arcano → INT/SAB/CAR):
+  nova tela pequena `telaEscolhaAtributoTalento` — lista só os
+  atributos elegíveis daquele talento, cada um mostrando "FOR 12 → 13"
+  (valor atual → valor com o bônus), toque aplica direto.
+
+Ambos os fluxos escrevem no mesmo `asiEscolhas` (estado já existente
+pro ASI genérico) — o `onConfirmar` já sabia aplicar isso via
+`aumentarAtributos`, só precisou trocar a condição de "só quando
+`asiModo === 'atributo'`" pra "quando `asiModo === 'atributo'` OU
+(`'talento'` com `asiEscolhas` preenchido)".
+
+**Validação no "Avançar":** se o talento escolhido exige uma escolha
+de ASI ainda não feita (`distribuir-dois` com pontos sobrando, ou
+`escolha-unica` com 2+ opções e nada escolhido), o "Avançar" reabre a
+tela certa em vez de deixar seguir sem aplicar nada — mesmo padrão já
+usado pro ASI genérico.
+
+**Resumo e card ficam explícitos:** o card "Escolher um Talento" e a
+tela de Resumo mostram o nome do talento junto com o ASI aplicado
+(ex: "Atirador Arcano — INT +1"), pra não ficar escondido que o
+talento também mexeu num atributo.
+
+**Testado:** Playwright 390×844, Bardo nível 3→4, 2 cenários
+completos: (1) Atirador Arcano (`escolha-unica`, 3 opções) — tela de
+escolha abriu, INT 12→13 aplicado, resumo mostrou "ASI do talento:
+INT +1", confirmado e persistido. (2) Aumento no Valor de Atributo
+(`distribuir-dois`) — tela de distribuição abriu, FOR +2 (8→10)
+aplicado, resumo mostrou "ASI do talento: FOR +2", confirmado e
+persistido.
+
+**Data/origem:** 2026-08.
