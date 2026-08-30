@@ -174,6 +174,11 @@ function aplicarLevelUpsAleatorios(
   classe: Classe,
   selecaoInicial: WizardSelection,
   nivelAlvo: number,
+  /** Quando informado, o PRIMEIRO nível de ASI encontrado usa esse
+   * talento em vez do sorteio 50/50 — usado por
+   * `gerarPersonagemComTalento` pra garantir que o personagem de teste
+   * de um talento específico realmente tenha esse talento. */
+  talentoForcadoId?: string,
 ): {
   selecao: WizardSelection;
   nivel: number;
@@ -236,7 +241,8 @@ function aplicarLevelUpsAleatorios(
       const atributosFinaisAtuais = Object.fromEntries(
         atributosOrdem.map((a) => [a, valorFinalAtributo(selecao, a) ?? 10]),
       ) as Record<Atributo, number>;
-      const usarTalento = Math.random() < 0.5;
+      const talentoForcado = talentoForcadoId && !talentosGeraisAtual.includes(talentoForcadoId) ? talentoForcadoId : null;
+      const usarTalento = talentoForcado !== null || Math.random() < 0.5;
       const opcoesTalento = usarTalento
         ? talentos.filter(
             (t) =>
@@ -246,8 +252,9 @@ function aplicarLevelUpsAleatorios(
               talentoDisponivel(t, nivel, atributosFinaisAtuais),
           )
         : [];
-      const talentoEscolhido =
-        sorteiaUm(opcoesTalento) ?? talentos.find((t) => t.id === 'aumento-no-valor-de-atributo') ?? null;
+      const talentoEscolhido = talentoForcado
+        ? (talentos.find((t) => t.id === talentoForcado) ?? null)
+        : (sorteiaUm(opcoesTalento) ?? talentos.find((t) => t.id === 'aumento-no-valor-de-atributo') ?? null);
       if (talentoEscolhido) {
         talentosGeraisAtual = [...talentosGeraisAtual, talentoEscolhido.id];
         const codigos = sortearAsiDoTalento(talentoEscolhido);
@@ -299,6 +306,9 @@ export function gerarPersonagemTeste(params: {
   origemNome: string;
   especieNome: string;
   nivelAlvo: number;
+  /** ID de um Talento Geral pra forçar no primeiro nível de ASI
+   * disponível, em vez do sorteio 50/50 — ver `gerarPersonagemComTalento`. */
+  talentoForcadoId?: string;
 }): PersonagemSalvo {
   const classe = classes.find((c) => c.nome === params.classeNome);
   if (!classe) throw new Error(`Classe não encontrada: ${params.classeNome}`);
@@ -319,7 +329,7 @@ export function gerarPersonagemTeste(params: {
     };
   }
 
-  const resultado = aplicarLevelUpsAleatorios(classe, selecaoNivel1, nivelAlvo);
+  const resultado = aplicarLevelUpsAleatorios(classe, selecaoNivel1, nivelAlvo, params.talentoForcadoId);
   return {
     id: gerarIdPersonagem(),
     criadoEm: new Date().toISOString(),
@@ -335,4 +345,81 @@ export function gerarPersonagemTeste(params: {
     periciasEspecialistaAtual: resultado.periciasEspecialistaAtual,
     talentosGeraisAtual: resultado.talentosGeraisAtual,
   };
+}
+
+/** Catálogo dos talentos/estilos já com efeito mecânico de verdade
+ * (Fase 4, lote 1 — ver DECISOES-DESIGN.md "Talentos Fase 4 — lote
+ * 1"). Cada um vem de um lugar diferente do personagem — `tipo` diz
+ * qual: `'origem'` só nasce de uma Origem específica (nunca escolhido
+ * na mão), `'estiloDeLuta'` vem do Estilo de Luta da classe (Guerreiro/
+ * Paladino/Guardião), `'geral'` é um Talento normal da lista de
+ * Level Up. Usado por `gerarPersonagensDeTesteDosTalentos` — quando
+ * a Fase 4 ganhar um novo lote, adicionar aqui também. */
+export const TALENTOS_FASE4_IMPLEMENTADOS: { id: string; nome: string; tipo: 'origem' | 'estiloDeLuta' | 'geral' }[] = [
+  { id: 'alerta', nome: 'Alerta', tipo: 'origem' },
+  { id: 'defensivo', nome: 'Defensivo', tipo: 'estiloDeLuta' },
+  { id: 'arquearia', nome: 'Arquearia', tipo: 'estiloDeLuta' },
+  { id: 'duelismo', nome: 'Duelismo', tipo: 'estiloDeLuta' },
+  { id: 'mestre-em-armaduras-medias', nome: 'Mestre em Armaduras Médias', tipo: 'geral' },
+];
+
+/** Gera um personagem de teste garantindo que ele TEM o talento/estilo
+ * pedido (não sorteado — forçado), com o nome do personagem = nome do
+ * talento, pra identificar na Lista sem abrir a ficha. Usa Classe/
+ * Origem/Espécie compatíveis (a primeira `disponivel` que sirva), o
+ * resto genérico/sorteado — mesmo espírito de `gerarPersonagemTeste`. */
+export function gerarPersonagemComTalento(id: string): PersonagemSalvo {
+  const entrada = TALENTOS_FASE4_IMPLEMENTADOS.find((t) => t.id === id);
+  if (!entrada) throw new Error(`Talento/Estilo não catalogado em TALENTOS_FASE4_IMPLEMENTADOS: ${id}`);
+
+  const especieNome = especies.find((e) => e.disponivel)?.nome;
+  if (!especieNome) throw new Error('Nenhuma Espécie disponível.');
+
+  if (entrada.tipo === 'origem') {
+    const origemObj = origens.find((o) => o.disponivel && o.talentoOrigemId === id);
+    if (!origemObj) throw new Error(`Nenhuma Origem disponível concede o talento "${id}".`);
+    const classeNome = classes.find((c) => c.disponivel)?.nome;
+    if (!classeNome) throw new Error('Nenhuma Classe disponível.');
+    const personagem = gerarPersonagemTeste({ classeNome, origemNome: origemObj.nome, especieNome, nivelAlvo: 1 });
+    personagem.selecao.nome = entrada.nome;
+    return personagem;
+  }
+
+  if (entrada.tipo === 'estiloDeLuta') {
+    const classeObj = classes.find((c) => c.disponivel && temEstiloDeLutaTrocavel(c, 1));
+    if (!classeObj) throw new Error(`Nenhuma Classe disponível tem Estilo de Luta pra testar "${id}".`);
+    const estiloObj = estilosDeLuta.find((e) => e.id === id);
+    if (!estiloObj) throw new Error(`Estilo de Luta não encontrado: ${id}`);
+    const origemNome = origens.find((o) => o.disponivel)?.nome;
+    if (!origemNome) throw new Error('Nenhuma Origem disponível.');
+    const personagem = gerarPersonagemTeste({ classeNome: classeObj.nome, origemNome, especieNome, nivelAlvo: 1 });
+    personagem.selecao.estiloDeLutaEscolhido = estiloObj.nome;
+    personagem.estiloDeLutaAtual = estiloObj.nome;
+    personagem.selecao.nome = entrada.nome;
+    return personagem;
+  }
+
+  // 'geral' — talento normal de Level Up, forçado no 1º nível de ASI.
+  const classeObj = classes.find((c) => c.disponivel && niveisComASI(c).length > 0);
+  if (!classeObj) throw new Error(`Nenhuma Classe disponível tem nível de ASI pra testar "${id}".`);
+  const nivelAlvo = Math.min(...niveisComASI(classeObj));
+  const origemNome = origens.find((o) => o.disponivel)?.nome;
+  if (!origemNome) throw new Error('Nenhuma Origem disponível.');
+  const personagem = gerarPersonagemTeste({
+    classeNome: classeObj.nome,
+    origemNome,
+    especieNome,
+    nivelAlvo,
+    talentoForcadoId: id,
+  });
+  personagem.selecao.nome = entrada.nome;
+  return personagem;
+}
+
+/** Gera 1 personagem de teste pra CADA talento/estilo já implementado
+ * (Fase 4) — pedido direto do Osmar pra conferir todos de uma vez, sem
+ * depender do sorteio acertar a combinação certa. Não salva sozinho —
+ * quem chama decide (mesmo padrão de `gerarPersonagemTeste`). */
+export function gerarPersonagensDeTesteDosTalentos(): PersonagemSalvo[] {
+  return TALENTOS_FASE4_IMPLEMENTADOS.map((t) => gerarPersonagemComTalento(t.id));
 }

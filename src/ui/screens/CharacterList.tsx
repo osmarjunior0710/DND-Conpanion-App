@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { armazenamentoPersonagens } from '../../core/armazenamentoPersonagens';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
+import { gerarPersonagensDeTesteDosTalentos } from '../../core/geradorPersonagemTeste';
 import { classes } from '../../data/rulesets/dnd2024/classes';
 import { subclasses } from '../../data/rulesets/dnd2024/subclasses';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
@@ -40,7 +41,12 @@ export default function CharacterList() {
       iconeId: subclasseId ?? classeId,
       nivel: p.nivel,
       pvAtual: p.pvAtual,
-      pvMax: calcularPvMaximoNivel1(p.selecao) ?? p.pvAtual,
+      // `p.pvMax` é o PV máximo real (acumulado nos Level Ups) — cai
+      // pro cálculo de nível 1 só em personagens salvos antes desse
+      // campo existir (mesmo padrão de fallback do FichaShell.tsx).
+      // Sem isso, todo personagem acima do nível 1 mostrava um "PV
+      // máximo" de nível 1 aqui, menor que o PV atual de verdade.
+      pvMax: p.pvMax ?? calcularPvMaximoNivel1(p.selecao) ?? p.pvAtual,
     };
   });
 
@@ -62,6 +68,12 @@ export default function CharacterList() {
     setVersao((v) => v + 1);
   }
 
+  function criarPersonagensDosTalentos() {
+    const personagens = gerarPersonagensDeTesteDosTalentos();
+    personagens.forEach((p) => armazenamentoPersonagens.salvar(p));
+    setVersao((v) => v + 1);
+  }
+
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -76,6 +88,10 @@ export default function CharacterList() {
 
       <div className="btn" style={{ marginBottom: 10 }} onClick={() => setModalTesteAberto(true)}>
         🎲 Personagem de Teste — gera uma ficha completa na hora, pra testar rápido
+      </div>
+
+      <div className="btn" style={{ marginBottom: 10 }} onClick={criarPersonagensDosTalentos}>
+        🧪 Criar 1 personagem por Talento implementado — nome = nome do talento
       </div>
 
       {personagens.length === 0 && (

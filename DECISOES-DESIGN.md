@@ -5059,3 +5059,49 @@ ficou destacado; personagem gerado nível 3; "Level Up" na Ficha abriu
 normalmente, pronto pra escolher o Talento do nível 4.
 
 **Data/origem:** 2026-08.
+
+## Botão "Criar 1 personagem por Talento implementado"
+
+**Contexto:** o Osmar pediu um jeito de conferir de vez os 5 talentos
+da Fase 4 lote 1 sem depender do sorteio acertar a combinação certa
+(Alerta só vem de Origem específica; os 3 de Estilo de Luta são 1 em
+10 no sorteio) — nome do personagem de teste = nome do talento, 1 pra
+cada.
+
+**Decisão:** `core/geradorPersonagemTeste.ts` ganhou
+`TALENTOS_FASE4_IMPLEMENTADOS` (catálogo com `tipo: 'origem' |
+'estiloDeLuta' | 'geral'`, um por talento já implementado — atualizar
+aqui a cada novo lote da Fase 4) e `gerarPersonagemComTalento(id)`,
+que monta Classe/Origem/Espécie compatíveis automaticamente pro tipo
+certo (`'origem'` busca a Origem que concede aquele
+`talentoOrigemId`; `'estiloDeLuta'` busca uma Classe com Estilo de
+Luta trocável e força esse Estilo; `'geral'` sobe até o 1º nível de
+ASI da Classe e força esse Talento em vez do sorteio 50/50) e seta
+`selecao.nome` = nome do talento. `gerarPersonagensDeTesteDosTalentos()`
+gera os 5 de uma vez; botão "🧪 Criar 1 personagem por Talento
+implementado" na tela "Seus personagens" salva todos e recarrega a
+lista.
+
+**Bug encontrado e corrigido no processo:** o card de cada personagem
+na lista mostrava `pvAtual/pvMax` errado pra qualquer personagem
+acima do nível 1 — `CharacterList.tsx` calculava o "PV máximo" sempre
+com `calcularPvMaximoNivel1(selecao)` (fórmula de nível 1), ignorando
+o campo `p.pvMax` (PV máximo real, acumulado nos Level Ups) que já
+existe em `PersonagemSalvo` e já é usado corretamente em
+`FichaShell.tsx`. Resultado visível: "Mestre em Armaduras Médias"
+(nível 4) aparecia como "32/11 PV" (atual maior que o "máximo").
+Corrigido pra `p.pvMax ?? calcularPvMaximoNivel1(selecao) ?? p.pvAtual`
+— mesmo padrão de fallback já usado em `FichaShell.tsx` (o `??`
+cobre só personagens salvos antes desse campo existir). Não era um
+bug introduzido por essa entrega — só nunca tinha aparecido porque
+não havia antes uma forma rápida de criar um personagem já acima do
+nível 1.
+
+**Testado:** Playwright 390×844 — os 5 personagens saem com o
+talento/estilo certo (`talentosGeraisAtual`/`estiloDeLutaAtual`
+conferidos via localStorage) e nome = nome do talento; Iniciativa do
+"Alerta" bateu (+4 = +2 DES +2 Prof.); PV da lista corrigido em todos
+os 5 depois do fix (antes só o de nível 4 mostrava o bug, porque os
+de nível 1 nunca tinham Level Up acumulado pra divergir).
+
+**Data/origem:** 2026-08.
