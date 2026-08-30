@@ -177,6 +177,7 @@ export default function LevelUpShell({
   const [talentoEscolhido, setTalentoEscolhido] = useState<string | null>(null);
   const [telaTalento, setTelaTalento] = useState(false);
   const [telaEscolhaAtributoTalento, setTelaEscolhaAtributoTalento] = useState<Atributo[] | null>(null);
+  const [atributoTalentoTemp, setAtributoTalentoTemp] = useState<Atributo | null>(null);
   const [aviso, setAviso] = useAvisoTemporario();
 
   const media = dadoVidaValor[personagem.dadoVida] + personagem.conMod;
@@ -294,6 +295,7 @@ export default function LevelUpShell({
       setAsiEscolhas([t.concedeAsi.atributos[0]]);
     } else {
       setAsiEscolhas([]);
+      setAtributoTalentoTemp(null);
       setTelaEscolhaAtributoTalento(t.concedeAsi.atributos);
     }
   }
@@ -372,6 +374,7 @@ export default function LevelUpShell({
         talentoObjEscolhido.concedeAsi.atributos.length > 1 &&
         asiEscolhas.length === 0
       ) {
+        setAtributoTalentoTemp(null);
         setTelaEscolhaAtributoTalento(talentoObjEscolhido.concedeAsi.atributos);
         return;
       }
@@ -438,6 +441,7 @@ export default function LevelUpShell({
         nivelAtual={novoNivel}
         atributosFinais={atributosFinaisAtuais}
         talentosGeraisAtuais={talentosGeraisAtuais}
+        talentoSelecionadoInicial={talentoEscolhido}
         onEscolher={(id) => {
           setTalentoEscolhido(id);
           setTelaTalento(false);
@@ -468,11 +472,8 @@ export default function LevelUpShell({
             return (
               <div
                 key={a}
-                className="opt-card"
-                onClick={() => {
-                  setAsiEscolhas([a]);
-                  setTelaEscolhaAtributoTalento(null);
-                }}
+                className={`opt-card ${atributoTalentoTemp === a ? 'selected' : ''}`}
+                onClick={() => setAtributoTalentoTemp(a)}
               >
                 <div className="opt-card-name">
                   {a} {base} → {Math.min(base + 1, maximo)}
@@ -483,8 +484,26 @@ export default function LevelUpShell({
         </div>
 
         <div className={styles.navLayer}>
-          <div className={`btn ${styles.pill}`} onClick={() => setTelaEscolhaAtributoTalento(null)}>
+          <div
+            className={`btn ${styles.pill}`}
+            onClick={() => {
+              setAtributoTalentoTemp(null);
+              setTelaEscolhaAtributoTalento(null);
+            }}
+          >
             ← Voltar
+          </div>
+          <div
+            className={`btn btn-primary ${styles.pill}`}
+            style={atributoTalentoTemp === null ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            onClick={() => {
+              if (atributoTalentoTemp === null) return;
+              setAsiEscolhas([atributoTalentoTemp]);
+              setAtributoTalentoTemp(null);
+              setTelaEscolhaAtributoTalento(null);
+            }}
+          >
+            Confirmar ✓
           </div>
         </div>
       </div>

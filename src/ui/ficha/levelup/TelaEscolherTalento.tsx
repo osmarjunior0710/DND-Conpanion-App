@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Atributo } from '../../../data/wizardFixtures';
 import { talentos, type Talento } from '../../../data/rulesets/dnd2024/talentos';
 import styles from './LevelUpShell.module.css';
@@ -6,6 +7,9 @@ interface TelaEscolherTalentoProps {
   nivelAtual: number;
   atributosFinais: Record<Atributo, number>;
   talentosGeraisAtuais: string[];
+  /** Talento já escolhido antes (reabrindo pra trocar) — vem
+   * pré-marcado, mesmo padrão de outras telas de edição do Level Up. */
+  talentoSelecionadoInicial: string | null;
   onEscolher: (id: string) => void;
   onFechar: () => void;
 }
@@ -27,16 +31,23 @@ function motivoIndisponivel(t: Talento, nivelAtual: number, atributosFinais: Rec
  * Nível/Atributo Mínimo (dado real); "Outro Pré-requisito" (texto
  * livre) aparece como aviso não-bloqueante, nunca trava a escolha.
  * Talento fica salvo `[PH]` — Fase 4 aplica o efeito mecânico de
- * verdade, talento por talento. */
+ * verdade, talento por talento.
+ *
+ * Tocar num talento só marca a seleção (destaca o card) — mesmo
+ * padrão de toda outra tela do Level Up (marcar, depois "Confirmar").
+ * Antes disso, tocar já fechava a tela na hora, diferente do resto do
+ * fluxo — o Osmar notou a inconsistência. */
 export default function TelaEscolherTalento({
   nivelAtual,
   atributosFinais,
   talentosGeraisAtuais,
+  talentoSelecionadoInicial,
   onEscolher,
   onFechar,
 }: TelaEscolherTalentoProps) {
+  const [selecionado, setSelecionado] = useState<string | null>(talentoSelecionadoInicial);
   const opcoes = talentos.filter(
-    (t) => t.categoria === 'Geral' && (t.repetivel || !talentosGeraisAtuais.includes(t.id)),
+    (t) => t.categoria === 'Geral' && (t.repetivel || !talentosGeraisAtuais.includes(t.id) || t.id === talentoSelecionadoInicial),
   );
 
   return (
@@ -58,9 +69,9 @@ export default function TelaEscolherTalento({
           return (
             <div
               key={t.id}
-              className="opt-card"
+              className={`opt-card ${selecionado === t.id ? 'selected' : ''}`}
               style={disponivel ? { cursor: 'pointer' } : { opacity: 0.45, pointerEvents: 'none' }}
-              onClick={() => disponivel && onEscolher(t.id)}
+              onClick={() => disponivel && setSelecionado(t.id)}
             >
               <div className="opt-card-name">
                 {t.nome}
@@ -80,6 +91,13 @@ export default function TelaEscolherTalento({
       <div className={styles.navLayer}>
         <div className={`btn ${styles.pill}`} onClick={onFechar}>
           ← Voltar
+        </div>
+        <div
+          className={`btn btn-primary ${styles.pill}`}
+          style={selecionado === null ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+          onClick={() => selecionado && onEscolher(selecionado)}
+        >
+          Confirmar ✓
         </div>
       </div>
     </div>

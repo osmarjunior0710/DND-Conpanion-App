@@ -4635,3 +4635,42 @@ abre a tela de atributo direto (não a lista); escolher CON aplicou
 +1 de verdade e persistiu.
 
 **Data/origem:** 2026-08.
+
+## Talentos — correção: seleção precisa marcar e depois "Confirmar", não aplicar no toque
+
+**Contexto:** a decisão acima (clareza de texto) **não resolveu o
+problema de verdade**. Feedback direto do Osmar: "em todo lugar você
+tem que escolher e depois escolher avançar, no caso da tela de
+escolha entre asi/talentos... a seleção te escolhe automaticamente,
+não tá seguindo o fluxo de todas as outras telas de marcar a seleção
+e depois avançar, e daí o jogador fica preso". Ou seja: em
+`TelaEscolherTalento` (lista de talentos) e na tela inline "Escolher
+Atributo" do talento, tocar numa opção já **aplicava a escolha e
+navegava embora** na hora — diferente de toda outra tela do Level Up
+(inclusive a tela de distribuição do ASI genérico, `telaAsi`, que já
+usava o padrão certo: toca = só marca/destaca; um botão "Confirmar"
+separado é que aplica e avança).
+
+**Decisão:** as duas telas passam a seguir o mesmo padrão de
+marcar-depois-confirmar de todo o resto do wizard:
+- `TelaEscolherTalento`: ganhou estado local `selecionado`
+  (inicializado com o talento já escolhido antes, se houver, via nova
+  prop `talentoSelecionadoInicial`). Tocar num talento só marca
+  (`selected`), não chama mais `onEscolher` direto. Novo botão
+  "Confirmar ✓" no `navLayer` (ao lado de "← Voltar") é que chama
+  `onEscolher(selecionado)` — fica desabilitado (opacidade + sem
+  clique) enquanto nada estiver marcado.
+- Tela inline "Escolher Atributo" (dentro de `LevelUpShell.tsx`):
+  mesmo padrão, com novo estado `atributoTalentoTemp`. Tocar num
+  atributo só marca; "Confirmar ✓" aplica de fato
+  (`setAsiEscolhas([atributoTalentoTemp])`) e fecha a tela; "← Voltar"
+  limpa a marcação sem aplicar nada.
+
+**Testado:** Playwright 390×844, fluxo completo — tocar em Esmagador
+mantém na tela da lista (não navega); "Confirmar ✓" aí sim abre a
+tela de atributo; tocar em CON mantém na tela de atributo (não
+navega); "Confirmar ✓" aí sim aplica e volta pro passo de ASI/Talento;
+estado final persistido correto (CON 15→16, `talentosGeraisAtual:
+['esmagador']`).
+
+**Data/origem:** 2026-08.
