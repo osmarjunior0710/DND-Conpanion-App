@@ -5135,3 +5135,23 @@ Couro Batido na Armadura; ataque com o Arco Longo rolou "1d20 + 6" —
 consistente com DES+Prof.+Arquearia.
 
 **Data/origem:** 2026-08.
+
+## Removido: "Criar 1 personagem por Talento implementado"
+
+**Contexto:** o Osmar achou a função "atrapalhando" e pediu pra
+tirar tudo, deixando só o gerador aleatório (Classe/Origem/Espécie/
+Nível) sem o botão de forçar talento específico.
+
+**Decisão:** removidos de `core/geradorPersonagemTeste.ts`:
+`TALENTOS_FASE4_IMPLEMENTADOS`, `gerarPersonagemComTalento`,
+`gerarPersonagensDeTesteDosTalentos`,
+`garantirEquipamentoParaEstiloDeLuta` e os helpers de identificar
+arma/armadura por nome — junto com o parâmetro `talentoForcadoId` de
+`aplicarLevelUpsAleatorios`/`gerarPersonagemTeste`, que só existia
+pra sustentar essa função. Botão "🧪 Criar 1 personagem por Talento
+implementado" removido de `CharacterList.tsx`. O botão "🎲 Personagem
+de Teste" (gerador aleatório puro) e o atalho "1 nível antes de um
+Talento" no seu popup continuam — não faziam parte do que foi pedido
+pra tirar.
+
+**Data/origem:** 2026-08.
