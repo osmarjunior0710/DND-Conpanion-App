@@ -589,7 +589,7 @@ export default function LevelUpShell({
               lista). As características mecânicas de cada subclasse ainda não existem na ficha.
             </div>
             {subclassesDaClasse.length === 0 && (
-              <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
+              <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 12 }}>
                 ＋ subclasses de {classe.nome} ainda não foram importadas.
               </div>
             )}
@@ -655,7 +655,7 @@ export default function LevelUpShell({
                       <div className={`check-box ${marcado ? 'checked' : ''}`} />
                       <span className="check-label">
                         <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                        {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
+                        {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
                           ({m.escola}
                           {removendo ? ' · 🔻 será removido' : jaTinha ? ' · já tinha' : ''})
                         </span>
@@ -690,7 +690,7 @@ export default function LevelUpShell({
                       <div className={`check-box ${marcado ? 'checked' : ''}`} />
                       <span className="check-label">
                         <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                        {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 12 }}>
+                        {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
                           ({m.circulo}º círculo
                           {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''})
                         </span>
@@ -795,7 +795,7 @@ export default function LevelUpShell({
           <>
             <div className="section-title">Dádiva Épica</div>
             {dadivaEpica?.descricao && <div className="label" style={{ marginBottom: 10 }}>{dadivaEpica.descricao}</div>}
-            <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 13 }}>
+            <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 12 }}>
               ＋ lista de Dádivas Épicas (Cap. 5) entra numa próxima entrega
             </div>
           </>

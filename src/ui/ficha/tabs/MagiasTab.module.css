@@ -4,7 +4,7 @@
   align-items: center;
   min-height: var(--touch-target-min);
   padding: var(--space-2) var(--space-1);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-dim);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -18,7 +18,7 @@
   min-height: var(--touch-target-min);
   padding: var(--space-2) var(--space-1);
   border-top: 1px solid var(--line-soft);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .spellRow {
@@ -31,12 +31,12 @@
 }
 
 .spellName {
-  font-size: 14px;
+  font-size: 13px;
   min-width: 0;
 }
 
 .spellCirculo {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-dim);
   white-space: nowrap;
 }
@@ -49,7 +49,7 @@
   border-radius: var(--shape-sm);
   background: var(--accent-dim);
   color: var(--text);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
   text-align: center;
   cursor: pointer;
@@ -74,7 +74,7 @@
   border-radius: var(--shape-xs);
   background: color-mix(in srgb, var(--danger) 12%, transparent);
   color: var(--danger);
-  font-size: 13px;
+  font-size: 12px;
   min-height: 44px;
   display: flex;
   align-items: center;

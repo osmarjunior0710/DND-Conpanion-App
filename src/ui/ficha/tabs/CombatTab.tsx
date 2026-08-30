@@ -269,7 +269,7 @@ export default function CombatTab({
             }}
             onClick={indomavelRestantes > 0 ? usarIndomavel : undefined}
           >
-            <div style={{ fontSize: 14 }}>🛡️ Ao falhar uma salvaguarda, toque aqui</div>
+            <div style={{ fontSize: 13 }}>🛡️ Ao falhar uma salvaguarda, toque aqui</div>
             <div className="label" style={{ marginTop: 2 }}>
               Rola de novo somando seu nível de Guerreiro ({indomavelRestantes}/{indomavelMaximo} usos — só recupera
               no Descanso Longo).
@@ -290,7 +290,7 @@ export default function CombatTab({
             }}
             onClick={usosFolegoRestantes > 0 ? usarMenteTatica : undefined}
           >
-            <div style={{ fontSize: 14 }}>🧠 Ao falhar um teste de atributo, toque aqui</div>
+            <div style={{ fontSize: 13 }}>🧠 Ao falhar um teste de atributo, toque aqui</div>
             <div className="label" style={{ marginTop: 2 }}>
               Gasta 1 uso de Recuperar Fôlego, joga 1d10 e soma ao teste ({usosFolegoRestantes}/{usosFolegoMaximo}{' '}
               usos — banco compartilhado com Recuperar Fôlego).

@@ -59,7 +59,7 @@ export default function AtributosTab({
       <div className={`box-solid ${styles.levelBox}`}>
         <div>
           <div className="label">nível atual</div>
-          <div style={{ fontSize: 18 }}>{nivel}</div>
+          <div style={{ fontSize: 17 }}>{nivel}</div>
         </div>
         <div className="btn btn-primary" style={{ padding: '8px 16px' }} onClick={onAbrirLevelUp}>
           ⬆ Level Up

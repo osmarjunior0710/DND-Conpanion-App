@@ -69,7 +69,7 @@ export default function CompletarMagiasShell({ titulo, atuais, catalogo, deficit
                   <div className={`check-box ${marcado ? 'checked' : ''}`} />
                   <span className="check-label">
                     <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
-                    {' '}<span style={{ color: 'var(--text-faint)', fontSize: 12 }}>
+                    {' '}<span style={{ color: 'var(--text-faint)', fontSize: 11 }}>
                       ({m.circulo === 0 ? m.escola : `${m.circulo}º círculo`}
                       {travado ? ' · já tinha' : ''})
                     </span>

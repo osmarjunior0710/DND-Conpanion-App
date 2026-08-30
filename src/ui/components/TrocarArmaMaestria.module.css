@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   padding: var(--space-2);
   margin: calc(var(--space-2) * -1);
   min-width: 32px;
@@ -36,7 +36,7 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   margin-bottom: var(--space-3);
 }
@@ -55,7 +55,7 @@
   border-bottom: 1px dashed var(--line-soft);
   min-height: var(--touch-target-min);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .opcaoAtual {
@@ -64,7 +64,7 @@
 }
 
 .detalhe {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-dim);
   white-space: nowrap;
   text-align: right;
@@ -72,7 +72,7 @@
 
 .close {
   margin-top: var(--space-4);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--accent);
   text-align: center;
   cursor: pointer;

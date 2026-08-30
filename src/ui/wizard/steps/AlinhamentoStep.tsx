@@ -13,7 +13,7 @@ export default function AlinhamentoStep({ selection, update }: StepProps) {
             style={{ padding: '10px 6px' }}
             onClick={() => update({ alinhamento: a })}
           >
-            <div className="opt-card-name" style={{ fontSize: 12, textAlign: 'center' }}>
+            <div className="opt-card-name" style={{ fontSize: 11, textAlign: 'center' }}>
               {a}
             </div>
           </div>

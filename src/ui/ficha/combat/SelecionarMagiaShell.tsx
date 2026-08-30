@@ -73,7 +73,7 @@ export default function SelecionarMagiaShell({
                   <span className="check-label">
                     <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
                     {!disponivel && (
-                      <span style={{ color: 'var(--text-faint)', fontSize: 12 }}> · sem espaço disponível</span>
+                      <span style={{ color: 'var(--text-faint)', fontSize: 11 }}> · sem espaço disponível</span>
                     )}
                   </span>
                 </div>

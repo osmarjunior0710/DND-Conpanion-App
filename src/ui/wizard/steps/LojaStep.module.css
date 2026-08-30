@@ -29,7 +29,7 @@
 }
 
 .ouroValor {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: bold;
   color: var(--accent);
 }
@@ -73,12 +73,12 @@
 }
 
 .cargaIcone {
-  font-size: 16px;
+  font-size: 15px;
   flex-shrink: 0;
 }
 
 .cargaTexto {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-faint);
   margin-top: 2px;
   text-align: right;
@@ -96,12 +96,12 @@
 
 .grupoTitulo {
   color: var(--accent);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .grupoContagem {
   color: var(--text-faint);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .compradoResumo {
@@ -120,7 +120,7 @@
 .compradoLinha {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 12px;
   padding: 2px 0;
 }
 
@@ -140,25 +140,25 @@
   align-items: baseline;
   padding: var(--space-2) var(--space-4);
   border-top: 1px dashed var(--line-soft);
-  font-size: 13px;
+  font-size: 12px;
   gap: var(--space-3);
 }
 
 .equipadoPeso {
   color: var(--text-faint);
-  font-size: 12px;
+  font-size: 11px;
   flex-shrink: 0;
 }
 
 .itemEfeitoTexto {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-dim);
   margin-top: var(--space-2);
   line-height: 1.4;
 }
 
 .itemNome {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   margin-bottom: var(--space-2);
 }
@@ -168,7 +168,7 @@
   justify-content: space-between;
   align-items: baseline;
   padding: 3px 0;
-  font-size: 12px;
+  font-size: 11px;
   gap: var(--space-3);
 }
 
@@ -208,7 +208,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   background: var(--panel2);
 }
@@ -221,5 +221,5 @@
 .stepperQtd {
   min-width: 32px;
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
 }

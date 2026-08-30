@@ -51,11 +51,11 @@ export default function OrigemStep({ selection, update }: StepProps) {
                   <InfoChip nome={o.pericias[1]} descricao={descricaoPericia(o.pericias[1])} />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
-                  <span className="label">Ferramenta</span>
+                  <span className="label">Proficiência na Ferramenta</span>
                   {o.ferramenta.categoria === 'fixa' ? (
                     <InfoChip nome={o.ferramenta.nome} descricao={buscarDescricaoFerramenta(o.ferramenta.nome)} />
                   ) : (
-                    <span className="label">escolha 1 de {o.ferramenta.grupo}</span>
+                    <span className="tag">escolha 1 de {o.ferramenta.grupo}</span>
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>

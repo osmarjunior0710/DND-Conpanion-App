@@ -33,7 +33,7 @@ export default function OrigemEscolhasStep({ selection, update }: StepProps) {
   return (
     <>
       <div className="section-title">{origem.nome}</div>
-      <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text-dim)', marginBottom: 4 }}>
+      <div style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--text-dim)', marginBottom: 4 }}>
         {descricoesOrigens[origem.id]}
       </div>
 

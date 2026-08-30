@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   transition: background var(--motion-standard) var(--ease-standard);
 }
@@ -31,12 +31,12 @@
 }
 
 .title {
-  font-size: 22px;
+  font-size: 21px;
   margin: var(--space-1) 0 2px;
 }
 
 .sub {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-dim);
   margin-bottom: var(--space-2);
 }
@@ -49,10 +49,10 @@
 }
 
 .optTitle {
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .optDesc {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-faint);
 }

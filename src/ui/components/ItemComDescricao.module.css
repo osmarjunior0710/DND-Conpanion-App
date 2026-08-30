@@ -11,7 +11,7 @@
   justify-content: center;
   cursor: pointer;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
   padding: var(--space-2);
   margin: calc(var(--space-2) * -1);
@@ -45,20 +45,20 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   margin-bottom: var(--space-3);
 }
 
 .desc {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
   color: var(--text-dim);
 }
 
 .close {
   margin-top: var(--space-4);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--accent);
   text-align: center;
   cursor: pointer;

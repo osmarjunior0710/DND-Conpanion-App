@@ -49,7 +49,7 @@ export default function MagiasTab({
 
   if (!conjura) {
     return (
-      <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 13, textAlign: 'center' }}>
+      <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 12, textAlign: 'center' }}>
         Esse personagem não tem nenhuma fonte de conjuração no momento (nem pela classe, nem por multiclasse).
       </div>
     );

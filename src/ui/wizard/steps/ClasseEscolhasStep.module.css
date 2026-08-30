@@ -24,11 +24,11 @@
 }
 
 .maestriaNome {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .maestriaDetalhe {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-dim);
   margin-top: 2px;
 }

@@ -5,9 +5,9 @@
   background: var(--accent-dim);
   color: var(--text);
   border-radius: var(--shape-full);
-  padding: var(--space-2) var(--space-3);
-  font-size: 13px;
-  min-height: 36px;
+  padding: var(--space-1) var(--space-2);
+  font-size: 12px;
+  min-height: 26px;
   transition: background var(--motion-standard) var(--ease-standard);
 }
 
@@ -21,7 +21,7 @@
 }
 
 .infoIcon {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
   opacity: 0.8;
 }
@@ -52,20 +52,20 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   margin-bottom: var(--space-3);
 }
 
 .desc {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
   color: var(--text-dim);
 }
 
 .close {
   margin-top: var(--space-4);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--accent);
   text-align: center;
   cursor: pointer;

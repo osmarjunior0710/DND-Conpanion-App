@@ -64,7 +64,7 @@ function CardTalento({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
         <div className="opt-card-name">
           {t.nome}
-          {!disponivel && <span style={{ color: 'var(--danger)', fontSize: 12 }}> · {motivo}</span>}
+          {!disponivel && <span style={{ color: 'var(--danger)', fontSize: 11 }}> · {motivo}</span>}
         </div>
         <div
           role="button"
@@ -75,7 +75,7 @@ function CardTalento({
           }}
           style={{
             flexShrink: 0,
-            fontSize: 18,
+            fontSize: 17,
             lineHeight: 1,
             padding: 8,
             marginTop: -8,
@@ -87,10 +87,10 @@ function CardTalento({
           📌
         </div>
       </div>
-      {asi && <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 2 }}>{asi}</div>}
+      {asi && <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>{asi}</div>}
       <div className="opt-card-desc">{t.beneficios}</div>
       {t.prerequisitos.outro && (
-        <div style={{ color: 'var(--text-faint)', fontSize: 12, marginTop: 4 }}>
+        <div style={{ color: 'var(--text-faint)', fontSize: 11, marginTop: 4 }}>
           ⚠️ Requer: {t.prerequisitos.outro} — confirme que seu personagem atende
         </div>
       )}

@@ -238,7 +238,7 @@ export default function LojaStep({ selection, update }: StepProps) {
 
       <label className={styles.filtroRow}>
         <input type="checkbox" checked={soProficiente} onChange={(e) => setSoProficiente(e.target.checked)} />
-        <span style={{ fontSize: 13 }}>Filtrar por proficiência (mostra só armas e armaduras que sua classe usa bem)</span>
+        <span style={{ fontSize: 12 }}>Filtrar por proficiência (mostra só armas e armaduras que sua classe usa bem)</span>
       </label>
 
       {(itensOrigem.length > 0 || itensClasse.length > 0) && (

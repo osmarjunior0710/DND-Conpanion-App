@@ -11,7 +11,7 @@
   justify-content: center;
   cursor: pointer;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
   padding: var(--space-2);
   margin: calc(var(--space-2) * -1);
@@ -45,12 +45,12 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
 }
 
 .tipo {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-faint);
   margin-bottom: var(--space-3);
 }
@@ -67,7 +67,7 @@
   padding: var(--space-2);
   border: 1px solid var(--line);
   border-radius: var(--shape-sm);
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
   min-height: var(--touch-target-min);
   display: flex;
@@ -85,7 +85,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-dim);
   margin-bottom: var(--space-3);
 }
@@ -97,14 +97,14 @@
 }
 
 .desc {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
   color: var(--text-dim);
 }
 
 .close {
   margin-top: var(--space-4);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--accent);
   text-align: center;
   cursor: pointer;

@@ -14,11 +14,11 @@
 }
 
 .name {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .meta {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-faint);
   margin-top: 2px;
 }
@@ -66,7 +66,7 @@
   min-height: var(--touch-target-min);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--shape-full);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-faint);
   cursor: pointer;
   transition:
@@ -80,7 +80,7 @@
 }
 
 .tabIcon {
-  font-size: 18px;
+  font-size: 17px;
   display: block;
   margin-bottom: 2px;
 }

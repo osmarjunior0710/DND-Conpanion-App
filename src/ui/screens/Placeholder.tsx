@@ -11,7 +11,7 @@ export default function Placeholder({ message, backTo }: PlaceholderProps) {
   return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 16 }}>{message}</div>
+        <div style={{ fontSize: 15 }}>{message}</div>
         <div className="label" style={{ marginTop: 12, cursor: 'pointer' }} onClick={() => navigate(backTo)}>
           ← voltar
         </div>

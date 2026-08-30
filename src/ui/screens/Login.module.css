@@ -9,12 +9,12 @@
 }
 
 .title {
-  font-size: 18px;
+  font-size: 17px;
   text-align: center;
 }
 
 .sub {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-faint);
   text-align: center;
   line-height: 1.5;
@@ -29,7 +29,7 @@
   border-radius: var(--shape-sm);
   background: #fff;
   color: #222;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   width: 100%;
   justify-content: center;
@@ -54,7 +54,7 @@
 }
 
 .note {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-faint);
   text-align: center;
   margin-top: 8px;

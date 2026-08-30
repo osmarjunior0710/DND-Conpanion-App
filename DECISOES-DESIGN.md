@@ -4922,3 +4922,58 @@ card como selecionado; aviso de perícia duplicada com a Classe
 continua funcionando.
 
 **Data/origem:** 2026-08.
+
+## Planilha mestra ganha coluna "Descrição Curta (app, card de seleção)" na aba Antecedentes
+
+**Contexto:** as 16 descrições curtas novas de Origem (ver decisão
+acima) foram escritas direto no código
+(`descricoesOrigensCurtas.ts`) — o Osmar pediu pra também salvar na
+planilha mestra, coluna nova, pra não perder esse texto lá (mesmo
+raciocínio de sempre: planilha é a fonte, o código deriva dela).
+
+**Decisão:** nova coluna **K** na aba "Antecedentes" da
+`dnd-master-referencia.xlsx`, título "Descrição Curta (app, card de
+seleção)", com comentário na célula do cabeçalho deixando claro que é
+resumo próprio (não trecho literal do livro, diferente do resto da
+aba) — mesma frase usada em `descricoesOrigensCurtas.ts`, 1 linha por
+Origem, mesma ordem das linhas já existentes (A2:A17). Arquivo não tem
+nenhuma fórmula (confirmado: 0 fórmulas em todas as 40 abas), então
+não precisou de recálculo.
+
+**Data/origem:** 2026-08.
+
+## Ajuste visual — chips mais compactos, "Ferramenta" renomeado, fontes 1px menores em todo o app
+
+**Contexto:** feedback direto do Osmar depois de ver o card de Origem
+novo: "o design tá bem ruim" — 3 pontos: (1) o rótulo "Ferramenta"
+devia ser "Proficiência na Ferramenta", e a linha de baixo (Origens
+com escolha de ferramenta, tipo Artesão) quebrava estranho; (2) os
+chips (`InfoChip`) estavam com padding grande demais; (3) pediu pra
+reduzir 1px em toda fonte do app, não só dessa tela.
+
+**Decisão:**
+1. Rótulo "Ferramenta" → "Proficiência na Ferramenta" em
+   `OrigemStep.tsx`. O caso de Origem com escolha de ferramenta (ex:
+   Artesão → "escolha 1 de Ferramentas de Artesão") trocou de
+   `<span className="label">` (texto solto, sem contenção visual,
+   causava a quebra estranha) pra `<span className="tag">` (badge
+   pequeno com borda, mesmo componente já usado em "(em breve)" —
+   compacto, não quebra).
+2. `InfoChip.module.css`: `padding` de `var(--space-2) var(--space-3)`
+   (8px/12px) pra `var(--space-1) var(--space-2)` (4px/8px);
+   `min-height` de 36px pra 26px — chip visualmente bem mais discreto,
+   ainda tocável (o toque é isolado dentro de um card com scroll, não
+   uma grade densa de botões adjacentes).
+3. **Todo** `font-size` (CSS e `fontSize` inline em TSX) do projeto
+   reduzido em 1px, com piso em 10px (nada fica menor que 10px, pra
+   não virar ilegível no celular) — script único (`sed`-like em
+   Python, não manual) rodou nos 165 pontos encontrados em 40
+   arquivos, `.css` e `.tsx`. Números grandes de destaque (dado
+   animado, título splash) também caíram 1px, igual pedido — só o piso
+   de 10px protege texto já bem pequeno.
+
+**Testado:** `npm run build` limpo depois da mudança; Playwright
+390×844 confirmando visualmente o card de Origem (chips menores,
+rótulo novo, badge sem quebra).
+
+**Data/origem:** 2026-08.
