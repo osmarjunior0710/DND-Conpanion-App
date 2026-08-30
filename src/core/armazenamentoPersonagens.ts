@@ -68,6 +68,10 @@ export interface PersonagemSalvo {
    * DECISOES-DESIGN.md/PENDENCIAS.md): só salva e mostra o talento,
    * `[PH]` — nenhum efeito mecânico de verdade ainda (Fase 4). */
   talentosGeraisAtual?: string[];
+  /** IDs de talentos marcados com 📌 na tela de escolha do Level Up —
+   * planejamento de build ("quero pegar isso num level up futuro"),
+   * não afeta nenhuma regra. Ausente/vazio = nenhum favoritado. */
+  talentosFavoritosAtual?: string[];
   /** Mochila como estado de verdade (ver DECISOES-DESIGN.md "Mochila
    * vira estado de verdade") — quando ausente (personagem salvo antes
    * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a

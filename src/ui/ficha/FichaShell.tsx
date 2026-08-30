@@ -132,6 +132,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo.periciasEspecialistaAtual ?? [],
   );
   const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
+  const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
@@ -245,6 +246,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       magiasPreparadasAtual: magiasPreparadasAtuais,
       periciasEspecialistaAtual: periciasEspecialistaAtuais,
       talentosGeraisAtual: talentosGeraisAtuais,
+      talentosFavoritosAtual: talentosFavoritos,
       itensMochilaAtual: itensMochila,
       levelUpHpModo,
       levelUpHpRolado,
@@ -267,10 +269,15 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     magiasPreparadasAtuais,
     periciasEspecialistaAtuais,
     talentosGeraisAtuais,
+    talentosFavoritos,
     itensMochila,
     levelUpHpModo,
     levelUpHpRolado,
   ]);
+
+  function toggleFavoritoTalento(id: string) {
+    setTalentosFavoritos((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }
 
   function alterarPv(delta: number) {
     setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
@@ -427,6 +434,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (resultado.periciasEspecialistaEscolhidas) setPericiasEspecialistaAtuais(resultado.periciasEspecialistaEscolhidas);
     if (resultado.talentoGeralEscolhido) {
       setTalentosGeraisAtuais((prev) => [...prev, resultado.talentoGeralEscolhido!]);
+      // Já foi escolhido de verdade — não faz mais sentido continuar
+      // "planejado" na seção de Favoritos.
+      setTalentosFavoritos((prev) => prev.filter((id) => id !== resultado.talentoGeralEscolhido));
     }
     setLevelUpHpModo(null);
     setLevelUpHpRolado(null);
@@ -463,6 +473,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         atributosAtuais={selecao.atributos}
         atributosFinaisAtuais={atributosFinaisAtuais}
         talentosGeraisAtuais={talentosGeraisAtuais}
+        talentosFavoritosAtuais={talentosFavoritos}
+        onToggleFavoritoTalento={toggleFavoritoTalento}
       />
     );
   }

@@ -4760,3 +4760,58 @@ escolhido o "Avançar" de fato sai do passo. Estado final persistido
 correto (CON +1, talento "esmagador" salvo).
 
 **Data/origem:** 2026-08.
+
+## Talentos — "Aumentar Atributos" e "Escolher um Talento" eram o mesmo talento duas vezes; vira só a lista, com passo extra pro ASI
+
+**Contexto:** o Osmar notou 2 problemas na tela de ASI/Talento depois
+da correção anterior: (1) "Aumento no Valor de Atributo" já existe
+como um talento normal na planilha (`concedeAsi.tipo:
+'distribuir-dois'`) — o card fixo "Aumentar Atributos" que eu tinha
+no topo da tela era **o mesmo mecanismo duplicado**, só hardcoded em
+vez de vir da lista de talentos. (2) a escolha de atributo do talento
+(quando precisa, ex: talento que dá +1 em 2-3 atributos à escolha)
+ficava "grudada" no fim da lista de talentos, dentro do mesmo passo —
+difícil de perceber que precisa rolar mais pra terminar a escolha.
+
+**Decisão:**
+1. Os 2 cards fixos ("Aumentar Atributos"/"Escolher um Talento")
+   somem. O passo `'asi'` agora só mostra a lista de talentos direto
+   — "Aumento no Valor de Atributo" aparece nela como qualquer outro
+   talento (mesmo texto oficial: "Aumenta 1 atributo em +2, OU dois
+   atributos em +1 cada, à escolha (máx. 20)" — ver `DND-Regras.md` >
+   Talentos).
+2. Quando o talento escolhido precisa de escolha de atributo
+   (`distribuir-dois`, ou `escolha-unica` com 2+ atributos), um passo
+   **novo** entra dinamicamente na sequência do Level Up logo depois
+   de `'asi'` — `'asiAtributo'`, com sua própria bolinha no indicador
+   de progresso, calculado a cada render a partir do talento
+   escolhido (`precisaEscolherAtributoDoTalento` em
+   `LevelUpShell.tsx`). Isso é diferente da tentativa anterior (tela
+   cheia separada): é um passo de verdade na sequência, então usa o
+   "Avançar" comum de todo o resto do wizard — nenhuma tela/botão
+   especial.
+3. Card de cada talento ganhou uma linha "Atributos: ..." entre o
+   título e a descrição (`descricaoAsi()` em `TelaEscolherTalento.tsx`),
+   calculada direto de `concedeAsi` — dado real, sempre visível sem
+   precisar abrir/escolher nada.
+4. Pin 📌 no canto superior direito de cada card — marca o talento
+   como "quero pegar isso num level up futuro" (não precisa escolher
+   agora). Talentos marcados aparecem numa seção "⭐ Favoritos" no
+   topo da lista (some de lá automaticamente se o jogador vier a
+   escolher o talento nesse mesmo Level Up, e é limpo pra sempre da
+   lista de favoritos quando o talento é de fato confirmado). Salvo
+   por personagem (`talentosFavoritosAtual` em
+   `armazenamentoPersonagens.ts`), não é uma preferência global do
+   dispositivo — cada ficha planeja sua própria build.
+
+**Testado:** Playwright 390×844 — confirmado que os 2 cards fixos
+sumiram; a lista mostra "Aumento no Valor de Atributo" como talento
+normal; a linha "Atributos:" aparece nos cards; marcar pin faz a
+seção "⭐ Favoritos" aparecer; escolher um talento com ASI não navega
+sozinho; "Avançar" leva pro passo novo (com nome/bolinha próprios);
+distribuir os pontos e "Avançar" de novo sai do passo; resumo final
+mostra "Talento" e "Atributo do talento" corretos; estado persistido
+certo (CON +2, talento salvo, favorito não escolhido continua
+favoritado depois de confirmar).
+
+**Data/origem:** 2026-08.

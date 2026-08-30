@@ -5,6 +5,10 @@ interface TelaEscolherTalentoProps {
   nivelAtual: number;
   atributosFinais: Record<Atributo, number>;
   talentosGeraisAtuais: string[];
+  /** IDs marcados com 📌 — "quero pegar isso num level up futuro".
+   * Persistido por personagem (ver DECISOES-DESIGN.md). */
+  favoritos: string[];
+  onToggleFavorito: (id: string) => void;
   selecionado: string | null;
   onSelecionar: (id: string) => void;
 }
@@ -20,6 +24,80 @@ function motivoIndisponivel(t: Talento, nivelAtual: number, atributosFinais: Rec
   return null;
 }
 
+/** Linha "Atributos: ..." mostrada entre o título e a descrição, só
+ * pros talentos que concedem ASI — direto de `concedeAsi` (dado real,
+ * já confirmado), nunca `[PH]`. */
+function descricaoAsi(t: Talento): string | null {
+  if (t.concedeAsi.tipo === 'nenhum') return null;
+  if (t.concedeAsi.tipo === 'distribuir-dois') {
+    return 'Atributos: +2 em um, ou +1 em dois (à sua escolha, máx. 20)';
+  }
+  const nomes = t.concedeAsi.atributos;
+  if (nomes.length === 1) return `Atributos: +1 em ${nomes[0]}`;
+  return `Atributos: +1 em ${nomes.slice(0, -1).join(', ')} ou ${nomes[nomes.length - 1]}`;
+}
+
+function CardTalento({
+  t,
+  disponivel,
+  motivo,
+  favoritado,
+  selecionado,
+  onSelecionar,
+  onToggleFavorito,
+}: {
+  t: Talento;
+  disponivel: boolean;
+  motivo: string | null;
+  favoritado: boolean;
+  selecionado: boolean;
+  onSelecionar: () => void;
+  onToggleFavorito: () => void;
+}) {
+  const asi = descricaoAsi(t);
+  return (
+    <div
+      className={`opt-card ${selecionado ? 'selected' : ''}`}
+      style={disponivel ? { cursor: 'pointer' } : { opacity: 0.45, pointerEvents: 'none' }}
+      onClick={() => disponivel && onSelecionar()}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+        <div className="opt-card-name">
+          {t.nome}
+          {!disponivel && <span style={{ color: 'var(--danger)', fontSize: 12 }}> · {motivo}</span>}
+        </div>
+        <div
+          role="button"
+          aria-label={favoritado ? 'Remover dos favoritos' : 'Marcar como favorito'}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorito();
+          }}
+          style={{
+            flexShrink: 0,
+            fontSize: 18,
+            lineHeight: 1,
+            padding: 8,
+            marginTop: -8,
+            marginRight: -8,
+            opacity: favoritado ? 1 : 0.3,
+            cursor: 'pointer',
+          }}
+        >
+          📌
+        </div>
+      </div>
+      {asi && <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 2 }}>{asi}</div>}
+      <div className="opt-card-desc">{t.beneficios}</div>
+      {t.prerequisitos.outro && (
+        <div style={{ color: 'var(--text-faint)', fontSize: 12, marginTop: 4 }}>
+          ⚠️ Requer: {t.prerequisitos.outro} — confirme que seu personagem atende
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Lista de seleção de Talento Geral (Fase 3 do plano de Talentos) —
  * renderizada dentro do passo "asi" do Level Up, junto do resto do
  * passo. Só um <> de opt-cards controlado pelo pai: tocar num talento
@@ -27,47 +105,63 @@ function motivoIndisponivel(t: Talento, nivelAtual: number, atributosFinais: Rec
  * escolha do Level Up — quem confirma e avança é sempre o "Avançar"
  * do passo, não um botão próprio desta lista. Talento fica salvo
  * `[PH]` — Fase 4 aplica o efeito mecânico de verdade, talento por
- * talento. */
+ * talento.
+ *
+ * Talentos marcados com 📌 aparecem numa seção "Favoritos" no topo —
+ * planejamento pro futuro, não precisa ser escolhido nesse Level Up
+ * pra ficar marcado. Some da lista de favoritos assim que o jogador
+ * de fato escolhe o talento (deixa de fazer sentido "planejar" algo
+ * que já foi pego). */
 export default function TelaEscolherTalento({
   nivelAtual,
   atributosFinais,
   talentosGeraisAtuais,
+  favoritos,
+  onToggleFavorito,
   selecionado,
   onSelecionar,
 }: TelaEscolherTalentoProps) {
   const opcoes = talentos.filter(
     (t) => t.categoria === 'Geral' && (t.repetivel || !talentosGeraisAtuais.includes(t.id) || t.id === selecionado),
   );
+  const favoritosNaLista = opcoes.filter((t) => favoritos.includes(t.id) && t.id !== selecionado);
+  const idsFavoritados = new Set(favoritosNaLista.map((t) => t.id));
+  const resto = opcoes.filter((t) => !idsFavoritados.has(t.id));
+
+  function renderCard(t: Talento) {
+    const motivo = motivoIndisponivel(t, nivelAtual, atributosFinais);
+    return (
+      <CardTalento
+        key={t.id}
+        t={t}
+        disponivel={motivo === null}
+        motivo={motivo}
+        favoritado={favoritos.includes(t.id)}
+        selecionado={selecionado === t.id}
+        onSelecionar={() => onSelecionar(t.id)}
+        onToggleFavorito={() => onToggleFavorito(t.id)}
+      />
+    );
+  }
 
   return (
     <>
       <div className="label" style={{ marginTop: 14, marginBottom: 10 }}>
         Talentos Gerais (Cap. 5) — escolher aqui não aplica nenhum efeito mecânico ainda,
-        só fica salvo e mostrado na Ficha (<code>[PH]</code>).
+        só fica salvo e mostrado na Ficha (<code>[PH]</code>). Toque no 📌 pra planejar um talento pra um level up futuro.
       </div>
-      {opcoes.map((t) => {
-        const motivo = motivoIndisponivel(t, nivelAtual, atributosFinais);
-        const disponivel = motivo === null;
-        return (
-          <div
-            key={t.id}
-            className={`opt-card ${selecionado === t.id ? 'selected' : ''}`}
-            style={disponivel ? { cursor: 'pointer' } : { opacity: 0.45, pointerEvents: 'none' }}
-            onClick={() => disponivel && onSelecionar(t.id)}
-          >
-            <div className="opt-card-name">
-              {t.nome}
-              {!disponivel && <span style={{ color: 'var(--danger)', fontSize: 12 }}> · {motivo}</span>}
-            </div>
-            <div className="opt-card-desc">{t.beneficios}</div>
-            {t.prerequisitos.outro && (
-              <div style={{ color: 'var(--text-faint)', fontSize: 12, marginTop: 4 }}>
-                ⚠️ Requer: {t.prerequisitos.outro} — confirme que seu personagem atende
-              </div>
-            )}
+      {favoritosNaLista.length > 0 && (
+        <>
+          <div className="section-title" style={{ marginBottom: 4 }}>
+            ⭐ Favoritos
           </div>
-        );
-      })}
+          {favoritosNaLista.map(renderCard)}
+          <div className="section-title" style={{ marginTop: 10, marginBottom: 4 }}>
+            Todos os talentos
+          </div>
+        </>
+      )}
+      {resto.map(renderCard)}
     </>
   );
 }
