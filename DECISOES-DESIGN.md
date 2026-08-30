@@ -4977,3 +4977,54 @@ reduzir 1px em toda fonte do app, não só dessa tela.
 rótulo novo, badge sem quebra).
 
 **Data/origem:** 2026-08.
+
+## Personagem de Teste — gerador automático pra testar rápido
+
+**Contexto:** o Osmar pediu uma forma rápida de criar um personagem
+completo pra testar telas, sem passar pelos ~10 passos do wizard toda
+vez — só escolher Classe/Origem/Espécie/Nível, o resto sorteado
+(atributos, perícias, magias, talentos, kit de equipamento inicial da
+Classe/Origem).
+
+**Decisão:** reaproveitar a lógica que já existia — cada passo do
+wizard já tem um botão 🔀 "sortear tudo desta etapa"
+(`randomizarClasse`/`randomizarEscolhasClasse`/etc em
+`WizardShell.tsx`). Portei essa mesma lógica pra
+`core/geradorPersonagemTeste.ts`, como funções puras encadeadas (sem
+UI, sem passar pelas telas), e completei com um "Level Up automático"
+pros níveis acima de 1 — mesma decisão que `LevelUpShell` pediria
+(subclasse, estilo de luta, truques/magias preparadas, especialista,
+ASI-ou-talento), só que sorteada em vez de escolhida a cada passo.
+Confirmado com o Osmar: PV usa a média do dado por nível (sem rolar,
+sem "PV máximo sempre") — mesmo padrão "usar a média" já default no
+wizard/Level Up normal.
+
+**Simplificações deliberadas** (é ferramenta de teste, não faz parte
+do fluxo real de jogo):
+- Truques/Magias Preparadas são resorteados do zero em cada nível
+  (não respeita a regra real de "só 1 troca por level-up" — não faz
+  sentido aplicar esse limite numa geração instantânea).
+- Talento/ASI: 50% chance de pegar "Aumento no Valor de Atributo"
+  (ASI puro), 50% chance de um Talento Geral aleatório entre os
+  válidos pro nível/atributos atuais (mesma validação de Nível/Atributo
+  Mínimo do picker real).
+- Dádiva Épica (Cap. 5) fica de fora — a lista ainda não existe no
+  app (mesmo estado `[PH]` do Level Up normal).
+- Não abre o wizard nem o Level Up — salva o personagem já pronto
+  direto (`armazenamentoPersonagens.salvar`) e navega pra Ficha.
+
+**UI:** botão "🎲 Personagem de Teste" na tela "Seus personagens"
+(`CharacterList.tsx`) — não entrou na Home pra não quebrar as "3
+opções fixas" que já existiam lá. Abre um popup
+(`PersonagemTesteModal.tsx`) com 4 `<select>` (Classe/Origem/Espécie —
+só as opções `disponivel: true`, mesma regra do wizard — e Nível
+1-20); "Criar" gera e já navega pra Ficha do personagem novo.
+
+**Testado:** Playwright 390×844 — gerado em nível 1, 5, 8, 12 e 20,
+com combinações diferentes de Classe/Origem/Espécie; ficha abre sem
+erro de JS em nenhum caso, navegando por todas as abas
+(Atributos/Perfil/Mochila/Magias/Combate); nível 8 confirmado com
+subclasse aplicada (ícone/nome no cabeçalho), PV/CA/atributos
+condizentes com o nível.
+
+**Data/origem:** 2026-08.

@@ -1,0 +1,58 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: var(--space-5);
+  overscroll-behavior: contain;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: var(--shape-lg);
+  padding: var(--space-5);
+  box-shadow: var(--elevation-3);
+  max-width: 360px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: var(--space-1);
+}
+
+.desc {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-bottom: var(--space-4);
+  line-height: 1.5;
+}
+
+.field {
+  margin-bottom: var(--space-4);
+}
+
+.select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--shape-sm);
+  padding: var(--space-3);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--panel2);
+  min-height: var(--touch-target-min);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}

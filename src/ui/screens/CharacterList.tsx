@@ -6,6 +6,7 @@ import { classes } from '../../data/rulesets/dnd2024/classes';
 import { subclasses } from '../../data/rulesets/dnd2024/subclasses';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import IconeClasse from '../components/IconeClasse';
+import PersonagemTesteModal from './PersonagemTesteModal';
 import styles from './CharacterList.module.css';
 
 const PALAVRA_CONFIRMACAO = 'apagar';
@@ -15,6 +16,7 @@ export default function CharacterList() {
   const [, setVersao] = useState(0);
   const [alvoApagar, setAlvoApagar] = useState<{ id: string; nome: string } | null>(null);
   const [textoDigitado, setTextoDigitado] = useState('');
+  const [modalTesteAberto, setModalTesteAberto] = useState(false);
   useLockBodyScroll(alvoApagar !== null);
 
   const personagens = armazenamentoPersonagens.listar().map((p) => {
@@ -70,6 +72,10 @@ export default function CharacterList() {
           <div className={styles.headerTitle}>Seus personagens</div>
           <div className="label">atrelados à sua conta Google</div>
         </div>
+      </div>
+
+      <div className="btn" style={{ marginBottom: 10 }} onClick={() => setModalTesteAberto(true)}>
+        🎲 Personagem de Teste — gera uma ficha completa na hora, pra testar rápido
       </div>
 
       {personagens.length === 0 && (
@@ -131,6 +137,13 @@ export default function CharacterList() {
             </div>
           </div>
         </div>
+      )}
+
+      {modalTesteAberto && (
+        <PersonagemTesteModal
+          onFechar={() => setModalTesteAberto(false)}
+          onCriado={(id) => navigate(`/ficha/${id}`)}
+        />
       )}
     </div>
   );
