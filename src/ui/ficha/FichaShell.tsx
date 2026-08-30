@@ -53,6 +53,7 @@ import {
   numeroDeAtaques,
 } from '../../core/levelUp';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
+import { origens } from '../../data/rulesets/dnd2024/origens';
 import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
@@ -163,8 +164,16 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const touchX = useRef(0);
 
   const desValor = valorFinalAtributo(selecao, 'DES') ?? 10;
-  const ca = calcularCAEquipado(itensMochila, desValor);
-  const iniciativa = calcularIniciativa(selecao);
+  // Talentos que entram no cálculo (Fase 4): os escolhidos em Level
+  // Up (`talentosGeraisAtuais`) MAIS o Talento de Origem, ganho fixo
+  // na criação (ex: Alerta) — nunca passa pelo picker de Level Up,
+  // então não vive em `talentosGeraisAtuais`.
+  const origemPersonagem = origens.find((o) => o.nome === selecao.origem) ?? null;
+  const talentosEfetivos = origemPersonagem
+    ? [...talentosGeraisAtuais, origemPersonagem.talentoOrigemId]
+    : talentosGeraisAtuais;
+  const ca = calcularCAEquipado(itensMochila, desValor, personagem.estiloDeLuta, talentosEfetivos);
+  const iniciativa = calcularIniciativa(selecao, classe, personagem.nivel, talentosEfetivos);
   const percepcaoPassiva = calcularPercepcaoPassiva(selecao, personagem.nivel);
   const atributos = calcularAtributosFinais(selecao);
   const atributosFinaisAtuais = Object.fromEntries(
@@ -175,8 +184,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
   const explicacaoPv = explicarPvMaximo(selecao, personagem.pvMax);
-  const explicacaoCa = explicarCAEquipado(itensMochila, desValor);
-  const explicacaoIniciativa = explicarIniciativa(selecao);
+  const explicacaoCa = explicarCAEquipado(itensMochila, desValor, personagem.estiloDeLuta, talentosEfetivos);
+  const explicacaoIniciativa = explicarIniciativa(selecao, classe, personagem.nivel, talentosEfetivos);
   const explicacaoPercepcaoPassiva = explicarPercepcaoPassiva(selecao, personagem.nivel);
   const estiloDeLuta = estilosDeLuta.find((e) => e.nome === personagem.estiloDeLuta) ?? null;
   const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
@@ -207,7 +216,16 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const equipadoAtual = resumoEquipado(itensMochila);
   const armaEquipada = equipadoAtual.maoPrincipal;
   const ataque = classe
-    ? ataqueAtual(armaEquipada?.nome ?? null, classe, personagem.nivel, forMod, desMod, armaEquipada?.duasMaosAtivo === true)
+    ? ataqueAtual(
+        armaEquipada?.nome ?? null,
+        classe,
+        personagem.nivel,
+        forMod,
+        desMod,
+        armaEquipada?.duasMaosAtivo === true,
+        personagem.estiloDeLuta,
+        equipadoAtual.maoSecundaria !== null,
+      )
     : null;
   const ataqueBonus = classe
     ? ataqueBonusMaoSecundaria(
@@ -217,6 +235,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         personagem.nivel,
         forMod,
         desMod,
+        personagem.estiloDeLuta,
       )
     : null;
 

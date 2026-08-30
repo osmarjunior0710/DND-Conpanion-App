@@ -7,6 +7,8 @@ import { classes, type Classe } from '../data/rulesets/dnd2024/classes';
 import { origens } from '../data/rulesets/dnd2024/origens';
 import { armaduras } from '../data/rulesets/dnd2024/armaduras';
 import { pericias } from '../data/rulesets/dnd2024/pericias';
+import { talentos, type EfeitoMecanicoTalento } from '../data/rulesets/dnd2024/talentos';
+import { estilosDeLuta } from '../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { modificador, valorFinalAtributo, type WizardSelection } from './personagem';
 import { resumoEquipado } from './equipamento';
@@ -21,6 +23,29 @@ const ATRIBUTO_POR_NOME_COMPLETO: Record<string, Atributo> = {
   Sabedoria: 'SAB',
   Carisma: 'CAR',
 };
+
+/** Procura, entre os IDs de talento em `talentosAtuais`, um cujo
+ * `efeitoMecanico.tipo` seja `tipo` — devolve o efeito inteiro (já
+ * tipado) ou `null`. Usado pelos cálculos da Fase 4 (Alerta, Mestre
+ * em Armaduras Médias, ...) pra não repetir o mesmo `.find()` em cada
+ * função. */
+export function efeitoMecanicoDoTalento<T extends EfeitoMecanicoTalento['tipo']>(
+  talentosAtuais: string[] | undefined,
+  tipo: T,
+): Extract<EfeitoMecanicoTalento, { tipo: T }> | null {
+  if (!talentosAtuais || talentosAtuais.length === 0) return null;
+  for (const id of talentosAtuais) {
+    const t = talentos.find((x) => x.id === id);
+    if (t?.efeitoMecanico?.tipo === tipo) {
+      return t.efeitoMecanico as Extract<EfeitoMecanicoTalento, { tipo: T }>;
+    }
+  }
+  return null;
+}
+
+function temEfeitoMecanico(talentosAtuais: string[] | undefined, tipo: EfeitoMecanicoTalento['tipo']): boolean {
+  return efeitoMecanicoDoTalento(talentosAtuais, tipo) !== null;
+}
 
 export function classeDaSelecao(selection: WizardSelection): Classe | null {
   return classes.find((c) => c.nome === selection.classe) ?? null;
@@ -61,11 +86,17 @@ function armaduraEquipadaInicial(selection: WizardSelection): (typeof armaduras)
   return null;
 }
 
-function caPelaArmadura(classeArmadura: string, desMod: number): number {
+/** `tetoDesOverride` substitui o teto de mod. Destreza lido da planilha
+ * (ex: Mestre em Armaduras Médias eleva de 2 pra 3) — sem efeito em
+ * armadura sem teto (Leve) ou de valor fixo (Pesada). */
+function caPelaArmadura(classeArmadura: string, desMod: number, tetoDesOverride?: number): number {
   const fixo = classeArmadura.match(/^(\d+)$/);
   if (fixo) return parseInt(fixo[1], 10);
   const comTeto = classeArmadura.match(/^(\d+)\s*\+\s*modificador de Des\s*\(máx\.?\s*(\d+)\)$/i);
-  if (comTeto) return parseInt(comTeto[1], 10) + Math.min(desMod, parseInt(comTeto[2], 10));
+  if (comTeto) {
+    const teto = tetoDesOverride ?? parseInt(comTeto[2], 10);
+    return parseInt(comTeto[1], 10) + Math.min(desMod, teto);
+  }
   const semTeto = classeArmadura.match(/^(\d+)\s*\+\s*modificador de Des$/i);
   if (semTeto) return parseInt(semTeto[1], 10) + desMod;
   return 10 + desMod;
@@ -101,23 +132,53 @@ function bonusEscudo(classeArmaduraEscudo: string): number {
  * wizard, antes da Mochila existir como estado). Sem armadura
  * equipada = 10 + mod. Destreza (padrão "sem armadura").
  */
-export function calcularCAEquipado(itensMochila: ItemMochila[], desValor: number): number {
+/** Bônus de CA dos talentos/Estilo de Luta já implementados na Fase 4
+ * (Defensivo, Mestre em Armaduras Médias) — reaproveitado por
+ * `calcularCAEquipado` e `explicarCAEquipado`. */
+function bonusCaFase4(
+  armaduraCatalogo: (typeof armaduras)[number] | undefined,
+  desValor: number,
+  estiloDeLutaEscolhido: string | null | undefined,
+  talentosAtuais: string[] | undefined,
+) {
+  const estilo = estiloDeLutaEscolhido ? estilosDeLuta.find((e) => e.nome === estiloDeLutaEscolhido) : undefined;
+  const defensivoBonus =
+    armaduraCatalogo && estilo?.efeitoMecanico?.tipo === 'bonus-ca-com-armadura' ? estilo.efeitoMecanico.bonus : 0;
+  const mestreArmadurasMedias = efeitoMecanicoDoTalento(talentosAtuais, 'teto-des-armadura-media');
+  const usaTetoMestre =
+    mestreArmadurasMedias !== null && armaduraCatalogo?.categoria.startsWith('Armadura Média') === true && desValor >= mestreArmadurasMedias.desMinima;
+  return { defensivoBonus, tetoDesOverride: usaTetoMestre ? mestreArmadurasMedias.tetoDes : undefined };
+}
+
+export function calcularCAEquipado(
+  itensMochila: ItemMochila[],
+  desValor: number,
+  estiloDeLutaEscolhido?: string | null,
+  talentosAtuais?: string[],
+): number {
   const desMod = modificador(desValor);
   const { armadura, escudo } = resumoEquipado(itensMochila);
   const armaduraCatalogo = armadura ? armaduras.find((a) => a.nome === armadura.nome) : undefined;
-  const base = armaduraCatalogo ? caPelaArmadura(armaduraCatalogo.classeArmadura, desMod) : 10 + desMod;
+  const { defensivoBonus, tetoDesOverride } = bonusCaFase4(armaduraCatalogo, desValor, estiloDeLutaEscolhido, talentosAtuais);
+  const base = armaduraCatalogo ? caPelaArmadura(armaduraCatalogo.classeArmadura, desMod, tetoDesOverride) : 10 + desMod;
   const escudoCatalogo = escudo ? armaduras.find((a) => a.nome === escudo.nome) : undefined;
   const bonus = escudoCatalogo ? bonusEscudo(escudoCatalogo.classeArmadura) : 0;
-  return base + bonus;
+  return base + bonus + defensivoBonus;
 }
 
 /** Explicação estruturada da `calcularCAEquipado`, pro popup do "ⓘ". */
-export function explicarCAEquipado(itensMochila: ItemMochila[], desValor: number): ExplicacaoCalculo {
+export function explicarCAEquipado(
+  itensMochila: ItemMochila[],
+  desValor: number,
+  estiloDeLutaEscolhido?: string | null,
+  talentosAtuais?: string[],
+): ExplicacaoCalculo {
   const desMod = modificador(desValor);
   const { armadura, escudo } = resumoEquipado(itensMochila);
   const armaduraCatalogo = armadura ? armaduras.find((a) => a.nome === armadura.nome) : undefined;
   const escudoCatalogo = escudo ? armaduras.find((a) => a.nome === escudo.nome) : undefined;
   const bonus = escudoCatalogo ? bonusEscudo(escudoCatalogo.classeArmadura) : 0;
+  const { defensivoBonus, tetoDesOverride } = bonusCaFase4(armaduraCatalogo, desValor, estiloDeLutaEscolhido, talentosAtuais);
 
   const linhas: LinhaExplicacao[] = [];
   let base: number;
@@ -126,13 +187,15 @@ export function explicarCAEquipado(itensMochila: ItemMochila[], desValor: number
     linhas.push({ label: 'mod. Destreza', valor: fmtMod(desMod) });
     base = 10 + desMod;
   } else {
-    const ca = caPelaArmadura(armaduraCatalogo.classeArmadura, desMod);
+    const ca = caPelaArmadura(armaduraCatalogo.classeArmadura, desMod, tetoDesOverride);
     const teto = armaduraCatalogo.classeArmadura.match(/máx\.?\s*(\d+)/i);
     const baseMatch = armaduraCatalogo.classeArmadura.match(/^(\d+)/);
     const baseArmadura = baseMatch ? parseInt(baseMatch[1], 10) : ca - desMod;
     linhas.push({ label: `${armaduraCatalogo.nome} (base)`, valor: `${baseArmadura}` });
     linhas.push({
-      label: teto ? `mod. Destreza (máx. ${teto[1]})` : 'mod. Destreza',
+      label: teto
+        ? `mod. Destreza (máx. ${tetoDesOverride ?? teto[1]}${tetoDesOverride !== undefined ? ' — Mestre em Armaduras Médias' : ''})`
+        : 'mod. Destreza',
       valor: fmtMod(ca - baseArmadura),
     });
     base = ca;
@@ -140,9 +203,12 @@ export function explicarCAEquipado(itensMochila: ItemMochila[], desValor: number
   if (escudoCatalogo) {
     linhas.push({ label: `${escudoCatalogo.nome} equipado`, valor: fmtMod(bonus) });
   }
+  if (defensivoBonus > 0) {
+    linhas.push({ label: 'Estilo de Luta: Defensivo', valor: fmtMod(defensivoBonus) });
+  }
   return {
     linhas,
-    total: { label: 'Classe de Armadura', valor: `${base + bonus}` },
+    total: { label: 'Classe de Armadura', valor: `${base + bonus + defensivoBonus}` },
   };
 }
 
@@ -161,10 +227,21 @@ export function calcularPercepcaoPassiva(selection: WizardSelection, nivel: numb
   return 10 + modificador(sabValor) + bonus;
 }
 
-export function calcularIniciativa(selection: WizardSelection): number | null {
+/** `classe`/`nivel`/`talentosAtuais` só entram no cálculo pro bônus do
+ * talento Alerta (Fase 4) — opcionais porque `calcularIniciativa`
+ * também é chamada no Resumo do wizard, antes de o personagem ter
+ * nível/talentos de verdade. */
+export function calcularIniciativa(
+  selection: WizardSelection,
+  classe?: Classe | null,
+  nivel?: number,
+  talentosAtuais?: string[],
+): number | null {
   const desValor = valorFinalAtributo(selection, 'DES');
   if (desValor === null) return null;
-  return modificador(desValor);
+  const temAlerta = temEfeitoMecanico(talentosAtuais, 'bonus-iniciativa-bonus-proficiencia');
+  const bonusAlerta = temAlerta && classe && nivel ? bonusProficiencia(classe, nivel) : 0;
+  return modificador(desValor) + bonusAlerta;
 }
 
 export interface AtributoFinal {
@@ -369,13 +446,22 @@ export function explicarPercepcaoPassiva(selection: WizardSelection, nivel: numb
   };
 }
 
-export function explicarIniciativa(selection: WizardSelection): ExplicacaoCalculo {
+export function explicarIniciativa(
+  selection: WizardSelection,
+  classe?: Classe | null,
+  nivel?: number,
+  talentosAtuais?: string[],
+): ExplicacaoCalculo {
   const desValor = valorFinalAtributo(selection, 'DES');
   if (desValor === null) return { linhas: [], total: { label: 'Iniciativa', valor: '—' } };
   const mod = modificador(desValor);
+  const temAlerta = temEfeitoMecanico(talentosAtuais, 'bonus-iniciativa-bonus-proficiencia');
+  const bonusAlerta = temAlerta && classe && nivel ? bonusProficiencia(classe, nivel) : 0;
+  const linhas: LinhaExplicacao[] = [{ label: 'mod. Destreza', valor: fmtMod(mod) }];
+  if (temAlerta) linhas.push({ label: 'Bônus de Proficiência (talento Alerta)', valor: fmtMod(bonusAlerta) });
   return {
-    linhas: [{ label: 'mod. Destreza', valor: fmtMod(mod) }],
-    total: { label: 'Iniciativa', valor: fmtMod(mod) },
+    linhas,
+    total: { label: 'Iniciativa', valor: fmtMod(mod + bonusAlerta) },
   };
 }
 

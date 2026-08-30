@@ -4815,3 +4815,76 @@ certo (CON +2, talento salvo, favorito não escolhido continua
 favoritado depois de confirmar).
 
 **Data/origem:** 2026-08.
+
+## Talentos Fase 4 — lote 1 (Alerta, Defensivo, Arquearia, Duelismo, Mestre em Armaduras Médias)
+
+**Contexto:** primeiro lote de Fase 4 (efeito mecânico de verdade,
+depois de Fases 1-3 completas). Escolhidos por serem "1 número
+isolado, plugável num cálculo que já existe" (ver PENDENCIAS.md,
+ordem sugerida). Confirmado com o Osmar antes de começar: (1) os 3
+talentos de categoria "Estilo de Luta" (Defensivo/Arquearia/Duelismo)
+JÁ existem também em `estilosDeLuta.ts` — a lista de Talentos do Level
+Up só mostra categoria "Geral", então esses 3 nunca aparecem lá; o
+mecanismo de verdade tinha que entrar pelo Estilo de Luta escolhido
+via classe (`personagem.estiloDeLuta`), não pelo picker de Talentos.
+Perguntei se valia a pena bloquear a duplicata na lista de Talentos —
+Osmar confirmou que sim ("bloquear duplicata"), mas na prática não é
+preciso: a duplicata é inofensiva, nunca aparece pro jogador.
+
+**Decisão — esquema de dado:** novo campo opcional `efeitoMecanico`
+em `Talento` (`data/rulesets/dnd2024/talentos.ts`) e `EstiloDeLuta`
+(`data/rulesets/dnd2024/estilosDeLuta.ts`), tipo união
+`EfeitoMecanicoTalento` — cada variante carrega só os números que o
+talento realmente usa (ex: `{ tipo: 'bonus-ataque-distancia', bonus: 2
+}`). Esse campo **não vem da planilha** — é anotado à mão, talento por
+talento, só quando a Fase 4 chega nele (aviso deixado no topo dos 2
+arquivos). `core/calculoPersonagem.ts` ganhou o helper
+`efeitoMecanicoDoTalento(talentosAtuais, tipo)` — procura, entre os
+IDs de talento ativos, um com aquele tipo de efeito; reaproveitado
+também em `core/ataque.ts` (via `efeitoDoEstiloDeLuta`, que faz o
+mesmo lookup em `estilosDeLuta.ts` por `nome`, já que
+`personagem.estiloDeLuta` guarda o nome, não o id).
+
+**Decisão — Talento de Origem entra no cálculo:** Alerta é categoria
+"Origem" — concedido fixo pela Origem escolhida na criação
+(`origem.talentoOrigemId`), nunca passa pelo picker de Level Up, então
+não vivia em `talentosGeraisAtuais`. `FichaShell.tsx` agora calcula
+`talentosEfetivos = [...talentosGeraisAtuais, origemPersonagem
+?.talentoOrigemId]` e passa esse array pros cálculos — não só os
+talentos escolhidos em Level Up.
+
+**Onde cada efeito entra:**
+- **Alerta** (`bonus-iniciativa-bonus-proficiencia`): soma Bônus de
+  Proficiência na Iniciativa — `calcularIniciativa`/`explicarIniciativa`
+  ganharam parâmetros opcionais `classe`/`nivel`/`talentosAtuais`
+  (a chamada no wizard, sem personagem de verdade ainda, continua sem
+  eles).
+- **Defensivo** (`bonus-ca-com-armadura`): +1 CA com qualquer Armadura
+  equipada — `calcularCAEquipado`/`explicarCAEquipado` ganharam
+  `estiloDeLutaEscolhido`/`talentosAtuais`.
+- **Mestre em Armaduras Médias** (`teto-des-armadura-media`): eleva o
+  teto do mod. Destreza somado na CA de 2 pra 3 com Armadura Média e
+  DES 16+ — `caPelaArmadura` ganhou `tetoDesOverride`, checado contra
+  `armaduraCatalogo.categoria.startsWith('Armadura Média')`.
+- **Arquearia** (`bonus-ataque-distancia`): +2 no acerto com arma à
+  Distância — `ataqueComArma` ganhou `estiloDeLutaEscolhido`, soma no
+  `modAcerto` quando `distancia` é true.
+- **Duelismo** (`bonus-dano-uma-mao-sem-outra-arma`): +2 no dano com 1
+  arma corpo a corpo numa mão e nenhuma outra — `ataqueComArma` ganhou
+  `outraArmaNaMaoSecundaria`; `ataqueBonusMaoSecundaria` (o ataque da
+  PRÓPRIA mão secundária) sempre passa `true` nesse parâmetro, porque
+  ele mesmo é "a outra arma" que desqualifica o Duelismo do ataque
+  principal.
+
+**Testado:** Playwright 390×844 — Origem Criminoso (concede Alerta),
+DES 16: Iniciativa mostrou **+5** (+3 DES +2 Bônus Prof.). Nível 4,
+talento Mestre em Armaduras Médias + Estilo Defensivo + Gibão de Peles
+(Armadura Média) equipado, DES 16: CA mostrou **16** (12 base + 3 teto
+elevado + 1 Defensivo). Estilo Arquearia + Arco Curto (DES 16):
+ataque rolou **1d20 + 7** (+3 DES +2 Prof. +2 Arquearia). Estilo
+Duelismo + Clava sozinha na mão principal (FOR 14): ataque rolou
+**1d20 + 4** (+2 FOR +2 Prof., sem bônus — confirma que Duelismo não
+mexe no acerto, só no dano, mesmo caminho de código do bônus de
+Arquearia já validado).
+
+**Data/origem:** 2026-08.

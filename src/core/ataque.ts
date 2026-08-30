@@ -6,9 +6,18 @@
 
 import { armas, type Arma } from '../data/rulesets/dnd2024/armas';
 import type { Classe } from '../data/rulesets/dnd2024/classes';
+import { estilosDeLuta } from '../data/rulesets/dnd2024/estilosDeLuta';
 import { bonusProficiencia } from './calculoPersonagem';
 import { identificarEquipamento } from './equipamento';
 import type { AtaqueInfo } from '../data/exampleCombat';
+
+/** Efeito mecânico (Fase 4) do Estilo de Luta escolhido pelo
+ * personagem, se houver — `estiloDeLutaEscolhido` guarda o `nome`
+ * (não o `id`), mesmo padrão de `personagem.estiloDeLutaEscolhido`. */
+function efeitoDoEstiloDeLuta(estiloDeLutaEscolhido: string | null | undefined) {
+  if (!estiloDeLutaEscolhido) return null;
+  return estilosDeLuta.find((e) => e.nome === estiloDeLutaEscolhido)?.efeitoMecanico ?? null;
+}
 
 export interface AtaqueResolvido {
   nome: string;
@@ -56,6 +65,11 @@ export function ataqueDesarmado(classe: Classe, nivel: number, forMod: number): 
  * `duasMaosAtivo` é o modo 2 mãos de uma arma Versátil (E3.4): troca
  * o dado de dano pelo maior, indicado entre parênteses na propriedade
  * (ex.: "Versátil (1d10)") — planilha, não hardcoded.
+ *
+ * `estiloDeLutaEscolhido` (Fase 4 dos Talentos) soma o bônus de
+ * Arquearia (+2 no acerto à Distância) e/ou Duelismo (+2 no dano corpo
+ * a corpo com 1 arma numa mão e nenhuma outra — precisa
+ * `outraArmaNaMaoSecundaria === false` e não estar em modo 2 mãos).
  */
 export function ataqueComArma(
   arma: Arma,
@@ -65,6 +79,8 @@ export function ataqueComArma(
   desMod: number,
   semModAtributoNoDano = false,
   duasMaosAtivo = false,
+  estiloDeLutaEscolhido?: string | null,
+  outraArmaNaMaoSecundaria = false,
 ): AtaqueResolvido {
   const acuidade = arma.propriedades.includes('Acuidade');
   const distancia = arma.categoria.includes('à Distância');
@@ -75,10 +91,22 @@ export function ataqueComArma(
   const { quantidade, lados, tipo } = usaVersatil ? parseDano(`${dadoVersatil} ${arma.dano.replace(/^\d+d\d+\s*/, '')}`) : parseDano(arma.dano);
   const danoMod = semModAtributoNoDano && atribMod > 0 ? 0 : atribMod;
   const descPropriedades = arma.propriedades ? ` · ${arma.propriedades}` : '';
+
+  const efeitoEstilo = efeitoDoEstiloDeLuta(estiloDeLutaEscolhido);
+  const bonusArquearia = distancia && efeitoEstilo?.tipo === 'bonus-ataque-distancia' ? efeitoEstilo.bonus : 0;
+  const podeDuelismo = !distancia && !duasMaosAtivo && !outraArmaNaMaoSecundaria;
+  const bonusDuelismo = podeDuelismo && efeitoEstilo?.tipo === 'bonus-dano-uma-mao-sem-outra-arma' ? efeitoEstilo.bonus : 0;
+
   return {
     nome: arma.nome,
     descricao: `${usaVersatil ? `${dadoVersatil} ${tipo}` : arma.dano}${descPropriedades}${usaVersatil ? ' (empunhada com 2 mãos)' : ''}.`,
-    info: { modAcerto: atribMod + prof, danoQuantidade: quantidade, danoLados: lados, danoMod, danoTipo: tipo },
+    info: {
+      modAcerto: atribMod + prof + bonusArquearia,
+      danoQuantidade: quantidade,
+      danoLados: lados,
+      danoMod: danoMod + bonusDuelismo,
+      danoTipo: tipo,
+    },
   };
 }
 
@@ -92,10 +120,12 @@ export function ataqueAtual(
   forMod: number,
   desMod: number,
   duasMaosAtivo = false,
+  estiloDeLutaEscolhido?: string | null,
+  outraArmaNaMaoSecundaria = false,
 ): AtaqueResolvido {
   const arma = nomeArmaEquipada ? armas.find((a) => a.nome === nomeArmaEquipada) : undefined;
   return arma
-    ? ataqueComArma(arma, classe, nivel, forMod, desMod, false, duasMaosAtivo)
+    ? ataqueComArma(arma, classe, nivel, forMod, desMod, false, duasMaosAtivo, estiloDeLutaEscolhido, outraArmaNaMaoSecundaria)
     : ataqueDesarmado(classe, nivel, forMod);
 }
 
@@ -113,11 +143,15 @@ export function ataqueBonusMaoSecundaria(
   nivel: number,
   forMod: number,
   desMod: number,
+  estiloDeLutaEscolhido?: string | null,
 ): AtaqueResolvido | null {
   if (!nomeMaoPrincipal || !nomeMaoSecundaria) return null;
   const principal = armas.find((a) => a.nome === nomeMaoPrincipal);
   const secundaria = armas.find((a) => a.nome === nomeMaoSecundaria);
   if (!principal || !secundaria) return null;
   if (!principal.propriedades.includes('Leve') || !secundaria.propriedades.includes('Leve')) return null;
-  return ataqueComArma(secundaria, classe, nivel, forMod, desMod, true);
+  // `outraArmaNaMaoSecundaria: true` — este ATAQUE é o de outra arma
+  // na mão secundária, então Duelismo ("nenhuma outra arma") nunca se
+  // aplica aqui, só potencialmente no ataque principal.
+  return ataqueComArma(secundaria, classe, nivel, forMod, desMod, true, false, estiloDeLutaEscolhido, true);
 }

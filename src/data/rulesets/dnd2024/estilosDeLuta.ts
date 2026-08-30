@@ -1,21 +1,35 @@
 // Gerado a partir de dnd-master-referencia.xlsx, aba "Talentos",
-// filtrado por Categoria = "Estilo de Luta". Não editar valores à mão.
+// filtrado por Categoria = "Estilo de Luta". Não editar valores à mão
+// (exceto `efeitoMecanico` — ver aviso em `talentos.ts`, mesmo campo,
+// mesmo motivo, adicionado aqui à mão fora da geração automática).
 //
 // Esses 10 talentos são escolhidos por classes como Guerreiro (nível 1),
 // Paladino e Guardião (nível 2) — a coluna "Benefícios" da planilha já
 // tinha um resumo mecânico curto pronto (não é frase corrida como as
 // descrições de outros talentos), então foi usada como está.
 
+import type { EfeitoMecanicoTalento } from './talentos';
+
 export interface EstiloDeLuta {
   id: string;
   nome: string;
   beneficios: string;
+  /** Ver `EfeitoMecanicoTalento` em `talentos.ts` — ausente = ainda
+   * `[PH]` (Fase 4 não chegou nesse Estilo de Luta). */
+  efeitoMecanico?: EfeitoMecanicoTalento;
   pagina: number;
   fonte: string;
 }
 
 export const estilosDeLuta: EstiloDeLuta[] = [
-  { id: 'arquearia', nome: 'Arquearia', beneficios: '+2 nas jogadas de ataque com armas à distância.', pagina: 209, fonte: 'PHB 2024' },
+  {
+    id: 'arquearia',
+    nome: 'Arquearia',
+    beneficios: '+2 nas jogadas de ataque com armas à distância.',
+    efeitoMecanico: { tipo: 'bonus-ataque-distancia', bonus: 2 },
+    pagina: 209,
+    fonte: 'PHB 2024',
+  },
   {
     id: 'combate-com-armas-de-arremesso',
     nome: 'Combate com Armas de Arremesso',
@@ -44,11 +58,19 @@ export const estilosDeLuta: EstiloDeLuta[] = [
     pagina: 210,
     fonte: 'PHB 2024',
   },
-  { id: 'defensivo', nome: 'Defensivo', beneficios: '+1 CA enquanto usa armadura Leve, Média ou Pesada.', pagina: 210, fonte: 'PHB 2024' },
+  {
+    id: 'defensivo',
+    nome: 'Defensivo',
+    beneficios: '+1 CA enquanto usa armadura Leve, Média ou Pesada.',
+    efeitoMecanico: { tipo: 'bonus-ca-com-armadura', bonus: 1 },
+    pagina: 210,
+    fonte: 'PHB 2024',
+  },
   {
     id: 'duelismo',
     nome: 'Duelismo',
     beneficios: 'Com 1 arma corpo a corpo numa mão e nenhuma outra arma: +2 no dano dessa arma.',
+    efeitoMecanico: { tipo: 'bonus-dano-uma-mao-sem-outra-arma', bonus: 2 },
     pagina: 210,
     fonte: 'PHB 2024',
   },

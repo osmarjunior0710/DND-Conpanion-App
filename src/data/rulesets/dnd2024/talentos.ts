@@ -16,8 +16,17 @@
 //
 // Fase 1 do plano de Talentos (ver DECISOES-DESIGN.md) — só dado e
 // schema. Classificação de texto em Ação/Ação Bônus/Reação/Passiva
-// (Fase 2), seleção na Ficha (Fase 3) e efeito mecânico de verdade
-// (Fase 4) ainda não existem.
+// (Fase 2) e seleção na Ficha (Fase 3) — feitas. Fase 4 (efeito
+// mecânico de verdade) está começando, em lotes pequenos — ver
+// PENDENCIAS.md "Talentos — Fase 4".
+//
+// IMPORTANTE sobre `efeitoMecanico`: esse campo NÃO vem da planilha —
+// é anotado à mão, talento por talento, só quando a Fase 4 chega nele
+// (ver DECISOES-DESIGN.md "Talentos Fase 4"). Se este arquivo for
+// regenerado a partir da planilha no futuro, os `efeitoMecanico` já
+// implementados precisam ser reaplicados manualmente — não são
+// perdidos por acidente só se alguém lembrar de conferir antes de
+// sobrescrever.
 
 import type { Atributo } from '../../wizardFixtures';
 
@@ -49,6 +58,26 @@ export type ConcedeAsiTalento =
   | { tipo: 'escolha-unica'; atributos: Atributo[]; maximo: number }
   | { tipo: 'distribuir-dois'; atributos: Atributo[]; maximo: number };
 
+/** Efeito mecânico de verdade — Fase 4, um talento por vez. Só os
+ * talentos já implementados têm esse campo; o resto continua `[PH]`
+ * (salvo/mostrado, sem efeito na ficha) até chegar a vez deles. */
+export type EfeitoMecanicoTalento =
+  /** Soma o Bônus de Proficiência atual na Iniciativa (Alerta). */
+  | { tipo: 'bonus-iniciativa-bonus-proficiencia' }
+  /** +`bonus` na CA enquanto uma Armadura (Leve/Média/Pesada) estiver
+   * equipada (Defensivo, do Estilo de Luta). */
+  | { tipo: 'bonus-ca-com-armadura'; bonus: number }
+  /** Com Armadura Média equipada e Destreza final >= `desMinima`,
+   * eleva o teto do mod. de Destreza somado na CA pra `tetoDes` em vez
+   * do padrão da armadura (Mestre em Armaduras Médias). */
+  | { tipo: 'teto-des-armadura-media'; desMinima: number; tetoDes: number }
+  /** +`bonus` na jogada de ataque com armas à Distância (Arquearia,
+   * do Estilo de Luta). */
+  | { tipo: 'bonus-ataque-distancia'; bonus: number }
+  /** +`bonus` no dano ao empunhar 1 arma corpo a corpo numa mão e
+   * nenhuma outra arma (Duelismo, do Estilo de Luta). */
+  | { tipo: 'bonus-dano-uma-mao-sem-outra-arma'; bonus: number };
+
 export interface Talento {
   id: string;
   nome: string;
@@ -56,10 +85,13 @@ export interface Talento {
   repetivel: boolean;
   prerequisitos: PrerequisitosTalento;
   concedeAsi: ConcedeAsiTalento;
-  /** Texto bruto da coluna "Benefícios" — Fase 2 (ainda não feita)
-   * classifica em Ação/Ação Bônus/Reação/Passiva, quebrando em frases
-   * quando o talento tiver múltiplos efeitos (ex: Conjurador Bélico). */
+  /** Texto bruto da coluna "Benefícios" — Fase 2 classifica em
+   * Ação/Ação Bônus/Reação/Passiva, quebrando em frases quando o
+   * talento tiver múltiplos efeitos (ex: Conjurador Bélico). */
   beneficios: string;
+  /** Ver `EfeitoMecanicoTalento` — ausente = ainda `[PH]` (Fase 4 não
+   * chegou nesse talento). */
+  efeitoMecanico?: EfeitoMecanicoTalento;
   pagina: number;
   fonte: string;
 }
@@ -73,6 +105,7 @@ export const talentos: Talento[] = [
     prerequisitos: { nivelMinimo: null, atributosMinimos: [], outro: null },
     concedeAsi: { tipo: 'nenhum' },
     beneficios: "Soma Bônus de Proficiência na Iniciativa. Pode trocar sua Iniciativa com a de um aliado voluntário imediatamente após rolar (nenhum dos dois pode estar Incapacitado).",
+    efeitoMecanico: { tipo: 'bonus-iniciativa-bonus-proficiencia' },
     pagina: 199,
     fonte: "PHB 2024",
   },
@@ -458,6 +491,7 @@ export const talentos: Talento[] = [
     prerequisitos: { nivelMinimo: 4, atributosMinimos: [], outro: "Treinamento com Armadura Média" },
     concedeAsi: { tipo: 'escolha-unica', atributos: ['FOR', 'DES'], maximo: 20 },
     beneficios: "Com Armadura Média e Destreza 16+: soma +3 (em vez de +2) na CA.",
+    efeitoMecanico: { tipo: 'teto-des-armadura-media', desMinima: 16, tetoDes: 3 },
     pagina: 207,
     fonte: "PHB 2024",
   },
@@ -656,6 +690,7 @@ export const talentos: Talento[] = [
     prerequisitos: { nivelMinimo: null, atributosMinimos: [], outro: "Característica de Estilo de Luta" },
     concedeAsi: { tipo: 'nenhum' },
     beneficios: "+2 nas jogadas de ataque com armas à distância.",
+    efeitoMecanico: { tipo: 'bonus-ataque-distancia', bonus: 2 },
     pagina: 209,
     fonte: "PHB 2024",
   },
@@ -711,6 +746,7 @@ export const talentos: Talento[] = [
     prerequisitos: { nivelMinimo: null, atributosMinimos: [], outro: "Característica de Estilo de Luta" },
     concedeAsi: { tipo: 'nenhum' },
     beneficios: "+1 CA enquanto usa armadura Leve, Média ou Pesada.",
+    efeitoMecanico: { tipo: 'bonus-ca-com-armadura', bonus: 1 },
     pagina: 210,
     fonte: "PHB 2024",
   },
@@ -722,6 +758,7 @@ export const talentos: Talento[] = [
     prerequisitos: { nivelMinimo: null, atributosMinimos: [], outro: "Característica de Estilo de Luta" },
     concedeAsi: { tipo: 'nenhum' },
     beneficios: "Com 1 arma corpo a corpo numa mão e nenhuma outra arma: +2 no dano dessa arma.",
+    efeitoMecanico: { tipo: 'bonus-dano-uma-mao-sem-outra-arma', bonus: 2 },
     pagina: 210,
     fonte: "PHB 2024",
   },
