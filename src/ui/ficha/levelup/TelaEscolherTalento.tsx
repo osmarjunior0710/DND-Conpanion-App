@@ -93,8 +93,8 @@ export default function TelaEscolherTalento({
           ← Voltar
         </div>
         <div
-          className={`btn btn-primary ${styles.pill}`}
-          style={selecionado === null ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+          className={`btn btn-primary ${styles.pill} ${selecionado === null ? 'btn-disabled' : ''}`}
+          style={selecionado === null ? { pointerEvents: 'none' } : undefined}
           onClick={() => selecionado && onEscolher(selecionado)}
         >
           Confirmar ✓

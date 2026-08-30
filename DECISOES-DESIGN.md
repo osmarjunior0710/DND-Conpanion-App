@@ -4674,3 +4674,34 @@ estado final persistido correto (CON 15→16, `talentosGeraisAtual:
 ['esmagador']`).
 
 **Data/origem:** 2026-08.
+
+## Talentos/ASI — botão "Confirmar" desabilitado não parecia (nem bloqueava de verdade) desabilitado
+
+**Contexto:** o Osmar mandou print da tela "Aumentar Atributos" com
+0 pontos distribuídos ("Faltam 2") e o botão "Confirmar ✓" parecendo
+habilitado (mesma cor azul sólida do resto). Investigando: os 3
+botões "Confirmar" novos (distribuição de ASI, escolha de atributo do
+talento, lista de talentos) usavam `style={{ opacity: 0.5,
+pointerEvents: 'none' }}` inline em vez da classe global já existente
+`.btn-disabled` (`opacity: 0.35`, usada em Wizard/Home/CharacterList)
+— ficava mais opaco que o padrão do app, mas ainda lia como "azul
+ativo". Pior: `styles.pill` (CSS module do Level Up) define
+`pointer-events: auto` pra funcionar dentro do `navLayer` (que é
+`pointer-events: none` no container) — como as duas classes têm a
+mesma especificidade CSS, a ordem de carregamento fazia `pill` vencer
+e **o botão continuava clicável mesmo "desabilitado"** (confirmado
+depois com teste automatizado: clique forçado no botão sem pontos
+distribuídos navegava pra frente mesmo assim).
+
+**Decisão:** os 3 botões passam a usar a classe `.btn-disabled` (pro
+visual ficar igual ao resto do app) **e** mantêm `pointerEvents:
+'none'` inline como reforço (inline vence qualquer classe, garante que
+`pill` não sobrescreve o bloqueio de clique mesmo com a mesma
+especificidade de seletor).
+
+**Testado:** Playwright 390×844 — `getComputedStyle` confirmando
+`opacity: 0.35` e `pointerEvents: none` no botão sem seleção feita;
+clique forçado (`{force:true}`) não navega. Screenshot confirma
+visual agora igual ao "← Voltar" (claramente esmaecido).
+
+**Data/origem:** 2026-08.

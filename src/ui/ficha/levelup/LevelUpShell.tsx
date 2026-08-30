@@ -494,8 +494,8 @@ export default function LevelUpShell({
             ← Voltar
           </div>
           <div
-            className={`btn btn-primary ${styles.pill}`}
-            style={atributoTalentoTemp === null ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            className={`btn btn-primary ${styles.pill} ${atributoTalentoTemp === null ? 'btn-disabled' : ''}`}
+            style={atributoTalentoTemp === null ? { pointerEvents: 'none' } : undefined}
             onClick={() => {
               if (atributoTalentoTemp === null) return;
               setAsiEscolhas([atributoTalentoTemp]);
@@ -571,8 +571,8 @@ export default function LevelUpShell({
             ← Voltar
           </div>
           <div
-            className={`btn btn-primary ${styles.pill}`}
-            style={pontosAsiRestantes === 0 ? undefined : { opacity: 0.5, pointerEvents: 'none' }}
+            className={`btn btn-primary ${styles.pill} ${pontosAsiRestantes === 0 ? '' : 'btn-disabled'}`}
+            style={pontosAsiRestantes === 0 ? undefined : { pointerEvents: 'none' }}
             onClick={() => {
               setTelaAsi(false);
               setLuIndex((i) => i + 1);
