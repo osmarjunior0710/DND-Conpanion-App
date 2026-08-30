@@ -51,6 +51,13 @@
   min-height: var(--touch-target-min);
 }
 
+.tagAtivo {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: bold;
+}
+
 .actions {
   display: flex;
   gap: var(--space-2);

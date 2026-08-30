@@ -5028,3 +5028,34 @@ subclasse aplicada (ícone/nome no cabeçalho), PV/CA/atributos
 condizentes com o nível.
 
 **Data/origem:** 2026-08.
+
+## Personagem de Teste — atalho pra gerar "1 nível antes de um Talento"
+
+**Contexto:** o Osmar notou que, testando Alerta/Defensivo/Arquearia/
+Duelismo (lote 1 da Fase 4), só via "Mestre em Armaduras Médias"
+aparecer — esperado, não é bug: Alerta vem só de Origens específicas
+(ex: Criminoso) e os 3 de Estilo de Luta só aparecem se o Estilo
+sorteado pelo gerador for exatamente aquele (1 em 10). Só Mestre em
+Armaduras Médias é Talento Geral de verdade, escolhido pela lista —
+por isso aparecia sozinho num personagem gerado aleatoriamente. Em
+vez de eu forçar essas combinações no gerador, o Osmar preferiu poder
+subir de nível manualmente e escolher o Talento na hora, testando o
+fluxo real de Level Up.
+
+**Decisão:** no popup "Personagem de Teste", embaixo do dropdown de
+Nível, uma linha de atalhos calculada a partir de `niveisComASI` da
+Classe escolhida (recalcula ao trocar de Classe) — 1 chip por nível
+de Talento da classe, mostrando "nível X (Talento no X+1)"; tocar
+seta o dropdown pra `X` (1 a menos que o nível de verdade). Gera o
+personagem exatamente 1 nível antes de qualquer Talento/ASI da
+classe escolhida — o jogador dá "Level Up" na Ficha logo em seguida e
+cai direto no passo de escolha, podendo testar qualquer Talento (não
+só os já implementados na Fase 4) através do fluxo real.
+
+**Testado:** Playwright 390×844 — chips corretos pro Guerreiro (4, 6,
+8, 12, 14, 16 — tem Talento extra, diferente da maioria das classes);
+clicar no chip "nível 3 (Talento no 4)" ajustou o dropdown pra 3 e
+ficou destacado; personagem gerado nível 3; "Level Up" na Ficha abriu
+normalmente, pronto pra escolher o Talento do nível 4.
+
+**Data/origem:** 2026-08.

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { armazenamentoPersonagens } from '../../core/armazenamentoPersonagens';
 import { gerarPersonagemTeste, opcoesGeradorTeste } from '../../core/geradorPersonagemTeste';
+import { classes } from '../../data/rulesets/dnd2024/classes';
+import { niveisComASI } from '../../core/levelUp';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import styles from './PersonagemTesteModal.module.css';
 
@@ -23,6 +25,9 @@ export default function PersonagemTesteModal({ onFechar, onCriado }: PersonagemT
   const [especieNome, setEspecieNome] = useState(opcoes.especies[0]?.nome ?? '');
   const [nivel, setNivel] = useState(1);
   const [gerando, setGerando] = useState(false);
+
+  const classeObj = classes.find((c) => c.nome === classeNome);
+  const niveisAsiDaClasse = classeObj ? niveisComASI(classeObj) : [];
 
   function criar() {
     setGerando(true);
@@ -90,6 +95,25 @@ export default function PersonagemTesteModal({ onFechar, onCriado }: PersonagemT
               </option>
             ))}
           </select>
+          {niveisAsiDaClasse.length > 0 && (
+            <>
+              <div className="label" style={{ marginTop: 8, marginBottom: 4 }}>
+                Ou 1 nível antes de um Talento, pra subir na mão e escolher você mesmo:
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {niveisAsiDaClasse.map((nivelAsi) => (
+                  <span
+                    key={nivelAsi}
+                    className={`tag ${nivel === nivelAsi - 1 ? styles.tagAtivo : ''}`}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setNivel(nivelAsi - 1)}
+                  >
+                    nível {nivelAsi - 1} (Talento no {nivelAsi})
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         <div className={styles.actions}>
