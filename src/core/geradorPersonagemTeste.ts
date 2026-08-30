@@ -19,6 +19,8 @@ import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesPro
 import { gruposFerramenta } from '../data/rulesets/dnd2024/ferramentas';
 import { magiasDaClasse } from '../data/rulesets/dnd2024/magias';
 import { talentos, type Talento } from '../data/rulesets/dnd2024/talentos';
+import { armas } from '../data/rulesets/dnd2024/armas';
+import { armaduras } from '../data/rulesets/dnd2024/armaduras';
 import { dadoVidaValor } from '../data/levelUpFixtures';
 import {
   criarSelecaoInicial,
@@ -33,6 +35,8 @@ import { valorRecursoClasse } from './recursosClasse';
 import { espacosDeMagiaAtivos } from './magiasPersonagem';
 import { niveisComASI, niveisComEspecialista, temEstiloDeLutaTrocavel } from './levelUp';
 import { gerarIdPersonagem, type PersonagemSalvo } from './armazenamentoPersonagens';
+import { calcularItensIniciais, type ItemMochila } from './mochila';
+import { equiparNoSlot } from './equipamento';
 
 const nomesAleatorios = [
   'Aria Ventos-Negros',
@@ -363,6 +367,55 @@ export const TALENTOS_FASE4_IMPLEMENTADOS: { id: string; nome: string; tipo: 'or
   { id: 'mestre-em-armaduras-medias', nome: 'Mestre em Armaduras Médias', tipo: 'geral' },
 ];
 
+function itemEhArmaADistancia(nomeItem: string): boolean {
+  return armas.find((a) => a.nome === nomeItem)?.categoria.includes('à Distância') ?? false;
+}
+
+function itemEhArmaCorpoACorpoUmaMao(nomeItem: string): boolean {
+  const a = armas.find((x) => x.nome === nomeItem);
+  return a !== undefined && a.categoria.includes('Corpo a Corpo') && !a.propriedades.includes('Duas Mãos');
+}
+
+function itemEhArmadura(nomeItem: string): boolean {
+  return armaduras.some((a) => a.nome === nomeItem);
+}
+
+/** Garante (e já equipa) o item que cada Estilo de Luta precisa pra
+ * ter algum efeito visível — sem isso, o Osmar teria que caçar o item
+ * certo na Mochila e equipar na mão pra sequer conseguir testar. Se o
+ * kit inicial sorteado (opção A/B/C) não tiver o item certo, troca pra
+ * uma opção que tenha antes de montar a Mochila. */
+function garantirEquipamentoParaEstiloDeLuta(personagem: PersonagemSalvo, classe: Classe, estiloId: string): void {
+  const verificador =
+    estiloId === 'arquearia'
+      ? itemEhArmaADistancia
+      : estiloId === 'duelismo'
+        ? itemEhArmaCorpoACorpoUmaMao
+        : estiloId === 'defensivo'
+          ? itemEhArmadura
+          : null;
+  if (!verificador) return;
+
+  let itens: ItemMochila[] = calcularItensIniciais(personagem.selecao);
+  let itemAlvo = itens.find((it) => verificador(it.nome));
+
+  if (!itemAlvo) {
+    const proficiencias = proficienciasIniciaisClasse[classe.id];
+    const opcaoComItem = proficiencias?.equipamentoInicial.find((o) => o.itens.some((it) => verificador(it.nome)));
+    if (opcaoComItem) {
+      personagem.selecao.equipamentoClasseEscolhido = opcaoComItem.rotulo as 'A' | 'B' | 'C';
+      itens = calcularItensIniciais(personagem.selecao);
+      itemAlvo = itens.find((it) => verificador(it.nome));
+    }
+  }
+
+  if (itemAlvo) {
+    const slot = estiloId === 'defensivo' ? 'armadura' : 'maoPrincipal';
+    itens = equiparNoSlot(itens, itemAlvo.id, slot);
+  }
+  personagem.itensMochilaAtual = itens;
+}
+
 /** Gera um personagem de teste garantindo que ele TEM o talento/estilo
  * pedido (não sorteado — forçado), com o nome do personagem = nome do
  * talento, pra identificar na Lista sem abrir a ficha. Usa Classe/
@@ -396,6 +449,12 @@ export function gerarPersonagemComTalento(id: string): PersonagemSalvo {
     personagem.selecao.estiloDeLutaEscolhido = estiloObj.nome;
     personagem.estiloDeLutaAtual = estiloObj.nome;
     personagem.selecao.nome = entrada.nome;
+    // Sem o item certo EQUIPADO, o efeito não aparece em lugar nenhum
+    // (Arquearia precisa de arma à Distância na Mão Principal;
+    // Duelismo, de 1 arma corpo a corpo numa mão só; Defensivo, de
+    // qualquer Armadura) — garante o kit certo e já equipa, pra não
+    // obrigar o Osmar a caçar item manualmente só pra testar.
+    garantirEquipamentoParaEstiloDeLuta(personagem, classeObj, id);
     return personagem;
   }
 

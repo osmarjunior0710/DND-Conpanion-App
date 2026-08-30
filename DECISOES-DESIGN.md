@@ -5105,3 +5105,33 @@ os 5 depois do fix (antes só o de nível 4 mostrava o bug, porque os
 de nível 1 nunca tinham Level Up acumulado pra divergir).
 
 **Data/origem:** 2026-08.
+
+## Personagens de teste de Estilo de Luta já nascem com o item certo equipado
+
+**Contexto:** o Osmar não sabia como confirmar Arquearia — o
+personagem de teste tinha o Estilo de Luta marcado, mas nenhum efeito
+visível, porque nenhum dos 3 efeitos de Estilo de Luta (Arquearia,
+Duelismo, Defensivo) aparece em lugar nenhum sem o item certo
+EQUIPADO (arma à Distância / arma corpo a corpo de 1 mão só / Armadura
+— ver `core/ataque.ts` e `core/calculoPersonagem.ts`, lote 1 da Fase
+4). O kit de equipamento inicial da Classe é sorteado entre as opções
+A/B/C, e nem toda opção tem o item necessário (ex: só a opção B do
+Guerreiro tem um Arco Longo).
+
+**Decisão:** `gerarPersonagemComTalento` (em
+`core/geradorPersonagemTeste.ts`) ganhou
+`garantirEquipamentoParaEstiloDeLuta` — depois de montar o
+personagem, verifica se o kit sorteado já tem o item certo; se não
+tiver, troca pra uma opção de equipamento (A/B/C) da Classe que
+tenha, e equipa esse item no slot certo (`core/equipamento.ts`
+`equiparNoSlot` — Mão Principal pras armas, Armadura pro Defensivo)
+antes de salvar. Assim o personagem de teste já nasce pronto pra
+mostrar o efeito, sem o Osmar precisar caçar item na Mochila.
+
+**Testado:** Playwright 390×844 — "Arquearia" nasceu com Arco Longo
+na Mão Principal (aba Mochila confirma "Equipado Agora"); "Duelismo"
+com Adaga na Mão Principal e nada na Mão Secundária; "Defensivo" com
+Couro Batido na Armadura; ataque com o Arco Longo rolou "1d20 + 6" —
+consistente com DES+Prof.+Arquearia.
+
+**Data/origem:** 2026-08.
