@@ -31,7 +31,7 @@ import { calcularPvMaximoNivel1, periciasProficientes } from './calculoPersonage
 import { armasParaMaestria, quantidadeMaestriaEmArma } from './maestriaArma';
 import { valorRecursoClasse } from './recursosClasse';
 import { espacosDeMagiaAtivos } from './magiasPersonagem';
-import { niveisComASI, niveisComEspecialista, temEstiloDeLutaTrocavel } from './levelUp';
+import { niveisComASI, niveisComEspecialista, temEstiloDeLutaTrocavel, subclasseImplementada } from './levelUp';
 import { gerarIdPersonagem, type PersonagemSalvo } from './armazenamentoPersonagens';
 
 const nomesAleatorios = [
@@ -174,6 +174,7 @@ function aplicarLevelUpsAleatorios(
   classe: Classe,
   selecaoInicial: WizardSelection,
   nivelAlvo: number,
+  subclasseForcada?: string | null,
 ): {
   selecao: WizardSelection;
   nivel: number;
@@ -202,7 +203,7 @@ function aplicarLevelUpsAleatorios(
     pvMax += mediaPvPorNivel;
 
     if (classe.nivelSubclasse === nivel && !subclasseAtual && subclassesDaClasse.length > 0) {
-      subclasseAtual = sorteiaUm(subclassesDaClasse)?.nome ?? null;
+      subclasseAtual = subclasseForcada ?? sorteiaUm(subclassesDaClasse)?.nome ?? null;
     }
 
     if (temEstiloDeLutaTrocavel(classe, nivel) && !estiloDeLutaAtual) {
@@ -290,6 +291,19 @@ export function opcoesGeradorTeste(): {
   };
 }
 
+/** Subclasses da classe pedida que já têm característica mecânica
+ * implementada de verdade (`subclasseImplementada`, mesmo bloqueio já
+ * usado na tela de escolha de subclasse do Level Up) — dropdown
+ * opcional "Subclasse" do gerador só oferece essas, nunca uma que
+ * ainda é só nome/ícone. */
+export function subclassesDisponiveisParaTeste(classeNome: string): OpcaoGeradorTeste[] {
+  const classe = classes.find((c) => c.nome === classeNome);
+  if (!classe) return [];
+  return subclasses
+    .filter((s) => s.classeId === classe.id && subclasseImplementada(s.nome))
+    .map((s) => ({ id: s.id, nome: s.nome }));
+}
+
 /** Gera e devolve um `PersonagemSalvo` completo, pronto pra salvar —
  * quem chama decide se salva (`armazenamentoPersonagens.salvar`) e
  * pra onde navegar depois. Não salva sozinho, pra manter esse módulo
@@ -299,6 +313,11 @@ export function gerarPersonagemTeste(params: {
   origemNome: string;
   especieNome: string;
   nivelAlvo: number;
+  /** Subclasse escolhida à mão no popup (dropdown opcional) — `null`/
+   * ausente = sorteia como sempre. Só faz efeito se `nivelAlvo` já
+   * bater o nível de subclasse da classe (senão o personagem nem
+   * chega lá, igual um Level Up de verdade). */
+  subclasseNome?: string | null;
 }): PersonagemSalvo {
   const classe = classes.find((c) => c.nome === params.classeNome);
   if (!classe) throw new Error(`Classe não encontrada: ${params.classeNome}`);
@@ -319,7 +338,7 @@ export function gerarPersonagemTeste(params: {
     };
   }
 
-  const resultado = aplicarLevelUpsAleatorios(classe, selecaoNivel1, nivelAlvo);
+  const resultado = aplicarLevelUpsAleatorios(classe, selecaoNivel1, nivelAlvo, params.subclasseNome);
   return {
     id: gerarIdPersonagem(),
     criadoEm: new Date().toISOString(),

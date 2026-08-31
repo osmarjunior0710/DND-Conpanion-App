@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { armazenamentoPersonagens } from '../../core/armazenamentoPersonagens';
-import { gerarPersonagemTeste, opcoesGeradorTeste } from '../../core/geradorPersonagemTeste';
+import { gerarPersonagemTeste, opcoesGeradorTeste, subclassesDisponiveisParaTeste } from '../../core/geradorPersonagemTeste';
 import { classes } from '../../data/rulesets/dnd2024/classes';
 import { niveisComASI } from '../../core/levelUp';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
@@ -24,14 +24,28 @@ export default function PersonagemTesteModal({ onFechar, onCriado }: PersonagemT
   const [origemNome, setOrigemNome] = useState(opcoes.origens[0]?.nome ?? '');
   const [especieNome, setEspecieNome] = useState(opcoes.especies[0]?.nome ?? '');
   const [nivel, setNivel] = useState(1);
+  const [subclasseNome, setSubclasseNome] = useState('');
   const [gerando, setGerando] = useState(false);
 
   const classeObj = classes.find((c) => c.nome === classeNome);
   const niveisAsiDaClasse = classeObj ? niveisComASI(classeObj) : [];
+  const subclassesDisponiveis =
+    classeObj && nivel >= classeObj.nivelSubclasse ? subclassesDisponiveisParaTeste(classeNome) : [];
+  // Se a classe ou o nível mudou e a escolha anterior não existe mais
+  // nessa lista (subclasse de outra classe, ou nível caiu abaixo do
+  // de subclasse), trata como "nenhuma escolhida" — sem precisar de
+  // efeito, só derivado do estado a cada render.
+  const subclasseValida = subclassesDisponiveis.some((s) => s.nome === subclasseNome) ? subclasseNome : '';
 
   function criar() {
     setGerando(true);
-    const personagem = gerarPersonagemTeste({ classeNome, origemNome, especieNome, nivelAlvo: nivel });
+    const personagem = gerarPersonagemTeste({
+      classeNome,
+      origemNome,
+      especieNome,
+      nivelAlvo: nivel,
+      subclasseNome: subclasseValida || null,
+    });
     armazenamentoPersonagens.salvar(personagem);
     onCriado(personagem.id);
   }
@@ -84,7 +98,7 @@ export default function PersonagemTesteModal({ onFechar, onCriado }: PersonagemT
           </select>
         </div>
 
-        <div className={styles.field} style={{ marginBottom: 0 }}>
+        <div className={styles.field} style={subclassesDisponiveis.length === 0 ? { marginBottom: 0 } : undefined}>
           <div className="label" style={{ marginBottom: 4 }}>
             Nível
           </div>
@@ -115,6 +129,22 @@ export default function PersonagemTesteModal({ onFechar, onCriado }: PersonagemT
             </>
           )}
         </div>
+
+        {subclassesDisponiveis.length > 0 && (
+          <div className={styles.field} style={{ marginBottom: 0 }}>
+            <div className="label" style={{ marginBottom: 4 }}>
+              Subclasse (opcional)
+            </div>
+            <select className={styles.select} value={subclasseValida} onChange={(e) => setSubclasseNome(e.target.value)}>
+              <option value="">— sortear —</option>
+              {subclassesDisponiveis.map((s) => (
+                <option key={s.id} value={s.nome}>
+                  {s.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className={styles.actions}>
           <div className="btn" style={{ flex: 1 }} onClick={onFechar}>

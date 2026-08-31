@@ -5633,3 +5633,39 @@ de Interrupção, Proficiências Bônus, Descobertas Mágicas, Perícia
 Inigualável) estão implementadas — plano fechado.**
 
 **Data/origem:** 2026-08.
+
+## Personagem de Teste — dropdown opcional de Subclasse
+
+**O que é:** pedido do Osmar — 5º dropdown no popup "🎲 Personagem de
+Teste", **opcional**, sempre começa vazio ("— sortear —"). Só aparece
+quando Nível ≥ nível de subclasse da Classe escolhida (Bardo = 3) — e
+só lista subclasses que já têm característica mecânica implementada
+de verdade (`subclasseImplementada`, mesmo bloqueio já usado na tela
+de escolha de subclasse do Level Up — hoje só "Colégio do
+Conhecimento" pra Bardo).
+
+**Implementação:**
+- `core/geradorPersonagemTeste.ts`: nova função
+  `subclassesDisponiveisParaTeste(classeNome)`; `gerarPersonagemTeste`
+  ganhou parâmetro opcional `subclasseNome`, repassado pra
+  `aplicarLevelUpsAleatorios` (novo parâmetro `subclasseForcada`) — se
+  vier preenchido, usa em vez de sortear; deixado vazio, comportamento
+  de sempre (sorteia entre as opções implementadas).
+- `PersonagemTesteModal.tsx`: a validade da escolha é só DERIVADA do
+  estado a cada render (`subclasseValida`), sem `useEffect` — troca de
+  Classe ou nível caindo abaixo do de subclasse invalida a escolha
+  anterior automaticamente (não sobra uma subclasse de outra classe
+  selecionada por engano).
+
+**Fora de escopo de propósito:** a subclasse forçada ainda não gera
+as escolhas mecânicas dela (Proficiências Bônus, Descobertas
+Mágicas) — o gerador nunca fez isso nem pra subclasse sorteada, esse
+gap já é conhecido (ver sessão de testes do Colégio do Conhecimento,
+sempre precisou passar pelo Level Up manual pra preencher essas
+escolhas). Só a ESCOLHA da subclasse deixou de ser aleatória.
+
+Testado via Playwright: dropdown ausente em nível 1; aparece em nível
+3 só com "Colégio do Conhecimento"; personagem gerado com a subclasse
+escolhida de verdade (não sorteada).
+
+**Data/origem:** 2026-08.
