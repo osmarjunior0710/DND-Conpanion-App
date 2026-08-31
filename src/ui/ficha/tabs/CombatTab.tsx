@@ -55,6 +55,8 @@ interface CombatTabProps {
   onUsarInspiracao: () => boolean;
   onRecuperarInspiracaoComEspaco: () => boolean;
   contraEncantamentoDisponivel: boolean;
+  iniciativaMod: number | null;
+  onRolarIniciativa?: () => void;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -103,13 +105,38 @@ export default function CombatTab({
   onUsarInspiracao,
   onRecuperarInspiracaoComEspaco,
   contraEncantamentoDisponivel,
+  iniciativaMod,
+  onRolarIniciativa,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [detalhesAtivo, setDetalhesAtivo] = useState(true);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [danoPendente, setDanoPendente] = useState<DanoPendente | null>(null);
   const [ataquesFeitos, setAtaquesFeitos] = useState(0);
+  const [iniciativaValor, setIniciativaValor] = useState<number | null>(null);
   const { rolarD20, rolarDados } = useRoll();
+
+  function alternarIniciativa() {
+    if (iniciativaValor !== null) {
+      setIniciativaValor(null);
+      return;
+    }
+    if (iniciativaMod === null) return;
+    rolarD20({
+      label: 'Iniciativa',
+      formula: `1d20 + ${iniciativaMod}`,
+      mod: iniciativaMod,
+      onResultado: (total) => setIniciativaValor(total),
+    });
+    onRolarIniciativa?.();
+  }
+
+  function fimDoTurno() {
+    onFimDoTurno();
+    setFeedback(null);
+    setDanoPendente(null);
+    setAtaquesFeitos(0);
+  }
 
   function abrirPainel(categoria: RecursoTurno) {
     if (turnState[categoria] === 'usada') return;
@@ -225,6 +252,34 @@ export default function CombatTab({
 
   return (
     <>
+      <div className={styles.splitBtns}>
+        <div
+          className={`${styles.splitBtn} ${styles.splitBtnIniciativa}`}
+          style={iniciativaMod === null ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+          onClick={alternarIniciativa}
+        >
+          {iniciativaValor === null ? (
+            <>
+              <div className={styles.sbIcon}>🎲</div>
+              <div className={styles.sbLabel}>Iniciativa</div>
+            </>
+          ) : (
+            <>
+              <div className={styles.sbIcon} style={{ fontSize: 21 }}>
+                {iniciativaValor}
+              </div>
+              <div className={styles.sbLabel}>Iniciativa</div>
+              <div className={styles.sbState}>(Aperte novamente para terminar o combate)</div>
+            </>
+          )}
+        </div>
+        <div className={`${styles.splitBtn} ${styles.splitBtnFimTurno}`} onClick={fimDoTurno}>
+          <div className={styles.sbIcon}>↻</div>
+          <div className={styles.sbLabel}>Fim do Turno</div>
+          <div className={styles.sbState}>restaura os 3 botões</div>
+        </div>
+      </div>
+
       <div className={`box-solid ${styles.hpLive}`}>
         <div>
           <div className="label">Pontos de Vida</div>
@@ -326,17 +381,6 @@ export default function CombatTab({
         <div className={styles.sbState}>{turnState.reacao === 'usada' ? 'usada' : 'ativo'}</div>
       </div>
 
-      <div
-        className={styles.endTurnBtn}
-        onClick={() => {
-          onFimDoTurno();
-          setFeedback(null);
-          setDanoPendente(null);
-          setAtaquesFeitos(0);
-        }}
-      >
-        ↻ Fim do Turno — restaura os 3 botões
-      </div>
       <div className="label">
         Ação abre da esquerda, Ação Bônus da direita, Reação sobe de baixo. Ao usar um, ele fica cinza/travado até
         "Fim do Turno".

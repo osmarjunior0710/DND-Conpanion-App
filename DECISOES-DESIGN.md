@@ -5282,3 +5282,29 @@ da última vez que o código foi tocado. Vai ser usado quando entrarmos
 no Colégio do Conhecimento.
 
 **Data/origem:** 2026-08.
+
+## Combat — botões de Iniciativa e Fim do Turno no topo da aba
+
+**O que é:** pedido do Osmar — 2 botões novos no topo da aba Combat
+(acima de Pontos de Vida), no mesmo estilo visual dos botões
+Ação/Ação Bônus.
+
+- **Iniciativa** (esquerda): 1º toque rola 1d20 + mod. de Iniciativa
+  (reaproveita o `rolarD20` do `RollContext`, mesmo padrão de todo
+  resto do app) e mostra o resultado direto no botão + "(Aperte
+  novamente para terminar o combate)". 2º toque limpa o valor, volta
+  ao estado inicial ("🎲 Iniciativa"). Também dispara a recuperação de
+  Inspiração de Bardo do "Inspiração Superior" (nv18), igual o mesmo
+  gatilho já existente na aba Atributos — rolar Iniciativa é rolar
+  Iniciativa, não importa qual botão da tela disparou.
+- **Fim do Turno** (direita): mesmo comportamento de sempre (reseta
+  Ação/Ação Bônus/Reação pro estado "ativo") — só mudou de lugar (era
+  uma faixa tracejada mais abaixo na tela). Não mexe no valor de
+  Iniciativa — ele é "por combate", não "por turno", só o 2º toque no
+  próprio botão de Iniciativa encerra.
+
+Testado via Playwright (390px): rolar Iniciativa mostra o valor no
+botão E no overlay de rolagem: 2º toque limpa; Fim do Turno com
+Iniciativa ativa preserva o valor.
+
+**Data/origem:** 2026-08.

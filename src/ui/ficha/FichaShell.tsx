@@ -670,6 +670,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onUsarInspiracao={usarInspiracao}
             onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
             contraEncantamentoDisponivel={contraEncantamentoDisponivel}
+            iniciativaMod={iniciativa}
+            onRolarIniciativa={inspiracaoSuperiorDesbloqueada ? recuperarInspiracaoAoRolarIniciativa : undefined}
           />
         )}
       </div>

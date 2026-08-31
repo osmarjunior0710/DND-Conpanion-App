@@ -114,22 +114,19 @@
   text-transform: uppercase;
 }
 
-.endTurnBtn {
-  width: 100%;
-  padding: var(--space-3);
-  text-align: center;
-  border: 1px dashed var(--line);
-  border-radius: var(--shape-sm);
-  cursor: pointer;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-bottom: var(--space-3);
-  min-height: var(--touch-target-min);
-  transition: background var(--motion-standard) var(--ease-standard);
+.splitBtnIniciativa {
+  border: 1px solid var(--line);
+  background: var(--panel2);
 }
 
-.endTurnBtn:active {
-  background: var(--panel2);
+.splitBtnFimTurno {
+  border: 1px dashed var(--line);
+  background: var(--panel);
+}
+
+.splitBtnFimTurno .sbLabel,
+.splitBtnFimTurno .sbState {
+  color: var(--text-dim);
 }
 
 .feedback {
