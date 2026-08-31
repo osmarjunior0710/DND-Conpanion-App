@@ -5476,3 +5476,15 @@ Teste automatizado: `calculoPersonagem.test.ts` ganhou 2 casos novos
 pra `calcularPericias` com `periciasBonusExtras`.
 
 **Data/origem:** 2026-08.
+
+## Reação — painel mostra o contador de Inspiração de Bardo no topo
+
+**O que é:** pedido do Osmar — o painel de Reação passou a mostrar o
+mesmo contador de Inspiração de Bardo (dado + pips + "X/Y disponíveis")
+que já existia no topo do painel de Ação Bônus, já que Palavras de
+Interrupção também gasta esse recurso. Reaproveita o mesmo componente
+`TickPips` e o mesmo bloco visual (`.slotCounter`), só que agora
+renderizado nos dois painéis (`BonusPanelContent` e
+`ReacaoPanelContent`) em vez de só um.
+
+**Data/origem:** 2026-08.

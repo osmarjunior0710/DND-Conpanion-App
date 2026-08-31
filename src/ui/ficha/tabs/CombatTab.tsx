@@ -462,6 +462,7 @@ export default function CombatTab({
             detalhesAtivo={detalhesAtivo}
             contraEncantamentoDisponivel={contraEncantamentoDisponivel}
             palavrasDeInterrupcaoDisponivel={palavrasDeInterrupcaoDisponivel}
+            usosInspiracaoMaximo={usosInspiracaoMaximo}
             usosInspiracaoRestantes={usosInspiracaoRestantes}
             tamanhoDadoInspiracao={tamanhoDadoInspiracao}
             onUsarInspiracao={onUsarInspiracao}

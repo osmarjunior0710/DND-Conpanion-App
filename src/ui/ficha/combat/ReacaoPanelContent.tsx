@@ -3,6 +3,7 @@ import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import { classificarMagia, iconesMagia } from '../../../core/classificarMagia';
 import { useRoll } from '../../roll/RollContext';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
+import TickPips from '../../components/TickPips';
 import styles from './PanelRows.module.css';
 
 interface ReacaoPanelContentProps {
@@ -14,6 +15,7 @@ interface ReacaoPanelContentProps {
   detalhesAtivo: boolean;
   contraEncantamentoDisponivel: boolean;
   palavrasDeInterrupcaoDisponivel: boolean;
+  usosInspiracaoMaximo: number;
   usosInspiracaoRestantes: number;
   tamanhoDadoInspiracao: number;
   onUsarInspiracao: () => boolean;
@@ -28,6 +30,7 @@ export default function ReacaoPanelContent({
   detalhesAtivo,
   contraEncantamentoDisponivel,
   palavrasDeInterrupcaoDisponivel,
+  usosInspiracaoMaximo,
   usosInspiracaoRestantes,
   tamanhoDadoInspiracao,
   onUsarInspiracao,
@@ -89,6 +92,15 @@ export default function ReacaoPanelContent({
 
   return (
     <>
+      {usosInspiracaoMaximo > 0 && (
+        <div className={styles.slotCounter}>
+          <span>Inspiração de Bardo (d{tamanhoDadoInspiracao}):</span>
+          <TickPips total={usosInspiracaoMaximo} usados={usosInspiracaoMaximo - usosInspiracaoRestantes} />
+          <span style={{ color: 'var(--text-faint)' }}>
+            {usosInspiracaoRestantes}/{usosInspiracaoMaximo} disponíveis
+          </span>
+        </div>
+      )}
       {palavrasDeInterrupcaoDisponivel && (
         <div
           className={styles.row}
