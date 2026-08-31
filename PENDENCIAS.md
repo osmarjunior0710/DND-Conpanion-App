@@ -1220,3 +1220,38 @@ das 2 funções de `nome: string` pra `id: IdCaracteristicaClasse`, e
 atualizar as ~8 chamadas nesses 3 arquivos) — fica pra quando alguma
 dessas características específicas for tocada de novo por outro
 motivo, não uma entrega isolada.
+
+## Bardo — Segredos Mágicos (nível 10, classe base) ainda sem lógica
+
+**O que é:** a descrição já está importada (`caracteristicasClasse.ts`,
+nível 10) — sempre que o nº de Magias Preparadas da tabela sobe
+(incluindo o nível 10), o Bardo pode escolher a magia nova da lista de
+Bardo, Clérigo, Druida OU Mago (conta como magia de Bardo). Nenhuma
+lógica de código existe ainda — o fluxo de escolha de Magias Preparadas
+(Level Up / criação) hoje só oferece a lista de magias de Bardo.
+
+**Por que foi adiado:** é mais trabalho que as correções de Contra-
+Encantamento/Inspiração Superior (feitas junto) — precisa expandir o
+pool de opções elegíveis na tela de escolha de magia, mantendo o
+tamanho da lista igual (só o nível 10 corrigido, seção 7 do SDD do
+Osmar) e sem confundir com "Descobertas Mágicas" do Colégio do
+Conhecimento (que é um array separado, sempre-preparado, tamanho
+fixo — características diferentes, não podem se misturar na tela).
+
+**O que falta:** decidir com o Osmar se entra antes ou depois do
+Colégio do Conhecimento (a UI de escolha de magia provavelmente é
+compartilhada entre as duas features).
+
+## Bardo — "pra quem foi concedido o dado de Inspiração" não é rastreado
+
+**O que é:** hoje `inspiracaoGasto` é só um contador (quantos usos o
+Bardo já gastou) — não existe registro de "esse dado específico foi
+dado pra outra criatura X". Isso só importa pro Colégio da Bravura
+(Inspiração em Combate: qualquer criatura que tenha um dado do Bardo
+pode usá-lo, não só o próprio Bardo) — não trava nada da classe base
+nem do Colégio do Conhecimento.
+
+**O que falta:** decidir um schema quando chegar a vez do Colégio da
+Bravura — provavelmente fora do escopo de "ficha de 1 personagem"
+atual do app (precisaria saber o estado de outros personagens da
+mesa). Discutir com o Osmar antes de implementar.

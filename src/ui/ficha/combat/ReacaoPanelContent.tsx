@@ -12,6 +12,7 @@ interface ReacaoPanelContentProps {
   magiasReacao: Magia[];
   modAcertoConjuracao: number | null;
   detalhesAtivo: boolean;
+  contraEncantamentoDisponivel: boolean;
 }
 
 export default function ReacaoPanelContent({
@@ -21,6 +22,7 @@ export default function ReacaoPanelContent({
   magiasReacao,
   modAcertoConjuracao,
   detalhesAtivo,
+  contraEncantamentoDisponivel,
 }: ReacaoPanelContentProps) {
   const [aviso, setAviso] = useState<string | null>(null);
   const { rolarD20 } = useRoll();
@@ -47,8 +49,32 @@ export default function ReacaoPanelContent({
     onEscolher(`✨ ${m.nome}`, m.descricaoCurta ?? '');
   }
 
+  function usarContraEncantamento() {
+    rolarD20({
+      label: 'Contra-Encantamento (nova salvaguarda)',
+      formula: '1d20 com Vantagem + seu mod. de salvaguarda',
+      mod: 0,
+      vantagem: 'vantagem',
+    });
+    onEscolher(
+      '🎶 Contra-Encantamento',
+      'Some seu modificador de salvaguarda (ou o de quem está sendo protegido, se não for você) ao resultado mostrado.',
+    );
+  }
+
   return (
     <>
+      {contraEncantamentoDisponivel && (
+        <div className={styles.row} onClick={usarContraEncantamento}>
+          <div className={styles.rowName}>🎶 Contra-Encantamento</div>
+          {detalhesAtivo && (
+            <div className={styles.rowDesc}>
+              Você ou uma criatura a até 9m falhou salvaguarda contra Amedrontado/Enfeitiçado — role de novo, com
+              Vantagem. Sem custo de recurso.
+            </div>
+          )}
+        </div>
+      )}
       {conjura && magiasReacao.length > 0 && (
         <>
           {magiasReacao.map((m) => (

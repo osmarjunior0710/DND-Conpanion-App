@@ -14,6 +14,7 @@ export default function RollOverlay() {
       <div className={styles.card} onClick={(e) => e.stopPropagation()}>
         <div className={styles.label}>{estado.label}</div>
         <div className={`${styles.die} ${dieClass}`}>{estado.valorDado}</div>
+        {estado.detalheVantagem && <div className={styles.formula}>{estado.detalheVantagem}</div>}
         <div className={styles.formula}>{estado.formula}</div>
         <div className={styles.total}>{estado.fase === 'rolando' ? '—' : estado.total}</div>
         {estado.critico === 'falha' && <div className={`${styles.feedback} ${styles.feedbackCritFail}`}>😢 FALHA CRÍTICA</div>}

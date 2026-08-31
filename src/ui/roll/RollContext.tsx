@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useRef, useState, type ReactNod
 
 type CritTipo = 'sucesso' | 'falha' | null;
 
+export type Vantagem = 'vantagem' | 'desvantagem';
+
 export interface RollState {
   label: string;
   formula: string;
@@ -9,12 +11,19 @@ export interface RollState {
   valorDado: number | string;
   total: number | null;
   critico: CritTipo;
+  /** Só preenchido em rolagem com Vantagem/Desvantagem — mostra os 2
+   * dados rolados e qual foi usado, pra não esconder a rolagem
+   * descartada (regra pede rolar os 2, não é só "role 1 com bônus"). */
+  detalheVantagem?: string;
 }
 
 interface RollD20Options {
   label: string;
   formula: string;
   mod: number;
+  /** Rola 2d20 e usa o maior ('vantagem') ou o menor ('desvantagem')
+   * — omitido = rolagem normal (1d20), comportamento de sempre. */
+  vantagem?: Vantagem;
   onResultado?: (total: number, d20: number) => void;
 }
 
@@ -42,14 +51,22 @@ export function RollProvider({ children }: { children: ReactNode }) {
   const [estado, setEstado] = useState<RollState | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const rolarD20 = useCallback(({ label, formula, mod, onResultado }: RollD20Options) => {
+  const rolarD20 = useCallback(({ label, formula, mod, vantagem, onResultado }: RollD20Options) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setEstado({ label, formula, fase: 'rolando', valorDado: '🎲', total: null, critico: null });
     timeoutRef.current = setTimeout(() => {
-      const d20 = 1 + Math.floor(Math.random() * 20);
+      const rolagem1 = 1 + Math.floor(Math.random() * 20);
+      let d20 = rolagem1;
+      let detalheVantagem: string | undefined;
+      if (vantagem) {
+        const rolagem2 = 1 + Math.floor(Math.random() * 20);
+        d20 = vantagem === 'vantagem' ? Math.max(rolagem1, rolagem2) : Math.min(rolagem1, rolagem2);
+        const rotulo = vantagem === 'vantagem' ? 'Vantagem' : 'Desvantagem';
+        detalheVantagem = `${rotulo}: ${rolagem1} e ${rolagem2} — usa ${d20}`;
+      }
       const total = d20 + mod;
       const critico: CritTipo = d20 === 1 ? 'falha' : d20 === 20 ? 'sucesso' : null;
-      setEstado({ label, formula, fase: 'concluido', valorDado: d20, total, critico });
+      setEstado({ label, formula, fase: 'concluido', valorDado: d20, total, critico, detalheVantagem });
       onResultado?.(total, d20);
     }, DURACAO_ANIMACAO_MS);
   }, []);

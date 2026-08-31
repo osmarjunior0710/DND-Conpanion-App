@@ -28,6 +28,7 @@ interface AtributosTabProps {
   maestriaArma: string[];
   armasParaMaestria: Arma[];
   onTrocarArmaMaestria: (armaAntiga: string, armaNova: string) => void;
+  onRolarIniciativa?: () => void;
 }
 
 export default function AtributosTab({
@@ -51,6 +52,7 @@ export default function AtributosTab({
   maestriaArma,
   armasParaMaestria,
   onTrocarArmaMaestria,
+  onRolarIniciativa,
 }: AtributosTabProps) {
   const { rolarD20 } = useRoll();
 
@@ -100,9 +102,11 @@ export default function AtributosTab({
         </div>
         <div
           className={`box ${styles.hpBox}`}
-          onClick={() =>
-            iniciativa !== null && rolarD20({ label: 'Iniciativa', formula: `1d20 + ${iniciativa}`, mod: iniciativa })
-          }
+          onClick={() => {
+            if (iniciativa === null) return;
+            rolarD20({ label: 'Iniciativa', formula: `1d20 + ${iniciativa}`, mod: iniciativa });
+            onRolarIniciativa?.();
+          }}
         >
           <div className="label">
             Iniciativa <InfoValor titulo="Iniciativa" explicacao={explicacaoIniciativa} />

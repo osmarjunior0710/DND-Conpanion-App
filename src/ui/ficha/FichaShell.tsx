@@ -211,6 +211,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const mestreTatico = classe ? caracteristicaDesbloqueada(classe, 'Mestre Tático', personagem.nivel) : null;
   const ataquesEstudados = classe ? caracteristicaDesbloqueada(classe, 'Ataques Estudados', personagem.nivel) : null;
   const ajusteTatico = classe ? caracteristicaDesbloqueada(classe, 'Ajuste Tático', personagem.nivel) : null;
+  const contraEncantamentoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Contra-Encantamento', personagem.nivel) !== null : false;
+  const inspiracaoSuperiorDesbloqueada = classe ? caracteristicaDesbloqueada(classe, 'Inspiração Superior', personagem.nivel) !== null : false;
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const equipadoAtual = resumoEquipado(itensMochila);
@@ -341,6 +343,19 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (!gastarQualquerSlot()) return false;
     setInspiracaoGasto((v) => Math.max(0, v - 1));
     return true;
+  }
+
+  /** "Inspiração Superior" (nv18): ao rolar Iniciativa, recupera usos
+   * gastos de Inspiração de Bardo até ter 2, se tiver menos que isso —
+   * nunca reduz usos já disponíveis, nunca passa do máximo da classe. */
+  function recuperarInspiracaoAoRolarIniciativa() {
+    if (!inspiracaoSuperiorDesbloqueada) return;
+    setInspiracaoGasto((atual) => {
+      const restantesAlvo = Math.min(usosInspiracaoMax, 2);
+      const restantesAtual = Math.max(0, usosInspiracaoMax - atual);
+      if (restantesAtual >= restantesAlvo) return atual;
+      return usosInspiracaoMax - restantesAlvo;
+    });
   }
 
   function descansoLongo() {
@@ -576,6 +591,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             maestriaArma={maestriaArma}
             armasParaMaestria={classe ? listarArmasParaMaestria(classe) : []}
             onTrocarArmaMaestria={trocarArmaMaestria}
+            onRolarIniciativa={inspiracaoSuperiorDesbloqueada ? recuperarInspiracaoAoRolarIniciativa : undefined}
           />
         )}
         {tab === 'perfil' && (
@@ -653,6 +669,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             fonteDeInspiracao={fonteDeInspiracao}
             onUsarInspiracao={usarInspiracao}
             onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
+            contraEncantamentoDisponivel={contraEncantamentoDisponivel}
           />
         )}
       </div>

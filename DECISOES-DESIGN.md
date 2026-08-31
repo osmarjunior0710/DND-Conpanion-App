@@ -5233,3 +5233,52 @@ Teste automatizado novo: `src/core/levelUp.test.ts` (7 casos,
 nível 0), per CLAUDE.md seção 13.
 
 **Data/origem:** 2026-08.
+
+## Bardo — correções de classe base (Contra-Encantamento + Inspiração Superior)
+
+**Contexto:** auditoria da classe Bardo (pedida pelo Osmar, comparando
+contra um SDD externo) achou 0 erros nos dados já importados, mas
+achou 5 lacunas de mecânica ainda não implementada (características
+com descrição na Ficha mas sem lógica de código por trás). Corrigindo
+as 2 mais simples primeiro, do mais simples ao mais complexo (decisão
+do Osmar).
+
+**Contra-Encantamento (nível 7, Reação):** novo item no painel de
+Reação (`ReacaoPanelContent.tsx`), condicionado a
+`caracteristicaDesbloqueada(classe, 'Contra-Encantamento', nivel)`.
+Rola novamente uma salvaguarda com Vantagem, sem gastar recurso
+nenhum. Como o alvo pode ser o próprio Bardo OU um aliado a até 9m
+(cujo modificador de salvaguarda o app não tem como saber), o botão
+rola só o d20 puro (com Vantagem) e pede pro jogador somar o
+modificador de salvaguarda de quem está sendo protegido manualmente —
+mesmo padrão já usado em Indomável (rolagem genérica, jogador aplica o
+contexto).
+
+**Decisão de infraestrutura:** o sistema de rolagem (`RollContext`)
+não tinha conceito de Vantagem/Desvantagem — só rolava 1d20 por vez.
+Optei (confirmado com o Osmar) por adicionar isso como capacidade
+reutilizável do `rolarD20` (`vantagem?: 'vantagem' | 'desvantagem'`),
+em vez de resolver só dentro do botão de Contra-Encantamento — outras
+características futuras (Vantagem é super comum em D&D) vão
+reaproveitar sem duplicar lógica. O overlay de rolagem (`RollOverlay`)
+mostra os 2 dados rolados e qual foi usado, pra não esconder a
+descartada.
+
+**Inspiração Superior (nível 18, passiva):** ao rolar Iniciativa (novo
+callback opcional `onRolarIniciativa` em `AtributosTab`), recupera
+usos gastos de Inspiração de Bardo até ter 2, se tiver menos que isso
+— nunca reduz usos já disponíveis, nunca passa do máximo da classe.
+Lógica em `FichaShell.tsx` (`recuperarInspiracaoAoRolarIniciativa`),
+mesmo padrão arquitetural das outras funções de gasto/recuperação de
+recurso do Bardo já existentes no arquivo (`usarInspiracao`,
+`recuperarInspiracaoComEspaco`) — ficam na Ficha, não em `core/`,
+porque mexem em `useState` do React, não são cálculo puro.
+
+**Achado da auditoria, fora de escopo desta entrega:** conferi a
+planilha mestra e ela já tem as 4 características mecânicas completas
+das 4 subclasses de Bardo (não só nomes, como o comentário antigo de
+`subclasses.ts` dizia) — Osmar preencheu isso por fora do chat depois
+da última vez que o código foi tocado. Vai ser usado quando entrarmos
+no Colégio do Conhecimento.
+
+**Data/origem:** 2026-08.

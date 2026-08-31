@@ -54,6 +54,7 @@ interface CombatTabProps {
   fonteDeInspiracao: boolean;
   onUsarInspiracao: () => boolean;
   onRecuperarInspiracaoComEspaco: () => boolean;
+  contraEncantamentoDisponivel: boolean;
 }
 
 const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
@@ -101,6 +102,7 @@ export default function CombatTab({
   fonteDeInspiracao,
   onUsarInspiracao,
   onRecuperarInspiracaoComEspaco,
+  contraEncantamentoDisponivel,
 }: CombatTabProps) {
   const [painelAberto, setPainelAberto] = useState<RecursoTurno | null>(null);
   const [detalhesAtivo, setDetalhesAtivo] = useState(true);
@@ -405,6 +407,7 @@ export default function CombatTab({
             magiasReacao={magiasPreparadasReacao}
             modAcertoConjuracao={modAcertoConjuracao}
             detalhesAtivo={detalhesAtivo}
+            contraEncantamentoDisponivel={contraEncantamentoDisponivel}
           />
         )}
       </SidePanel>
