@@ -5308,3 +5308,28 @@ botão E no overlay de rolagem: 2º toque limpa; Fim do Turno com
 Iniciativa ativa preserva o valor.
 
 **Data/origem:** 2026-08.
+
+## Combat — Pontos de Vida vira indicador "wavy" (M3 Expressive)
+
+**O que é:** pedido do Osmar — redesenhar o bloco de PV da aba Combat:
+1. Removido o texto de aviso de protótipo.
+2. A barra de PV virou um indicador linear "wavy" (componente M3
+   Expressive) — novo componente `WavyProgressBar.tsx`
+   (`ui/components/`), SVG com `preserveAspectRatio="none"` (estica
+   pra largura real do container sem precisar medir em JS). Cor muda
+   por severidade: >50% verde (`--good`), 25-50% âmbar (`--warn`),
+   ≤25% vermelho (`--danger`) — trecho não preenchido fica em
+   `--line` (neutro).
+3. Os botões +/- saíram de dentro do card de PV e viraram uma linha de
+   5 botões abaixo: −5 · −1 · Manual `[PH]` · +1 · +5. "Manual" ainda
+   não faz nada (marcado `[PH]` por enquanto, CLAUDE.md seção 12) — é
+   pra quando tiver um campo de digitar quantidade exata.
+
+Nenhuma mudança em `core/` — `onAlterarPv(delta)` já aceitava
+qualquer delta, só passou a ser chamado com -5/+5 também.
+
+Testado via Playwright em 390px, com PV cheio (barra toda verde), PV
+baixo em ~36% (mostra âmbar) e PV zerado (barra toda neutra, sem
+trecho colorido).
+
+**Data/origem:** 2026-08.

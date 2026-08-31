@@ -6,6 +6,7 @@ import type { AtaqueResolvido } from '../../../core/ataque';
 import type { EspacoDeMagiaAtivo } from '../../../core/magiasPersonagem';
 import { useRoll } from '../../roll/RollContext';
 import InfoChip from '../../components/InfoChip';
+import WavyProgressBar from '../../components/WavyProgressBar';
 import SidePanel from '../combat/SidePanel';
 import AcaoPanelContent, { type DanoPendente } from '../combat/AcaoPanelContent';
 import BonusPanelContent from '../combat/BonusPanelContent';
@@ -281,24 +282,30 @@ export default function CombatTab({
       </div>
 
       <div className={`box-solid ${styles.hpLive}`}>
-        <div>
+        <div className={styles.hpHeader}>
           <div className="label">Pontos de Vida</div>
           <div className={styles.hpNum}>
             {pvAtual} / {pvMax}
           </div>
         </div>
-        <div className={styles.hpBtns}>
-          <div className={styles.hpBtn} onClick={() => onAlterarPv(-1)}>
-            −
-          </div>
-          <div className={styles.hpBtn} onClick={() => onAlterarPv(1)}>
-            +
-          </div>
-        </div>
+        <WavyProgressBar valor={pvAtual} maximo={pvMax} />
       </div>
-      <div className="label" style={{ marginBottom: 14 }}>
-        ⚠️ Protótipo: cada toque muda 1 PV por vez. Um campo pra digitar quantidade de dano/cura fica pra quando o
-        motor de cálculo (`core/`) entrar de verdade.
+      <div className={styles.hpBtnRow}>
+        <div className={styles.hpBtnSmall} onClick={() => onAlterarPv(-5)}>
+          −5
+        </div>
+        <div className={styles.hpBtnSmall} onClick={() => onAlterarPv(-1)}>
+          −1
+        </div>
+        <div className={`${styles.hpBtnSmall} ${styles.hpBtnManual}`}>
+          Manual <span className="tag">[PH]</span>
+        </div>
+        <div className={styles.hpBtnSmall} onClick={() => onAlterarPv(1)}>
+          +1
+        </div>
+        <div className={styles.hpBtnSmall} onClick={() => onAlterarPv(5)}>
+          +5
+        </div>
       </div>
 
       {(estiloDeLuta || mestreTatico || ataquesEstudados || ajusteTatico) && (
