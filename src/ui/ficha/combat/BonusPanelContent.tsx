@@ -13,6 +13,10 @@ interface BonusPanelContentProps {
   tamanhoDadoInspiracao: number;
   fonteDeInspiracao: boolean;
   temEspacoDisponivel: boolean;
+  /** Círculo que `onRecuperarInspiracaoComEspaco` vai gastar de
+   * verdade (o de menor círculo com sobra) — `null` se não tiver
+   * nenhum espaço disponível. */
+  proximoCirculoParaGastar: number | null;
   onUsarInspiracao: () => void;
   onRecuperarInspiracaoComEspaco: () => void;
   detalhesAtivo: boolean;
@@ -29,6 +33,7 @@ export default function BonusPanelContent({
   tamanhoDadoInspiracao,
   fonteDeInspiracao,
   temEspacoDisponivel,
+  proximoCirculoParaGastar,
   onUsarInspiracao,
   onRecuperarInspiracaoComEspaco,
   detalhesAtivo,
@@ -77,11 +82,17 @@ export default function BonusPanelContent({
               style={recuperarDesabilitado ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
               onClick={onRecuperarInspiracaoComEspaco}
             >
-              <div className={styles.rowName}>🔁 Recuperar Inspiração com Espaço de Magia</div>
+              <div className={styles.rowName}>🔁 Fonte de Inspiração</div>
+              <div className={styles.rowDesc}>Recupera Inspiração com Espaço de Magia</div>
               {detalhesAtivo && (
                 <div className={styles.rowDesc}>
                   Sem ação necessária — gasta 1 Espaço de Magia pra recuperar 1 uso gasto de Inspiração de Bardo
                   (Fonte de Inspiração).
+                </div>
+              )}
+              {proximoCirculoParaGastar !== null && (
+                <div className={styles.rowDesc} style={{ color: 'var(--text-faint)' }}>
+                  Espaço de magia do {proximoCirculoParaGastar}º círculo será gasto.
                 </div>
               )}
             </div>

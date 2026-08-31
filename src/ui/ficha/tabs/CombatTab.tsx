@@ -246,6 +246,10 @@ export default function CombatTab({
   }
 
   const temEspacoDisponivel = espacos.some((e) => (espacosGastosPorCirculo[e.circulo] ?? 0) < e.maximo);
+  // `espacos` já vem ordenado por círculo crescente (espacosDeMagiaAtivos,
+  // core/magiasPersonagem.ts) — o primeiro com sobra é exatamente o que
+  // `gastarQualquerSlot` (FichaShell.tsx) vai gastar de verdade.
+  const proximoCirculoParaGastar = espacos.find((e) => (espacosGastosPorCirculo[e.circulo] ?? 0) < e.maximo)?.circulo ?? null;
 
   function ladoDoPainel(categoria: RecursoTurno): 'left' | 'right' | 'bottom' {
     if (categoria === 'acao') return 'left';
@@ -447,6 +451,7 @@ export default function CombatTab({
             tamanhoDadoInspiracao={tamanhoDadoInspiracao}
             fonteDeInspiracao={fonteDeInspiracao}
             temEspacoDisponivel={temEspacoDisponivel}
+            proximoCirculoParaGastar={proximoCirculoParaGastar}
             onUsarInspiracao={usarInspiracaoBardo}
             onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
             detalhesAtivo={detalhesAtivo}

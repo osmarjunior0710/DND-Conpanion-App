@@ -5584,3 +5584,19 @@ aba Perfil de um Bardo nível 13 não tem mais nenhum "Característica de
 Subclasse" solto.
 
 **Data/origem:** 2026-08.
+
+## Bônus — "Fonte de Inspiração" mostra qual círculo vai gastar
+
+**O que é:** pedido do Osmar — no painel de Ação Bônus, o item que
+gasta 1 Espaço de Magia pra recuperar 1 uso de Inspiração de Bardo
+("Fonte de Inspiração"):
+1. Nome renomeado pra "Fonte de Inspiração" (era "Recuperar Inspiração
+   com Espaço de Magia", que virou a 2ª linha em vez do título).
+2. Nova linha no final: "Espaço de magia do Xº círculo será gasto" —
+   X é sempre o menor círculo com sobra (`CombatTab.tsx` calcula
+   `proximoCirculoParaGastar` a partir do mesmo `espacos` já ordenado
+   crescente que `gastarQualquerSlot` usa de verdade em
+   `FichaShell.tsx` — a UI não inventa outra ordem, só mostra a que já
+   é usada).
+
+**Data/origem:** 2026-08.
