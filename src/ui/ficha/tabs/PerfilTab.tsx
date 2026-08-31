@@ -2,7 +2,11 @@ import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { especies } from '../../../data/rulesets/dnd2024/especies';
 import { talentos, talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
-import { caracteristicasAcumuladas, caracteristicasSubclasseAcumuladas } from '../../../core/levelUp';
+import {
+  caracteristicasAcumuladas,
+  caracteristicasSubclasseAcumuladas,
+  NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE,
+} from '../../../core/levelUp';
 import type { WizardSelection } from '../../../core/personagem';
 
 interface PerfilTabProps {
@@ -14,7 +18,14 @@ interface PerfilTabProps {
 }
 
 export default function PerfilTab({ selecao, classe, nivel, subclasse, talentosGeraisAtuais }: PerfilTabProps) {
-  const caracteristicasClasse = classe ? caracteristicasAcumuladas(classe, nivel) : [];
+  // O placeholder "Característica de Subclasse" (ver levelUp.ts) nunca
+  // vira card aqui — a característica REAL já aparece certa na seção
+  // "Subclasse" logo abaixo (`caracteristicasDaSubclasse`); mostrar o
+  // placeholder aqui também só duplicava a informação com um texto
+  // errado ("descrição não importada", mesmo quando já foi).
+  const caracteristicasClasse = classe
+    ? caracteristicasAcumuladas(classe, nivel).filter((c) => c.nome !== NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE)
+    : [];
   const caracteristicasDaSubclasse = caracteristicasSubclasseAcumuladas(subclasse, nivel);
   const origem = origens.find((o) => o.nome === selecao.origem) ?? null;
   const talento = origem ? talentosOrigem.find((t) => t.id === origem.talentoOrigemId) ?? null : null;

@@ -8,6 +8,8 @@ import { subclasses } from '../../../data/rulesets/dnd2024/subclasses';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import {
   caracteristicasDoNivel,
+  caracteristicasDoNivelComSubclasse,
+  NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE,
   niveisComASI,
   niveisComDadivaEpica,
   niveisComEspecialista,
@@ -228,6 +230,7 @@ export default function LevelUpShell({
   const nomesComTelaPropria = new Set<string>();
   if (luSteps.includes('subclasse')) nomesComTelaPropria.add(`Subclasse de ${classe.nome}`);
   if (luSteps.includes('proficienciasBonus')) nomesComTelaPropria.add('Proficiências Bônus');
+  if (luSteps.includes('descobertasMagicas')) nomesComTelaPropria.add('Descobertas Mágicas');
   if (luSteps.includes('estiloDeLuta')) nomesComTelaPropria.add('Estilo de Luta');
   if (luSteps.includes('especialista')) NOMES_ESPECIALISTA.forEach((n) => nomesComTelaPropria.add(n));
   if (luSteps.includes('asi')) nomesComTelaPropria.add('Aumento no Valor de Atributo');
@@ -504,7 +507,9 @@ export default function LevelUpShell({
     setLuIndex((i) => i - 1);
   }
 
-  const features = caracteristicasDoNivel(classe, novoNivel).filter((f) => !nomesComTelaPropria.has(f.nome));
+  const features = caracteristicasDoNivelComSubclasse(classe, novoNivel, subclasseEscolhida).filter(
+    (f) => !nomesComTelaPropria.has(f.nome),
+  );
   const dadivaEpica = caracteristicasDoNivel(classe, novoNivel).find((f) => f.nome === 'Dádiva Épica');
 
   if (faseDramatica !== 'idle') {
@@ -680,6 +685,11 @@ export default function LevelUpShell({
                 <div className="opt-card-name">{f.nome}</div>
                 {f.descricao ? (
                   <div className="opt-card-desc">{f.descricao}</div>
+                ) : f.nome === NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE ? (
+                  <div className="opt-card-desc" style={{ color: 'var(--text-faint)' }}>
+                    Depende da subclasse escolhida ({subclasseEscolhida ?? 'nenhuma'}) — essa subclasse ainda não tem
+                    característica de nível {novoNivel} importada.
+                  </div>
                 ) : (
                   <div className="opt-card-desc" style={{ color: 'var(--text-faint)' }}>
                     Descrição detalhada ainda não importada pra esse nível/característica.

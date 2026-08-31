@@ -5530,3 +5530,57 @@ junto das magias normais de 3º círculo.
 características do Colégio do Conhecimento.**
 
 **Data/origem:** 2026-08.
+
+## Bug real: "Característica de Subclasse" (placeholder da planilha) mostrava texto errado
+
+**O que era:** a planilha mestra (aba "Progressão de Classe") usa o
+nome literal **"Característica de Subclasse"** em `classes.ts` nos
+níveis em que o Livro do Jogador diz "veja sua subclasse" em vez de
+nomear algo fixo (Bardo: nível 6 e 14; Guerreiro: nível 7, 10, 15, 18
+— confirmado, mesmo padrão nas duas classes já importadas). Como
+`caracteristicasClasse.ts` nunca teve (nem podia ter) uma entrada com
+esse nome literal, 2 lugares mostravam esse placeholder como se fosse
+uma característica de verdade, com um texto de erro genérico
+("descrição ainda não importada") mesmo depois de já termos o dado
+real da subclasse importado:
+1. Level Up, passo "Novas Características" (nível 6 mostrava
+   "Característica de Subclasse" em vez de "Descobertas Mágicas").
+2. Aba Perfil, seção "Classe" (mesmo problema, e ainda **duplicado**
+   com a seção "Subclasse" logo abaixo, que já mostrava a informação
+   certa).
+
+**Correção:** `core/levelUp.ts` ganhou
+`NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE` (a constante do nome
+literal, hand-maintained — não muda com a planilha) e
+`caracteristicasDoNivelComSubclasse(classe, nivel, nomeSubclasse)`,
+que troca qualquer entrada com esse nome pela(s) característica(s)
+REAL(is) daquele nível da subclasse escolhida (via
+`caracteristicasSubclasseDoNivel`, nova função — igual
+`caracteristicasSubclasseAcumuladas`, só que SEM acumular, só o nível
+exato). Se a subclasse não tem dado ainda (ou não foi escolhida), o
+placeholder continua aparecendo, mas agora com uma mensagem que
+explica o motivo de verdade ("depende da subclasse escolhida — essa
+subclasse ainda não tem característica de nível X importada") em vez
+do texto genérico de "dado não importado".
+
+- Level Up: `features` agora usa `caracteristicasDoNivelComSubclasse`
+  em vez de `caracteristicasDoNivel`. "Descobertas Mágicas" também
+  entrou em `nomesComTelaPropria` (já tem passo dedicado, não precisa
+  aparecer 2x). "Perícia Inigualável" (nível 14) não tem passo
+  dedicado ainda, então aparece aqui mesmo, com o texto certo — bônus
+  dessa correção, sem trabalho extra.
+- Aba Perfil: a seção "Classe" agora filtra o nome do placeholder de
+  propósito (a informação real já vem certa pela seção "Subclasse"
+  logo abaixo — mostrar 2x seria pior, não melhor).
+
+Teste automatizado: `levelUp.test.ts`,
+`caracteristicasDoNivelComSubclasse` (resolve pro nome real com
+subclasse escolhida; mantém o placeholder intacto sem subclasse —
+caso de borda).
+
+Testado via Playwright: Bardo nível 13→14, passo "Novas
+Características" mostra "Perícia Inigualável" com a descrição real;
+aba Perfil de um Bardo nível 13 não tem mais nenhum "Característica de
+Subclasse" solto.
+
+**Data/origem:** 2026-08.

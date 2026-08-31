@@ -144,14 +144,6 @@ const CONTAGEM_ATAQUE_EXTRA: Record<string, number> = {
   [ID_CARACTERISTICA_CLASSE.tresAtaquesExtras]: 4,
 };
 
-/** Características de subclasse já desbloqueadas (nível 1 até
- * `nivelAtual`, inclusive) — mesmo formato de `caracteristicasAcumuladas`,
- * só que lendo de `caracteristicasSubclasse.ts` (dado próprio, chave
- * é o NOME da subclasse, não a classe). `nomeSubclasse === null`
- * (personagem ainda não escolheu, ou subclasse ainda não importada)
- * retorna sempre vazio — nunca quebra. Cada característica de
- * subclasse já tem o nível certo direto no dado (não precisa cruzar
- * com `classe.progressao` como as de classe base). */
 /** True se a subclasse já tem pelo menos 1 característica real
  * importada em `caracteristicasSubclasse.ts` — usado pra bloquear a
  * escolha de subclasses que ainda são só um nome/ícone (ver
@@ -161,12 +153,56 @@ export function subclasseImplementada(nomeSubclasse: string): boolean {
   return caracteristicasSubclasse.some((c) => c.subclasse === nomeSubclasse);
 }
 
+/** Características de subclasse já desbloqueadas (nível 1 até
+ * `nivelAtual`, inclusive) — mesmo formato de `caracteristicasAcumuladas`,
+ * só que lendo de `caracteristicasSubclasse.ts` (dado próprio, chave
+ * é o NOME da subclasse, não a classe). `nomeSubclasse === null`
+ * (personagem ainda não escolheu, ou subclasse ainda não importada)
+ * retorna sempre vazio — nunca quebra. Cada característica de
+ * subclasse já tem o nível certo direto no dado (não precisa cruzar
+ * com `classe.progressao` como as de classe base). */
 export function caracteristicasSubclasseAcumuladas(nomeSubclasse: string | null, nivelAtual: number): CaracteristicaNivel[] {
   if (!nomeSubclasse) return [];
   return caracteristicasSubclasse
     .filter((c) => c.subclasse === nomeSubclasse && c.nivel <= nivelAtual)
     .sort((a, b) => a.nivel - b.nivel)
     .map((c) => ({ nome: c.nome, descricao: c.descricao }));
+}
+
+/** Característica(s) de subclasse desbloqueada(s) EXATAMENTE no nível
+ * dado (não acumulado) — usado pra resolver o placeholder
+ * "Característica de Subclasse" que a planilha usa em
+ * `classes.ts`/`progressao` quando o Livro do Jogador diz "veja sua
+ * subclasse" em vez de nomear a característica (ela varia por
+ * subclasse). Ver `caracteristicasDoNivelComSubclasse`, que já faz essa
+ * substituição — usar essa função direto só é necessário fora do fluxo
+ * de Level Up. */
+export function caracteristicasSubclasseDoNivel(nomeSubclasse: string | null, nivel: number): CaracteristicaNivel[] {
+  if (!nomeSubclasse) return [];
+  return caracteristicasSubclasse
+    .filter((c) => c.subclasse === nomeSubclasse && c.nivel === nivel)
+    .map((c) => ({ nome: c.nome, descricao: c.descricao }));
+}
+
+/** Nome literal que a planilha usa em `classes.ts` quando a
+ * característica daquele nível depende da subclasse escolhida (ex:
+ * Bardo nível 6 e 14, Guerreiro nível 7/10/15/18) — o Livro do Jogador
+ * só diz "veja sua subclasse" ali, não nomeia nada fixo. */
+export const NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE = 'Característica de Subclasse';
+
+/** Igual a `caracteristicasDoNivel`, mas troca qualquer entrada
+ * `NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE` pela(s) característica(s)
+ * REAL(is) daquele nível da subclasse escolhida (0, 1 ou mais — ex:
+ * Colégio do Conhecimento nível 3 tem 2 de uma vez). Se a subclasse
+ * ainda não tem dado importado (ou não foi escolhida), o placeholder
+ * fica como está — quem renderiza decide o que mostrar nesse caso. */
+export function caracteristicasDoNivelComSubclasse(classe: Classe, nivel: number, nomeSubclasse: string | null): CaracteristicaNivel[] {
+  const base = caracteristicasDoNivel(classe, nivel);
+  return base.flatMap((c) => {
+    if (c.nome !== NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE) return [c];
+    const reais = caracteristicasSubclasseDoNivel(nomeSubclasse, nivel);
+    return reais.length > 0 ? reais : [c];
+  });
 }
 
 /** True se uma característica NOMEADA de subclasse já está desbloqueada

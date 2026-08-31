@@ -1,9 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel, numeroDeAtaques, caracteristicasSubclasseAcumuladas } from './levelUp';
+import {
+  niveisComASI,
+  niveisComDadivaEpica,
+  temEstiloDeLutaTrocavel,
+  numeroDeAtaques,
+  caracteristicasSubclasseAcumuladas,
+  caracteristicasDoNivelComSubclasse,
+  NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE,
+} from './levelUp';
 import { classes } from '../data/rulesets/dnd2024/classes';
 
 const guerreiro = classes.find((c) => c.nome === 'Guerreiro');
 if (!guerreiro) throw new Error('Fixture "Guerreiro" não encontrada em data/rulesets/dnd2024/classes.ts');
+const bardo = classes.find((c) => c.nome === 'Bardo');
+if (!bardo) throw new Error('Fixture "Bardo" não encontrada em data/rulesets/dnd2024/classes.ts');
 
 describe('niveisComASI (reconhece por ID estável, não por nome de exibição)', () => {
   it('lista os 6 níveis de ASI do Guerreiro (4,6,8,12,14,16)', () => {
@@ -55,5 +65,19 @@ describe('caracteristicasSubclasseAcumuladas', () => {
 
   it('retorna vazio sem subclasse escolhida (caso de borda: null)', () => {
     expect(caracteristicasSubclasseAcumuladas(null, 20)).toEqual([]);
+  });
+});
+
+describe('caracteristicasDoNivelComSubclasse', () => {
+  it('Bardo nível 6 com Colégio do Conhecimento: troca o placeholder pela característica real (Descobertas Mágicas)', () => {
+    const resultado = caracteristicasDoNivelComSubclasse(bardo, 6, 'Colégio do Conhecimento');
+    expect(resultado.map((c) => c.nome)).toEqual(['Descobertas Mágicas']);
+    expect(resultado[0].descricao).not.toBeNull();
+  });
+
+  it('caso de borda: sem subclasse escolhida, o placeholder fica como está (não quebra, não inventa texto)', () => {
+    const resultado = caracteristicasDoNivelComSubclasse(bardo, 6, null);
+    expect(resultado.map((c) => c.nome)).toEqual([NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE]);
+    expect(resultado[0].descricao).toBeNull();
   });
 });
