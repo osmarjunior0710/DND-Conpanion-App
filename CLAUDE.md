@@ -251,3 +251,30 @@ quanto pra descrição, o que fizer mais sentido pro caso.
   são placeholder — são texto de regra real, mesmo sem cálculo por
   trás ainda. `[PH]` é só pra número/nome inventado, não pra texto de
   regra correto com pouca interatividade.
+
+## 13. Testes automatizados e IDs estáveis — obrigatório em `core/` daqui pra frente
+
+Decidido depois de uma auditoria externa (ver DECISOES-DESIGN.md) —
+duas regras permanentes pra reduzir o risco de regressão silenciosa
+conforme o motor de cálculo cresce:
+
+- **Toda função nova em `core/` que calcula um valor de regra** (CA,
+  PV, iniciativa, perícia, dano, recurso, etc.) **precisa vir com
+  teste automatizado (Vitest) no mesmo commit/entrega**, cobrindo pelo
+  menos 1 caso normal e 1 caso de borda (valor mínimo/máximo,
+  ausência de dado, etc.). `npm test` faz parte do checklist de toda
+  entrega, junto com `npm run build` — nunca fazer push com teste
+  quebrado.
+- **Ao alterar uma função de cálculo já existente**, atualizar (ou
+  adicionar, se ainda não existir) o teste correspondente antes de
+  considerar a entrega concluída — não deixar pra depois.
+- **Toda característica/regra que o código precisa RECONHECER
+  programaticamente** (não só exibir na tela) — ex: "esse nível dá
+  Aumento no Valor de Atributo", "essa característica é Estilo de
+  Luta" — deve usar um **ID estável** no dado, nunca comparação pelo
+  nome de exibição. O nome pode mudar por revisão editorial da
+  planilha (o Osmar edita por fora, ver seção 3) sem que a regra deva
+  quebrar; o ID é só uso interno do código, o nome continua sendo o
+  texto mostrado ao jogador. Casos antigos que ainda comparam por
+  nome migram aos poucos, sob demanda — não é preciso migrar tudo de
+  uma vez, mas todo código **novo** já nasce usando ID.

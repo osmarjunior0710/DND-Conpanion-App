@@ -1187,3 +1187,20 @@ seleção" que sirva pras 4 (e futuras, tipo Talentos), com:
 **Não fazer agora** — só registrar. Quando entrar na fila, vale revisar
 as 4 implementações atuais junto (nenhuma delas deve virar a
 "referência" sem revisar as outras 3 primeiro).
+
+## Migração de comparação-por-nome pra ID estável (código já existente)
+
+**O que é:** CLAUDE.md seção 13 (depois da auditoria externa, ver
+DECISOES-DESIGN.md) tornou obrigatório todo código **novo** que
+reconhece uma característica/regra programaticamente usar ID estável,
+nunca o nome de exibição. Código **já existente** que ainda compara
+por nome (ex: `levelUp.ts` com `caracteristicaDesbloqueada(classe,
+'Mestre Tático', nivel)`, `'Aumento no Valor de Atributo'`, `'Dádiva
+Épica'`, `'Estilo de Luta'`) não foi migrado retroativamente ainda.
+
+**O que falta:** migrar caso por caso, sob demanda — não precisa ser
+tudo de uma vez. Primeiro alvo planejado: `levelUp.ts` (Entrega 3 do
+plano acordado com o Osmar depois da auditoria). Cada migração:
+adicionar ID estável no dado da característica (mantendo o nome pra
+exibição), trocar a comparação no código pra usar o ID, checar que
+nada quebrou (teste automatizado, se já existir cobertura da função).

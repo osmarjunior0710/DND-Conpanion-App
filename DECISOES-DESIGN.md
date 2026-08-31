@@ -5155,3 +5155,51 @@ Talento" no seu popup continuam — não faziam parte do que foi pedido
 pra tirar.
 
 **Data/origem:** 2026-08.
+
+## Auditoria externa (GPT) — o que foi adotado e o que não foi
+
+**Contexto:** o Osmar trouxe uma auditoria técnica + "SDDs" feita por
+outra IA (documento .docx), propondo uma bateria grande de mudanças
+estruturais: Vitest com pirâmide de testes completa, contrato
+`Character` separado de `WizardSelection`, `schemaVersion` +
+migradores versionados na persistência, quebra de
+`calculoPersonagem.ts`/`FichaShell.tsx` em módulos/hooks por domínio,
+desacoplar o Roll Engine do `RollContext`, CI com gate de
+lint+test+build antes do deploy, e um validador automático dos
+catálogos de dado.
+
+**Avaliação:** a auditoria acertou 2 achados reais e específicos
+deste projeto — (1) zero teste automatizado hoje (`package.json` não
+declara `test`, confirmado), e (2) regra de nível/característica de
+classe reconhecida por comparação de **nome de exibição** em vez de
+ID estável (`levelUp.ts` compara strings tipo `'Mestre Tático'`,
+`'Aumento no Valor de Atributo'` — frágil porque o Osmar edita a
+planilha por fora, um nome pode mudar de revisão editorial sem que a
+regra devesse quebrar). O resto do pacote (contrato `Character`
+formal, `schemaVersion`+migradores, quebra de arquivo em hooks por
+domínio, CI bloqueando deploy) é conselho correto pra um SaaS com
+time e múltiplos usuários, mas pesado demais pro contexto real deste
+projeto (uso pessoal, Osmar + grupo de mesa, ver CLAUDE.md seção 9) —
+pausar pra fazer tudo isso antes de continuar contraria o próprio
+ritmo de entrega pequena e validada na hora que já funciona aqui. O
+documento também tinha pelo menos 1 número errado apresentado como
+"evidência verificada" (`index.css` "possui 1542 linhas" — na
+verdade tinha 368 na hora da checagem, e o projeto já usa CSS Modules
+extensivamente, contrariando a própria premissa do achado) — motivo
+a mais pra não adotar o pacote inteiro sem checar caso a caso.
+
+**Decisão:** adotar só os 2 pontos verificados e baratos, formalizados
+em CLAUDE.md seção 13 (regra permanente daqui pra frente, não só essa
+rodada):
+1. Toda função nova de cálculo em `core/` vem com teste automatizado
+   (Vitest) no mesmo commit.
+2. Toda característica/regra reconhecida por código (não só exibida)
+   usa ID estável, nunca nome de exibição.
+
+`schemaVersion`+migradores versionados NÃO foi adotado agora — fica
+pra quando (se) aparecer um bug real de migração; hoje os fallbacks
+`??` opcionais em `PersonagemSalvo` dão conta na prática. Modularização
+de `calculoPersonagem.ts`/`FichaShell.tsx`, CI gate e validador de
+catálogo também ficam de fora por ora — sem urgência real hoje.
+
+**Data/origem:** 2026-08.
