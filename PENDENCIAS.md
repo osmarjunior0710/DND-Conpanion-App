@@ -1234,3 +1234,40 @@ nem do Colégio do Conhecimento.
 Bravura — provavelmente fora do escopo de "ficha de 1 personagem"
 atual do app (precisaria saber o estado de outros personagens da
 mesa). Discutir com o Osmar antes de implementar.
+
+## Level Up — revisar ordem das telas e o que cada uma mostra
+
+**O que é:** o fluxo de Level Up (`LevelUpShell.tsx`) cresceu aos
+poucos, entrega por entrega, conforme cada característica de classe
+foi ganhando uma tela própria (Subclasse, Proficiências Bônus, Estilo
+de Luta, Truques, Magias Preparadas, Especialista, ASI/Talento, Dádiva
+Épica) — a ordem entre elas nunca foi desenhada de propósito, é só a
+ordem em que cada `if` foi adicionado ao array `luSteps`
+(`LevelUpShell.tsx`, função que monta os passos). O Osmar reportou que
+o fluxo de hoje "tá muito estranho" testando na tela, sem apontar
+ainda exatamente o quê (ordem das telas, textos repetidos, o passo
+"Novas Características" mostrando/escondendo coisa que já tem tela
+própria, etc.).
+
+**Por que foi adiado:** precisa o Osmar testar mais e apontar
+especificamente o que incomoda antes de redesenhar — mudar ordem de
+passo por palpite pode trocar um problema por outro.
+
+**O que falta:** sessão dedicada só pra passar por um Level Up
+completo (idealmente um personagem que dispare o máximo de passos ao
+mesmo tempo — ex: Bardo/Colégio do Conhecimento saltando pro nível 3)
+anotando tela por tela o que confunde. Candidatos a rever, só como
+ponto de partida (não é a lista final):
+- Ordem atual: PV → Novas Características → Subclasse → Proficiências
+  Bônus → Estilo de Luta → Truques → Magias Preparadas → Especialista
+  → Talento/ASI → Dádiva Épica → Resumo — faz sentido pro jogador
+  nessa ordem, ou deveria seguir a ordem que aparece no Livro do
+  Jogador / na tabela de progressão da classe?
+- O passo "Novas Características" (`step === 'features'`) mostra as
+  características do nível que NÃO têm tela própria
+  (`nomesComTelaPropria`) — vale a pena revisar se falta contexto ali
+  (ex: não menciona nem linka pra characterísticas de SUBCLASSE, só
+  de classe base).
+- Textos de aviso/ajuda repetidos ou desatualizados entre telas (ex:
+  o aviso de "[PH]" na tela de Subclasse foi ajustado na última
+  entrega, vale conferir se sobrou algo parecido em outra tela).
