@@ -5,6 +5,7 @@
 
 import { caracteristicasClasse } from '../data/rulesets/dnd2024/caracteristicasClasse';
 import type { Classe } from '../data/rulesets/dnd2024/classes';
+import { ID_CARACTERISTICA_CLASSE } from '../data/rulesets/dnd2024/idsCaracteristicasClasse';
 
 export interface CaracteristicaNivel {
   nome: string;
@@ -15,15 +16,19 @@ export interface CaracteristicaNivel {
  * direto da progressão real da classe, não uma tabela fixa. Guerreiro
  * tem 6 níveis de ASI (4,6,8,12,14,16), diferente da maioria das
  * outras classes (5 níveis) — variação real confirmada no livro, ver
- * DECISOES-DESIGN.md "Guerreiro — plano de implementação completa". */
+ * DECISOES-DESIGN.md "Guerreiro — plano de implementação completa".
+ * Reconhecida por ID estável (`ID_CARACTERISTICA_CLASSE.asi`, ver
+ * CLAUDE.md seção 13), não por comparação direta do nome de exibição. */
 export function niveisComASI(classe: Classe): number[] {
-  return classe.progressao.filter((p) => p.caracteristicas.includes('Aumento no Valor de Atributo')).map((p) => p.nivel);
+  const nome = ID_CARACTERISTICA_CLASSE.asi;
+  return classe.progressao.filter((p) => p.caracteristicas.includes(nome)).map((p) => p.nivel);
 }
 
 /** Níveis em que a classe concede uma "Dádiva Épica" — categoria de
  * escolha exclusiva de nível único (só nível 19 no Guerreiro hoje). */
 export function niveisComDadivaEpica(classe: Classe): number[] {
-  return classe.progressao.filter((p) => p.caracteristicas.includes('Dádiva Épica')).map((p) => p.nivel);
+  const nome = ID_CARACTERISTICA_CLASSE.dadivaEpica;
+  return classe.progressao.filter((p) => p.caracteristicas.includes(nome)).map((p) => p.nivel);
 }
 
 /** True se a classe já concedeu "Estilo de Luta" em algum nível até
@@ -31,12 +36,13 @@ export function niveisComDadivaEpica(classe: Classe): number[] {
  * atinge um nível [de Guerreiro], você pode substituir o talento que
  * escolheu por um talento diferente de Estilo de Luta" (não é escolha
  * única do nível 1, é reconsiderável em todo level-up daí em diante).
- * Generalizado por nome de característica, não hardcoded pra
+ * Generalizado por ID de característica, não hardcoded pra
  * Guerreiro — Guardião/Paladino também têm "Estilo de Luta" (concedido
  * no nível 2 deles); quando forem importados, isso já funciona sem
  * mudar código. */
 export function temEstiloDeLutaTrocavel(classe: Classe, nivelAtual: number): boolean {
-  return classe.progressao.some((p) => p.nivel <= nivelAtual && p.caracteristicas.includes('Estilo de Luta'));
+  const nome = ID_CARACTERISTICA_CLASSE.estiloDeLuta;
+  return classe.progressao.some((p) => p.nivel <= nivelAtual && p.caracteristicas.includes(nome));
 }
 
 /** Características (com descrição real, quando `caracteristicasClasse.ts`
@@ -116,9 +122,9 @@ export function contarRepeticoesCaracteristica(classe: Classe, nome: string, niv
  * planilha mestra usa nomes diferentes de característica pros dois
  * (\"Especialista\" no nível 2, \"Especialização\" no nível 9) mesmo
  * sendo a mesma mecânica (confirmado com o Osmar) — por isso os dois
- * nomes contam aqui, em vez de assumir que a característica sempre se
+ * IDs contam aqui, em vez de assumir que a característica sempre se
  * chama igual em todo nível que a concede. */
-export const NOMES_ESPECIALISTA = ['Especialista', 'Especialização'];
+export const NOMES_ESPECIALISTA: string[] = [ID_CARACTERISTICA_CLASSE.especialista, ID_CARACTERISTICA_CLASSE.especializacao];
 
 export function niveisComEspecialista(classe: Classe): number[] {
   return classe.progressao.filter((p) => p.caracteristicas.some((c) => NOMES_ESPECIALISTA.includes(c))).map((p) => p.nivel);
@@ -129,12 +135,12 @@ export function niveisComEspecialista(classe: Classe): number[] {
  * "Ataque Extra" (2), "Dois Ataques Extras" (3), "Três Ataques Extras"
  * (4) são nomes oficiais usados por várias classes do Livro do Jogador
  * 2024 (não é specific de Guerreiro) pra indicar a mesma mecânica de
- * base escalando — por isso o mapa nome→contagem é genérico, lido
+ * base escalando — por isso o mapa ID→contagem é genérico, lido
  * contra a progressão real da classe, não uma tabela por classe. */
 const CONTAGEM_ATAQUE_EXTRA: Record<string, number> = {
-  'Ataque Extra': 2,
-  'Dois Ataques Extras': 3,
-  'Três Ataques Extras': 4,
+  [ID_CARACTERISTICA_CLASSE.ataqueExtra]: 2,
+  [ID_CARACTERISTICA_CLASSE.doisAtaquesExtras]: 3,
+  [ID_CARACTERISTICA_CLASSE.tresAtaquesExtras]: 4,
 };
 
 export function numeroDeAtaques(classe: Classe, nivelAtual: number): number {

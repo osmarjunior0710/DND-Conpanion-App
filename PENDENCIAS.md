@@ -1194,13 +1194,29 @@ as 4 implementações atuais junto (nenhuma delas deve virar a
 DECISOES-DESIGN.md) tornou obrigatório todo código **novo** que
 reconhece uma característica/regra programaticamente usar ID estável,
 nunca o nome de exibição. Código **já existente** que ainda compara
-por nome (ex: `levelUp.ts` com `caracteristicaDesbloqueada(classe,
-'Mestre Tático', nivel)`, `'Aumento no Valor de Atributo'`, `'Dádiva
-Épica'`, `'Estilo de Luta'`) não foi migrado retroativamente ainda.
+por nome não foi todo migrado retroativamente ainda.
 
-**O que falta:** migrar caso por caso, sob demanda — não precisa ser
-tudo de uma vez. Primeiro alvo planejado: `levelUp.ts` (Entrega 3 do
-plano acordado com o Osmar depois da auditoria). Cada migração:
-adicionar ID estável no dado da característica (mantendo o nome pra
-exibição), trocar a comparação no código pra usar o ID, checar que
-nada quebrou (teste automatizado, se já existir cobertura da função).
+**Entrega 3 (concluída) migrou só a parte interna de `levelUp.ts`:**
+`niveisComASI`, `niveisComDadivaEpica`, `temEstiloDeLutaTrocavel`,
+`NOMES_ESPECIALISTA`/`niveisComEspecialista` e
+`CONTAGEM_ATAQUE_EXTRA`/`numeroDeAtaques` agora comparam contra
+`ID_CARACTERISTICA_CLASSE` (novo arquivo hand-maintained,
+`data/rulesets/dnd2024/idsCaracteristicasClasse.ts`, mesmo padrão do
+`efeitoMecanico` de `talentos.ts`) em vez do nome de exibição
+diretamente. A assinatura pública dessas funções não mudou — quem
+chama de fora não precisou ser tocado.
+
+**O que ainda falta (decisão explícita do Osmar: escopo menor pra
+Entrega 3, migrar o resto sob demanda):** `caracteristicaDesbloqueada(classe,
+nome, nivel)` e `contarRepeticoesCaracteristica(classe, nome, nivel)`
+continuam recebendo `nome` (string livre) como parâmetro — quem chama
+ainda passa o nome de exibição direto ('Mestre Tático', 'Indomável',
+'Surto de Ação', 'Pau pra Toda Obra', 'Ataques Estudados', 'Ajuste
+Tático', 'Inspiração de Bardo', 'Fonte de Inspiração'), em
+`FichaShell.tsx`, `calculoPersonagem.ts` e `inspiracaoBardo.ts`. Migrar
+isso é um passo maior (adicionar ID pra cada uma dessas ~8
+características em `idsCaracteristicasClasse.ts`, trocar o parâmetro
+das 2 funções de `nome: string` pra `id: IdCaracteristicaClasse`, e
+atualizar as ~8 chamadas nesses 3 arquivos) — fica pra quando alguma
+dessas características específicas for tocada de novo por outro
+motivo, não uma entrega isolada.

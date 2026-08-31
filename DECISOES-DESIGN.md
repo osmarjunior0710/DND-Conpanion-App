@@ -5203,3 +5203,33 @@ de `calculoPersonagem.ts`/`FichaShell.tsx`, CI gate e validador de
 catálogo também ficam de fora por ora — sem urgência real hoje.
 
 **Data/origem:** 2026-08.
+
+## Entrega 3 — IDs estáveis em `levelUp.ts` (1º caso real de migração)
+
+**O que é:** primeira aplicação prática da regra da seção 13 num
+arquivo já existente. Criado `data/rulesets/dnd2024/idsCaracteristicasClasse.ts`
+— mapa hand-maintained `ID_CARACTERISTICA_CLASSE` (ex: `asi` →
+`'Aumento no Valor de Atributo'`, `estiloDeLuta` → `'Estilo de
+Luta'`), no mesmo padrão do `efeitoMecanico` de `talentos.ts`: não vem
+da planilha, tem aviso no topo do arquivo pra reaplicar manualmente se
+algo mudar. `levelUp.ts` (`niveisComASI`, `niveisComDadivaEpica`,
+`temEstiloDeLutaTrocavel`, `NOMES_ESPECIALISTA`,
+`CONTAGEM_ATAQUE_EXTRA`) agora compara contra esse ID em vez do nome
+de exibição direto. Assinatura pública das funções não mudou — nenhum
+outro arquivo precisou ser tocado.
+
+**Escopo reduzido de propósito:** o Osmar escolheu migrar só a parte
+interna de `levelUp.ts` nesta entrega, não as ~8 chamadas externas que
+ainda passam nome (`caracteristicaDesbloqueada`/
+`contarRepeticoesCaracteristica` em `FichaShell.tsx`,
+`calculoPersonagem.ts`, `inspiracaoBardo.ts`) — fica pra quando essas
+características específicas forem tocadas de novo por outro motivo,
+não uma entrega isolada. Ver `PENDENCIAS.md` "Migração de
+comparação-por-nome pra ID estável" pro detalhe do que falta.
+
+Teste automatizado novo: `src/core/levelUp.test.ts` (7 casos,
+`niveisComASI`/`niveisComDadivaEpica`/`temEstiloDeLutaTrocavel`/
+`numeroDeAtaques`, incluindo caso de borda de classe sem progressão e
+nível 0), per CLAUDE.md seção 13.
+
+**Data/origem:** 2026-08.
