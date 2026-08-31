@@ -5333,3 +5333,23 @@ baixo em ~36% (mostra âmbar) e PV zerado (barra toda neutra, sem
 trecho colorido).
 
 **Data/origem:** 2026-08.
+
+## Combat — ajuste de padding + barra de PV volta a ser reta
+
+**O que é:** 2 ajustes rápidos pedidos pelo Osmar, em cima da entrega
+anterior:
+1. `WavyProgressBar.tsx` renomeado pra `LinearProgressBar.tsx` e
+   simplificado — tirada a onda (senoide), volta a ser uma linha reta
+   colorida por severidade. A variante "wavy" do M3 Expressive não
+   ficou legível o suficiente no tamanho de tela do app; decisão:
+   ficar só com o indicador linear reto (ainda M3, só não a variante
+   "wavy").
+2. Padding reduzido nos botões da aba Combat: `.splitBtn` (Ação/Ação
+   Bônus/Iniciativa/Fim do Turno) de `min-height: 76px` + padding
+   grande pra `58px` + padding menor; `.splitBtnSmall` (Reação) com
+   padding vertical reduzido. O texto "(Aperte novamente...)" do botão
+   de Iniciativa ganhou uma classe própria (`.sbHint`, 9px) separada
+   do `.sbState` genérico (10px, maiúsculo) — é só um lembrete, não
+   precisa do mesmo peso visual do "ATIVO/USADA".
+
+**Data/origem:** 2026-08.

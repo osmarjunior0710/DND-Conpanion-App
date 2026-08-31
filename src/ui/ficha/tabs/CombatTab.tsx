@@ -6,7 +6,7 @@ import type { AtaqueResolvido } from '../../../core/ataque';
 import type { EspacoDeMagiaAtivo } from '../../../core/magiasPersonagem';
 import { useRoll } from '../../roll/RollContext';
 import InfoChip from '../../components/InfoChip';
-import WavyProgressBar from '../../components/WavyProgressBar';
+import LinearProgressBar from '../../components/LinearProgressBar';
 import SidePanel from '../combat/SidePanel';
 import AcaoPanelContent, { type DanoPendente } from '../combat/AcaoPanelContent';
 import BonusPanelContent from '../combat/BonusPanelContent';
@@ -270,7 +270,7 @@ export default function CombatTab({
                 {iniciativaValor}
               </div>
               <div className={styles.sbLabel}>Iniciativa</div>
-              <div className={styles.sbState}>(Aperte novamente para terminar o combate)</div>
+              <div className={styles.sbHint}>(Aperte novamente para terminar o combate)</div>
             </>
           )}
         </div>
@@ -288,7 +288,7 @@ export default function CombatTab({
             {pvAtual} / {pvMax}
           </div>
         </div>
-        <WavyProgressBar valor={pvAtual} maximo={pvMax} />
+        <LinearProgressBar valor={pvAtual} maximo={pvMax} />
       </div>
       <div className={styles.hpBtnRow}>
         <div className={styles.hpBtnSmall} onClick={() => onAlterarPv(-5)}>
