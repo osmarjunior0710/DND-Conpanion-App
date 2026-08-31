@@ -597,7 +597,13 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
           />
         )}
         {tab === 'perfil' && (
-          <PerfilTab selecao={selecao} classe={classe} nivel={personagem.nivel} talentosGeraisAtuais={talentosGeraisAtuais} />
+          <PerfilTab
+            selecao={selecao}
+            classe={classe}
+            nivel={personagem.nivel}
+            subclasse={personagem.subclasse}
+            talentosGeraisAtuais={talentosGeraisAtuais}
+          />
         )}
         {tab === 'mochila' && (
           <MochilaTab

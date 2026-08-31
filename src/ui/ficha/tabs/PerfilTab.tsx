@@ -2,18 +2,20 @@ import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { especies } from '../../../data/rulesets/dnd2024/especies';
 import { talentos, talentosOrigem } from '../../../data/rulesets/dnd2024/talentos';
-import { caracteristicasAcumuladas } from '../../../core/levelUp';
+import { caracteristicasAcumuladas, caracteristicasSubclasseAcumuladas } from '../../../core/levelUp';
 import type { WizardSelection } from '../../../core/personagem';
 
 interface PerfilTabProps {
   selecao: WizardSelection;
   classe: Classe | null;
   nivel: number;
+  subclasse: string | null;
   talentosGeraisAtuais: string[];
 }
 
-export default function PerfilTab({ selecao, classe, nivel, talentosGeraisAtuais }: PerfilTabProps) {
+export default function PerfilTab({ selecao, classe, nivel, subclasse, talentosGeraisAtuais }: PerfilTabProps) {
   const caracteristicasClasse = classe ? caracteristicasAcumuladas(classe, nivel) : [];
+  const caracteristicasDaSubclasse = caracteristicasSubclasseAcumuladas(subclasse, nivel);
   const origem = origens.find((o) => o.nome === selecao.origem) ?? null;
   const talento = origem ? talentosOrigem.find((t) => t.id === origem.talentoOrigemId) ?? null : null;
   const especie = especies.find((e) => e.nome === selecao.especie) ?? null;
@@ -41,6 +43,20 @@ export default function PerfilTab({ selecao, classe, nivel, talentosGeraisAtuais
           )}
         </div>
       ))}
+
+      {caracteristicasDaSubclasse.length > 0 && (
+        <>
+          <div className="section-title" style={{ marginTop: 16 }}>
+            Subclasse{subclasse ? ` — ${subclasse}` : ''}
+          </div>
+          {caracteristicasDaSubclasse.map((c) => (
+            <div key={c.nome} className="opt-card" style={{ cursor: 'default' }}>
+              <div className="opt-card-name">{c.nome}</div>
+              <div className="opt-card-desc">{c.descricao}</div>
+            </div>
+          ))}
+        </>
+      )}
 
       {talentosGeraisEscolhidos.length > 0 && (
         <>

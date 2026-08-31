@@ -5389,3 +5389,34 @@ passo Magias Preparadas mostra magias de 6º círculo de outras classes
 com a marcação "via Segredos Mágicos" ao lado das nativas.
 
 **Data/origem:** 2026-08.
+
+## Colégio do Conhecimento — Entrega 1 (dado + características visíveis na Ficha)
+
+**O que é:** primeira entrega do plano de 4 combinado com o Osmar pro
+Colégio do Conhecimento. Criado `data/rulesets/dnd2024/caracteristicasSubclasse.ts`
+(gerado da planilha, aba "Subclasses") com as 4 características reais
+(Palavras de Interrupção nv3, Proficiências Bônus nv3, Descobertas
+Mágicas nv6, Perícia Inigualável nv14) — só Colégio do Conhecimento
+importado por enquanto, mesmo padrão incremental de
+`caracteristicasClasse.ts`. Corrigido à mão o Tipo de Ação de
+"Palavras de Interrupção" pra "Reação" (a coluna "auto, revisar" da
+planilha errou, texto da própria descrição confirma).
+
+Nova função `caracteristicasSubclasseAcumuladas` (`core/levelUp.ts`) —
+mesmo formato de `caracteristicasAcumuladas`, lendo do novo arquivo,
+chaveada pelo NOME da subclasse (não precisa cruzar com
+`classe.progressao`, cada característica já tem o próprio nível).
+
+**Ainda não afeta mecânica** (Entregas 2-4 do plano) — essa entrega só
+faz a característica aparecer de verdade na aba Perfil da Ficha, numa
+seção "Subclasse — {nome}" nova, pra qualquer personagem com
+`subclasseAtual` = "Colégio do Conhecimento" e nível ≥ 3. Antes disso
+a escolha de subclasse era só cosmética (trocava o ícone na Lista).
+
+Teste automatizado: `levelUp.test.ts`, `caracteristicasSubclasseAcumuladas`
+(acumula por nível 3→6→14, e caso de borda sem subclasse escolhida).
+
+Testado via Playwright: Bardo/Colégio do Conhecimento nível 14 mostra
+as 4 características reais na aba Perfil.
+
+**Data/origem:** 2026-08.

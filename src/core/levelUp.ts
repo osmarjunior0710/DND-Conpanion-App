@@ -4,6 +4,7 @@
 // — zero constante de D&D hardcoded, zero suposição fixa por classe.
 
 import { caracteristicasClasse } from '../data/rulesets/dnd2024/caracteristicasClasse';
+import { caracteristicasSubclasse } from '../data/rulesets/dnd2024/caracteristicasSubclasse';
 import type { Classe } from '../data/rulesets/dnd2024/classes';
 import { ID_CARACTERISTICA_CLASSE } from '../data/rulesets/dnd2024/idsCaracteristicasClasse';
 
@@ -142,6 +143,22 @@ const CONTAGEM_ATAQUE_EXTRA: Record<string, number> = {
   [ID_CARACTERISTICA_CLASSE.doisAtaquesExtras]: 3,
   [ID_CARACTERISTICA_CLASSE.tresAtaquesExtras]: 4,
 };
+
+/** Características de subclasse já desbloqueadas (nível 1 até
+ * `nivelAtual`, inclusive) — mesmo formato de `caracteristicasAcumuladas`,
+ * só que lendo de `caracteristicasSubclasse.ts` (dado próprio, chave
+ * é o NOME da subclasse, não a classe). `nomeSubclasse === null`
+ * (personagem ainda não escolheu, ou subclasse ainda não importada)
+ * retorna sempre vazio — nunca quebra. Cada característica de
+ * subclasse já tem o nível certo direto no dado (não precisa cruzar
+ * com `classe.progressao` como as de classe base). */
+export function caracteristicasSubclasseAcumuladas(nomeSubclasse: string | null, nivelAtual: number): CaracteristicaNivel[] {
+  if (!nomeSubclasse) return [];
+  return caracteristicasSubclasse
+    .filter((c) => c.subclasse === nomeSubclasse && c.nivel <= nivelAtual)
+    .sort((a, b) => a.nivel - b.nivel)
+    .map((c) => ({ nome: c.nome, descricao: c.descricao }));
+}
 
 export function numeroDeAtaques(classe: Classe, nivelAtual: number): number {
   let maximo = 1;

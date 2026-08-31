@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel, numeroDeAtaques } from './levelUp';
+import { niveisComASI, niveisComDadivaEpica, temEstiloDeLutaTrocavel, numeroDeAtaques, caracteristicasSubclasseAcumuladas } from './levelUp';
 import { classes } from '../data/rulesets/dnd2024/classes';
 
 const guerreiro = classes.find((c) => c.nome === 'Guerreiro');
@@ -40,5 +40,20 @@ describe('numeroDeAtaques', () => {
     expect(numeroDeAtaques(guerreiro, 5)).toBe(2);
     expect(numeroDeAtaques(guerreiro, 11)).toBe(3);
     expect(numeroDeAtaques(guerreiro, 20)).toBe(4);
+  });
+});
+
+describe('caracteristicasSubclasseAcumuladas', () => {
+  it('acumula por nível — Colégio do Conhecimento no 3 tem 2, no 6 tem 3, no 14 tem as 4', () => {
+    expect(caracteristicasSubclasseAcumuladas('Colégio do Conhecimento', 3).map((c) => c.nome)).toEqual([
+      'Palavras de Interrupção',
+      'Proficiências Bônus',
+    ]);
+    expect(caracteristicasSubclasseAcumuladas('Colégio do Conhecimento', 6)).toHaveLength(3);
+    expect(caracteristicasSubclasseAcumuladas('Colégio do Conhecimento', 14)).toHaveLength(4);
+  });
+
+  it('retorna vazio sem subclasse escolhida (caso de borda: null)', () => {
+    expect(caracteristicasSubclasseAcumuladas(null, 20)).toEqual([]);
   });
 });
