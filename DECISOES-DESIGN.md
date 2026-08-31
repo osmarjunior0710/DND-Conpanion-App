@@ -5600,3 +5600,36 @@ gasta 1 Espaço de Magia pra recuperar 1 uso de Inspiração de Bardo
    é usada).
 
 **Data/origem:** 2026-08.
+
+## Colégio do Conhecimento — Perícia Inigualável (nível 14) — ÚLTIMA característica, plano fechado
+
+**O que é:** 4ª e última característica do Colégio do Conhecimento.
+Ao falhar um teste de atributo ou jogada de ataque (só do próprio
+Bardo), pode gastar 1 uso do banco NORMAL de Inspiração de Bardo
+(mesmo pool de "🎵 Inspiração de Bardo"/"Palavras de Interrupção", não
+um recurso separado), rolar o dado e somar ao d20 — regra especial:
+**se ainda assim falhar, o uso não é gasto** (único reembolso
+condicional confirmado no jogo).
+
+**Interação (decisão do Osmar):** como o app não sabe se a soma virou
+sucesso ou não (isso só o jogador/mestre sabe, comparando com a CD),
+o fluxo é: toque no card → rola o dado (gasto otimista, já debita 1
+uso) → aparece uma confirmação "Somou o dado ao d20 e ainda assim
+falhou?" com 2 botões — "Sim, ainda falhou" devolve o uso
+(`devolverUsoInspiracao`, nova função em `FichaShell.tsx`, difere de
+`recuperarInspiracaoComEspaco` por não gastar Espaço de Magia); "Não,
+deu certo" só fecha a confirmação, mantendo o uso gasto.
+
+Card vive na mesma área "livre" de Indomável/Mente Tática (não é
+atrelado a Ação/Ação Bônus/Reação — característica reativa, sem custo
+de ação, mesmo padrão dos outros 2 já existentes).
+
+Testado via Playwright: Bardo/Conhecimento nível 14 — card aparece,
+rola o dado, mostra a confirmação, "Sim, ainda falhou" devolve o uso
+de verdade (1/1 → volta a mostrar clicável).
+
+**Com isso, as 4 características do Colégio do Conhecimento (Palavras
+de Interrupção, Proficiências Bônus, Descobertas Mágicas, Perícia
+Inigualável) estão implementadas — plano fechado.**
+
+**Data/origem:** 2026-08.

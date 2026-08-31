@@ -57,6 +57,8 @@ interface CombatTabProps {
   onRecuperarInspiracaoComEspaco: () => boolean;
   contraEncantamentoDisponivel: boolean;
   palavrasDeInterrupcaoDisponivel: boolean;
+  periciaInigualavelDisponivel: boolean;
+  onDevolverUsoInspiracao: () => void;
   iniciativaMod: number | null;
   onRolarIniciativa?: () => void;
 }
@@ -108,6 +110,8 @@ export default function CombatTab({
   onRecuperarInspiracaoComEspaco,
   contraEncantamentoDisponivel,
   palavrasDeInterrupcaoDisponivel,
+  periciaInigualavelDisponivel,
+  onDevolverUsoInspiracao,
   iniciativaMod,
   onRolarIniciativa,
 }: CombatTabProps) {
@@ -117,6 +121,7 @@ export default function CombatTab({
   const [danoPendente, setDanoPendente] = useState<DanoPendente | null>(null);
   const [ataquesFeitos, setAtaquesFeitos] = useState(0);
   const [iniciativaValor, setIniciativaValor] = useState<number | null>(null);
+  const [periciaInigualavelPendente, setPericiaInigualavelPendente] = useState(false);
   const { rolarD20, rolarDados } = useRoll();
 
   function alternarIniciativa() {
@@ -216,6 +221,29 @@ export default function CombatTab({
     if (!onUsarIndomavel()) return;
     rolarD20({ label: 'Indomável (nova salvaguarda)', formula: `1d20 + ${nivel}`, mod: nivel });
     setFeedback('🛡️ Indomável — use esse resultado como sua nova salvaguarda.');
+  }
+
+  function usarPericiaInigualavel() {
+    if (!onUsarInspiracao()) return;
+    rolarDados({
+      label: 'Perícia Inigualável',
+      formula: `1d${tamanhoDadoInspiracao}`,
+      quantidade: 1,
+      lados: tamanhoDadoInspiracao,
+      mod: 0,
+    });
+    setFeedback('🎓 Perícia Inigualável — some o resultado ao seu d20 que falhou.');
+    setPericiaInigualavelPendente(true);
+  }
+
+  function confirmarPericiaInigualavel(aindaFalhou: boolean) {
+    if (aindaFalhou) {
+      onDevolverUsoInspiracao();
+      setFeedback('🎓 Perícia Inigualável — ainda falhou, o uso de Inspiração foi devolvido.');
+    } else {
+      setFeedback('🎓 Perícia Inigualável — virou sucesso, uso de Inspiração gasto normalmente.');
+    }
+    setPericiaInigualavelPendente(false);
   }
 
   function registrarAtaque(nome: string, desc: string, dano: DanoPendente) {
@@ -366,6 +394,46 @@ export default function CombatTab({
               usos — banco compartilhado com Recuperar Fôlego).
             </div>
           </div>
+        </>
+      )}
+
+      {periciaInigualavelDisponivel && (
+        <>
+          <div className="section-title">Perícia Inigualável</div>
+          {periciaInigualavelPendente ? (
+            <div className="box" style={{ padding: 12, marginBottom: 12 }}>
+              <div style={{ fontSize: 13 }}>Somou o dado ao d20 e ainda assim falhou?</div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                <div className="btn" style={{ flex: 1, padding: '8px 0', textAlign: 'center' }} onClick={() => confirmarPericiaInigualavel(true)}>
+                  Sim, ainda falhou
+                </div>
+                <div
+                  className="btn btn-primary"
+                  style={{ flex: 1, padding: '8px 0', textAlign: 'center' }}
+                  onClick={() => confirmarPericiaInigualavel(false)}
+                >
+                  Não, deu certo
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="box"
+              style={{
+                padding: 12,
+                marginBottom: 12,
+                cursor: usosInspiracaoRestantes > 0 ? 'pointer' : 'default',
+                opacity: usosInspiracaoRestantes > 0 ? 1 : 0.5,
+              }}
+              onClick={usosInspiracaoRestantes > 0 ? usarPericiaInigualavel : undefined}
+            >
+              <div style={{ fontSize: 13 }}>🎓 Ao falhar um teste de atributo ou ataque, toque aqui</div>
+              <div className="label" style={{ marginTop: 2 }}>
+                Gasta 1 uso de Inspiração de Bardo (d{tamanhoDadoInspiracao}), soma ao d20 — se ainda assim falhar, o
+                uso não é gasto ({usosInspiracaoRestantes}/{usosInspiracaoMaximo} usos).
+              </div>
+            </div>
+          )}
         </>
       )}
 

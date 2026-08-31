@@ -229,6 +229,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const contraEncantamentoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Contra-Encantamento', personagem.nivel) !== null : false;
   const inspiracaoSuperiorDesbloqueada = classe ? caracteristicaDesbloqueada(classe, 'Inspiração Superior', personagem.nivel) !== null : false;
   const palavrasDeInterrupcaoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Palavras de Interrupção', personagem.nivel);
+  const periciaInigualavelDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Perícia Inigualável', personagem.nivel);
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const equipadoAtual = resumoEquipado(itensMochila);
@@ -363,6 +364,16 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (!gastarQualquerSlot()) return false;
     setInspiracaoGasto((v) => Math.max(0, v - 1));
     return true;
+  }
+
+  /** "Perícia Inigualável" (Colégio do Conhecimento, nv14): devolve 1
+   * uso de Inspiração de Bardo SEM gastar Espaço de Magia — reembolso
+   * condicional de quando o teste/ataque continua falhando mesmo
+   * depois de somar o dado (regra pede rolar antes de saber se vai
+   * gastar de verdade, por isso o gasto é otimista e essa função só
+   * desfaz se o jogador confirmar que ainda falhou). */
+  function devolverUsoInspiracao() {
+    setInspiracaoGasto((v) => Math.max(0, v - 1));
   }
 
   /** "Inspiração Superior" (nv18): ao rolar Iniciativa, recupera usos
@@ -706,6 +717,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
             contraEncantamentoDisponivel={contraEncantamentoDisponivel}
             palavrasDeInterrupcaoDisponivel={palavrasDeInterrupcaoDisponivel}
+            periciaInigualavelDisponivel={periciaInigualavelDisponivel}
+            onDevolverUsoInspiracao={devolverUsoInspiracao}
             iniciativaMod={iniciativa}
             onRolarIniciativa={inspiracaoSuperiorDesbloqueada ? recuperarInspiracaoAoRolarIniciativa : undefined}
           />
