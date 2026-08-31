@@ -50,6 +50,7 @@ import {
 import { usosInspiracaoMaximo, dadoInspiracao, fonteDeInspiracaoDesbloqueada } from '../../core/inspiracaoBardo';
 import {
   caracteristicaDesbloqueada,
+  caracteristicaSubclasseDesbloqueada,
   contarRepeticoesCaracteristica,
   numeroDeAtaques,
 } from '../../core/levelUp';
@@ -133,6 +134,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [periciasEspecialistaAtuais, setPericiasEspecialistaAtuais] = useState<string[]>(
     personagemSalvo.periciasEspecialistaAtual ?? [],
   );
+  const [periciasSubclasseBonusAtuais, setPericiasSubclasseBonusAtuais] = useState<string[]>(
+    personagemSalvo.periciasSubclasseBonusAtual ?? [],
+  );
   const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
   const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
@@ -180,7 +184,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const atributosFinaisAtuais = Object.fromEntries(
     atributosOrdem.map((a) => [a, valorFinalAtributo(selecao, a) ?? 10]),
   ) as Record<Atributo, number>;
-  const pericias = calcularPericias(selecao, personagem.nivel, periciasEspecialistaAtuais);
+  const pericias = calcularPericias(selecao, personagem.nivel, periciasEspecialistaAtuais, periciasSubclasseBonusAtuais);
   const bonusProficienciaAtual = classe ? bonusProficiencia(classe, personagem.nivel) : 0;
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
@@ -214,6 +218,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const ajusteTatico = classe ? caracteristicaDesbloqueada(classe, 'Ajuste Tático', personagem.nivel) : null;
   const contraEncantamentoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Contra-Encantamento', personagem.nivel) !== null : false;
   const inspiracaoSuperiorDesbloqueada = classe ? caracteristicaDesbloqueada(classe, 'Inspiração Superior', personagem.nivel) !== null : false;
+  const palavrasDeInterrupcaoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Palavras de Interrupção', personagem.nivel);
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const equipadoAtual = resumoEquipado(itensMochila);
@@ -267,6 +272,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       truquesAtual: truquesAtuais,
       magiasPreparadasAtual: magiasPreparadasAtuais,
       periciasEspecialistaAtual: periciasEspecialistaAtuais,
+      periciasSubclasseBonusAtual: periciasSubclasseBonusAtuais,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
       itensMochilaAtual: itensMochila,
@@ -290,6 +296,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     truquesAtuais,
     magiasPreparadasAtuais,
     periciasEspecialistaAtuais,
+    periciasSubclasseBonusAtuais,
     talentosGeraisAtuais,
     talentosFavoritos,
     itensMochila,
@@ -447,6 +454,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
+    periciasSubclasseBonusEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
   }) {
@@ -467,6 +475,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (resultado.truquesEscolhidos) setTruquesAtuais(resultado.truquesEscolhidos);
     if (resultado.magiasPreparadasEscolhidas) setMagiasPreparadasAtuais(resultado.magiasPreparadasEscolhidas);
     if (resultado.periciasEspecialistaEscolhidas) setPericiasEspecialistaAtuais(resultado.periciasEspecialistaEscolhidas);
+    if (resultado.periciasSubclasseBonusEscolhidas) setPericiasSubclasseBonusAtuais(resultado.periciasSubclasseBonusEscolhidas);
     if (resultado.talentoGeralEscolhido) {
       setTalentosGeraisAtuais((prev) => [...prev, resultado.talentoGeralEscolhido!]);
       // Já foi escolhido de verdade — não faz mais sentido continuar
@@ -504,7 +513,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         magiasPreparadasAtuais={magiasPreparadasAtuais}
         magiasDaClasseDisponiveis={magiasDisponiveisParaPreparar(classe, personagem.nivel + 1)}
         periciasEspecialistaAtuais={periciasEspecialistaAtuais}
-        periciasProficientesDoPersonagem={periciasProficientes(selecao)}
+        periciasProficientesDoPersonagem={[...periciasProficientes(selecao), ...periciasSubclasseBonusAtuais]}
+        periciasSubclasseBonusAtuais={periciasSubclasseBonusAtuais}
         atributosAtuais={selecao.atributos}
         atributosFinaisAtuais={atributosFinaisAtuais}
         talentosGeraisAtuais={talentosGeraisAtuais}
@@ -678,6 +688,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onUsarInspiracao={usarInspiracao}
             onRecuperarInspiracaoComEspaco={recuperarInspiracaoComEspaco}
             contraEncantamentoDisponivel={contraEncantamentoDisponivel}
+            palavrasDeInterrupcaoDisponivel={palavrasDeInterrupcaoDisponivel}
             iniciativaMod={iniciativa}
             onRolarIniciativa={inspiracaoSuperiorDesbloqueada ? recuperarInspiracaoAoRolarIniciativa : undefined}
           />

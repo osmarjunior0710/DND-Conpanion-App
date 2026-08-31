@@ -56,6 +56,7 @@ interface CombatTabProps {
   onUsarInspiracao: () => boolean;
   onRecuperarInspiracaoComEspaco: () => boolean;
   contraEncantamentoDisponivel: boolean;
+  palavrasDeInterrupcaoDisponivel: boolean;
   iniciativaMod: number | null;
   onRolarIniciativa?: () => void;
 }
@@ -106,6 +107,7 @@ export default function CombatTab({
   onUsarInspiracao,
   onRecuperarInspiracaoComEspaco,
   contraEncantamentoDisponivel,
+  palavrasDeInterrupcaoDisponivel,
   iniciativaMod,
   onRolarIniciativa,
 }: CombatTabProps) {
@@ -459,6 +461,10 @@ export default function CombatTab({
             modAcertoConjuracao={modAcertoConjuracao}
             detalhesAtivo={detalhesAtivo}
             contraEncantamentoDisponivel={contraEncantamentoDisponivel}
+            palavrasDeInterrupcaoDisponivel={palavrasDeInterrupcaoDisponivel}
+            usosInspiracaoRestantes={usosInspiracaoRestantes}
+            tamanhoDadoInspiracao={tamanhoDadoInspiracao}
+            onUsarInspiracao={onUsarInspiracao}
           />
         )}
       </SidePanel>

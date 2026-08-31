@@ -5420,3 +5420,59 @@ Testado via Playwright: Bardo/Colégio do Conhecimento nível 14 mostra
 as 4 características reais na aba Perfil.
 
 **Data/origem:** 2026-08.
+
+## Colégio do Conhecimento — Entregas 2 e 3 + correções de bug
+
+**Contexto:** feedback do Osmar depois de testar a Entrega 1 — 4
+problemas reais, resolvidos juntos.
+
+**1. Bloqueio de subclasses não implementadas:** `subclasseImplementada`
+(`core/levelUp.ts`) checa se a subclasse tem pelo menos 1 característica
+em `caracteristicasSubclasse.ts` (genérico por dado, não hardcoded pro
+nome). A tela de escolha de subclasse (`LevelUpShell.tsx`) mostra as
+outras 3 subclasses de Bardo travadas ("Ainda não implementada",
+opacidade reduzida, sem clique) até que ganhem dado real.
+
+**2. Palavras de Interrupção (nv3, Reação):** novo item no painel de
+Reação, condicionado a `caracteristicaSubclasseDesbloqueada(subclasse,
+'Palavras de Interrupção', nivel)`. Gasta 1 uso do banco PRÓPRIO de
+Inspiração de Bardo do personagem (não concede a ninguém — caminho
+paralelo, mesma regra do livro), rola o dado de Inspiração
+(`rolarDados`, não `rolarD20` — não é um ataque/teste, é só o dado
+solto) e mostra aviso pra subtrair do resultado da criatura.
+
+**3. Proficiências Bônus (nv3, escolha real de perícia):** nova etapa
+"proficienciasBonus" no Level Up, disparada quando a subclasse
+escolhida NESSE MESMO level-up (ou uma já salva) desbloqueia a
+característica e o personagem ainda não tem as 3 perícias (dispara 1
+vez só). Lista só as perícias em que o personagem AINDA não é
+proficiente (usa `periciasProficientesDoPersonagem`, mesmo padrão do
+passo "Especialista"). Escolha persistida em `periciasSubclasseBonusAtual`
+(novo campo em `armazenamentoPersonagens.ts`) e alimentada de volta em
+`calcularPericias` via novo parâmetro `periciasBonusExtras` — essas
+perícias agora contam como proficiência de verdade (bônus inteiro, não
+dobrado — Especialista continua sendo o único jeito de dobrar).
+
+**Achado de arquitetura durante a implementação:** `subclasseEscolhida`
+(estado local do Level Up) precisou ser declarado ANTES da montagem de
+`luSteps` (mesmo padrão já usado por `talentoEscolhido`/
+`precisaEscolherAtributoDoTalento`) — só assim o passo
+"proficienciasBonus" consegue reagir à escolha de subclasse feita no
+MESMO level-up (nível 3, os dois acontecem juntos).
+
+**4. Aba Atributos — layout mais compacto:** PV, CA, Iniciativa e
+Bônus de Proficiência viraram uma única linha de 4 caixas no topo
+(antes: PV/CA/Iniciativa numa linha própria mais abaixo, Bônus de
+Proficiência dentro da lista de Perícias). Padding reduzido em
+`levelBox`/`hpBox`/`skillRow`. Atributos (FOR/DES/CON/INT/SAB/CAR)
+mantidos como estavam, a pedido do Osmar.
+
+Testado via Playwright: outras 3 subclasses aparecem travadas;
+Proficiências Bônus mostra as 14 perícias ainda-não-proficientes,
+trava em "3/3"; Palavras de Interrupção aparece no painel de Reação
+(Bardo/Conhecimento nível 7, "1 uso restante" mostrado certo).
+
+Teste automatizado: `calculoPersonagem.test.ts` ganhou 2 casos novos
+pra `calcularPericias` com `periciasBonusExtras`.
+
+**Data/origem:** 2026-08.

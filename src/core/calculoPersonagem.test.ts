@@ -6,6 +6,7 @@ import {
   calcularPvMaximoNivel1,
   calcularIniciativa,
   calcularPercepcaoPassiva,
+  calcularPericias,
 } from './calculoPersonagem';
 import { classes } from '../data/rulesets/dnd2024/classes';
 import { criarSelecaoInicial, type WizardSelection } from './personagem';
@@ -117,5 +118,22 @@ describe('calcularPercepcaoPassiva', () => {
   it('com proficiência em Percepção: soma o Bônus de Proficiência do nível', () => {
     const s = selecaoGuerreiro({ periciasClasseEscolhidas: ['Percepção'] });
     expect(calcularPercepcaoPassiva(s, 1)).toBe(11 + 2);
+  });
+});
+
+describe('calcularPericias (periciasBonusExtras — ex: "Proficiências Bônus" do Colégio do Conhecimento)', () => {
+  it('perícia fora de periciasBonusExtras continua "Sem proficiência"', () => {
+    const s = selecaoGuerreiro();
+    const resultado = calcularPericias(s, 1, [], ['Arcanismo']);
+    const furtividade = resultado.find((p) => p.nome === 'Furtividade');
+    expect(furtividade?.proficiente).toBe(false);
+  });
+
+  it('perícia listada em periciasBonusExtras vira proficiente (bônus inteiro, não dobrado)', () => {
+    const s = selecaoGuerreiro();
+    const resultado = calcularPericias(s, 1, [], ['Arcanismo']);
+    const arcanismo = resultado.find((p) => p.nome === 'Arcanismo');
+    expect(arcanismo?.proficiente).toBe(true);
+    expect(arcanismo?.mod).toBe(0 + bonusProficiencia(guerreiro, 1)); // INT 10 -> mod 0
   });
 });

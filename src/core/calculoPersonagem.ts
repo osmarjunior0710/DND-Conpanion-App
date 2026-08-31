@@ -302,10 +302,15 @@ export function periciasProficientes(selection: WizardSelection): string[] {
  * (Bardo nível 2 — característica genérica por nome, igual
  * `niveisComEspecialista`, não hardcoded pra Bardo) e não for
  * proficiente, ou nenhum bônus nos outros casos. */
-export function calcularPericias(selection: WizardSelection, nivel: number, periciasEspecialista: string[] = []): PericiaFinal[] {
+export function calcularPericias(
+  selection: WizardSelection,
+  nivel: number,
+  periciasEspecialista: string[] = [],
+  periciasBonusExtras: string[] = [],
+): PericiaFinal[] {
   const classe = classeDaSelecao(selection);
   if (!classe) return [];
-  const proficientes = new Set(periciasProficientes(selection));
+  const proficientes = new Set([...periciasProficientes(selection), ...periciasBonusExtras]);
   const bonus = bonusProficiencia(classe, nivel);
   const temPauParaTodaObra = caracteristicaDesbloqueada(classe, 'Pau pra Toda Obra', nivel) !== null;
   const resultado: PericiaFinal[] = [];

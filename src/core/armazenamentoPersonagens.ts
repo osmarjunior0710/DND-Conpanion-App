@@ -61,6 +61,11 @@ export interface PersonagemSalvo {
    * `core/levelUp.ts` `niveisComEspecialista`). Ausente/vazio =
    * personagem ainda não passou por um desses níveis. */
   periciasEspecialistaAtual?: string[];
+  /** Perícias com proficiência de verdade (não Especialização) ganhas
+   * por "Proficiências Bônus" (Colégio do Conhecimento, nível 3) —
+   * escolha única de 3, feita 1 vez só. Ausente/vazio = personagem
+   * ainda não passou por esse nível com essa subclasse. */
+  periciasSubclasseBonusAtual?: string[];
   /** IDs dos Talentos Gerais escolhidos nos níveis de ASI/Talento (ver
    * `core/levelUp.ts` `niveisComASI`, `data/rulesets/dnd2024/talentos.ts`)
    * — acumula 1 por nível em que o jogador escolheu "Talento" em vez de

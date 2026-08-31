@@ -13,6 +13,10 @@ interface ReacaoPanelContentProps {
   modAcertoConjuracao: number | null;
   detalhesAtivo: boolean;
   contraEncantamentoDisponivel: boolean;
+  palavrasDeInterrupcaoDisponivel: boolean;
+  usosInspiracaoRestantes: number;
+  tamanhoDadoInspiracao: number;
+  onUsarInspiracao: () => boolean;
 }
 
 export default function ReacaoPanelContent({
@@ -23,9 +27,13 @@ export default function ReacaoPanelContent({
   modAcertoConjuracao,
   detalhesAtivo,
   contraEncantamentoDisponivel,
+  palavrasDeInterrupcaoDisponivel,
+  usosInspiracaoRestantes,
+  tamanhoDadoInspiracao,
+  onUsarInspiracao,
 }: ReacaoPanelContentProps) {
   const [aviso, setAviso] = useState<string | null>(null);
-  const { rolarD20 } = useRoll();
+  const { rolarD20, rolarDados } = useRoll();
 
   function conjurarMagia(m: Magia) {
     if (m.circulo > 0) {
@@ -62,8 +70,41 @@ export default function ReacaoPanelContent({
     );
   }
 
+  function usarPalavrasDeInterrupcao() {
+    if (!onUsarInspiracao()) return;
+    rolarDados({
+      label: 'Palavras de Interrupção',
+      formula: `1d${tamanhoDadoInspiracao}`,
+      quantidade: 1,
+      lados: tamanhoDadoInspiracao,
+      mod: 0,
+    });
+    onEscolher(
+      '🗯 Palavras de Interrupção',
+      'Subtraia o resultado mostrado do dano, ou do resultado do teste/ataque da criatura (pode virar fracasso).',
+    );
+  }
+
+  const semUsosInspiracao = usosInspiracaoRestantes <= 0;
+
   return (
     <>
+      {palavrasDeInterrupcaoDisponivel && (
+        <div
+          className={styles.row}
+          style={semUsosInspiracao ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+          onClick={usarPalavrasDeInterrupcao}
+        >
+          <div className={styles.rowName}>🗯 Palavras de Interrupção</div>
+          {detalhesAtivo && (
+            <div className={styles.rowDesc}>
+              Criatura à vista a até 18m rolou dano ou foi bem-sucedida em teste/ataque — gasta 1 uso da sua
+              Inspiração de Bardo (d{tamanhoDadoInspiracao}), subtraia o resultado do dela ({usosInspiracaoRestantes}{' '}
+              uso{usosInspiracaoRestantes === 1 ? '' : 's'} restante{usosInspiracaoRestantes === 1 ? '' : 's'}).
+            </div>
+          )}
+        </div>
+      )}
       {contraEncantamentoDisponivel && (
         <div className={styles.row} onClick={usarContraEncantamento}>
           <div className={styles.rowName}>🎶 Contra-Encantamento</div>

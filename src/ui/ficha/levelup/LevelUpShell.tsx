@@ -12,8 +12,11 @@ import {
   niveisComDadivaEpica,
   niveisComEspecialista,
   temEstiloDeLutaTrocavel,
+  subclasseImplementada,
+  caracteristicaSubclasseDesbloqueada,
   NOMES_ESPECIALISTA,
 } from '../../../core/levelUp';
+import { pericias } from '../../../data/rulesets/dnd2024/pericias';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
 import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
 import { iconesMagia } from '../../../core/classificarMagia';
@@ -46,6 +49,7 @@ interface LevelUpShellProps {
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
+    periciasSubclasseBonusEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
   }) => void;
@@ -74,6 +78,10 @@ interface LevelUpShellProps {
    * de Especialista pode vir (só dá pra especializar o que já é
    * proficiente). */
   periciasProficientesDoPersonagem: string[];
+  /** Perícias já escolhidas pra "Proficiências Bônus" (Colégio do
+   * Conhecimento, nível 3) — escolha única, feita 1 vez só (quando o
+   * array chega a 3, o passo não aparece mais). */
+  periciasSubclasseBonusAtuais: string[];
   /** Atributos atuais do personagem (já com Level Ups anteriores
    * aplicados) — pra mostrar base/mod real na tela de Aumento de
    * Atributo. */
@@ -95,6 +103,7 @@ type LuStep =
   | 'pv'
   | 'features'
   | 'subclasse'
+  | 'proficienciasBonus'
   | 'estiloDeLuta'
   | 'truques'
   | 'magiasPreparadas'
@@ -123,6 +132,7 @@ export default function LevelUpShell({
   magiasDaClasseDisponiveis,
   periciasEspecialistaAtuais,
   periciasProficientesDoPersonagem,
+  periciasSubclasseBonusAtuais,
   atributosAtuais,
   atributosFinaisAtuais,
   talentosGeraisAtuais,
@@ -143,6 +153,13 @@ export default function LevelUpShell({
   const maxEspecialista = periciasEspecialistaAtuais.length + (especialistaDisparaAgora ? 2 : 0);
 
   // Precisa vir antes da montagem de `luSteps` — decide se o passo
+  // "proficienciasBonus" entra na sequência quando a subclasse
+  // escolhida NESTE level-up (não só uma já salva de antes) desbloqueia
+  // "Proficiências Bônus" no mesmo nível (Colégio do Conhecimento,
+  // nível 3 — subclasse e a escolha de perícia chegam juntas).
+  const [subclasseEscolhida, setSubclasseEscolhida] = useState<string | null>(personagem.subclasse);
+
+  // Precisa vir antes da montagem de `luSteps` — decide se o passo
   // extra "asiAtributo" entra na sequência (ver mais abaixo).
   const [talentoEscolhido, setTalentoEscolhido] = useState<string | null>(null);
   const talentoObjEscolhido = talentoEscolhido ? (talentos.find((t) => t.id === talentoEscolhido) ?? null) : null;
@@ -156,6 +173,16 @@ export default function LevelUpShell({
 
   const luSteps: LuStep[] = ['pv', 'features'];
   if (classe.nivelSubclasse === novoNivel && !personagem.subclasse) luSteps.push('subclasse');
+  // Subclasse do PRÓPRIO level-up (se acabou de ser escolhida no passo
+  // acima) ou já escolhida antes — os dois casos podem disparar
+  // "Proficiências Bônus" (Colégio do Conhecimento, nível 3), sempre 1
+  // única vez (nunca de novo depois que as 3 perícias já existem).
+  if (
+    caracteristicaSubclasseDesbloqueada(subclasseEscolhida, 'Proficiências Bônus', novoNivel) &&
+    periciasSubclasseBonusAtuais.length === 0
+  ) {
+    luSteps.push('proficienciasBonus');
+  }
   if (temEstiloDeLutaTrocavel(classe, novoNivel)) luSteps.push('estiloDeLuta');
   if (maxTruques > 0) luSteps.push('truques');
   if (maxMagiasPreparadas > 0) luSteps.push('magiasPreparadas');
@@ -179,6 +206,7 @@ export default function LevelUpShell({
   // normalmente — esse passo é o único lugar que mostra ela.
   const nomesComTelaPropria = new Set<string>();
   if (luSteps.includes('subclasse')) nomesComTelaPropria.add(`Subclasse de ${classe.nome}`);
+  if (luSteps.includes('proficienciasBonus')) nomesComTelaPropria.add('Proficiências Bônus');
   if (luSteps.includes('estiloDeLuta')) nomesComTelaPropria.add('Estilo de Luta');
   if (luSteps.includes('especialista')) NOMES_ESPECIALISTA.forEach((n) => nomesComTelaPropria.add(n));
   if (luSteps.includes('asi')) nomesComTelaPropria.add('Aumento no Valor de Atributo');
@@ -187,15 +215,11 @@ export default function LevelUpShell({
   const [luIndex, setLuIndex] = useState(0);
   const [faseDramatica, setFaseDramatica] = useState<FaseDramatica>('idle');
   const [valorDadoAnimado, setValorDadoAnimado] = useState<number | null>(null);
-  // Escolha de subclasse — versão placeholder (ver PENDENCIAS.md
-  // "Escolha de subclasse — versão placeholder"): só salva o NOME
-  // escolhido (pra já poder trocar o ícone na Lista de Personagens),
-  // nenhuma característica mecânica da subclasse existe ainda.
-  const [subclasseEscolhida, setSubclasseEscolhida] = useState<string | null>(personagem.subclasse);
   const [estiloDeLutaEscolhido, setEstiloDeLutaEscolhido] = useState<string | null>(personagem.estiloDeLuta);
   const [truquesEscolhidos, setTruquesEscolhidos] = useState<string[]>(truquesAtuais);
   const [magiasPreparadasEscolhidas, setMagiasPreparadasEscolhidas] = useState<string[]>(magiasPreparadasAtuais);
   const [especialistaEscolhidas, setEspecialistaEscolhidas] = useState<string[]>(periciasEspecialistaAtuais);
+  const [proficienciasBonusEscolhidas, setProficienciasBonusEscolhidas] = useState<string[]>(periciasSubclasseBonusAtuais);
   const [asiEscolhas, setAsiEscolhas] = useState<Atributo[]>([]);
   const [aviso, setAviso] = useAvisoTemporario();
 
@@ -269,6 +293,23 @@ export default function LevelUpShell({
 
   const especialistaValido = especialistaEscolhidas.length === maxEspecialista;
 
+  // Proficiências Bônus (Colégio do Conhecimento, nível 3): escolha
+  // única de 3 perícias entre as que o personagem AINDA não é
+  // proficiente — nunca aparece de novo depois de confirmada (ver
+  // condição de `luSteps` acima).
+  const periciasNaoProficientes = pericias.filter((p) => !periciasProficientesDoPersonagem.includes(p.nome)).map((p) => p.nome);
+
+  function toggleProficienciaBonus(nome: string) {
+    const i = proficienciasBonusEscolhidas.indexOf(nome);
+    if (i > -1) {
+      setProficienciasBonusEscolhidas((prev) => prev.filter((x) => x !== nome));
+      return;
+    }
+    if (proficienciasBonusEscolhidas.length < 3) setProficienciasBonusEscolhidas((prev) => [...prev, nome]);
+  }
+
+  const proficienciasBonusValido = proficienciasBonusEscolhidas.length === 3;
+
   const PONTOS_ASI = 2;
   const pontosAsiGastos = asiEscolhas.length;
   const pontosAsiRestantes = PONTOS_ASI - pontosAsiGastos;
@@ -320,6 +361,7 @@ export default function LevelUpShell({
     pv: 'Pontos de Vida',
     features: 'Novas Características',
     subclasse: 'Escolha de Subclasse',
+    proficienciasBonus: 'Proficiências Bônus',
     estiloDeLuta: 'Estilo de Luta',
     truques: 'Truques',
     magiasPreparadas: 'Magias Preparadas',
@@ -344,6 +386,10 @@ export default function LevelUpShell({
     }
     if (step === 'subclasse' && subclassesDaClasse.length > 0 && subclasseEscolhida === null) {
       setAviso('Escolha uma subclasse antes de avançar.');
+      return;
+    }
+    if (step === 'proficienciasBonus' && !proficienciasBonusValido) {
+      setAviso('Escolha exatamente 3 perícias pra Proficiências Bônus antes de avançar.');
       return;
     }
     if (step === 'truques' && !truquesValido) {
@@ -390,6 +436,7 @@ export default function LevelUpShell({
         truquesEscolhidos: luSteps.includes('truques') ? truquesEscolhidos : null,
         magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
         periciasEspecialistaEscolhidas: luSteps.includes('especialista') ? especialistaEscolhidas : null,
+        periciasSubclasseBonusEscolhidas: luSteps.includes('proficienciasBonus') ? proficienciasBonusEscolhidas : null,
         atributosAumentados: luSteps.includes('asi') && asiEscolhas.length > 0 ? asiEscolhas : null,
         talentoGeralEscolhido: luSteps.includes('asi') ? talentoEscolhido : null,
       });
@@ -585,28 +632,33 @@ export default function LevelUpShell({
           <>
             <div className="section-title">Escolha sua subclasse</div>
             <div className="label" style={{ marginBottom: 8, color: 'var(--warn)' }}>
-              [PH] Escolha ainda não implementada de verdade — só guarda o nome (troca o ícone do personagem na
-              lista). As características mecânicas de cada subclasse ainda não existem na ficha.
+              [PH] Subclasses sem características mecânicas implementadas aparecem travadas — só dá pra escolher
+              entre elas quando a Ficha souber aplicar as regras de verdade.
             </div>
             {subclassesDaClasse.length === 0 && (
               <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 12 }}>
                 ＋ subclasses de {classe.nome} ainda não foram importadas.
               </div>
             )}
-            {subclassesDaClasse.map((s) => (
-              <div
-                key={s.id}
-                className={`opt-card ${subclasseEscolhida === s.nome ? 'selected' : ''}`}
-                onClick={() => setSubclasseEscolhida(s.nome)}
-              >
-                <div className="opt-card-row">
-                  <IconeClasse id={s.id} />
-                  <div className="opt-card-info">
-                    <div className="opt-card-name">{s.nome}</div>
+            {subclassesDaClasse.map((s) => {
+              const implementada = subclasseImplementada(s.nome);
+              return (
+                <div
+                  key={s.id}
+                  className={`opt-card ${subclasseEscolhida === s.nome ? 'selected' : ''}`}
+                  style={implementada ? undefined : { opacity: 0.5, pointerEvents: 'none' }}
+                  onClick={() => setSubclasseEscolhida(s.nome)}
+                >
+                  <div className="opt-card-row">
+                    <IconeClasse id={s.id} />
+                    <div className="opt-card-info">
+                      <div className="opt-card-name">{s.nome}</div>
+                      {!implementada && <div className="opt-card-desc">Ainda não implementada</div>}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </>
         )}
 
@@ -707,6 +759,27 @@ export default function LevelUpShell({
                 ⚠️ {trocasDeMagia} magias trocadas — só pode trocar 1 por level-up.
               </div>
             )}
+          </>
+        )}
+
+        {step === 'proficienciasBonus' && (
+          <>
+            <div className="section-title">
+              Proficiências Bônus — escolha 3 ({proficienciasBonusEscolhidas.length}/3)
+            </div>
+            <div className="label" style={{ marginBottom: 8 }}>
+              Característica do Colégio do Conhecimento — proficiência em 3 perícias à sua escolha, entre as que
+              você ainda não é proficiente.
+            </div>
+            {periciasNaoProficientes.map((nome) => {
+              const marcada = proficienciasBonusEscolhidas.includes(nome);
+              return (
+                <div key={nome} className="check-row" onClick={() => toggleProficienciaBonus(nome)}>
+                  <div className={`check-box ${marcada ? 'checked' : ''}`} />
+                  <span className="check-label">{nome}</span>
+                </div>
+              );
+            })}
           </>
         )}
 
@@ -846,6 +919,12 @@ export default function LevelUpShell({
               <div className="summary-row">
                 <span>Especialista</span>
                 <span>{especialistaEscolhidas.slice(periciasEspecialistaAtuais.length).join(', ') || 'nenhuma escolhida'}</span>
+              </div>
+            )}
+            {luSteps.includes('proficienciasBonus') && (
+              <div className="summary-row">
+                <span>Proficiências Bônus</span>
+                <span>{proficienciasBonusEscolhidas.join(', ') || 'nenhuma escolhida'}</span>
               </div>
             )}
             {luSteps.includes('asi') && (

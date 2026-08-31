@@ -68,23 +68,6 @@ export default function AtributosTab({
         </div>
       </div>
 
-      <div className="stat-grid">
-        {atributos.map((a) => (
-          <div
-            key={a.atributo}
-            className="box stat-box"
-            onClick={() => rolarD20({ label: a.atributo, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
-          >
-            <div className="stat-name">{a.atributo}</div>
-            <div className="stat-mod">{a.valor}</div>
-            <div className="stat-val">
-              {a.mod >= 0 ? '+' : ''}
-              {a.mod}
-            </div>
-          </div>
-        ))}
-      </div>
-
       <div className={styles.hpRow}>
         <div className={`box ${styles.hpBox}`}>
           <div className="label">
@@ -115,16 +98,33 @@ export default function AtributosTab({
             {iniciativa !== null ? `${iniciativa >= 0 ? '+' : ''}${iniciativa} 🎲` : '—'}
           </div>
         </div>
+        <div className={`box ${styles.hpBox}`}>
+          <div className="label">Bônus Prof.</div>
+          <div className={styles.hpNum}>
+            {bonusProficiencia >= 0 ? '+' : ''}
+            {bonusProficiencia}
+          </div>
+        </div>
+      </div>
+
+      <div className="stat-grid">
+        {atributos.map((a) => (
+          <div
+            key={a.atributo}
+            className="box stat-box"
+            onClick={() => rolarD20({ label: a.atributo, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
+          >
+            <div className="stat-name">{a.atributo}</div>
+            <div className="stat-mod">{a.valor}</div>
+            <div className="stat-val">
+              {a.mod >= 0 ? '+' : ''}
+              {a.mod}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="section-title">Perícias</div>
-      <div className={styles.skillRow}>
-        <span>Bônus de Proficiência</span>
-        <span>
-          {bonusProficiencia >= 0 ? '+' : ''}
-          {bonusProficiencia}
-        </span>
-      </div>
       {pericias.map((p) => (
         <div
           key={p.nome}

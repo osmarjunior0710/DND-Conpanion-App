@@ -152,12 +152,30 @@ const CONTAGEM_ATAQUE_EXTRA: Record<string, number> = {
  * retorna sempre vazio — nunca quebra. Cada característica de
  * subclasse já tem o nível certo direto no dado (não precisa cruzar
  * com `classe.progressao` como as de classe base). */
+/** True se a subclasse já tem pelo menos 1 característica real
+ * importada em `caracteristicasSubclasse.ts` — usado pra bloquear a
+ * escolha de subclasses que ainda são só um nome/ícone (ver
+ * PENDENCIAS.md "Escolha de subclasse — versão placeholder"). Genérico
+ * por dado, não hardcoded pro nome de nenhuma subclasse específica. */
+export function subclasseImplementada(nomeSubclasse: string): boolean {
+  return caracteristicasSubclasse.some((c) => c.subclasse === nomeSubclasse);
+}
+
 export function caracteristicasSubclasseAcumuladas(nomeSubclasse: string | null, nivelAtual: number): CaracteristicaNivel[] {
   if (!nomeSubclasse) return [];
   return caracteristicasSubclasse
     .filter((c) => c.subclasse === nomeSubclasse && c.nivel <= nivelAtual)
     .sort((a, b) => a.nivel - b.nivel)
     .map((c) => ({ nome: c.nome, descricao: c.descricao }));
+}
+
+/** True se uma característica NOMEADA de subclasse já está desbloqueada
+ * no nível atual — mesmo padrão de `caracteristicaDesbloqueada`, só que
+ * pra `caracteristicasSubclasse.ts`. Usado por telas que só precisam
+ * saber de 1 característica específica (ex: painel de Reação). */
+export function caracteristicaSubclasseDesbloqueada(nomeSubclasse: string | null, nome: string, nivelAtual: number): boolean {
+  if (!nomeSubclasse) return false;
+  return caracteristicasSubclasse.some((c) => c.subclasse === nomeSubclasse && c.nome === nome && c.nivel <= nivelAtual);
 }
 
 export function numeroDeAtaques(classe: Classe, nivelAtual: number): number {
