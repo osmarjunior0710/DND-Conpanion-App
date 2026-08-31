@@ -13,6 +13,11 @@ interface CompletarMagiasShellProps {
   deficit: number;
   onConfirmar: (novaLista: string[]) => void;
   onFechar: () => void;
+  /** Nome da classe do personagem — só usado pra marcar, na lista, uma
+   * magia que não é nativa dela (veio de "Segredos Mágicos", Bardo
+   * nível 10). Omitido = nenhuma marcação (ex: tela de Truques, que
+   * "Segredos Mágicos" não afeta). */
+  classeNome?: string;
 }
 
 /** Tela de "completar" Truques/Magias Preparadas faltando — diferente
@@ -22,7 +27,7 @@ interface CompletarMagiasShellProps {
  * conta. Não é level-up — é corrigir um descompasso entre o que a
  * ficha tem e o que a tabela da classe diz que deveria ter nesse
  * nível (ver PENDENCIAS.md "Detector genérico de ficha atrasada"). */
-export default function CompletarMagiasShell({ titulo, atuais, catalogo, deficit, onConfirmar, onFechar }: CompletarMagiasShellProps) {
+export default function CompletarMagiasShell({ titulo, atuais, catalogo, deficit, onConfirmar, onFechar, classeNome }: CompletarMagiasShellProps) {
   const [escolhidas, setEscolhidas] = useState<string[]>([]);
 
   function toggle(nome: string) {
@@ -59,6 +64,7 @@ export default function CompletarMagiasShell({ titulo, atuais, catalogo, deficit
             {(m) => {
               const travado = atuais.includes(m.nome);
               const marcado = travado || escolhidas.includes(m.nome);
+              const viaSegredosMagicos = classeNome !== undefined && !m.classes.includes(classeNome);
               return (
                 <div
                   key={m.id}
@@ -71,7 +77,8 @@ export default function CompletarMagiasShell({ titulo, atuais, catalogo, deficit
                     <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
                     {' '}<span style={{ color: 'var(--text-faint)', fontSize: 11 }}>
                       ({m.circulo === 0 ? m.escola : `${m.circulo}º círculo`}
-                      {travado ? ' · já tinha' : ''})
+                      {travado ? ' · já tinha' : ''}
+                      {viaSegredosMagicos ? ' · via Segredos Mágicos' : ''})
                     </span>
                   </span>
                 </div>

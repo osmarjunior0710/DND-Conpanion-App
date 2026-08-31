@@ -3,8 +3,9 @@
 
 import type { Atributo } from '../data/wizardFixtures';
 import type { Classe, RecursoClasse } from '../data/rulesets/dnd2024/classes';
-import { magias, type Magia } from '../data/rulesets/dnd2024/magias';
+import { magias, magiasDaClasse, type Magia } from '../data/rulesets/dnd2024/magias';
 import { bonusProficiencia } from './calculoPersonagem';
+import { caracteristicaDesbloqueada } from './levelUp';
 import { modificador, valorFinalAtributo, type WizardSelection } from './personagem';
 import { valorRecursoClasse } from './recursosClasse';
 
@@ -111,6 +112,35 @@ export function deficitTruques(classe: Classe | null, nivel: number, truquesAtua
 export function deficitMagiasPreparadas(classe: Classe | null, nivel: number, magiasPreparadasAtuais: string[]): number {
   if (!classe) return 0;
   return Math.max(0, valorRecursoClasse(classe, 'Magias Preparadas', nivel) - magiasPreparadasAtuais.length);
+}
+
+/** "Segredos Mágicos" (Bardo, nível 10, classe base): sempre que o nº
+ * de Magias Preparadas sobe, a magia nova pode vir de Bardo, Clérigo,
+ * Druida OU Mago. Lista de classes hand-maintained — vem do texto da
+ * própria característica (`caracteristicasClasse.ts`, nível 10), não
+ * é regra genérica pra qualquer classe (só Bardo tem isso hoje). Se
+ * outra classe ganhar uma característica parecida no futuro, dá pra
+ * generalizar essa lista por classe; não vale a pena antes disso. */
+const CLASSES_SEGREDOS_MAGICOS = ['Clérigo', 'Druida', 'Mago'];
+
+/** Pool de magias (círculo > 0, nunca truque) elegíveis pra Magias
+ * Preparadas no nível dado — só a lista da própria classe, exceto se
+ * "Segredos Mágicos" já estiver desbloqueada nesse nível, caso em que
+ * o pool cresce com as listas de `CLASSES_SEGREDOS_MAGICOS` também
+ * (sem duplicar magia que apareça em mais de uma lista). */
+export function magiasDisponiveisParaPreparar(classe: Classe, nivel: number): Magia[] {
+  const propria = magiasDaClasse(classe.nome).filter((m) => m.circulo > 0);
+  if (caracteristicaDesbloqueada(classe, 'Segredos Mágicos', nivel) === null) return propria;
+  const vistos = new Set(propria.map((m) => m.id));
+  const extras: Magia[] = [];
+  for (const nomeClasseExtra of CLASSES_SEGREDOS_MAGICOS) {
+    for (const m of magiasDaClasse(nomeClasseExtra).filter((m) => m.circulo > 0)) {
+      if (vistos.has(m.id)) continue;
+      vistos.add(m.id);
+      extras.push(m);
+    }
+  }
+  return [...propria, ...extras];
 }
 
 export interface GrupoDeMagias {

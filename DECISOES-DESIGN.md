@@ -5353,3 +5353,39 @@ anterior:
    precisa do mesmo peso visual do "ATIVO/USADA".
 
 **Data/origem:** 2026-08.
+
+## Bardo — Segredos Mágicos (nível 10, classe base)
+
+**O que é:** última lacuna da classe base do Bardo (das 5 achadas na
+auditoria de Bardo). A partir do nível 10, sempre que o nº de Magias
+Preparadas sobe, a magia nova pode vir de Bardo, Clérigo, Druida OU
+Mago — conta como magia de Bardo.
+
+**Implementação:** `core/magiasPersonagem.ts` ganhou
+`magiasDisponiveisParaPreparar(classe, nivel)` — retorna só a lista da
+própria classe até o nível 9; a partir do nível 10 (checado por
+`caracteristicaDesbloqueada(classe, 'Segredos Mágicos', nivel)`, não
+hardcoded '10' direto, pra funcionar certo se a planilha algum dia
+mudar o nível), soma as listas de Clérigo/Druida/Mago sem duplicar
+magia que apareça em mais de uma lista (dedupe por `id`).
+`CLASSES_SEGREDOS_MAGICOS` (`['Clérigo', 'Druida', 'Mago']`) é
+hand-maintained — vem do texto da própria característica, não é regra
+genérica (só Bardo tem isso hoje).
+
+Usado nos 2 lugares que hoje montam o catálogo de Magias Preparadas
+pra escolher: passo "Magias Preparadas" do Level Up
+(`LevelUpShell.tsx`) e a tela de "Completar Magias Preparadas"
+(`CompletarMagiasShell.tsx`, corrige ficha atrasada). As duas telas
+marcam com "· via Segredos Mágicos" qualquer magia da lista que não
+seja nativa do Bardo (`!magia.classes.includes('Bardo')`) — transparência
+pro jogador entender de onde a opção emprestada veio, sem misturar com
+"já tinha"/"será removida".
+
+Teste automatizado: `src/core/magiasPersonagem.test.ts` — nível 9 (só
+lista própria) vs. nível 10 (pool cresce, sem duplicata).
+
+Testado via Playwright: personagem Bardo nível 10, Level Up pro 11,
+passo Magias Preparadas mostra magias de 6º círculo de outras classes
+com a marcação "via Segredos Mágicos" ao lado das nativas.
+
+**Data/origem:** 2026-08.

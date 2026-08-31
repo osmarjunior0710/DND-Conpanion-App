@@ -45,6 +45,7 @@ import {
   magiasPreparadasDoPersonagem,
   deficitTruques,
   deficitMagiasPreparadas,
+  magiasDisponiveisParaPreparar,
 } from '../../core/magiasPersonagem';
 import { usosInspiracaoMaximo, dadoInspiracao, fonteDeInspiracaoDesbloqueada } from '../../core/inspiracaoBardo';
 import {
@@ -501,7 +502,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         truquesAtuais={truquesAtuais}
         truquesDaClasse={magiasDaClasse(classe.nome, 0)}
         magiasPreparadasAtuais={magiasPreparadasAtuais}
-        magiasDaClasseDisponiveis={magiasDaClasse(classe.nome).filter((m) => m.circulo > 0)}
+        magiasDaClasseDisponiveis={magiasDisponiveisParaPreparar(classe, personagem.nivel + 1)}
         periciasEspecialistaAtuais={periciasEspecialistaAtuais}
         periciasProficientesDoPersonagem={periciasProficientes(selecao)}
         atributosAtuais={selecao.atributos}
@@ -535,7 +536,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       <CompletarMagiasShell
         titulo="Magias Preparadas"
         atuais={magiasPreparadasAtuais}
-        catalogo={magiasDaClasse(classe.nome).filter((m) => m.circulo > 0 && m.circulo <= circuloMaximo)}
+        catalogo={magiasDisponiveisParaPreparar(classe, personagem.nivel).filter((m) => m.circulo <= circuloMaximo)}
+        classeNome={classe.nome}
         deficit={faltamMagiasPreparadas}
         onFechar={() => setCompletarAberto(null)}
         onConfirmar={(novaLista) => {

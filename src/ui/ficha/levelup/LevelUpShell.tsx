@@ -681,6 +681,7 @@ export default function LevelUpShell({
                   const jaTinha = magiasPreparadasAtuais.includes(m.nome);
                   const marcado = magiasPreparadasEscolhidas.includes(m.nome);
                   const removendo = jaTinha && !marcado;
+                  const viaSegredosMagicos = !m.classes.includes(classe.nome);
                   return (
                     <div
                       key={m.id}
@@ -692,7 +693,8 @@ export default function LevelUpShell({
                         <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
                         {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
                           ({m.circulo}º círculo
-                          {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''})
+                          {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''}
+                          {viaSegredosMagicos ? ' · via Segredos Mágicos' : ''})
                         </span>
                       </span>
                     </div>
