@@ -27,7 +27,7 @@ export interface WizardSelection {
   alinhamento: string | null;
   itens: ItemCarrinho[];
   atributos: Record<Atributo, number | null>;
-  bonusModo: '111' | null;
+  bonusModo: '111' | '21' | null;
   bonusEscolhas: Atributo[];
   desbloquearAtributos: boolean;
   xp: number;

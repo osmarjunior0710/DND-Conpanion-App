@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { dadoVidaValor } from '../../../data/levelUpFixtures';
 import type { Atributo } from '../../../data/wizardFixtures';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
-import { modificador, type WizardSelection } from '../../../core/personagem';
+import type { WizardSelection } from '../../../core/personagem';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import { subclasses } from '../../../data/rulesets/dnd2024/subclasses';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
@@ -25,6 +25,7 @@ import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
 import IconeClasse from '../../components/IconeClasse';
+import DistribuirPontosAtributo from '../../components/DistribuirPontosAtributo';
 import { useAvisoTemporario } from '../../hooks/useAvisoTemporario';
 import { talentos } from '../../../data/rulesets/dnd2024/talentos';
 import TelaEscolherTalento from './TelaEscolherTalento';
@@ -538,61 +539,6 @@ export default function LevelUpShell({
     );
   }
 
-  /** Tabela de distribuir 2 pontos de ASI — reaproveitada tanto pro modo
-   * "Aumentar Atributos" quanto pra um talento com `concedeAsi.tipo ===
-   * 'distribuir-dois'`. Só marca/desmarca (+/-); quem confirma e avança
-   * é sempre o "Avançar" do passo, igual todo o resto do wizard. */
-  function renderDistribuirPontos() {
-    return (
-      <>
-        <div className="label" style={{ marginTop: 14, marginBottom: 10 }}>
-          Distribua {PONTOS_ASI} pontos — no máximo 2 no mesmo atributo (regra real: +2 num só, ou +1 em dois).
-          Faltam {pontosAsiRestantes}.
-        </div>
-        <div className={styles.asiHeaderRow}>
-          <span>Atributo</span>
-          <span>ASI</span>
-          <span>Total</span>
-        </div>
-        {NOMES_ATRIBUTOS.map((nome) => {
-          const a = nome as Atributo;
-          const base = atributosAtuais[a] ?? 10;
-          const nesse = pontosNoAtributo(a);
-          const total = base + nesse;
-          return (
-            <div key={a} className={styles.asiRow}>
-              <span>
-                {a} {base} ({modificador(base) >= 0 ? '+' : ''}
-                {modificador(base)})
-              </span>
-              <span className={styles.asiStepper}>
-                <div
-                  className={styles.asiBtn}
-                  style={nesse === 0 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
-                  onClick={() => decrementarAsi(a)}
-                >
-                  −
-                </div>
-                <span>{nesse}</span>
-                <div
-                  className={styles.asiBtn}
-                  style={pontosAsiRestantes === 0 || nesse >= 2 || base + nesse >= 20 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
-                  onClick={() => incrementarAsi(a)}
-                >
-                  +
-                </div>
-              </span>
-              <span>
-                {total} ({modificador(total) >= 0 ? '+' : ''}
-                {modificador(total)})
-              </span>
-            </div>
-          );
-        })}
-      </>
-    );
-  }
-
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -951,7 +897,15 @@ export default function LevelUpShell({
         {step === 'asiAtributo' && talentoObjEscolhido && (
           <>
             <div className="section-title">{talentoObjEscolhido.nome}</div>
-            {talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && renderDistribuirPontos()}
+            {talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && (
+              <DistribuirPontosAtributo
+                pontosTotal={PONTOS_ASI}
+                escolhas={asiEscolhas}
+                atributosBase={atributosAtuais}
+                onIncrementar={incrementarAsi}
+                onDecrementar={decrementarAsi}
+              />
+            )}
             {talentoObjEscolhido.concedeAsi.tipo === 'escolha-unica' && (
               <>
                 <div className="label" style={{ marginBottom: 10 }}>

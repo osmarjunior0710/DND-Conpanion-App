@@ -227,8 +227,8 @@ export default function WizardShell() {
         <AtributosStep {...p} valorSelecionado={valorSelecionado} setValorSelecionado={setValorSelecionado} />
       ),
       isValid: (s) =>
-        atributosOrdem.every((a) => s.atributos[a] !== null) && s.bonusModo === '111' && s.bonusEscolhas.length === 3,
-      mensagemInvalida: 'Distribua os 6 atributos e aplique o ajuste de antecedente (+1/+1/+1) antes de avançar.',
+        atributosOrdem.every((a) => s.atributos[a] !== null) && s.bonusModo !== null && s.bonusEscolhas.length === 3,
+      mensagemInvalida: 'Distribua os 6 atributos e aplique o ajuste de antecedente (+1/+1/+1 ou +2/+1) antes de avançar.',
       randomize: randomizarAtributos,
     },
     {

@@ -1,6 +1,7 @@
-import { arrayPadrao, atributosOrdem } from '../../../data/wizardFixtures';
+import { arrayPadrao, atributosOrdem, type Atributo } from '../../../data/wizardFixtures';
 import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { modFmt, valorFinalAtributo, type WizardSelection } from '../../../core/personagem';
+import DistribuirPontosAtributo from '../../components/DistribuirPontosAtributo';
 import type { StepProps } from './StepProps';
 
 interface AtributosStepProps extends StepProps {
@@ -40,6 +41,10 @@ export default function AtributosStep({ selection, update, valorSelecionado, set
     update({ bonusModo: '111', bonusEscolhas: [] });
   }
 
+  function setBonusModo21() {
+    update({ bonusModo: '21', bonusEscolhas: [] });
+  }
+
   function toggleBonus(a: (typeof atributosOrdem)[number]) {
     if (atributoTravado(a)) return;
     const i = selection.bonusEscolhas.indexOf(a);
@@ -48,6 +53,22 @@ export default function AtributosStep({ selection, update, valorSelecionado, set
     } else if (selection.bonusEscolhas.length < 3) {
       update({ bonusEscolhas: [...selection.bonusEscolhas, a] });
     }
+  }
+
+  function incrementarBonus21(a: Atributo) {
+    if (atributoTravado(a)) return;
+    const nesse = selection.bonusEscolhas.filter((x) => x === a).length;
+    const base = selection.atributos[a] ?? 10;
+    if (selection.bonusEscolhas.length >= 3 || nesse >= 2 || base + nesse >= 20) return;
+    update({ bonusEscolhas: [...selection.bonusEscolhas, a] });
+  }
+
+  function decrementarBonus21(a: Atributo) {
+    const i = selection.bonusEscolhas.lastIndexOf(a);
+    if (i === -1) return;
+    const novo = [...selection.bonusEscolhas];
+    novo.splice(i, 1);
+    update({ bonusEscolhas: novo });
   }
 
   function toggleDesbloquear() {
@@ -100,8 +121,7 @@ export default function AtributosStep({ selection, update, valorSelecionado, set
         <>
           <div className="section-title">Ajuste do Antecedente ({selection.origem || '— selecione uma origem antes —'})</div>
           <div className="box" style={{ padding: 8, marginBottom: 10, fontSize: 11, color: 'var(--text-faint)', lineHeight: 1.5 }}>
-            ⚠️ Protótipo: por regra, o antecedente permite +2/+1 num par de atributos OU +1/+1/+1 nos três. Aqui só o
-            modo <b>+1/+1/+1</b> está funcional.
+            Por regra, o antecedente permite <b>+2/+1</b> num par de atributos OU <b>+1/+1/+1</b> nos três.
             {atributosElegiveis
               ? ` Os 3 atributos elegíveis de ${selection.origem} (${atributosElegiveis.join(', ')}) já vêm travados abaixo — os outros 3 ficam bloqueados, a não ser que você marque "Desbloquear atributos".`
               : ' Selecione uma origem antes pra travar os atributos certos aqui.'}
@@ -126,12 +146,26 @@ export default function AtributosStep({ selection, update, valorSelecionado, set
                 +1 / +1 / +1
               </div>
             </div>
-            <div className="opt-card btn-disabled" style={{ flex: 1, margin: 0 }}>
+            <div
+              className={`opt-card ${selection.bonusModo === '21' ? 'selected' : ''}`}
+              style={{ flex: 1, margin: 0 }}
+              onClick={setBonusModo21}
+            >
               <div className="opt-card-name" style={{ textAlign: 'center' }}>
-                +2 / +1 (em breve)
+                +2 / +1
               </div>
             </div>
           </div>
+          {selection.bonusModo === '21' && (
+            <DistribuirPontosAtributo
+              pontosTotal={3}
+              escolhas={selection.bonusEscolhas}
+              atributosBase={selection.atributos}
+              onIncrementar={incrementarBonus21}
+              onDecrementar={decrementarBonus21}
+              atributoTravado={atributoTravado}
+            />
+          )}
           {selection.bonusModo === '111' && (
             <>
               <div className="label">toque em até 3 atributos pra aplicar +1 ({selection.bonusEscolhas.length}/3)</div>

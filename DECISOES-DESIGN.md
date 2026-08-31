@@ -5669,3 +5669,49 @@ Testado via Playwright: dropdown ausente em nível 1; aparece em nível
 escolhida de verdade (não sorteada).
 
 **Data/origem:** 2026-08.
+
+## Criação de Personagem — modo "+2/+1" do ajuste de Antecedente
+
+**O que é:** o passo "3c. Atributos" do wizard só tinha o modo
+"+1/+1/+1" funcional; o card "+2/+1" ficava desabilitado ("em
+breve"). Implementado o modo que faltava, reaproveitando a mesma UI
+de +/- redondos que já existia no Level Up pra distribuir os 2 pontos
+de Aumento no Valor de Atributo — regra real é a mesma forma
+(distribuir N pontos, no máximo 2 no mesmo atributo), só muda o total
+(2 no Level Up, 3 no ajuste de Antecedente).
+
+**Implementação:**
+- `WizardSelection.bonusModo` (`core/personagem.ts`) ganhou o
+  literal `'21'` além de `'111'` — `valorFinalAtributo` já era
+  genérico (conta ocorrências no array `bonusEscolhas`), não precisou
+  mudar.
+- Nova UI compartilhada `ui/components/DistribuirPontosAtributo.tsx`
+  (+ `.module.css`) — extraída da função local
+  `renderDistribuirPontos()` que só existia dentro de
+  `LevelUpShell.tsx`. Componente controlado: recebe `pontosTotal`,
+  `escolhas`, `atributosBase`, `onIncrementar`/`onDecrementar` e um
+  `atributoTravado` opcional — cada tela (Level Up ou wizard) mantém
+  seu próprio estado e regra de validação, só a renderização da
+  tabela é compartilhada.
+- `LevelUpShell.tsx` passou a usar o componente novo no lugar da
+  função local (removida, junto com as classes CSS
+  `.asiHeaderRow`/`.asiRow`/`.asiStepper`/`.asiBtn` que só ela usava).
+- `AtributosStep.tsx`: card "+2/+1" habilitado, com
+  `incrementarBonus21`/`decrementarBonus21` respeitando o mesmo
+  travamento de atributo elegível do Antecedente (`atributoTravado`)
+  que o modo "+1/+1/+1" já respeitava.
+- `WizardShell.tsx`: validação do passo agora aceita `bonusModo !==
+  null` (qualquer um dos dois modos), não só `'111'`.
+- Removido o aviso de protótipo "só o modo +1/+1/+1 está funcional" —
+  os dois modos agora funcionam. O botão 🔀 de aleatorizar o passo
+  continua só usando o modo "+1/+1/+1" de propósito (não foi pedido
+  pra aleatorizar o modo "+2/+1" também).
+
+Testado via Playwright em 390px: preencheu os 6 atributos, trocou pro
+modo "+2/+1", confirmou trava nos atributos fora da lista de
+elegíveis do Antecedente sorteado, aplicou +2 num atributo elegível
+(botão "+" trava sozinho ao chegar em 2) e +1 em outro, "Faltam"
+chegou a 0, e "Avançar" levou pro próximo passo (Línguas) sem
+bloqueio.
+
+**Data/origem:** 2026-08.
