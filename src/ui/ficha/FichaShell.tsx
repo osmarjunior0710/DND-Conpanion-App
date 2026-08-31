@@ -46,6 +46,7 @@ import {
   deficitTruques,
   deficitMagiasPreparadas,
   magiasDisponiveisParaPreparar,
+  poolDescobertasMagicas,
 } from '../../core/magiasPersonagem';
 import { usosInspiracaoMaximo, dadoInspiracao, fonteDeInspiracaoDesbloqueada } from '../../core/inspiracaoBardo';
 import {
@@ -137,6 +138,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [periciasSubclasseBonusAtuais, setPericiasSubclasseBonusAtuais] = useState<string[]>(
     personagemSalvo.periciasSubclasseBonusAtual ?? [],
   );
+  const [magiasDescobertasMagicasAtuais, setMagiasDescobertasMagicasAtuais] = useState<string[]>(
+    personagemSalvo.magiasDescobertasMagicasAtual ?? [],
+  );
   const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
   const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
@@ -199,10 +203,16 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
   const magiasPreparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
+  const magiasDescobertasMagicas = magiasPreparadasDoPersonagem(magiasDescobertasMagicasAtuais);
   const faltamTruques = deficitTruques(classe, personagem.nivel, truquesAtuais);
   const faltamMagiasPreparadas = deficitMagiasPreparadas(classe, personagem.nivel, magiasPreparadasAtuais);
-  const magiasPreparadasReacao = magiasPreparadas.filter(ehMagiaDeReacao);
-  const magiasPreparadasAcao = magiasPreparadas.filter((m) => !ehMagiaDeReacao(m));
+  // Descobertas Mágicas conta como magia de Bardo (texto da
+  // característica) — entra no que dá pra conjurar em combate, mas é
+  // um array PRÓPRIO separado, só unido aqui pra montar a lista de
+  // "o que aparece nos painéis de Ação/Reação".
+  const magiasConjuraveis = [...magiasPreparadas, ...magiasDescobertasMagicas];
+  const magiasPreparadasReacao = magiasConjuraveis.filter(ehMagiaDeReacao);
+  const magiasPreparadasAcao = magiasConjuraveis.filter((m) => !ehMagiaDeReacao(m));
   const modAcertoConjuracao = calcularModAcertoConjuracao(selecao, classe, personagem.nivel);
   const usosInspiracaoMax = usosInspiracaoMaximo(selecao, classe, personagem.nivel);
   const usosInspiracaoRestantes = Math.max(0, usosInspiracaoMax - inspiracaoGasto);
@@ -273,6 +283,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       magiasPreparadasAtual: magiasPreparadasAtuais,
       periciasEspecialistaAtual: periciasEspecialistaAtuais,
       periciasSubclasseBonusAtual: periciasSubclasseBonusAtuais,
+      magiasDescobertasMagicasAtual: magiasDescobertasMagicasAtuais,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
       itensMochilaAtual: itensMochila,
@@ -297,6 +308,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     magiasPreparadasAtuais,
     periciasEspecialistaAtuais,
     periciasSubclasseBonusAtuais,
+    magiasDescobertasMagicasAtuais,
     talentosGeraisAtuais,
     talentosFavoritos,
     itensMochila,
@@ -455,6 +467,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
     periciasSubclasseBonusEscolhidas: string[] | null;
+    magiasDescobertasMagicasEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
   }) {
@@ -476,6 +489,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (resultado.magiasPreparadasEscolhidas) setMagiasPreparadasAtuais(resultado.magiasPreparadasEscolhidas);
     if (resultado.periciasEspecialistaEscolhidas) setPericiasEspecialistaAtuais(resultado.periciasEspecialistaEscolhidas);
     if (resultado.periciasSubclasseBonusEscolhidas) setPericiasSubclasseBonusAtuais(resultado.periciasSubclasseBonusEscolhidas);
+    if (resultado.magiasDescobertasMagicasEscolhidas) setMagiasDescobertasMagicasAtuais(resultado.magiasDescobertasMagicasEscolhidas);
     if (resultado.talentoGeralEscolhido) {
       setTalentosGeraisAtuais((prev) => [...prev, resultado.talentoGeralEscolhido!]);
       // Já foi escolhido de verdade — não faz mais sentido continuar
@@ -515,6 +529,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         periciasEspecialistaAtuais={periciasEspecialistaAtuais}
         periciasProficientesDoPersonagem={[...periciasProficientes(selecao), ...periciasSubclasseBonusAtuais]}
         periciasSubclasseBonusAtuais={periciasSubclasseBonusAtuais}
+        magiasDescobertasMagicasAtuais={magiasDescobertasMagicasAtuais}
+        poolDescobertasMagicas={poolDescobertasMagicas(9)}
         atributosAtuais={selecao.atributos}
         atributosFinaisAtuais={atributosFinaisAtuais}
         talentosGeraisAtuais={talentosGeraisAtuais}
@@ -641,6 +657,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             conjura={conjura}
             truquesAtuais={truquesAtuais}
             magiasPreparadasAtuais={magiasPreparadasAtuais}
+            magiasDescobertasMagicasAtuais={magiasDescobertasMagicasAtuais}
             faltamTruques={faltamTruques}
             faltamMagiasPreparadas={faltamMagiasPreparadas}
             onCompletarTruques={() => setCompletarAberto('truques')}

@@ -5488,3 +5488,45 @@ renderizado nos dois painéis (`BonusPanelContent` e
 `ReacaoPanelContent`) em vez de só um.
 
 **Data/origem:** 2026-08.
+
+## Colégio do Conhecimento — Descobertas Mágicas (nível 6)
+
+**O que é:** 3ª das 4 características do Colégio do Conhecimento
+implementada. 2 magias SEMPRE preparadas (truque ou de círculo, até o
+círculo que o personagem já tem espaço), escolhidas de Clérigo, Druida
+ou Mago — nunca da lista de Bardo — fora da conta normal de Magias
+Preparadas. Trocável 1 por level-up (mesmo padrão de Truques).
+
+**Implementação:**
+- `core/magiasPersonagem.ts`: `poolDescobertasMagicas(circuloMaximo)`
+  reaproveita a mesma constante `CLASSES_SEGREDOS_MAGICOS`
+  (Clérigo/Druida/Mago) já usada por "Segredos Mágicos" — coincidência
+  de regra do livro (as 2 características citam as mesmas 3 classes),
+  não é o mesmo conceito, comentário deixa isso explícito.
+- Novo passo "descobertasMagicas" no Level Up
+  (`LevelUpShell.tsx`) — aparece toda vez que a característica já
+  estiver desbloqueada (não só a primeira vez), mesmo padrão de
+  Truques (pode trocar 1, não precisa mexer se não quiser).
+- Novo campo persistido `magiasDescobertasMagicasAtual` em
+  `armazenamentoPersonagens.ts`.
+- Aba Magias (`MagiasTab.tsx`) ganhou seção própria "Descobertas
+  Mágicas", separada de Truques/Magias Preparadas, com aviso "sempre
+  preparadas, não contam na conta normal".
+- Aba Combat: as 2 magias entram no que dá pra conjurar em Ação/Reação
+  (união com Magias Preparadas normais só na hora de montar a lista
+  de "o que aparece pra conjurar", os arrays de origem continuam
+  separados — `magiasConjuraveis` em `FichaShell.tsx`).
+
+Teste automatizado: `magiasPersonagem.test.ts`, `poolDescobertasMagicas`
+(círculo 0 = só truques; círculo maior = inclui magias até o limite,
+sem duplicata).
+
+Testado via Playwright: Bardo/Conhecimento nível 5→6, escolhe 2 magias
+de 3º círculo (Arma Elemental, Aura de Vitalidade) na tela dedicada;
+aba Magias mostra a seção nova; aba Combat "Usar Magia" lista as 2
+junto das magias normais de 3º círculo.
+
+**Falta só Perícia Inigualável (nível 14) pra fechar as 4
+características do Colégio do Conhecimento.**
+
+**Data/origem:** 2026-08.

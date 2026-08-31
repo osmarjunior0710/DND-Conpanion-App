@@ -50,6 +50,7 @@ interface LevelUpShellProps {
     magiasPreparadasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
     periciasSubclasseBonusEscolhidas: string[] | null;
+    magiasDescobertasMagicasEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
   }) => void;
@@ -82,6 +83,14 @@ interface LevelUpShellProps {
    * Conhecimento, nível 3) — escolha única, feita 1 vez só (quando o
    * array chega a 3, o passo não aparece mais). */
   periciasSubclasseBonusAtuais: string[];
+  /** "Descobertas Mágicas" (Colégio do Conhecimento, nível 6) — 2
+   * magias já escolhidas (pré-marcadas, trocável 1 por level-up, mesmo
+   * padrão de Truques). */
+  magiasDescobertasMagicasAtuais: string[];
+  /** Catálogo de onde vêm as 2 magias de Descobertas Mágicas —
+   * Clérigo/Druida/Mago, TODOS os círculos (filtrado por círculo ativo
+   * no nível novo aqui dentro, mesmo padrão de `magiasDaClasseDisponiveis`). */
+  poolDescobertasMagicas: Magia[];
   /** Atributos atuais do personagem (já com Level Ups anteriores
    * aplicados) — pra mostrar base/mod real na tela de Aumento de
    * Atributo. */
@@ -107,6 +116,7 @@ type LuStep =
   | 'estiloDeLuta'
   | 'truques'
   | 'magiasPreparadas'
+  | 'descobertasMagicas'
   | 'especialista'
   | 'asi'
   | 'asiAtributo'
@@ -133,6 +143,8 @@ export default function LevelUpShell({
   periciasEspecialistaAtuais,
   periciasProficientesDoPersonagem,
   periciasSubclasseBonusAtuais,
+  magiasDescobertasMagicasAtuais,
+  poolDescobertasMagicas,
   atributosAtuais,
   atributosFinaisAtuais,
   talentosGeraisAtuais,
@@ -144,6 +156,9 @@ export default function LevelUpShell({
   const maxMagiasPreparadas = valorRecursoClasse(classe, 'Magias Preparadas', novoNivel);
   const circuloMaximoNovoNivel = Math.max(0, ...espacosDeMagiaAtivos(classe, novoNivel).map((e) => e.circulo));
   const magiasPreparadasDaClasse = magiasDaClasseDisponiveis.filter((m) => m.circulo <= circuloMaximoNovoNivel);
+  const descobertasMagicasCatalogo = poolDescobertasMagicas.filter(
+    (m) => m.circulo === 0 || m.circulo <= circuloMaximoNovoNivel,
+  );
   // Especialista não é uma tabela por nível (não tem coluna numérica
   // na planilha) — a regra real é sempre "+2 perícias por gatilho"
   // (confirmado na descrição da característica), por isso o incremento
@@ -186,6 +201,12 @@ export default function LevelUpShell({
   if (temEstiloDeLutaTrocavel(classe, novoNivel)) luSteps.push('estiloDeLuta');
   if (maxTruques > 0) luSteps.push('truques');
   if (maxMagiasPreparadas > 0) luSteps.push('magiasPreparadas');
+  // Descobertas Mágicas aparece TODA vez que já estiver desbloqueada
+  // (mesmo padrão de Truques) — sempre pode trocar 1 das 2, mesmo sem
+  // ser a primeira vez.
+  if (caracteristicaSubclasseDesbloqueada(subclasseEscolhida, 'Descobertas Mágicas', novoNivel)) {
+    luSteps.push('descobertasMagicas');
+  }
   if (especialistaDisparaAgora) luSteps.push('especialista');
   if (niveisComASI(classe).includes(novoNivel)) {
     luSteps.push('asi');
@@ -220,6 +241,7 @@ export default function LevelUpShell({
   const [magiasPreparadasEscolhidas, setMagiasPreparadasEscolhidas] = useState<string[]>(magiasPreparadasAtuais);
   const [especialistaEscolhidas, setEspecialistaEscolhidas] = useState<string[]>(periciasEspecialistaAtuais);
   const [proficienciasBonusEscolhidas, setProficienciasBonusEscolhidas] = useState<string[]>(periciasSubclasseBonusAtuais);
+  const [descobertasMagicasEscolhidas, setDescobertasMagicasEscolhidas] = useState<string[]>(magiasDescobertasMagicasAtuais);
   const [asiEscolhas, setAsiEscolhas] = useState<Atributo[]>([]);
   const [aviso, setAviso] = useAvisoTemporario();
 
@@ -262,6 +284,24 @@ export default function LevelUpShell({
 
   const trocasDeTruque = contarTrocas(truquesAtuais, truquesEscolhidos);
   const truquesValido = truquesEscolhidos.length === maxTruques && trocasDeTruque <= 1;
+
+  // Descobertas Mágicas: sempre 2 (número fixo da própria
+  // característica, não escala com nível — diferente de Truques/Magias
+  // Preparadas), trocável 1 por level-up, mesmo padrão de Truques.
+  const MAX_DESCOBERTAS_MAGICAS = 2;
+  function toggleDescobertaMagica(nome: string) {
+    const i = descobertasMagicasEscolhidas.indexOf(nome);
+    if (i > -1) {
+      setDescobertasMagicasEscolhidas((prev) => prev.filter((x) => x !== nome));
+      return;
+    }
+    if (descobertasMagicasEscolhidas.length < MAX_DESCOBERTAS_MAGICAS) {
+      setDescobertasMagicasEscolhidas((prev) => [...prev, nome]);
+    }
+  }
+  const trocasDeDescobertaMagica = contarTrocas(magiasDescobertasMagicasAtuais, descobertasMagicasEscolhidas);
+  const descobertasMagicasValido =
+    descobertasMagicasEscolhidas.length === MAX_DESCOBERTAS_MAGICAS && trocasDeDescobertaMagica <= 1;
 
   function toggleMagiaPreparada(nome: string) {
     const i = magiasPreparadasEscolhidas.indexOf(nome);
@@ -365,6 +405,7 @@ export default function LevelUpShell({
     estiloDeLuta: 'Estilo de Luta',
     truques: 'Truques',
     magiasPreparadas: 'Magias Preparadas',
+    descobertasMagicas: 'Descobertas Mágicas',
     especialista: 'Especialista',
     asi: 'Atributo ou Talento',
     asiAtributo: 'Atributo do Talento',
@@ -408,6 +449,14 @@ export default function LevelUpShell({
       );
       return;
     }
+    if (step === 'descobertasMagicas' && !descobertasMagicasValido) {
+      setAviso(
+        trocasDeDescobertaMagica > 1
+          ? 'Você só pode trocar 1 magia de Descobertas Mágicas por level-up — desmarque menos magias que já tinha.'
+          : `Escolha exatamente ${MAX_DESCOBERTAS_MAGICAS} magias antes de avançar.`,
+      );
+      return;
+    }
     if (step === 'especialista' && !especialistaValido) {
       setAviso(`Escolha exatamente ${maxEspecialista - periciasEspecialistaAtuais.length} perícia(s) pra Especialista antes de avançar.`);
       return;
@@ -437,6 +486,7 @@ export default function LevelUpShell({
         magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
         periciasEspecialistaEscolhidas: luSteps.includes('especialista') ? especialistaEscolhidas : null,
         periciasSubclasseBonusEscolhidas: luSteps.includes('proficienciasBonus') ? proficienciasBonusEscolhidas : null,
+        magiasDescobertasMagicasEscolhidas: luSteps.includes('descobertasMagicas') ? descobertasMagicasEscolhidas : null,
         atributosAumentados: luSteps.includes('asi') && asiEscolhas.length > 0 ? asiEscolhas : null,
         talentoGeralEscolhido: luSteps.includes('asi') ? talentoEscolhido : null,
       });
@@ -561,6 +611,18 @@ export default function LevelUpShell({
           <div className="label">
             Regra oficial: a cada nível, você pode substituir 1 das magias que já tem preparada por outra da lista
             (de qualquer círculo pro qual você tenha espaço).
+          </div>
+        </div>
+      )}
+
+      {step === 'descobertasMagicas' && (
+        <div className={styles.subHeader}>
+          <div className="section-title" style={{ marginBottom: 4 }}>
+            Descobertas Mágicas — escolha {MAX_DESCOBERTAS_MAGICAS} ({descobertasMagicasEscolhidas.length}/{MAX_DESCOBERTAS_MAGICAS})
+          </div>
+          <div className="label">
+            Característica do Colégio do Conhecimento — magias de Clérigo, Druida ou Mago, SEMPRE preparadas (não
+            contam na conta normal de Magias Preparadas). Pode substituir 1 por level-up.
           </div>
         </div>
       )}
@@ -762,6 +824,41 @@ export default function LevelUpShell({
           </>
         )}
 
+        {step === 'descobertasMagicas' && (
+          <>
+            {agruparMagiasPorCirculo(descobertasMagicasCatalogo).map((grupo) => (
+              <GrupoMagiaColapsavel key={grupo.circulo} label={grupo.label} magias={grupo.magias}>
+                {(m) => {
+                  const jaTinha = magiasDescobertasMagicasAtuais.includes(m.nome);
+                  const marcado = descobertasMagicasEscolhidas.includes(m.nome);
+                  const removendo = jaTinha && !marcado;
+                  return (
+                    <div
+                      key={m.id}
+                      className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
+                      onClick={() => toggleDescobertaMagica(m.nome)}
+                    >
+                      <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                      <span className="check-label">
+                        <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                        {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
+                          ({m.circulo === 0 ? m.escola : `${m.circulo}º círculo`}
+                          {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''})
+                        </span>
+                      </span>
+                    </div>
+                  );
+                }}
+              </GrupoMagiaColapsavel>
+            ))}
+            {trocasDeDescobertaMagica > 1 && (
+              <div className="label" style={{ color: 'var(--danger)', marginTop: 6 }}>
+                ⚠️ {trocasDeDescobertaMagica} magias trocadas — só pode trocar 1 por level-up.
+              </div>
+            )}
+          </>
+        )}
+
         {step === 'proficienciasBonus' && (
           <>
             <div className="section-title">
@@ -913,6 +1010,12 @@ export default function LevelUpShell({
               <div className="summary-row">
                 <span>Magias Preparadas</span>
                 <span>{trocasDeMagia > 0 ? `${trocasDeMagia} trocada(s)` : 'sem troca'}</span>
+              </div>
+            )}
+            {luSteps.includes('descobertasMagicas') && (
+              <div className="summary-row">
+                <span>Descobertas Mágicas</span>
+                <span>{trocasDeDescobertaMagica > 0 ? `${trocasDeDescobertaMagica} trocada(s)` : 'sem troca'}</span>
               </div>
             )}
             {luSteps.includes('especialista') && (

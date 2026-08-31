@@ -143,6 +143,28 @@ export function magiasDisponiveisParaPreparar(classe: Classe, nivel: number): Ma
   return [...propria, ...extras];
 }
 
+/** "Descobertas Mágicas" (Bardo, Colégio do Conhecimento, nível 6):
+ * pool de onde vêm as 2 magias sempre-preparadas da característica —
+ * mesmas 3 classes de `CLASSES_SEGREDOS_MAGICOS` (Clérigo/Druida/Mago),
+ * reaproveitado de propósito (o livro usa a mesma lista de 3 nas duas
+ * características, mera coincidência de regra, não é o mesmo array
+ * conceitual). Truque (círculo 0) sempre entra; magia de círculo só
+ * entra até `circuloMaximo` (mesma regra "precisa ter espaço pra ela"
+ * do texto da característica). Sem duplicar magia repetida em mais de
+ * 1 lista. */
+export function poolDescobertasMagicas(circuloMaximo: number): Magia[] {
+  const vistos = new Set<string>();
+  const resultado: Magia[] = [];
+  for (const nomeClasse of CLASSES_SEGREDOS_MAGICOS) {
+    for (const m of magiasDaClasse(nomeClasse).filter((m) => m.circulo === 0 || m.circulo <= circuloMaximo)) {
+      if (vistos.has(m.id)) continue;
+      vistos.add(m.id);
+      resultado.push(m);
+    }
+  }
+  return resultado;
+}
+
 export interface GrupoDeMagias {
   circulo: number;
   label: string;

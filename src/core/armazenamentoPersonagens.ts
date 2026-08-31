@@ -66,6 +66,12 @@ export interface PersonagemSalvo {
    * escolha única de 3, feita 1 vez só. Ausente/vazio = personagem
    * ainda não passou por esse nível com essa subclasse. */
   periciasSubclasseBonusAtual?: string[];
+  /** "Descobertas Mágicas" (Colégio do Conhecimento, nível 6) — 2
+   * magias SEMPRE preparadas, de Clérigo/Druida/Mago, fora da conta
+   * normal de Magias Preparadas. Trocável 1 por level-up (mesmo
+   * padrão de Truques). Ausente/vazio = personagem ainda não passou
+   * por esse nível com essa subclasse. */
+  magiasDescobertasMagicasAtual?: string[];
   /** IDs dos Talentos Gerais escolhidos nos níveis de ASI/Talento (ver
    * `core/levelUp.ts` `niveisComASI`, `data/rulesets/dnd2024/talentos.ts`)
    * — acumula 1 por nível em que o jogador escolheu "Talento" em vez de

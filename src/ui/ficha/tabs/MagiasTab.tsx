@@ -24,6 +24,10 @@ interface MagiasTabProps {
   conjura: boolean;
   truquesAtuais: string[];
   magiasPreparadasAtuais: string[];
+  /** "Descobertas Mágicas" (Colégio do Conhecimento, nível 6) — 2
+   * magias sempre preparadas, mostradas numa seção própria (não se
+   * misturam com Magias Preparadas normais). */
+  magiasDescobertasMagicasAtuais: string[];
   faltamTruques: number;
   faltamMagiasPreparadas: number;
   onCompletarTruques: () => void;
@@ -39,6 +43,7 @@ export default function MagiasTab({
   conjura,
   truquesAtuais,
   magiasPreparadasAtuais,
+  magiasDescobertasMagicasAtuais,
   faltamTruques,
   faltamMagiasPreparadas,
   onCompletarTruques,
@@ -58,6 +63,7 @@ export default function MagiasTab({
   const espacos = espacosDeMagiaAtivos(classe, nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
   const preparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
+  const descobertasMagicas = magiasPreparadasDoPersonagem(magiasDescobertasMagicasAtuais);
   const [espacosExpandido, setEspacosExpandido] = useColapsavel('espacos-de-magia', true);
 
   function rolarAtaqueSeForMagiaDeAtaque(m: Magia) {
@@ -152,6 +158,32 @@ export default function MagiasTab({
               </div>
             </div>
           ))}
+        </>
+      )}
+
+      {descobertasMagicas.length > 0 && (
+        <>
+          <div className="section-title">Descobertas Mágicas</div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            Colégio do Conhecimento — sempre preparadas, não contam na conta de Magias Preparadas.
+          </div>
+          {descobertasMagicas.map((m) => {
+            const semEspaco = m.circulo > 0 && circulosDisponiveisParaConjurar(m.circulo, espacos, espacosGastosPorCirculo).length === 0;
+            return (
+              <div key={m.id} className={styles.spellRow}>
+                <div className={styles.spellName}>
+                  <MagiaComDescricao magia={m} variante="icone" />
+                </div>
+                <span className={styles.spellCirculo}>{m.circulo === 0 ? 'Truque' : `${m.circulo}º círculo`}</span>
+                <div
+                  className={`${styles.usarBtn} ${semEspaco ? styles.usarBtnDesabilitado : ''}`}
+                  onClick={() => usarMagia(m)}
+                >
+                  Usar
+                </div>
+              </div>
+            );
+          })}
         </>
       )}
 
