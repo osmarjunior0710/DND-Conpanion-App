@@ -5795,3 +5795,54 @@ cada magia (pra somar com o Upcast e rodar o dado completo) e o
 motor/UI que realmente executa a rolagem na Ficha.
 
 **Data/origem:** 2026-09.
+
+## Modal de rolagem — Vantagem/Desvantagem escolhida DEPOIS do resultado
+
+**O que é:** pedido do Osmar, spec detalhada por ele — depois de uma
+rolagem de d20 normal (sem Vantagem/Desvantagem pré-definida),
+aparecem 2 botões "Desvantagem" (vermelho, esquerda) e "Vantagem"
+(verde, direita) embaixo do resultado. Ao tocar em um, um 2º d20
+rola do lado do primeiro (mesma animação de girar), e o total/crítico
+são recalculados a partir do dado que a regra manda usar (maior pra
+Vantagem, menor pra Desvantagem) — o dado descartado fica com opacidade
+reduzida, não escondido (regra pede rolar os 2, não esconder o que não
+foi usado).
+
+**Por que só rolagem de d20 (não dano):** Vantagem/Desvantagem é
+mecânica exclusiva de teste/salvaguarda/ataque (1 d20) nas regras de
+D&D — nunca se aplica a dano nem a "dado extra pra somar num d20"
+(ex: Perícia Inigualável, Mente Tática). Por sorte o código já
+separava isso: `rolarD20` (sempre 1d20) vs `rolarDados` (quantidade/
+lados variáveis) — só precisei ligar os botões novos em `rolarD20`;
+`rolarDados` nunca ativa `podeEscolherVantagem` (garantia estrutural,
+não um `if` a mais pra lembrar de manter).
+
+**Implementação:**
+- `RollContext.tsx`: `RollState` ganhou `tipo` ('d20'/'dados'),
+  `dado2` (2º d20, só quando Vantagem/Desvantagem está em jogo),
+  `vantagem` (qual regra está valendo), `mod` (guardado só em rolagens
+  'd20' pra poder recalcular o total depois) e `podeEscolherVantagem`
+  (true só numa rolagem 'd20' concluída, sem Vantagem/Desvantagem
+  ainda decidida). Removido o campo antigo `detalheVantagem` (texto)
+  — virou visual (2 dados lado a lado + opacidade no descartado).
+- Nova função `escolherVantagemPosRolagem(tipo)`: rola o 2º d20 e
+  recalcula total/crítico a partir do dado usado pela regra.
+- O fluxo de Vantagem/Desvantagem PRÉ-definida na chamada (ex:
+  Contra-Encantamento em `ReacaoPanelContent.tsx`, que já nasce com
+  `vantagem: 'vantagem'`) continua funcionando igual, só que agora
+  também mostra os 2 dados visualmente (antes só tinha o texto) — sem
+  os botões, porque a decisão já foi tomada na hora da chamada.
+- `RollOverlay.tsx`/`.module.css`: `.card` ganhou `min-width` maior
+  (260px) pra já caber os 2 dados sem "pular" de tamanho quando o 2º
+  aparece — com 1 dado só, ele fica centralizado dentro dessa largura
+  (`.diceRow` com `justify-content: center`); com 2, o 1º desloca pra
+  esquerda naturalmente pelo layout flex.
+
+Testado via Playwright em 390px: teste de atributo sem Vantagem/
+Desvantagem mostra os 2 botões; clicar em Vantagem faz o 2º dado
+girar e resolver (ex: 20 e 1 saíram numa rolagem de Desvantagem — o
+1 ficou em destaque com borda de Falha Crítica, o 20 ficou
+esmaecido); total e crítico bateram com o dado usado, não com o
+primeiro rolado.
+
+**Data/origem:** 2026-09.
