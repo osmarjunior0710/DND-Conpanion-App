@@ -147,7 +147,7 @@ export default function WizardShell() {
     });
     const bonusEscolhas = embaralhar([...atributosOrdem]).slice(0, 3);
     setValorSelecionado(null);
-    update({ atributos, bonusModo: '111', bonusEscolhas });
+    update({ atributos, bonusEscolhas });
   }
   function randomizarLinguas() {
     const outrosIdiomas = idiomas.filter((i) => i.nome !== 'Comum').map((i) => i.nome);
@@ -226,9 +226,8 @@ export default function WizardShell() {
       render: (p) => (
         <AtributosStep {...p} valorSelecionado={valorSelecionado} setValorSelecionado={setValorSelecionado} />
       ),
-      isValid: (s) =>
-        atributosOrdem.every((a) => s.atributos[a] !== null) && s.bonusModo !== null && s.bonusEscolhas.length === 3,
-      mensagemInvalida: 'Distribua os 6 atributos e aplique o ajuste de antecedente (+1/+1/+1 ou +2/+1) antes de avançar.',
+      isValid: (s) => atributosOrdem.every((a) => s.atributos[a] !== null) && s.bonusEscolhas.length === 3,
+      mensagemInvalida: 'Distribua os 6 atributos e os 3 pontos do ajuste de antecedente antes de avançar.',
       randomize: randomizarAtributos,
     },
     {

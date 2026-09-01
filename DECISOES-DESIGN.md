@@ -5846,3 +5846,42 @@ esmaecido); total e crítico bateram com o dado usado, não com o
 primeiro rolado.
 
 **Data/origem:** 2026-09.
+
+## Criação de Personagem — ajuste de Antecedente unificado num só modo
+
+**O que é:** o Osmar testou na tela e viu que "+1/+1/+1" e "+2/+1" no
+passo "3c. Atributos" usavam 2 soluções de UI diferentes (grade de
+cards tocáveis vs. lista de +/- redondos) — pediu pra unificar as
+duas, usando a solução da lista (`DistribuirPontosAtributo`, a mesma
+já usada no Level Up). Como distribuir 3 pontos com no máximo 2 no
+mesmo atributo já cobre as duas formas válidas da regra (1+1+1 ou
+2+1) automaticamente, o seletor de modo (os 2 cards "+1/+1/+1" /
+"+2/+1") virou desnecessário — sumiu, sobrou só a lista.
+
+**Implementação:**
+- `AtributosStep.tsx`: removidos `setBonusModo`/`setBonusModo21`/
+  `toggleBonus` e a grade antiga; sempre renderiza
+  `<DistribuirPontosAtributo pontosTotal={3} .../>` assim que os 6
+  atributos base estão preenchidos, com `atributoTravado` bloqueando
+  os 3 atributos fora da lista de elegíveis do Antecedente (igual já
+  fazia no modo "+2/+1").
+- `bonusModo` (`'111' | '21' | null`) removido de `WizardSelection`
+  (`core/personagem.ts`) e de todo lugar que setava — não tinha mais
+  uso depois de sumir o seletor de modo (`WizardShell.tsx`'s
+  `randomizarAtributos`, `geradorPersonagemTeste.ts`). Validação do
+  passo simplificada pra só checar `bonusEscolhas.length === 3`.
+- `DistribuirPontosAtributo.tsx`/`.module.css`: nova classe
+  `.rowTravado` — a linha inteira de um atributo bloqueado (não só os
+  botões +/-, como antes) fica cinza escuro/esmaecida, deixando claro
+  visualmente que não dá pra tocar ali sem marcar "Desbloquear
+  atributos". Efeito colateral bom: o Level Up (que nunca passa
+  `atributoTravado`) não muda nada, já que a classe só é aplicada
+  quando esse prop existe e retorna true.
+
+Testado via Playwright em 390px: só a lista aparece agora (sem
+seletor de modo); atributos fora da lista de elegíveis do Antecedente
+sorteado (CON/SAB/CAR pra uma Origem com FOR/DES/INT elegíveis)
+apareceram visivelmente esmaecidos com botões travados; aplicar +2
+num elegível e +1 em outro chegou em "Faltam 0" e liberou "Avançar".
+
+**Data/origem:** 2026-09.

@@ -27,7 +27,6 @@ export interface WizardSelection {
   alinhamento: string | null;
   itens: ItemCarrinho[];
   atributos: Record<Atributo, number | null>;
-  bonusModo: '111' | '21' | null;
   bonusEscolhas: Atributo[];
   desbloquearAtributos: boolean;
   xp: number;
@@ -54,7 +53,6 @@ export function criarSelecaoInicial(): WizardSelection {
     alinhamento: null,
     itens: [],
     atributos: { FOR: null, DES: null, CON: null, INT: null, SAB: null, CAR: null },
-    bonusModo: null,
     bonusEscolhas: [],
     desbloquearAtributos: false,
     xp: 0,

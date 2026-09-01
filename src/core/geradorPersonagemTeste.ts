@@ -79,7 +79,6 @@ function gerarSelecaoNivel1(classe: Classe, origemNome: string, especieNome: str
     atributos[a] = valores[i];
   });
   selection.atributos = atributos;
-  selection.bonusModo = '111';
   selection.bonusEscolhas = embaralhar([...atributosOrdem]).slice(0, 3);
 
   // Escolhas da Classe (estilo de luta, maestria, perícias, ferramentas,

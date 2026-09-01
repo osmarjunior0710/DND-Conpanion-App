@@ -58,7 +58,7 @@ export default function DistribuirPontosAtributo({
         const total = base + nesse;
         const travado = atributoTravado?.(a) ?? false;
         return (
-          <div key={a} className={styles.row}>
+          <div key={a} className={`${styles.row} ${travado ? styles.rowTravado : ''}`}>
             <span>
               {a} {base} ({modificador(base) >= 0 ? '+' : ''}
               {modificador(base)})
