@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { armazenamentoPersonagens } from '../../core/armazenamentoPersonagens';
+import { ID_PERSONAGEM_DEMO } from '../../core/personagemDemo';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
 import { classes } from '../../data/rulesets/dnd2024/classes';
 import { subclasses } from '../../data/rulesets/dnd2024/subclasses';
@@ -104,9 +105,15 @@ export default function CharacterList() {
           <span className="tag">
             {c.pvAtual}/{c.pvMax} PV
           </span>
-          <div className={styles.deleteBtn} onClick={(e) => abrirConfirmacao(c.id, c.nome, e)}>
-            🗑️
-          </div>
+          {c.id === ID_PERSONAGEM_DEMO ? (
+            <span className="tag" title="Personagem fixo de demonstração, não pode ser apagado">
+              🔒 fixo
+            </span>
+          ) : (
+            <div className={styles.deleteBtn} onClick={(e) => abrirConfirmacao(c.id, c.nome, e)}>
+              🗑️
+            </div>
+          )}
         </div>
       ))}
 

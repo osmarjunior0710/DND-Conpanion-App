@@ -5885,3 +5885,54 @@ apareceram visivelmente esmaecidos com botões travados; aplicar +2
 num elegível e +1 em outro chegou em "Faltam 0" e liberou "Avançar".
 
 **Data/origem:** 2026-09.
+
+## Personagem fixo de demonstração (URL estável pra outra IA/pessoa ver a UI)
+
+**O que é:** pedido do Osmar — precisava de uma URL fixa
+(`/ficha/demo-bardo-colegio-conhecimento`) que leva sempre ao mesmo
+personagem, não apagável, independente de quem/qual navegador abra —
+motivo: dar acesso a outra IA pra ver a UI sem precisar criar um
+personagem primeiro. Personagem: Bardo/Colégio do Conhecimento nível
+20, Origem Artista, Espécie Humano, com os 2 kits iniciais (classe +
+origem) preenchendo a Mochila.
+
+**Problema real de arquitetura, resolvido:** o armazenamento hoje é
+só `localStorage` (por navegador, ver `core/armazenamentoPersonagens.ts`)
+— não existe backend compartilhado (Supabase só entra na Fase 5, ver
+CLAUDE.md seção 9). Uma URL fixa sozinha NÃO faz um navegador
+diferente enxergar o mesmo dado. Solução: o personagem é um dado
+**congelado** (`data/personagemDemo.ts`, gerado 1 vez com
+`core/geradorPersonagemTeste.ts` e colado como literal, não gerado em
+tempo de execução) — `FichaShell.tsx` chama
+`core/personagemDemo.ts`'s `garantirPersonagemDemo()` quando o id da
+URL bate com `ID_PERSONAGEM_DEMO`: se esse navegador ainda não tem
+esse personagem salvo, semeia com o dado congelado. Assim, QUALQUER
+navegador que abrir a URL cria localmente o mesmo personagem-base na
+1ª visita. Editar esse personagem na tela (PV, mochila, etc.)
+continua funcionando normal e persiste NESSE navegador — só não pode
+ser apagado, e um navegador diferente sempre parte do mesmo estado
+congelado.
+
+**"Não apagável":** duas camadas — `armazenamentoPersonagens.ts`'s
+`apagar()` recusa silenciosamente se `id === ID_PERSONAGEM_DEMO`
+(garantia de verdade, funciona não importa por onde alguém tente
+apagar); `CharacterList.tsx` também troca o botão 🗑️ por uma tag
+"🔒 fixo" só nesse personagem, pra não mostrar um botão que não faz
+nada.
+
+**Por que "kit A" nos dois (não B):** o kit B da Classe Bardo é só
+90 PO sem item nenhum (ganhar ouro em vez de equipamento, opção real
+do livro) — pro personagem de demonstração servir pra ver a Mochila
+cheia, os dois precisam ser o kit COM item (opção A tanto de Classe
+quanto de Origem). "Kit de Artista" (item da opção A de Classe) já
+expande sozinho pros itens de dentro dele via
+`core/mochila.ts`'s `calcularItensIniciais` — não precisei fazer nada
+extra pra isso acontecer.
+
+Testado via Playwright com um contexto de navegador 100% limpo (sem
+`localStorage` prévio) acessando a URL direto — personagem carregou
+completo (PV 143/143, Espaços de Magia até 9º círculo, Mochila com
+itens de Classe + Origem, CA 12 com a Couro equipada automaticamente)
+sem passar pela Lista nem pelo wizard antes.
+
+**Data/origem:** 2026-09.

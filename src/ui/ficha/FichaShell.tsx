@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
+import { garantirPersonagemDemo, ID_PERSONAGEM_DEMO } from '../../core/personagemDemo';
 import {
   bonusProficiencia,
   calcularAtributosFinais,
@@ -89,7 +90,7 @@ const turnoInicial: Record<RecursoTurno, EstadoRecurso> = {
 export default function FichaShell() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const personagemSalvo = id ? armazenamentoPersonagens.buscar(id) : null;
+  const personagemSalvo = id === ID_PERSONAGEM_DEMO ? garantirPersonagemDemo() : id ? armazenamentoPersonagens.buscar(id) : null;
 
   if (!personagemSalvo) {
     return (

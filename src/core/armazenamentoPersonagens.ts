@@ -4,6 +4,7 @@
 
 import type { WizardSelection } from './personagem';
 import type { ItemMochila } from './mochila';
+import { ID_PERSONAGEM_DEMO } from '../data/personagemDemo';
 
 export interface PersonagemSalvo {
   id: string;
@@ -127,6 +128,10 @@ class ArmazenamentoLocalStorage implements ArmazenamentoPersonagens {
   }
 
   apagar(id: string): void {
+    // Personagem fixo de demonstração (ver `data/personagemDemo.ts`)
+    // nunca é apagável — a URL fixa precisa continuar funcionando pra
+    // sempre, mesmo que alguém tente apagar pela Lista.
+    if (id === ID_PERSONAGEM_DEMO) return;
     const restantes = this.listar().filter((p) => p.id !== id);
     localStorage.setItem(CHAVE, JSON.stringify(restantes));
   }
