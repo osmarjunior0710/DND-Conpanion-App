@@ -1311,3 +1311,28 @@ em duas entregas em vez de fazer tudo de uma vez.
    não-linear, ex: duração em degraus por círculo específico) não
    têm fórmula — o motor deve simplesmente NÃO tentar somar dado
    automático pra elas, só mostrar `Upcast_Texto`.
+
+## Revisão de abas da planilha mestra (possível consolidação)
+
+**O que é:** o Osmar comentou, depois de arrumar os IDs da planilha,
+que tem a sensação de que `dnd-master-referencia.xlsx` tem abas
+demais (hoje são 40) e que várias poderiam virar uma aba só. Ainda
+não foi discutido quais nem por quê — só o sentimento de que a
+estrutura atual pode estar fragmentada demais.
+
+**Por que foi adiado:** precisa de uma sessão dedicada olhando aba
+por aba com o Osmar (não é uma correção óbvia de bug de dado) —
+juntar abas que hoje já são consumidas por `data/rulesets/dnd2024/*`
+tem risco de quebrar o processo de importação/geração de cada
+arquivo `.ts` se a estrutura de colunas mudar sem avisar. Antes de
+mexer, também precisa mapear quais dessas 40 abas já viraram dado
+real no app hoje vs. quais ainda são só referência (nunca foram
+importadas).
+
+**O que falta:** revisar a lista de abas (ver `Índice` da própria
+planilha) junto com o Osmar, apontando candidatas óbvias a fundir
+(ex: abas pequenas e correlatas tipo "Focos e Símbolos" /
+"Munição" / "Bugigangas", ou "Montarias e Veículos" / "Veículos
+Aquáticos") e decidir se a fusão é só na planilha (organização) ou
+também exige tocar em algum `data/rulesets/dnd2024/*.ts` já gerado a
+partir de uma dessas abas.
