@@ -1271,3 +1271,43 @@ ponto de partida (não é a lista final):
 - Textos de aviso/ajuda repetidos ou desatualizados entre telas (ex:
   o aviso de "[PH]" na tela de Subclasse foi ajustado na última
   entrega, vale conferir se sobrou algo parecido em outra tela).
+
+## Motor de rolagem de dano de Magia (Dano Base + Upcast)
+
+**O que é:** o Osmar pediu pra estruturar o Upcast de magias
+(quanto aumenta por círculo acima do círculo base) e depois ligar
+isso a uma rolagem de dado de verdade na Ficha — "jogador vê o
+resultado final (mais dados)" e "a gente precisa rodar os dados
+direito". Ver decisão "Magias — Upcast estruturado" no
+`DECISOES-DESIGN.md`: só a parte de Upcast (planilha, aba "Magias",
+colunas N-S) foi feita nesta entrega.
+
+**Por que foi adiado:** o Upcast sozinho não é suficiente pra rodar
+o dado completo — falta o **Dano Base** de cada magia (quanto dano
+a magia já causa no círculo mínimo dela, ex: Bola de Fogo = 8d6 no
+3º círculo), que hoje só existe dentro do texto livre de
+`descricaoCompleta`/`descricaoCurta`, não estruturado. Extrair isso
+de ~130+ magias de dano é um trabalho equivalente ao que já foi
+feito pro Upcast, e o Osmar confirmou (via pergunta direta) separar
+em duas entregas em vez de fazer tudo de uma vez.
+
+**O que falta pra resolver:**
+1. Extrair o Dano Base estruturado (dado + tipo de dano) de cada
+   magia com dano, mesmo processo de cruzar PDF + planilha já usado
+   pro Upcast (colunas novas na aba "Magias", ex:
+   `DanoBase_Dado`/`DanoBase_Tipo`).
+2. Função nova em `core/` que combina Dano Base + Upcast Estruturado
+   dado o círculo do espaço usado (`core/magiaDano.ts` ou nome
+   parecido) — precisa de teste Vitest (ver seção 13 do
+   `CLAUDE.md`), cobrindo pelo menos: magia sem upcast, magia com
+   upcast tipo "Dado por Círculo" em círculo acima do base, e o
+   caso "Fórmula Própria"/"Outro" (não soma nada automático, só
+   mostra o texto).
+3. UI na Ficha (provavelmente na aba Magias, ao escolher o círculo
+   pra conjurar) mostrando o total de dados que vai rolar antes de
+   confirmar, e disparando a rolagem de verdade via `RollContext`
+   (mesmo sistema de overlay de rolagem já usado em Combat).
+4. As 18 magias marcadas `Upcast_Tipo = "Outro"` na planilha (regra
+   não-linear, ex: duração em degraus por círculo específico) não
+   têm fórmula — o motor deve simplesmente NÃO tentar somar dado
+   automático pra elas, só mostrar `Upcast_Texto`.

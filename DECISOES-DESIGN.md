@@ -5715,3 +5715,83 @@ chegou a 0, e "Avançar" levou pro próximo passo (Línguas) sem
 bloqueio.
 
 **Data/origem:** 2026-08.
+
+## Magias — Upcast estruturado (só a planilha, ainda sem motor/UI)
+
+**O que é:** o Osmar pediu ajuda pra estruturar o "Upcast" (efeito de
+conjurar em círculo mais alto) das 132 magias que já tinham texto
+livre na coluna "Upcast" da planilha mestra — o texto tinha sido
+digitado à mão a partir do livro e ele não tinha certeza se era
+"por círculo" ou não pra cada uma. Escopo combinado com o Osmar via
+pergunta: **só estruturar o dado nesta entrega** — extrair o Dano
+Base de cada magia e ligar isso a um motor de rolagem de dados de
+verdade fica pra uma entrega separada, futura.
+
+**Como foi feito:** extraí o texto de "Usando um Espaço de Magia de
+Círculo Superior" dos 3 PDFs de Magias (Cap. 7 do Livro do Jogador)
+que o Osmar anexou, casando cada trecho com o nome da magia
+correspondente na planilha. O PDF tem layout em 2 colunas que às
+vezes embaralha a ordem de leitura automática — usei o **círculo da
+própria magia (coluna "Círculo" já existente) como checagem
+cruzada**: por regra, "acima de X" no upcast É SEMPRE o círculo da
+própria magia, então qualquer trecho extraído com X diferente do
+círculo da magia era sinal de erro de leitura (achei e corrigi 3
+casos assim: Lâmina Flamejante, Arma Elemental, Guardiões
+Espirituais — a extração automática tinha pego o texto do vizinho
+errado). Pros casos onde o PDF ficou ambíguo mesmo depois de
+recortar o texto certo, usei o texto que o Osmar já tinha digitado na
+planilha como fonte (ele já tinha lido o livro certo pra digitar,
+só faltava estruturar).
+
+**Estrutura nova (aba "Magias", colunas N a S, a coluna "Upcast"
+antiga em M ficou intacta pra comparação):**
+- `Upcast_Tipo`: um de 5 valores —
+  - **Dado por Círculo** (64 magias, ex: Bola de Fogo "+1d6 por
+    círculo acima de 3") — usa `Upcast_Dado` (ex: "1d6") e
+    `Upcast_CirculoBase` (o "acima de X").
+  - **Alvo por Círculo** (25 magias, ex: Mísseis Mágicos "+1 dardo
+    por círculo acima de 1") — usa `Upcast_Alvos` (quantos por
+    círculo, quase sempre 1, mas Forma Etérea é 3) e
+    `Upcast_CirculoBase`.
+  - **Flat por Círculo** (13 magias, ex: Armadura de Agathys "+5 PV
+    temp e +5 dano por círculo acima de 1" — número fixo, sem dado)
+    — usa `Upcast_Flat` e `Upcast_CirculoBase`.
+  - **Fórmula Própria** (12 magias, ex: as magias "Invocar X" e
+    Dissipar Magia) — o efeito já escala sozinho pelo círculo do
+    espaço usado, sem bônus adicional a somar; não usa nenhuma das
+    colunas numéricas.
+  - **Outro (texto livre)** (18 magias com regra não-linear demais
+    pra caber num dos tipos acima sem perder precisão — ex:
+    duração que salta pra um valor fixo em círculos específicos
+    "6º:10 dias / 7º:30 dias / 8º:180 dias", ou efeitos com DOIS
+    dados diferentes tipo Mão de Bigby — Punho Cerrado +2d8, Mão
+    Esmagadora +2d6).
+  - **Nenhum** (258 magias — truques e magias sem upcast, confirmado
+    contra o "-" que o Osmar já tinha marcado).
+- `Upcast_Texto`: sempre preenchido (menos "Nenhum") com a frase
+  limpa e verificada, pra exibir na UI mesmo nos casos "Outro" onde
+  não dá pra rodar dado automaticamente.
+
+**Por que esse recorte de 5 tipos:** o pedido do Osmar foi "jogador
+vê o resultado final (mais dados), a gente precisa rodar os dados
+direito" — os 3 primeiros tipos (Dado/Alvo/Flat por Círculo, 102
+magias) cobrem exatamente isso de forma genérica (fórmula: valor
+base + (círculo usado − CirculoBase) × Upcast_Dado/Alvos/Flat).
+"Fórmula Própria" e "Outro" ficam de fora do cálculo automático de
+propósito — forçar esses 30 casos numa fórmula genérica ia exigir
+inventar exceção em cima de exceção, e o texto livre já resolve a
+exibição.
+
+**Bug de dado encontrado e reportado ao Osmar (não corrigido por
+mim):** 55 IDs na aba "Magias" são reaproveitados entre magias
+diferentes (ex: as 14 magias "Invocar X" têm todas o mesmo ID
+`Magik_Invo`). Não afeta o app hoje — `data/rulesets/dnd2024/magias.ts`
+gera o próprio `id` a partir do nome (slug), nunca leu essa coluna da
+planilha — mas fica registrado caso vire problema em outro uso futuro
+da planilha.
+
+**Fora de escopo desta entrega (ver `PENDENCIAS.md`):** Dano Base de
+cada magia (pra somar com o Upcast e rodar o dado completo) e o
+motor/UI que realmente executa a rolagem na Ficha.
+
+**Data/origem:** 2026-09.
