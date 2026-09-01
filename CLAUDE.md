@@ -18,6 +18,12 @@
 > Coisas adiadas de propósito (ainda não resolvidas) ficam em
 > `PENDENCIAS.md` — leia esse também, e **atualize-o** sempre que adiar
 > algo ou resolver algo que estava lá (ver seção 11).
+> O plano da entrega que está em andamento AGORA mesmo fica em
+> `EmDev.md` — leia esse antes de continuar um trabalho em progresso, e
+> **mantenha atualizado** enquanto trabalha (ver seção 14). Bug/melhoria
+> que o Osmar apontar e não for corrigido na hora fica em
+> `Feedback.md` — leia esse antes de propor a próxima entrega, pode ter
+> algo relevante já anotado lá (ver seção 15).
 
 ## 1. Quem está do outro lado
 
@@ -338,3 +344,54 @@ conforme o motor de cálculo cresce:
   texto mostrado ao jogador. Casos antigos que ainda comparam por
   nome migram aos poucos, sob demanda — não é preciso migrar tudo de
   uma vez, mas todo código **novo** já nasce usando ID.
+
+## 14. Regra de atualização do EmDev.md
+
+`EmDev.md` é o plano da entrega **em andamento agora** — diferente da
+família `DECISOES-*.md` (o que já foi decidido, permanente) e de
+`PENDENCIAS.md` (o que foi adiado de propósito), este é só o
+checklist de passos de UMA entrega sendo executada neste momento, pra
+não perder o fio se a conversa for interrompida/retomada depois.
+
+- **Ao propor um plano de entregas pequenas** (seção 6, antes de
+  escrever qualquer código) e o Osmar aprovar, escreva os passos em
+  `EmDev.md` como checklist (`- [ ]` / `- [x]`), não só na resposta do
+  chat.
+- **Marque cada passo como `[x]` assim que ele for concluído** —
+  durante o trabalho, não só no final.
+- **Quando TODOS os passos do plano viram `[x]`**, apague o conteúdo
+  de `EmDev.md` (deixa vazio/só o cabeçalho) — não acumula plano
+  antigo já entregue. Se alguma decisão durável surgiu no caminho, ela
+  já devia ter ido pro arquivo `DECISOES-*.md` certo antes de apagar
+  daqui (ver seção 7) — `EmDev.md` nunca é o lugar definitivo pra
+  nada, só o rascunho de trabalho.
+- Se o Osmar pedir pra trocar de assunto no meio de um plano ainda não
+  concluído, deixe o conteúdo como está (não apague plano incompleto)
+  — ele continua ali pra retomar depois.
+- Um plano recém-aprovado **substitui** o conteúdo anterior se o
+  anterior já estava 100% `[x]` (aí já deveria ter sido apagado); não
+  deveria haver 2 planos diferentes simultâneos aqui — se acontecer,
+  pergunte ao Osmar qual está valendo.
+
+## 15. Regra de atualização do Feedback.md
+
+`Feedback.md` é a lista de bugs/melhorias que o Osmar aponta testando
+na tela, mas que **não são corrigidos na hora** — fica pra decidir
+prioridade depois, junto com ele.
+
+- **Sempre que o Osmar reportar um bug ou pedir uma melhoria e vocês
+  decidirem não resolver imediatamente**, registre em `Feedback.md`
+  (o que é, onde acontece, 1-2 frases — não precisa do detalhe
+  técnico de uma entrada de `DECISOES-*.md`, é só pra não esquecer).
+- **Antes de propor a próxima entrega**, dê uma olhada em
+  `Feedback.md` — pode ter algo relevante já anotado ali que a
+  próxima entrega deveria cobrir.
+- **Ao resolver um item da lista**, apague a entrada de
+  `Feedback.md` — se a correção também for uma decisão de design não
+  óbvia, registre no arquivo `DECISOES-*.md` certo (seção 7); se for
+  só um bug corrigido sem lição reaproveitável, não precisa de
+  registro permanente em lugar nenhum (ver seção 7.1).
+- Diferente de `PENDENCIAS.md` (coisas que o Claude Code adia de
+  propósito por decisão técnica, ex: dado que a planilha não tem
+  ainda) — `Feedback.md` é a lista que **o Osmar** alimenta testando
+  o app, não o Claude Code decidindo adiar algo sozinho.
