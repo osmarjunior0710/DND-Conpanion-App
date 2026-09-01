@@ -17,7 +17,7 @@ export interface CaracteristicaNivel {
  * direto da progressão real da classe, não uma tabela fixa. Guerreiro
  * tem 6 níveis de ASI (4,6,8,12,14,16), diferente da maioria das
  * outras classes (5 níveis) — variação real confirmada no livro, ver
- * DECISOES-DESIGN.md "Guerreiro — plano de implementação completa".
+ * DECISOES-CLASSES.md "Motor de Level Up genérico".
  * Reconhecida por ID estável (`ID_CARACTERISTICA_CLASSE.asi`, ver
  * CLAUDE.md seção 13), não por comparação direta do nome de exibição. */
 export function niveisComASI(classe: Classe): number[] {
@@ -107,8 +107,8 @@ export function caracteristicaDesbloqueada(classe: Classe, nome: string, nivelAt
 }
 
 /** Conta quantas vezes uma característica com o padrão "repete o mesmo
- * nome pra indicar +1 uso" (ver DECISOES-DESIGN.md "Cuidado de import —
- * nome repetido", convenção 1) aparece na progressão até `nivelAtual` —
+ * nome pra indicar +1 uso" (ver DECISOES-CLASSES.md "Motor de Level Up
+ * genérico") aparece na progressão até `nivelAtual` —
  * usado pra derivar nº de usos de recursos como Indomável (9/13/17) e
  * Surto de Ação (2/17) que não têm coluna numérica própria em
  * `classes.ts` (diferente de Recuperar Fôlego/Maestria em Arma, que

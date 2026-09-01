@@ -25,6 +25,16 @@
 > vários (ex: um padrão de UI reaproveitado em toda tela), fica aqui
 > em `DECISOES-DESIGN.md`. Ver seção 7 do `CLAUDE.md` pra regra
 > completa de quando registrar.
+>
+> **2026-09 — 1ª divisão + passagem de compactação:** o arquivo único
+> tinha passado de 5900 linhas; a divisão por área sozinha não ia
+> segurar o crescimento (2 classes + 1 subclasse já tinham gerado
+> ~2200 linhas de changelog em `DECISOES-CLASSES.md`, e faltam ~10
+> classes + ~35 subclasses pra implementar). Junto da divisão, os 2
+> arquivos mais pesados (`DECISOES-CLASSES.md`, `DECISOES-FICHA.md`)
+> passaram por uma compactação — narração de entrega/bug corrigido/
+> "testei X" removida, só padrão reaproveitável ficou. Regra daqui
+> pra frente, pra não engordar de novo: ver seção 7 do `CLAUDE.md`.
 
 ---
 

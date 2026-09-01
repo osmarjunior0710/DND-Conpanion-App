@@ -154,6 +154,47 @@ design (não só uma correção técnica óbvia), **consulte o(s) arquivo(s)
 relevante(s) primeiro** pra não repetir uma decisão que já foi tomada e
 revertida antes.
 
+### 7.1 Esses arquivos são padrão reaproveitável, não changelog — critério de escrita
+
+Em 2026-09, depois de implementar só 2 classes (Guerreiro, Bardo) e 1
+subclasse, o arquivo de decisões de classe já tinha passado de 2000
+linhas — insustentável faltando ~10 classes e ~35 subclasses. Passagem
+de compactação feita (ver `DECISOES-DESIGN.md`), e daqui pra frente
+**toda entrada nova precisa passar neste teste antes de ser escrita:**
+
+> "Se eu (ou outra sessão do Claude Code) estiver implementando uma
+> classe/tela/feature PARECIDA daqui a 2 meses, essa entrada muda como
+> eu vou fazer isso?"
+
+Se a resposta for sim, escreva — e escreva o **padrão generalizado**
+(o que vale pra qualquer classe/tela parecida), não só o caso
+específico que motivou a descoberta. Se a resposta for não, **não
+escreva uma entrada** — o código funcionando já é a prova de que
+funciona, e o Git guarda o histórico de como se chegou lá. Nunca
+entram como entrada nova:
+- Bug já corrigido, sem lição reaproveitável além do fix em si.
+- "Entrega X feita, aqui está o que testei" — narração de progresso.
+  Isso é reporte de status pro Osmar (ver seção 1), não decisão de
+  design; não precisa de registro permanente depois de comunicado.
+- Ajuste visual pontual sem padrão por trás (ex: "esse texto virou 2
+  linhas em vez de 1").
+- Qualquer parágrafo que comece descrevendo o que você TESTOU
+  (Playwright, cenário, resultado) — teste é prova de que funcionou
+  nessa entrega, não conhecimento que vale reler depois.
+
+**Quando uma decisão evolui em várias idas e voltas** (ex: 3 tentativas
+de UI até acertar) — não registre as tentativas erradas como entradas
+separadas. Registre **só o estado final**, como se tivesse sido
+desenhado certo da primeira vez; a lição de "por que as tentativas
+anteriores não funcionaram" só entra se ela própria for um padrão
+reaproveitável (ex: "toda escolha em tela cheia usa X, não Y").
+
+**Sinal de que um arquivo da família precisa de outra compactação:**
+mais de ~600-800 linhas, ou mais de ~15-20 entradas. Compactar não é
+apagar informação — é reescrever o que sobrou de várias entregas
+relacionadas numa entrada só, focada no padrão, cortando a narrativa
+de como se chegou lá.
+
 ## 8. Lacunas de dados conhecidas (não travam o projeto)
 
 Estas informações ainda não foram extraídas dos livros. Se uma entrega

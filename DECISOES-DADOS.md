@@ -7,7 +7,9 @@
 > em `DND-Regras.md`, não aqui — ver seção 3.1 do `CLAUDE.md`.
 > Parte da família `DECISOES-*.md` — ver o índice em
 > `DECISOES-DESIGN.md`, e a seção 7 do `CLAUDE.md` pra regra de
-> quando registrar uma entrada aqui.
+> quando registrar uma entrada aqui — e pro critério de "isso é
+> padrão reaproveitável ou changelog de entrega" que mantém este
+> arquivo pequeno.
 
 ---
 

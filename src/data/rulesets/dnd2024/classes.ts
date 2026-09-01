@@ -13,7 +13,7 @@
 // círculo) em vez de 1 recurso com sub-tabela, pra reaproveitar o
 // mesmo `RecursoClasse` genérico sem precisar de um schema novo —
 // cada círculo recupera no Descanso Longo, igual pros outros casters
-// (ver DECISOES-DESIGN.md "Casters"). Valor 0 num nível = ainda não
+// (ver DECISOES-CLASSES.md "Casters — 3 padrões reais de troca de magia"). Valor 0 num nível = ainda não
 // tem espaço daquele círculo, não é ausência de dado.
 
 import type { Atributo } from '../../wizardFixtures';

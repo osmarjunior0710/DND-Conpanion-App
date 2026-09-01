@@ -51,8 +51,7 @@ export interface ItemMochila {
   quantidade: number;
   peso: string | null;
   /** De onde o item veio — só metadado/histórico agora (a Mochila é
-   * uma lista única, ver DECISOES-DESIGN.md "Mochila vira estado de
-   * verdade"), não controla mais agrupamento visual. 'Manual' é item
+   * uma lista única, ver DECISOES-FICHA.md "Mochila — decisões de arquitetura"), não controla mais agrupamento visual. 'Manual' é item
    * que o jogador adicionou direto na tela (ganhou em jogo, achou,
    * etc), sem passar pelo wizard/Loja. */
   origemDoItem: 'Origem' | 'Classe' | 'Loja' | 'Manual';
@@ -64,9 +63,9 @@ export interface ItemMochila {
   slot?: 'maoPrincipal' | 'maoSecundaria' | 'armadura' | 'escudo' | null;
   /** Só faz sentido pra arma Versátil na Mão Principal: true quando o
    * jogador escolheu empunhar com as 2 mãos (dado de dano maior, mas
-   * ocupa a Mão Secundária também) — ver E3.4 em DECISOES-DESIGN.md. */
+   * ocupa a Mão Secundária também) — ver DECISOES-FICHA.md "Equipamento — mecanismo de equipar/CA/Atacar/Sintonização". */
   duasMaosAtivo?: boolean;
-  /** Item mágico sintonizado (E4.2, ver DECISOES-DESIGN.md) — só faz
+  /** Item mágico sintonizado (ver DECISOES-FICHA.md "Itens Mágicos — catálogo + Sintonizar na Mochila") — só faz
    * sentido pra itens que `itemExigeSintonizacao` reconhece
    * (`core/sintonizacao.ts`). Limite de 3 simultâneos é aplicado na
    * hora de ligar, não é uma trava de tipo aqui. */
@@ -196,7 +195,7 @@ const DESAGREGACAO_KITS: Record<string, { nome: string; quantidade: number }[]> 
  * Armadura e o primeiro Escudo que aparecerem, se já não tiver algo
  * no slot. Arma não entra aqui de propósito: "o que está na mão" é
  * uma escolha mais explícita do jogador, fica pra ele equipar na
- * Mochila (ver E2/E3 em DECISOES-DESIGN.md).
+ * Mochila (ver DECISOES-FICHA.md "Equipamento — mecanismo de equipar/CA/Atacar/Sintonização").
  */
 function slotInicialAutomatico(itensJaAdicionados: ItemMochila[], nome: string): ItemMochila['slot'] {
   const info = identificarEquipamento(nome);

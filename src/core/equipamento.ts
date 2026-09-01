@@ -146,9 +146,9 @@ export const NOME_CATEGORIA_MOCHILA: Record<CategoriaMochila, string> = {
 
 /**
  * Classificação da Mochila em 4 grupos visuais (não é regra de D&D,
- * é só organização de tela — ver DECISOES-DESIGN.md "Mochila
- * organizada em grupos"): Armas / Armadura (inclui Escudo, mesma
- * régua de "aumenta CA") / Jóias e Artefatos / Outros.
+ * é só organização de tela — ver DECISOES-FICHA.md "Mochila —
+ * decisões de arquitetura consolidadas"): Armas / Armadura (inclui
+ * Escudo, mesma régua de "aumenta CA") / Jóias e Artefatos / Outros.
  *
  * "Jóias e Artefatos" sempre fica vazio hoje: nenhum item mágico
  * (anel, amuleto...) foi importado ainda (planilha não tem — ver

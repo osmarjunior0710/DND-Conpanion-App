@@ -22,7 +22,7 @@
 //
 // IMPORTANTE sobre `efeitoMecanico`: esse campo NÃO vem da planilha —
 // é anotado à mão, talento por talento, só quando a Fase 4 chega nele
-// (ver DECISOES-DESIGN.md "Talentos Fase 4"). Se este arquivo for
+// (ver DECISOES-CLASSES.md "Talentos — arquitetura final"). Se este arquivo for
 // regenerado a partir da planilha no futuro, os `efeitoMecanico` já
 // implementados precisam ser reaplicados manualmente — não são
 // perdidos por acidente só se alguém lembrar de conferir antes de

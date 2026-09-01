@@ -84,8 +84,7 @@ export interface PersonagemSalvo {
    * planejamento de build ("quero pegar isso num level up futuro"),
    * não afeta nenhuma regra. Ausente/vazio = nenhum favoritado. */
   talentosFavoritosAtual?: string[];
-  /** Mochila como estado de verdade (ver DECISOES-DESIGN.md "Mochila
-   * vira estado de verdade") — quando ausente (personagem salvo antes
+  /** Mochila como estado de verdade (ver DECISOES-FICHA.md "Mochila — decisões de arquitetura consolidadas") — quando ausente (personagem salvo antes
    * dessa entrega), `FichaShell.tsx` reconstrói a lista inicial a
    * partir de `selecao` (mesmo cálculo de sempre), só na 1ª vez. */
   itensMochilaAtual?: ItemMochila[];

@@ -5,7 +5,7 @@
 //
 // `circulo` é 0 pra Truque (a planilha usa o texto "Truque" na coluna
 // Círculo pros 0-círculo, aqui normalizado pra número — Truques nunca
-// gastam Espaço de Magia, ver DECISOES-DESIGN.md "Casters"). `classes`
+// gastam Espaço de Magia, ver DECISOES-CLASSES.md "Casters — 3 padrões reais de troca de magia"). `classes`
 // é a lista de classes que têm essa magia na lista própria, derivada da
 // coluna "Classes" (texto separado por vírgula) — não cobre magias
 // concedidas por subclasse de OUTRA classe (ex.: Bardo/Colégio do

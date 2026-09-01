@@ -5,7 +5,9 @@
 > iniciativa, upcast na ação "Usar Magia". Parte da família
 > `DECISOES-*.md` — ver o índice em `DECISOES-DESIGN.md` pra
 > saber em qual arquivo procurar cada assunto, e a seção 7 do
-> `CLAUDE.md` pra regra de quando registrar uma entrada aqui.
+> `CLAUDE.md` pra regra de quando registrar uma entrada aqui — e pro
+> critério de "isso é padrão reaproveitável ou changelog de entrega"
+> que mantém este arquivo pequeno.
 
 ---
 

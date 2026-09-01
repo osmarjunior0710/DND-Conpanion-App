@@ -12,7 +12,7 @@ export function valorRecursoClasse(classe: Classe, prefixoNome: string, nivel: n
 
 /** Nº de usos de Recuperar Fôlego no nível atual — Mente Tática (nível
  * 2) gasta usos do mesmo banco, não tem contador próprio (ver
- * DECISOES-DESIGN.md "Guerreiro B3"). */
+ * DECISOES-CLASSES.md "Guerreiro — recursos e mecânicas implementadas"). */
 export function quantidadeRecuperarFolego(classe: Classe, nivel: number): number {
   return valorRecursoClasse(classe, 'Recuperar Fôlego', nivel);
 }
