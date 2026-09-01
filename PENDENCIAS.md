@@ -1,15 +1,16 @@
 # PENDENCIAS.md
 
-> Marcadores de "vamos voltar aqui depois". Diferente do
-> `DECISOES-DESIGN.md` (que registra o que já foi decidido), este arquivo
-> registra o que **ainda não foi resolvido** — coisas adiadas de propósito
-> pra não travar uma entrega, mas que precisam ser retomadas em algum
-> momento.
+> Marcadores de "vamos voltar aqui depois". Diferente da família
+> `DECISOES-*.md` (que registra o que já foi decidido — ver índice no
+> topo de `DECISOES-DESIGN.md`), este arquivo registra o que **ainda
+> não foi resolvido** — coisas adiadas de propósito pra não travar uma
+> entrega, mas que precisam ser retomadas em algum momento.
 >
 > Regra de uso: sempre que adiar uma decisão ou implementação "pra depois"
 > durante uma entrega, registre aqui — o que é, por que foi adiado, e o
-> que falta pra resolver. Ao resolver algo desta lista, mova a entrada pra
-> `DECISOES-DESIGN.md` (como decisão tomada) e remova daqui.
+> que falta pra resolver. Ao resolver algo desta lista, mova a entrada
+> pro arquivo `DECISOES-*.md` correspondente (como decisão tomada) e
+> remova daqui.
 
 ---
 
@@ -25,7 +26,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
 - **E1 — Mochila vira estado de verdade.** Lista única (sem separar
   por Origem/Classe/Loja), +/- quantidade, remover item, adicionar
   item novo por nome livre. Ver decisão "Mochila vira estado de
-  verdade (E1 do plano de Equipamento)" no `DECISOES-DESIGN.md`.
+  verdade (E1 do plano de Equipamento)" no `DECISOES-FICHA.md`.
 - **Ajuste pós-E1 — quantidade trava em 0, remover pede confirmação.**
   O Osmar testou e pediu 2 correções de comportamento: (1) o `-`
   agora trava a quantidade em 0 em vez de apagar a linha sozinho — o
@@ -52,7 +53,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   Armadura+Escudo realmente equipados; "Atacar" usa a arma da Mão
   Principal (ou Ataque Desarmado real); ataque bônus da propriedade
   Leve quando as duas mãos forem Leve; Versátil ganha o dado maior
-  empunhada com 2 mãos, ocupando a Mão Secundária. Ver DECISOES-DESIGN.md
+  empunhada com 2 mãos, ocupando a Mão Secundária. Ver DECISOES-FICHA.md
   "E3.1"-"E3.4" pra detalhes de cada uma.
 
 **Falta:**
@@ -72,7 +73,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   equipado depois).
 - **Vestiário genérico (E2, adiado) — regra de classificação já
   definida, só falta dado.** Regra confirmada (ver decisão "Sistema
-  de Equipamento — schema de referência" no `DECISOES-DESIGN.md`):
+  de Equipamento — schema de referência" no `DECISOES-FICHA.md`):
   item é equipável se tiver Bônus de CA, Dano, ou Efeito Mágico
   cadastrado — hoje nenhum item de `equipamentoAventura.ts` tem
   nenhum dos 3 (itens mágicos ainda não importados), então por essa
@@ -97,7 +98,7 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   arma restrita for importada, essa checagem precisa entrar antes de
   somar o bônus.
 - ~~**E4 — Sintonização (3 itens simultâneos).**~~ **Completa**
-  (E4.1 catálogo + E4.2 UI, ver DECISOES-DESIGN.md). Com isso o Plano
+  (E4.1 catálogo + E4.2 UI, ver DECISOES-FICHA.md). Com isso o Plano
   de Equipamento inteiro (E1-E4) está feito. **Segue fora de
   escopo:** efeito mecânico automático (CA/dano de item mágico
   aplicado sozinho na Ficha) — `efeitoResumido` é texto livre, não
@@ -117,7 +118,7 @@ plano aprovado ("vamos de e1").
 de Guerreiro deprioritizadas, o Osmar decidiu que a próxima classe a
 implementar é **Bardo** — ver decisões "Casters — 3 padrões reais de
 troca de magia" e "Bardo — próxima classe a implementar" no
-`DECISOES-DESIGN.md` pra achados de regra completos e a decupagem
+`DECISOES-CLASSES.md` pra achados de regra completos e a decupagem
 das 4 subclasses (Colégios). Esta entrada é só o checklist de
 progresso — os detalhes de regra ficam lá, não duplicar aqui.
 
@@ -132,7 +133,7 @@ subclasse (4 Colégios).
    ganhou as 12 características reais (2 células com conteúdo colado
    de outra parte do livro foram limpas); `magias.ts` (novo) importa o
    catálogo completo de 390 magias (não só Bardo), com `classes:
-   string[]` e `magiasDaClasse(nome, circulo?)`. Ver DECISOES-DESIGN.md
+   string[]` e `magiasDaClasse(nome, circulo?)`. Ver DECISOES-CLASSES.md
    "Bardo — Etapa 1 (Dados) feita" pra detalhes e o que ficou
    documentado como qualidade de dado conhecida (1 caso confirmado de
    texto colado em "Badalar Fúnebre", não revisado célula por célula
@@ -148,7 +149,7 @@ subclasse (4 Colégios).
    preparadas de 1º círculo, equipamento A/B). Achado: "Escolhas da
    Classe" tinha 3 acoplamentos implícitos a Guerreiro (perícias
    fixas em 2, Estilo de Luta sempre visível, validação do wizard
-   travando sem Estilo de Luta) — corrigidos, ver DECISOES-DESIGN.md
+   travando sem Estilo de Luta) — corrigidos, ver DECISOES-CLASSES.md
    "Bardo — Etapa 2". Dados de perícia/ferramenta/equipamento inicial
    transcritos do Cap. 3 (PDF "Bárbaro a Feiticeiro" que o Osmar já
    tinha enviado).
@@ -157,20 +158,20 @@ subclasse (4 Colégios).
    máximo/recuperação reais, não mais fixture de Bruxo). Só cobre 1
    círculo simultâneo — suficiente hoje porque Bardo nível 1 só tem o
    1º; vira limitação real só quando a Etapa 4 existir. Ver
-   DECISOES-DESIGN.md "Bardo — Etapa 3.1".
+   DECISOES-CLASSES.md "Bardo — Etapa 3.1".
 4. **Level Up** — dividida em 3 sub-entregas:
    - ~~**4.1 Truques**~~ — **feita**. Cresce/troca por level-up (lista
-     única pré-marcada, valida "só 1 trocado"). Ver DECISOES-DESIGN.md
+     única pré-marcada, valida "só 1 trocado"). Ver DECISOES-CLASSES.md
      "Bardo — Etapa 4.1".
    - ~~**4.2 Espaços de Magia multi-círculo**~~ — **feita**. Todos os
      círculos ativos rastreados ao mesmo tempo (`espacosDeMagiaAtivos`,
      `espacosGastosPorCirculo`), cada um com seu contador — resolve o
      que quebrava a partir do nível 3 do Bardo (2º círculo desbloqueia
-     junto do 1º). Ver DECISOES-DESIGN.md "Bardo — Etapa 4.2".
+     junto do 1º). Ver DECISOES-CLASSES.md "Bardo — Etapa 4.2".
    - ~~**4.3 Magias Preparadas**~~ — **feita**. Mesmo padrão de tela
      da 4.1 (lista única pré-marcada, valida "só 1 trocada"), catálogo
      filtrado pelos círculos com espaço no NOVO nível
-     (`espacosDeMagiaAtivos`, Etapa 4.2). Ver DECISOES-DESIGN.md
+     (`espacosDeMagiaAtivos`, Etapa 4.2). Ver DECISOES-CLASSES.md
      "Bardo — Etapa 4.3".
    - **Upar magia de círculo maior** (não escopado) — hoje cada magia
      preparada só gasta o espaço do círculo dela mesma; a regra de
@@ -180,7 +181,7 @@ subclasse (4 Colégios).
    Magias Preparadas reais (exclui as de Reação, que só aparecem no
    painel de Reação se existirem); gasta Espaço de Magia real; magia
    de ataque rola acerto automático (dano fica manual — planilha não
-   tem dado de dano estruturado). Ver DECISOES-DESIGN.md "Bardo —
+   tem dado de dano estruturado). Ver DECISOES-CLASSES.md "Bardo —
    Etapa 3.2".
 
 **Antes de começar a codar:** propor o plano de entregas pequenas pro
@@ -204,7 +205,7 @@ Osmar pra já poder trocar o ícone do personagem na Lista antes da
 implementação completa existir. A tela mostra aviso `[PH]` deixando
 isso explícito. **Falta pra virar de verdade:**
 - Características mecânicas de cada Colégio (níveis 3/6/14, ver
-  decupagem em DECISOES-DESIGN.md "Bardo — próxima classe a
+  decupagem em DECISOES-CLASSES.md "Bardo — próxima classe a
   implementar") — hoje escolher um Colégio não muda NADA na ficha além
   do ícone.
 - Descrição completa de cada Colégio (hoje os cards da escolha não têm
@@ -255,7 +256,7 @@ exibido, até virar dado/lógica de verdade.
   Luta, Mestre Tático, Ataques Estudados, contagem de Ataque Extra.
 - ~~Fixture: os números do ataque em si (`ataqueArmaExemplo`,
   hardcoded "Adaga +4/1d4+3")~~ — **resolvido na E3.2** (ver
-  DECISOES-DESIGN.md): `core/ataque.ts` calcula o ataque de verdade a
+  DECISOES-FICHA.md): `core/ataque.ts` calcula o ataque de verdade a
   partir da arma equipada na Mão Principal (ou Ataque Desarmado real
   se nada estiver equipado), `ataqueArmaExemplo` foi removido. Falta
   só a escolha **Arma vs. Ataque Desarmado por instância de ataque**
@@ -302,7 +303,7 @@ wizard → Ficha, definido junto com o Osmar.
   vira o nome real escolhido (`ferramentaOrigemEscolhida`). Carga total
   soma peso × quantidade de verdade. `exampleSheet.ts` apagado
   (fixture morto). Depois: kits (ex: "Kit de Explorador de Masmorras")
-  desagregam nos itens de dentro (ver DECISOES-DESIGN.md), peso por
+  desagregam nos itens de dentro (ver DECISOES-FICHA.md), peso por
   linha mostra o total já multiplicado, menu do avatar com "Itens
   detalhados" (descrição inline vs. popup com ⓘ), apagar personagem na
   Lista com confirmação por texto, banner de XP-trava removido.
@@ -314,10 +315,10 @@ wizard → Ficha, definido junto com o Osmar.
   estepper comprar/vender, ouro restante calculado de verdade (PO=10PP=
   100PC) e Mod. de Ataque por arma (considerando proficiência da
   classe). Filtro "só o que a classe usa bem" pra Armas/Armaduras. Ver
-  DECISOES-DESIGN.md.
+  DECISOES-FICHA.md.
 - **A6 (parcial):** Estilo de Luta, Perícias de Classe e itens de
   Equipamento de Classe já estavam/ficaram conectados na Ficha real —
-  ver decisão em DECISOES-DESIGN.md. Falta só a aba Magias: hoje mostra
+  ver decisão em DECISOES-FICHA.md. Falta só a aba Magias: hoje mostra
   espaços de magia de exemplo, dado de Bruxo, em vez de refletir "sem
   magia" pro Guerreiro (a nota fixa sobre a regra de Bruxo/Magia de
   Pacto foi removida do Perfil por não se aplicar ao Guerreiro; volta
@@ -441,7 +442,7 @@ recurso que boa parte dos personagens nunca vai ter de verdade.
 pode multiclassar (ainda não implementado — ver pendência
 "Personagem multiclasse" abaixo) e ganhar conjuração de outra classe.
 Amarrar a visibilidade só na classe base quebraria nesse caso. Decisão
-registrada em `DECISOES-DESIGN.md` ("Magia de item vs magia natural" +
+registrada em `DECISOES-FICHA.md` ("Magia de item vs magia natural" +
 "Aba Magias sempre visível, nunca escondida por classe"): a resposta
 certa é uma função derivada `personagemConjura()` (hoje só olharia a
 classe atual, pronta pra somar multiclasse depois) — a aba Magias
@@ -502,7 +503,7 @@ seguem o mesmo formato de "Bônus de X: N" na coluna "Recursos da
 Classe"), 4) pedir/usar o PDF do Cap. 3 pra proficiências e equipamento
 inicial de classe (mesma exceção documentada usada no Guerreiro).
 Guardião e Paladino compartilham a tabela de conjuração (ver
-DECISOES-DESIGN.md) — importar uma vez só quando chegar a vez delas.
+DECISOES-DADOS.md) — importar uma vez só quando chegar a vez delas.
 
 **Material de apoio já pronto do Osmar (fora deste repositório, ele
 guarda em documentos próprios):** decupagem nível a nível completa de
@@ -617,9 +618,9 @@ motivou o pedido.
 **O que é:** Fases 1 (dado), 2 (classificação de texto) e 3 completa
 (seleção de Talento Geral no Level Up com validação de Nível/Atributo
 Mínimo + ASI embutido do próprio talento aplicado de verdade) estão
-feitas — ver DECISOES-DESIGN.md pros detalhes. Fase 4 (efeito mecânico
+feitas — ver DECISOES-CLASSES.md pros detalhes. Fase 4 (efeito mecânico
 de verdade) começou — ver "Talentos Fase 4 — lote 1" em
-DECISOES-DESIGN.md pro esquema de dado (`efeitoMecanico`) e os 5
+DECISOES-CLASSES.md pro esquema de dado (`efeitoMecanico`) e os 5
 primeiros talentos implementados (Alerta, Defensivo, Arquearia,
 Duelismo, Mestre em Armaduras Médias). O resto dos ~80 talentos
 continua `[PH]` (salvo/mostrado, sem efeito na ficha) até chegar a vez
@@ -699,7 +700,7 @@ estão importadas e selecionáveis no wizard (sem sub-escolha nenhuma,
 perícia/talento à escolha livre, mesmo problema do Habilidoso — ver
 pendência acima) e 6 espécies com sub-escolha de linhagem/herança
 (Aasimar, Draconato, Elfo, Gnomo, Golias, Tiferino — schema da
-sub-escolha já definido em `DECISOES-DESIGN.md`, ver "Dados — Espécies
+sub-escolha já definido em `DECISOES-DADOS.md`, ver "Dados — Espécies
 têm 3 naturezas diferentes de sub-escolha").
 
 **Por que foi adiado:** as opções de cada sub-escolha (as 10 cores de
@@ -760,7 +761,7 @@ o Guerreiro resolvido de ponta a ponta (nível 1 ao 20, incluindo as 4
 subclasses) antes de partir pras outras 11 classes. Decupagem nível a
 nível já feita e verificada — ver decisão "Guerreiro — plano de
 implementação completa nível 1-20 + 4 subclasses" no
-`DECISOES-DESIGN.md` pra achados de regra e ordem de implementação
+`DECISOES-CLASSES.md` pra achados de regra e ordem de implementação
 recomendada, caso isso seja retomado no futuro. Quebrado em 5
 entregas pequenas (B1-B5) pro "Guerreiro base", antes de partir pras
 4 subclasses — só o "base" foi feito.
@@ -808,7 +809,7 @@ entregas pequenas (B1-B5) pro "Guerreiro base", antes de partir pras
 **Simplificação assumida (não é a regra 100% literal):** o ícone de
 troca fica sempre visível na aba Perfil, não é gated a "só aparece
 depois de apertar Descanso Longo de verdade". Fica documentado como
-decisão consciente em `DECISOES-DESIGN.md` — se o Osmar preferir a
+decisão consciente em `DECISOES-CLASSES.md` — se o Osmar preferir a
 versão mais fiel (só habilita a troca logo depois de descansar), essa
 pendência entra aqui.
 
@@ -882,7 +883,7 @@ pendência entra aqui.
   correto, Surto de Ação 2/2 usos — todos os números batem com a
   progressão real da planilha.
   **Gaps já conhecidos, não fazem parte do escopo de B5** (cada um já
-  tem entrada própria nesta lista ou em `DECISOES-DESIGN.md`, revisar
+  tem entrada própria nesta lista ou em `DECISOES-CLASSES.md`, revisar
   lá antes de reabrir aqui): Subclasse de Guerreiro (placeholder,
   níveis 3/7/10/15/18 — deprioritizado, ver nota acima "as 4
   subclasses foram DEPRIORIZADAS"); ASI (seletor
@@ -997,7 +998,7 @@ wizard→ficha estiver fechado (prioridade atual registrada em
 ## Preferência "Itens detalhados" (menu do avatar) não persiste entre sessões
 
 **O que é:** o toggle "Itens detalhados" no menu do avatar
-(`AvatarMenu.tsx`, ver DECISOES-DESIGN.md) reseta pro padrão
+(`AvatarMenu.tsx`, ver DECISOES-FICHA.md) reseta pro padrão
 "desligado" toda vez que a página recarrega — é estado local do
 componente, não salvo em lugar nenhum.
 
@@ -1016,7 +1017,7 @@ como o armazenamento de personagem, é só preferência de UI.
 ## Idioma extra concedido por característica de Classe nível 1 — não implementado
 
 **O que é:** além do "Comum + 2 à escolha" da tela de Línguas (vem da
-Origem, já implementado e correto, ver `DECISOES-DESIGN.md`), algumas
+Origem, já implementado e correto, ver `DECISOES-DADOS.md`), algumas
 classes concedem idioma extra por característica de nível 1. Confirmado
 direto na aba "Características de Classe" da planilha mestra:
 - **Druida:** característica "Idioma Druídico" — sempre concede
@@ -1055,7 +1056,7 @@ esse tipo de traço for habilitada, revisar se faz sentido extrair o
 truque/magia concedida de forma estruturada (hoje está só em prosa
 dentro de `descricao`) e então marcar a pill correspondente na etapa
 de Classe (Truques/Magias Preparadas) usando a mesma função. Ver
-DECISOES-DESIGN.md "Marcação de duplicidade... — só na criação" pro
+DECISOES-WIZARD.md "Marcação de duplicidade... — só na criação" pro
 resto do contexto.
 
 ## Iconografia de Magias (⚔️/❤️‍🩹/🪙) — só na criação, Ficha ainda não usa
@@ -1088,7 +1089,7 @@ vez de Tempo/Alcance/Componentes/Duração).
 magias com Tempo de Conjuração "1 Ação Bônus" (poucas no catálogo, 6
 no total) aparecem hoje no painel de Ação (Etapa 3.2), não no de Ação
 Bônus, onde deveriam por regra. Simplificação aceita por ora (ver
-DECISOES-DESIGN.md "Etapa 3.2"); resolver quando o painel de Bônus
+DECISOES-CLASSES.md "Etapa 3.2"); resolver quando o painel de Bônus
 ganhar suporte a magia de verdade.
 
 ## Dano de magia não rola automaticamente — planilha não tem dado estruturado
@@ -1155,7 +1156,7 @@ uma solução ad-hoc por campo. Motivo: é quase certo que vamos achar
 mais casos assim conforme o app cresce — o suspeito que tinha sido
 anotado aqui (Aumento de Valor de Atributo do Level Up não aplicava de
 verdade em `selecao.atributos`) se confirmou e já foi corrigido — ver
-DECISOES-DESIGN.md "Level Up: Aumento de Valor de Atributo agora
+DECISOES-CLASSES.md "Level Up: Aumento de Valor de Atributo agora
 aplica de verdade". Ideia de formato (não decidido ainda, só registrado): uma
 função central tipo `verificarPendenciasDoPersonagem(selecao, classe,
 nivel, estadoAtual)` que devolve uma lista de "coisas que deveriam
@@ -1279,7 +1280,7 @@ ponto de partida (não é a lista final):
 isso a uma rolagem de dado de verdade na Ficha — "jogador vê o
 resultado final (mais dados)" e "a gente precisa rodar os dados
 direito". Ver decisão "Magias — Upcast estruturado" no
-`DECISOES-DESIGN.md`: só a parte de Upcast (planilha, aba "Magias",
+`DECISOES-DADOS.md`: só a parte de Upcast (planilha, aba "Magias",
 colunas N-S) foi feita nesta entrega.
 
 **Por que foi adiado:** o Upcast sozinho não é suficiente pra rodar

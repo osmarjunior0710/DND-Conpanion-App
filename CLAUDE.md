@@ -5,9 +5,13 @@
 > conversa se perde com o tempo, este arquivo não.
 >
 > Este arquivo é o "coração" do projeto: regras fixas, que não mudam com
-> frequência. Decisões de design que evoluem com o tempo ficam em
-> `DECISOES-DESIGN.md` — leia esse arquivo também, e **atualize-o** sempre
-> que tomar ou aprender algo sobre uma decisão de design (ver seção 7).
+> frequência. Decisões de design que evoluem com o tempo ficam na
+> família de arquivos `DECISOES-*.md` (`DECISOES-DESIGN.md`,
+> `DECISOES-WIZARD.md`, `DECISOES-FICHA.md`, `DECISOES-COMBATE.md`,
+> `DECISOES-CLASSES.md`, `DECISOES-DADOS.md`) — leia o índice no topo
+> de `DECISOES-DESIGN.md` pra saber qual arquivo cobre qual assunto,
+> e **atualize o arquivo certo** sempre que tomar ou aprender algo
+> sobre uma decisão de design (ver seção 7).
 > Fatos de regra de D&D já confirmados (catálogo, valores,
 > pré-requisitos) ficam em `DND-Regras.md`, organizados por tópico —
 > leia esse também antes de mexer em dado de regra (ver seção 3.1).
@@ -65,28 +69,30 @@ sobrescreva sem dizer o que mudou.
 
 `DND-Regras.md` guarda **fatos de regra de D&D já confirmados**
 (catálogo, valores, exceções, pré-requisitos) organizados por tópico.
-`DECISOES-DESIGN.md` guarda só decisão de arquitetura/UI/processo do
-app (ver seção 7). Antes desta regra, os dois ficavam misturados no
-mesmo arquivo, que cresceu demais e virou difícil de reler.
+A família `DECISOES-*.md` guarda só decisão de arquitetura/UI/processo
+do app (ver seção 7 e o índice no topo de `DECISOES-DESIGN.md`).
+Antes desta regra, os dois ficavam misturados no mesmo arquivo, que
+cresceu demais e virou difícil de reler.
 
 - **Ordem de consulta pra regra de jogo:** primeiro `DND-Regras.md`;
   enquanto a migração não estiver marcada como concluída lá (ver o
   aviso "Status da migração" no topo daquele arquivo), também confira
-  `DECISOES-DESIGN.md`, que ainda pode ter regra de jogo não migrada.
-  Quando `DND-Regras.md` marcar a migração como concluída, pare de
-  checar `DECISOES-DESIGN.md` pra regra de jogo — só decisão de design
+  o(s) arquivo(s) `DECISOES-*.md` relevante(s) ao assunto (ver
+  índice), que ainda podem ter regra de jogo não migrada. Quando
+  `DND-Regras.md` marcar a migração como concluída, pare de checar a
+  família `DECISOES-*.md` pra regra de jogo — só decisão de design
   continua lá.
-- **Sempre que, lendo ou escrevendo em `DECISOES-DESIGN.md`, você
-  encontrar ou for registrar um fato de regra de D&D** (não uma
-  decisão de arquitetura/UI) — verifique se `DND-Regras.md` já tem um
-  tópico onde esse fato se encaixa; se tiver, agrupe lá; se não tiver,
-  crie um tópico novo. Depois de mover, apague o fato de
-  `DECISOES-DESIGN.md`, deixando lá só a decisão de design que
-  eventualmente dependia dele (referencie o tópico de `DND-Regras.md`
-  em vez de repetir o fato).
+- **Sempre que, lendo ou escrevendo em qualquer arquivo
+  `DECISOES-*.md`, você encontrar ou for registrar um fato de regra
+  de D&D** (não uma decisão de arquitetura/UI) — verifique se
+  `DND-Regras.md` já tem um tópico onde esse fato se encaixa; se
+  tiver, agrupe lá; se não tiver, crie um tópico novo. Depois de
+  mover, apague o fato do arquivo `DECISOES-*.md` de origem, deixando
+  lá só a decisão de design que eventualmente dependia dele
+  (referencie o tópico de `DND-Regras.md` em vez de repetir o fato).
 - Migração é incremental, tópico por tópico — não precisa migrar tudo
   de uma vez. Cada tópico só sai da lista de "ainda em
-  DECISOES-DESIGN.md" quando alguém (Osmar ou Claude Code) mover de
+  DECISOES-*.md" quando alguém (Osmar ou Claude Code) mover de
   verdade o conteúdo.
 
 ## 4. Arquitetura em camadas — não negociável
@@ -116,7 +122,8 @@ Ao implementar qualquer componente/tela nova, siga sempre esta ordem:
    padrões de componente (bottom sheet, FAB, seleção, etc.).
 2. Só depois, aplicar a pele temática de RPG por cima (textura,
    tipografia old-school, paleta dourada/bronze — ver
-   `DECISOES-DESIGN.md` pra detalhes já registrados).
+   `DECISOES-DESIGN.md` pra detalhes já registrados, seção "Sistema
+   de design geral").
 Isso é um processo padrão, não uma escolha caso a caso — vale pra toda
 tela nova daqui pra frente.
 
@@ -125,16 +132,27 @@ tela nova daqui pra frente.
 Proponha um plano de entregas pequenas e espere aprovação. Nunca comece a
 implementar sem esse plano ter sido confirmado.
 
-## 7. Regra de atualização do DECISOES-DESIGN.md
+## 7. Regra de atualização da família DECISOES-*.md
 
 Sempre que você tomar (ou o usuário tomar, com sua ajuda) uma decisão de
 design que não é óbvia a partir do código — por que um padrão de UI foi
 escolhido, por que uma regra de D&D foi simplificada de um jeito
-específico, o que já foi tentado e descartado — registre em
-`DECISOES-DESIGN.md`, não só no chat. O chat se perde; esse arquivo não.
+específico, o que já foi tentado e descartado — registre numa entrada
+nova, não só no chat. O chat se perde; esses arquivos não.
+
+Desde 2026-09 as decisões são organizadas por área em 6 arquivos
+(`DECISOES-DESIGN.md`, `DECISOES-WIZARD.md`, `DECISOES-FICHA.md`,
+`DECISOES-COMBATE.md`, `DECISOES-CLASSES.md`, `DECISOES-DADOS.md`) —
+o índice no topo de `DECISOES-DESIGN.md` explica o escopo de cada um.
+Escolha o arquivo pelo assunto da decisão; na dúvida entre dois, use
+o que a tela/fluxo mais afetado pela decisão pertence; se for um
+padrão que atravessa várias telas (ex: componente reaproveitável,
+arquitetura de alto nível), vai em `DECISOES-DESIGN.md`.
+
 Antes de propor uma solução de UI ou de regra que pareça uma decisão de
-design (não só uma correção técnica óbvia), **consulte esse arquivo
-primeiro** pra não repetir uma decisão que já foi tomada e revertida antes.
+design (não só uma correção técnica óbvia), **consulte o(s) arquivo(s)
+relevante(s) primeiro** pra não repetir uma decisão que já foi tomada e
+revertida antes.
 
 ## 8. Lacunas de dados conhecidas (não travam o projeto)
 
@@ -145,7 +163,7 @@ sob demanda:
 - Talentos com ativação em combate (quais concedem Ação Bônus/Reação)
 - Confirmar se número de idiomas concedidos é sempre 2 ou varia por
   Origem/Espécie — **resolvido:** não varia, planilha não tem coluna de
-  idioma em Origem/Espécie. Ver `DECISOES-DESIGN.md`.
+  idioma em Origem/Espécie. Ver `DECISOES-DADOS.md`.
 - Idioma extra concedido por característica de Classe nível 1 (além dos
   2+Comum da Origem): confirmado que Druida (Druídico, fixo) e Ladino
   (Gíria dos Ladrões + 1 à escolha) concedem — ainda não implementado
@@ -169,18 +187,18 @@ Progressão de Classe), removido.
 Personagem), removido.
 ~~Proficiências de arma/armadura/escudo por classe~~ — extraída dos
 livros pelo Osmar, nova aba "Proficiências de Classe" na planilha,
-removido. Ver `DECISOES-DESIGN.md`.
+removido. Ver `DECISOES-DADOS.md`.
 ~~Fórmula exata de capacidade de carga (Força × multiplicador)~~ —
 confirmada na planilha mestra, aba "Glossário de Regras" (termo
 "Capacidade de Carga"): Força × 7 kg pra Tamanho Pequeno/Médio (única
 combinação usada pelas espécies jogáveis do projeto hoje). Corrige o
 valor anterior (Força × 7,5 kg), que tinha sido estimado de memória
-antes da planilha ser conferida. Ver `DECISOES-DESIGN.md`.
+antes da planilha ser conferida. Ver `DECISOES-FICHA.md`.
 ~~Popup de descrição de Armas e Armaduras~~ — planilha ganhou coluna
 "Descrição" nas duas abas, importado e ligado. Removido.
 ~~Progressão de círculo dos meio-conjuradores (Guardião/Paladino)~~ —
 confirmada linha a linha, idêntica entre as duas classes, removido. Ver
-`DECISOES-DESIGN.md`.
+`DECISOES-DADOS.md`.
 
 ## 9. Escopo do produto (não expandir sem confirmar)
 
@@ -220,7 +238,8 @@ atual — registre em `PENDENCIAS.md` o que é, por que foi adiado, e o que
 falta pra resolver. Isso vale tanto pra dados (ex: uma origem/classe que
 precisa de uma seleção que ainda não tem tela) quanto pra decisões de
 arquitetura deixadas em aberto (ex: multiclasse). Quando algo da lista for
-resolvido, mova a entrada pra `DECISOES-DESIGN.md` (como decisão tomada)
+resolvido, mova a entrada pro arquivo `DECISOES-*.md` correspondente ao
+assunto (como decisão tomada — ver índice no topo de `DECISOES-DESIGN.md`)
 e remova de `PENDENCIAS.md` — não deixe as duas listas com a mesma coisa.
 Antes de propor uma entrega nova que toque em dado de regra (origens,
 classes, espécies, talentos, magias), **consulte esse arquivo primeiro**

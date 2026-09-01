@@ -2,25 +2,27 @@
 
 > Este arquivo guarda **fatos de regra de D&D 5e (2024) já confirmados**
 > na planilha (`dnd-master-referencia.xlsx`) ou no livro — não decisão
-> de arquitetura, UI ou processo do projeto (isso continua em
-> `DECISOES-DESIGN.md`). É uma base de referência por **tópico**, não
-> um histórico cronológico de entregas.
+> de arquitetura, UI ou processo do projeto (isso continua na família
+> `DECISOES-*.md`, ver índice no topo de `DECISOES-DESIGN.md`). É uma
+> base de referência por **tópico**, não um histórico cronológico de
+> entregas.
 >
 > Formato de cada tópico: fatos confirmados em bullet, direto ao ponto.
 > Cite a fonte quando não for óbvio (aba da planilha, capítulo do
 > livro). Sem "Contexto"/"Testado"/data de entrega — isso é rastro de
-> decisão do app, não regra de jogo, e fica em `DECISOES-DESIGN.md`.
+> decisão do app, não regra de jogo, e fica na família `DECISOES-*.md`.
 >
 > **Regra de uso:** antes de propor algo que dependa de uma regra de
 > D&D, procure aqui primeiro. Ao encontrar (ou confirmar) um fato de
 > regra em qualquer lugar — inclusive dentro de uma entrada de
-> `DECISOES-DESIGN.md` — verifique se já existe um tópico aqui que
-> agrupe esse fato; se não existir, crie um tópico novo. Depois de
-> mover o fato pra cá, apague-o de `DECISOES-DESIGN.md`, deixando lá
-> só a decisão de design/arquitetura (ver seção 3 do `CLAUDE.md`).
+> qualquer arquivo `DECISOES-*.md` — verifique se já existe um tópico
+> aqui que agrupe esse fato; se não existir, crie um tópico novo.
+> Depois de mover o fato pra cá, apague-o do arquivo `DECISOES-*.md`
+> de origem, deixando lá só a decisão de design/arquitetura (ver seção
+> 3 do `CLAUDE.md`).
 >
 > **Status da migração:** em andamento, começando pelo tópico
-> Talentos. Enquanto não estiver 100% migrado, `DECISOES-DESIGN.md`
+> Talentos. Enquanto não estiver 100% migrado, a família `DECISOES-*.md`
 > ainda pode conter regra de jogo não extraída — ver `CLAUDE.md` seção
 > 3 pra ordem de consulta.
 
