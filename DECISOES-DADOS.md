@@ -572,3 +572,41 @@ motor/UI que realmente executa a rolagem na Ficha.
 
 **Data/origem:** 2026-09.
 
+
+## Idioma extra concedido por característica de Classe nível 1 — Druida/Ladino
+
+**O que é:** além do Comum + 2 à escolha que toda Origem concede (tela
+"4. Línguas" do wizard), Druida ganha Druídico (fixo, sem escolha) e
+Ladino ganha Gíria dos Ladrões (fixo) + 1 idioma extra à escolha —
+confirmado direto na aba "Características de Classe" da planilha
+mestra. As outras 10 classes ainda não foram auditadas linha a linha
+(ver `PENDENCIAS.md`).
+
+**Padrão implementado:** `data/rulesets/dnd2024/idiomaExtraClasse.ts`
+— mapa `Record<nomeClasse, { fixo: string[]; escolhaLivre: number }>`
+lido por `core/idiomas.ts` (`totalIdiomasEsperados`, testado) e por
+`LinguasStep.tsx`: idioma fixo entra sozinho (igual ao Comum, não
+consome a escolha livre do jogador), e o total de escolhas na tela
+cresce dinamicamente por `escolhaLivre`. `WizardShell.tsx` valida e
+randomiza usando o mesmo mapa. Reaproveitável pras próximas classes
+assim que a auditoria confirmar mais casos — só adicionar entrada no
+mapa, nenhuma tela muda.
+
+**Achado no caminho:** a Ficha não mostrava Idiomas em lugar nenhum
+depois da criação (só existia na tela de revisão do wizard, antes de
+salvar) — sem isso, o idioma extra de Classe seria invisível mesmo
+funcionando. Adicionada seção "Idiomas" no Perfil (lista simples,
+mesmo padrão de `selecao.linguas.join(', ')` já usado no Resumo).
+
+**Importante — ainda não testável na tela:** Druida e Ladino não são
+classes jogáveis hoje (aparecem "(em breve)" no wizard, nem existem em
+`classes.ts`) — o mecanismo está pronto e coberto por teste automatizado
+(`core/idiomas.test.ts`), mas só vira visível/testável na tela quando
+uma das duas for implementada como classe completa.
+
+**Fora de escopo:** Idioma Druídico também concede "sempre tem Falar
+com Animais preparada" — não implementado (precisa do mesmo tipo de
+mecanismo de "característica concede magia" que falta pro Talento de
+Origem Iniciado em Magia, ver `PENDENCIAS.md`).
+
+**Data/origem:** 2026-09.

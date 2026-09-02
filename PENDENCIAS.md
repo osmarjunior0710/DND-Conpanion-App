@@ -1119,53 +1119,21 @@ sistemática — provavelmente melhor de fazer depois que o fluxo
 wizard→ficha estiver fechado (prioridade atual registrada em
 `DECISOES-DESIGN.md`), já que mexe em CSS espalhado pelo app inteiro.
 
-## Preferência "Itens detalhados" (menu do avatar) não persiste entre sessões
+## Idioma extra de Classe (Druida/Ladino) — mecanismo pronto, mas não testável ainda
 
-**O que é:** o toggle "Itens detalhados" no menu do avatar
-(`AvatarMenu.tsx`, ver DECISOES-FICHA.md) reseta pro padrão
-"desligado" toda vez que a página recarrega — é estado local do
-componente, não salvo em lugar nenhum.
+**O que é:** mecanismo implementado (ver `DECISOES-DADOS.md` "Idioma
+extra concedido por característica de Classe nível 1 — Druida/Ladino")
+pra Druida (Druídico, fixo) e Ladino (Gíria dos Ladrões fixo + 1 à
+escolha). **Druida e Ladino não são classes jogáveis ainda** (aparecem
+"(em breve)" no wizard) — o código está certo e coberto por teste
+automatizado, mas só dá pra ver funcionando na tela quando uma das
+duas virar classe completa (ver pendência "Faltam 10 classes").
 
-**Por que foi adiado:** a entrega focou em ter o comportamento
-funcionando (ligar/desligar, popup vs. descrição inline). Persistir é
-uma decisão pequena mas que precisa de lugar pra morar — provavelmente
-`localStorage` direto (preferência de exibição, não dado de
-personagem, não precisa entrar no `armazenamentoPersonagens`).
-
-**O que falta pra resolver:** se o Osmar sentir falta (toda vez que
-abrir a Ficha o toggle volta pro padrão), decidir se vale a pena
-persistir por personagem ou globalmente pro app inteiro, e implementar
-com uma chave de `localStorage` — não precisa de interface trocável
-como o armazenamento de personagem, é só preferência de UI.
-
-## Idioma extra concedido por característica de Classe nível 1 — não implementado
-
-**O que é:** além do "Comum + 2 à escolha" da tela de Línguas (vem da
-Origem, já implementado e correto, ver `DECISOES-DADOS.md`), algumas
-classes concedem idioma extra por característica de nível 1. Confirmado
-direto na aba "Características de Classe" da planilha mestra:
-- **Druida:** característica "Idioma Druídico" — sempre concede
-  Druídico (fixo, sem escolha).
-- **Ladino:** característica "Gíria do Ladrão" — concede Gíria dos
-  Ladrões (fixo) + 1 idioma à escolha do jogador.
-
-As outras 10 classes (Bárbaro, Bardo, Bruxo, Clérigo, Feiticeiro,
-Guardião, Guerreiro, Mago, Monge, Paladino) ainda não foram auditadas
-linha a linha pra confirmar se concedem algo parecido — é a mesma
-auditoria pendente já listada no `CLAUDE.md` seção 8.
-
-**Por que foi adiado:** achado numa auditoria em chat separado com
-apoio do Claude, verificado direto na planilha antes de confiar (não
-copiado do chat paralelo às cegas). Ainda não afeta o Guerreiro (classe
-piloto do fluxo wizard→Ficha) — Guerreiro não tem característica desse
-tipo em nível 1 — então não trava a entrega atual.
-
-**O que falta pra resolver:** auditar as outras 10 classes na aba
-"Características de Classe" (nível 1 de cada), e decidir onde esse
-idioma extra aparece na Ficha/wizard (soma na mesma lista de idiomas da
-Origem? aparece separado, ligado à característica de classe?) — é uma
-decisão de UI pequena, mas precisa de confirmação do Osmar antes de
-implementar (regra 6 do `CLAUDE.md`).
+**O que falta pra resolver:** as outras 10 classes (Bárbaro, Bardo,
+Bruxo, Clérigo, Feiticeiro, Guardião, Guerreiro, Mago, Monge, Paladino)
+ainda não foram auditadas linha a linha na aba "Características de
+Classe" pra confirmar se concedem idioma extra também — auditar quando
+cada uma for implementada.
 
 ## Marcação de duplicidade — só Perícias hoje, Talentos/Truques/Magias dormentes
 
@@ -1182,15 +1150,6 @@ dentro de `descricao`) e então marcar a pill correspondente na etapa
 de Classe (Truques/Magias Preparadas) usando a mesma função. Ver
 DECISOES-WIZARD.md "Marcação de duplicidade... — só na criação" pro
 resto do contexto.
-
-## Iconografia de Magias (⚔️/❤️‍🩹/🪙) — só na criação, Ficha ainda não usa
-
-`core/classificarMagia.ts` foi escrito de forma genérica (recebe
-qualquer `Magia`), mas hoje só é chamado em `ClasseEscolhasStep.tsx`
-(Truques/Magias Preparadas da criação). A aba Magias da Ficha ainda
-usa fixture (Etapa 3 do plano de Bardo, não feita) — quando essa etapa
-acontecer, reaproveitar `iconesMagia()`/`classificarMagia()` lá também
-em vez de duplicar a lógica.
 
 ## Card padronizado de descrição — só Magias hoje, falta Itens/Armas/Armaduras/Itens Mágicos
 

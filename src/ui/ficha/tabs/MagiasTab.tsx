@@ -7,7 +7,7 @@ import {
   magiasPreparadasDoPersonagem,
   circulosDisponiveisParaConjurar,
 } from '../../../core/magiasPersonagem';
-import { classificarMagia, usarMagiaTemAcaoAutomatizada } from '../../../core/classificarMagia';
+import { classificarMagia, iconesMagia, usarMagiaTemAcaoAutomatizada } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TickPips from '../../components/TickPips';
 import { useColapsavel } from '../../hooks/useColapsavel';
@@ -151,7 +151,7 @@ export default function MagiasTab({
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={m} variante="icone" />
+                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
                 </div>
                 <span className={styles.spellCirculo}>Truque</span>
                 <div
@@ -178,7 +178,7 @@ export default function MagiasTab({
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={m} variante="icone" />
+                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
                 </div>
                 <span className={styles.spellCirculo}>{m.circulo === 0 ? 'Truque' : `${m.circulo}º círculo`}</span>
                 <div
@@ -207,7 +207,7 @@ export default function MagiasTab({
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={m} variante="icone" />
+                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
                 </div>
                 <span className={styles.spellCirculo}>{m.circulo}º círculo</span>
                 <div

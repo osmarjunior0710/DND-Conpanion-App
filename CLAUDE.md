@@ -236,12 +236,11 @@ sob demanda:
 - Confirmar se número de idiomas concedidos é sempre 2 ou varia por
   Origem/Espécie — **resolvido:** não varia, planilha não tem coluna de
   idioma em Origem/Espécie. Ver `DECISOES-DADOS.md`.
-- Idioma extra concedido por característica de Classe nível 1 (além dos
-  2+Comum da Origem): confirmado que Druida (Druídico, fixo) e Ladino
-  (Gíria dos Ladrões + 1 à escolha) concedem — ainda não implementado
-  na Ficha/wizard (só a tela de Línguas da Origem existe hoje). As
-  outras 10 classes ainda não foram auditadas linha a linha na aba
-  "Características de Classe". Ver `PENDENCIAS.md`.
+~~Idioma extra concedido por característica de Classe nível 1~~ —
+  mecanismo implementado pra Druida (Druídico, fixo) e Ladino (Gíria
+  dos Ladrões + 1 à escolha), ver `DECISOES-DADOS.md`. As outras 10
+  classes ainda não foram auditadas linha a linha na aba
+  "Características de Classe" — ver `PENDENCIAS.md`.
 - **~24 células de "Descrição Completa" (Características de Classe e
   Subclasses) têm conteúdo duplicado de outra aba colado dentro** — ver
   `auditoria-planilha-mestra.md` (arquivo do Osmar, não faz parte do

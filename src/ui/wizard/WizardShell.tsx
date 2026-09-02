@@ -5,6 +5,8 @@ import { origens } from '../../data/rulesets/dnd2024/origens';
 import { talentosOrigem, type ConcedeProficienciasTalento } from '../../data/rulesets/dnd2024/talentos';
 import { especies } from '../../data/rulesets/dnd2024/especies';
 import { idiomas } from '../../data/rulesets/dnd2024/idiomas';
+import { idiomaExtraClasse } from '../../data/rulesets/dnd2024/idiomaExtraClasse';
+import { totalIdiomasEsperados } from '../../core/idiomas';
 import { classes } from '../../data/rulesets/dnd2024/classes';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classesProficienciasIniciais';
@@ -171,8 +173,11 @@ export default function WizardShell() {
     update({ atributos, bonusEscolhas });
   }
   function randomizarLinguas() {
-    const outrosIdiomas = idiomas.filter((i) => i.nome !== 'Comum').map((i) => i.nome);
-    update({ linguas: ['Comum', ...embaralhar(outrosIdiomas).slice(0, 2)] });
+    const extra = selection.classe ? idiomaExtraClasse[selection.classe] : undefined;
+    const fixosClasse = extra?.fixo ?? [];
+    const escolhas = 2 + (extra?.escolhaLivre ?? 0);
+    const outrosIdiomas = idiomas.filter((i) => i.nome !== 'Comum' && !fixosClasse.includes(i.nome)).map((i) => i.nome);
+    update({ linguas: ['Comum', ...fixosClasse, ...embaralhar(outrosIdiomas).slice(0, escolhas)] });
   }
   function randomizarAlinhamento() {
     const a = alinhamentos[Math.floor(Math.random() * alinhamentos.length)];
@@ -267,8 +272,8 @@ export default function WizardShell() {
     {
       name: '4. Línguas',
       render: (p) => <LinguasStep {...p} />,
-      isValid: (s) => s.linguas.filter((l) => l !== 'Comum').length === 2,
-      mensagemInvalida: 'Escolha mais 2 idiomas além de Comum antes de avançar.',
+      isValid: (s) => s.linguas.filter((l) => l !== 'Comum').length === totalIdiomasEsperados(s.classe),
+      mensagemInvalida: 'Escolha os idiomas indicados antes de avançar.',
       randomize: randomizarLinguas,
     },
     {

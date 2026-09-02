@@ -143,6 +143,13 @@ export default function PerfilTab({
           Nenhum traço de espécie ainda.
         </div>
       )}
+
+      <div className="section-title" style={{ marginTop: 16 }}>
+        Idiomas
+      </div>
+      <div className="label" style={{ marginBottom: 12 }}>
+        {selecao.linguas.length > 0 ? selecao.linguas.join(', ') : '—'}
+      </div>
     </>
   );
 }

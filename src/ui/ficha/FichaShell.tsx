@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
 import { garantirPersonagemDemo, ID_PERSONAGEM_DEMO } from '../../core/personagemDemo';
+import { useColapsavel } from '../hooks/useColapsavel';
 import {
   bonusProficiencia,
   calcularAtributosFinais,
@@ -173,7 +174,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [completarAberto, setCompletarAberto] = useState<'truques' | 'magiasPreparadas' | null>(null);
   const [levelUpHpModo, setLevelUpHpModo] = useState<'media' | 'rolar' | null>(personagemSalvo.levelUpHpModo ?? null);
   const [levelUpHpRolado, setLevelUpHpRolado] = useState<number | null>(personagemSalvo.levelUpHpRolado ?? null);
-  const [itensDetalhados, setItensDetalhados] = useState(false);
+  const [itensDetalhados, setItensDetalhados] = useColapsavel('itens-detalhados', false);
   const [pesoAtivo, setPesoAtivo] = useState(true);
   const touchX = useRef(0);
 
@@ -612,7 +613,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         </div>
         <AvatarMenu
           itensDetalhados={itensDetalhados}
-          onToggleItensDetalhados={() => setItensDetalhados((v) => !v)}
+          onToggleItensDetalhados={() => setItensDetalhados(!itensDetalhados)}
           pesoAtivo={pesoAtivo}
           onTogglePeso={() => setPesoAtivo((v) => !v)}
         />
