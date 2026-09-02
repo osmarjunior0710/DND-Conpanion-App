@@ -7,6 +7,14 @@ describe('magiasGratisDasInvocacoes', () => {
     expect(resultado).toHaveLength(1);
     expect(resultado[0].magia.nome).toBe('Armadura Arcana');
     expect(resultado[0].recarga).toBe('ilimitado');
+    expect(resultado[0].pvTemporarioConcedido).toBeNull();
+  });
+
+  it('Vigor Ínfero concede PV Temporário (valor máximo do dado, sem rolar)', () => {
+    const resultado = magiasGratisDasInvocacoes(['vigor-infero']);
+    expect(resultado).toHaveLength(1);
+    expect(resultado[0].magia.nome).toBe('Vitalidade Vazia');
+    expect(resultado[0].pvTemporarioConcedido).toBe(12);
   });
 
   it('deriva a magia concedida por uma invocação "limitada" (descansoLongo)', () => {

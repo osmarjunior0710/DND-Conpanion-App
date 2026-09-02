@@ -19,6 +19,9 @@ export type EstadoRecurso = 'disponivel' | 'usada';
 interface CombatTabProps {
   pvAtual: number;
   pvMax: number;
+  /** PV Temporário atual (ex: Vigor Ínfero/Vitalidade Vazia) — absorve
+   * dano antes do PV normal. 0 = nenhum, linha some. */
+  pvTemporario: number;
   onAlterarPv: (delta: number) => void;
   turnState: Record<RecursoTurno, EstadoRecurso>;
   onMarcarUsado: (categoria: RecursoTurno) => void;
@@ -72,6 +75,7 @@ const LABELS: Record<RecursoTurno, { icone: string; nome: string }> = {
 export default function CombatTab({
   pvAtual,
   pvMax,
+  pvTemporario,
   onAlterarPv,
   turnState,
   onMarcarUsado,
@@ -317,7 +321,14 @@ export default function CombatTab({
 
       <div className={`box-solid ${styles.hpLive}`}>
         <div className={styles.hpHeader}>
-          <div className="label">Pontos de Vida</div>
+          <div className="label">
+            Pontos de Vida
+            {pvTemporario > 0 && (
+              <span className="tag" style={{ marginLeft: 6 }}>
+                +{pvTemporario} temp
+              </span>
+            )}
+          </div>
           <div className={styles.hpNum}>
             {pvAtual} / {pvMax}
           </div>

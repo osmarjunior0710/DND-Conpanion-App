@@ -49,7 +49,7 @@ interface MagiasTabProps {
   /** IDs de Invocações cuja magia de graça `'descansoLongo'` já foi
    * usada desde o último Descanso Longo (travadas até lá). */
   magiasGratisGastas: string[];
-  onUsarMagiaGratis: (invocacaoId: string, recarga: 'ilimitado' | 'descansoLongo') => void;
+  onUsarMagiaGratis: (item: MagiaGratisDeInvocacao) => void;
   faltamTruques: number;
   faltamMagiasPreparadas: number;
   onCompletarTruques: () => void;
@@ -109,7 +109,7 @@ export default function MagiasTab({
   function usarMagiaGratis(item: MagiaGratisDeInvocacao) {
     const jaGasta = item.recarga === 'descansoLongo' && magiasGratisGastas.includes(item.invocacaoId);
     if (jaGasta) return;
-    onUsarMagiaGratis(item.invocacaoId, item.recarga);
+    onUsarMagiaGratis(item);
     rolarAtaqueSeForMagiaDeAtaque(item.magia);
   }
 
@@ -187,10 +187,13 @@ export default function MagiasTab({
               <div key={item.invocacaoId} className={styles.spellRow}>
                 <div className={styles.spellName}>
                   <MagiaComDescricao magia={item.magia} /> {iconesMagia(item.magia)}
-                  <div style={{ color: 'var(--text-faint)', fontSize: 11 }}>{item.invocacaoNome}</div>
+                  <div style={{ color: 'var(--text-faint)', fontSize: 11 }}>
+                    {item.invocacaoNome}
+                    {item.pvTemporarioConcedido !== null && ` · +${item.pvTemporarioConcedido} PV Temp`}
+                  </div>
                 </div>
                 <span className={styles.spellCirculo}>{item.magia.circulo}º círculo</span>
-                {item.recarga === 'ilimitado' ? (
+                {item.recarga === 'ilimitado' && item.pvTemporarioConcedido === null ? (
                   <span className="tag">sem custo</span>
                 ) : (
                   <div

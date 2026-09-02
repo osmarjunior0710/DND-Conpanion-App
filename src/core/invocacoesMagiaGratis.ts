@@ -9,6 +9,10 @@ export interface MagiaGratisDeInvocacao {
    * só 1x, trava até o próximo Descanso Longo (ver `magiasGratisGastas`
    * em `FichaShell.tsx`). */
   recarga: 'ilimitado' | 'descansoLongo';
+  /** Só Vigor Ínfero: PV Temporário concedido a cada uso (pega o maior
+   * valor entre o atual e este, não soma — ver `ganharPvTemporario`).
+   * `null` nas outras. */
+  pvTemporarioConcedido: number | null;
 }
 
 /** Deriva as magias concedidas "de graça" (sem gastar Espaço de Pacto)
@@ -28,6 +32,7 @@ export function magiasGratisDasInvocacoes(invocacoesAtuais: string[]): MagiaGrat
       invocacaoNome: invocacao.nome,
       magia,
       recarga: invocacao.magiaGratisConcedida.recarga,
+      pvTemporarioConcedido: invocacao.pvTemporarioConcedido,
     });
   }
   return resultado;

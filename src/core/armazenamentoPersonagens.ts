@@ -23,6 +23,10 @@ export interface PersonagemSalvo {
    * Luta trocado, Maestria em Arma trocada, usos gastos de recurso)
    * só existia em estado do React, nunca em disco. */
   pvMax?: number;
+  /** PV Temporário atual (ex: concedido por Vigor Ínfero/Vitalidade
+   * Vazia) — absorve dano antes do PV normal, nunca soma com cura.
+   * Ausente/0 = sem PV Temporário. Ver `core/pvTemporario.ts`. */
+  pvTemporarioAtual?: number;
   /** Subclasse escolhida — versão placeholder (ver PENDENCIAS.md
    * "Escolha de subclasse — versão placeholder"): só o nome, usado
    * hoje pra trocar o ícone do personagem na Lista. Nenhuma

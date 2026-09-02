@@ -538,3 +538,33 @@ Mesmo princípio já usado no Livro das Sombras/Descobertas Mágicas.
 ainda não tem — por isso ficou de fora do IM.1, vira IM.2 sozinha.
 
 **Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.1.
+
+## Bruxo — IM.2 feito: PV Temporário (motor novo, primeiro uso — Vigor Ínfero)
+
+**PV Temporário não é "mais um número igual ao PV normal"** — regra
+real do Glossário: dano desconta primeiro do PV Temporário, só o
+excedente desconta do PV normal; cura nunca soma em PV Temporário
+(só no PV normal); ganhar PV Temporário de novo NÃO soma com o que já
+tem, fica o maior dos dois. `core/pvTemporario.ts` isola essa lógica em
+2 funções puras testadas (`aplicarAlteracaoPv`, `ganharPvTemporario`) —
+`FichaShell.tsx`'s `alterarPv()` (já usado pelos botões -5/-1/+1/+5 do
+Combat) passou a rotear por ali, sem precisar de nenhuma mudança na UI
+dos botões em si.
+
+**Nem toda invocação "avontade" (ilimitada) dispensa botão de Usar.**
+O padrão do IM.1 (ilimitado sem efeito rastreável = vira tag "sem
+custo", sem botão) não vale pra Vigor Ínfero — ela É ilimitada, mas
+cada uso pode mudar o PV Temporário de verdade (se já gastou, usar de
+novo restaura pro valor cheio). Por isso ganhou campo próprio
+(`pvTemporarioConcedido: number | null` em `invocacoesMisticas.ts`,
+propagado por `MagiaGratisDeInvocacao`) que força o botão real mesmo
+sendo `recarga: 'ilimitado'`. Lição pras próximas invocações
+"avontade": perguntar "o uso muda algum estado rastreado?" antes de
+assumir que é so tag — não é só olhar pra `recarga`.
+
+**Valor fixo, não dado geral:** "PV Temporários = valor máximo do dado
+(sem rolar)" de Vitalidade Vazia (2d4+4) virou o número `12` fixo,
+comentado com a fonte — não um motor de "maior valor de uma expressão
+de dado" (não existe ainda, só serve pra esse caso único hoje).
+
+**Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.2.

@@ -40,7 +40,8 @@ import { alternarSintonizacao } from '../../core/sintonizacao';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
-import { magiasGratisDasInvocacoes } from '../../core/invocacoesMagiaGratis';
+import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../core/invocacoesMagiaGratis';
+import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
 import {
   espacosDeMagiaAtivos,
   ehMagiaDeReacao,
@@ -130,6 +131,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     estiloDeLuta: personagemSalvo.estiloDeLutaAtual ?? selecao.estiloDeLutaEscolhido,
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
+  const [pvTemporario, setPvTemporario] = useState(personagemSalvo.pvTemporarioAtual ?? 0);
   const [maestriaArma, setMaestriaArma] = useState<string[]>(personagemSalvo.maestriaArmaAtual ?? selecao.maestriaArmaEscolhida);
   const [truquesAtuais, setTruquesAtuais] = useState<string[]>(personagemSalvo.truquesAtual ?? selecao.truquesEscolhidos);
   const [magiasPreparadasAtuais, setMagiasPreparadasAtuais] = useState<string[]>(
@@ -288,6 +290,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       nivel: personagem.nivel,
       pvAtual,
       pvMax: personagem.pvMax,
+      pvTemporarioAtual: pvTemporario,
       subclasseAtual: personagem.subclasse,
       estiloDeLutaAtual: personagem.estiloDeLuta,
       maestriaArmaAtual: maestriaArma,
@@ -319,6 +322,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagem.subclasse,
     personagem.estiloDeLuta,
     pvAtual,
+    pvTemporario,
     maestriaArma,
     folegoGasto,
     indomavelGasto,
@@ -346,7 +350,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   }
 
   function alterarPv(delta: number) {
-    setPvAtual((v) => Math.max(0, Math.min(personagem.pvMax, v + delta)));
+    const resultado = aplicarAlteracaoPv(pvAtual, personagem.pvMax, pvTemporario, delta);
+    setPvAtual(resultado.pvAtual);
+    setPvTemporario(resultado.pvTemporario);
   }
 
   function marcarUsado(categoria: RecursoTurno) {
@@ -443,9 +449,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     );
   }
 
-  function usarMagiaGratisDeInvocacao(invocacaoId: string, recarga: 'ilimitado' | 'descansoLongo') {
-    if (recarga === 'descansoLongo' && !magiasGratisGastas.includes(invocacaoId)) {
-      setMagiasGratisGastas((prev) => [...prev, invocacaoId]);
+  function usarMagiaGratisDeInvocacao(item: MagiaGratisDeInvocacao) {
+    if (item.recarga === 'descansoLongo' && !magiasGratisGastas.includes(item.invocacaoId)) {
+      setMagiasGratisGastas((prev) => [...prev, item.invocacaoId]);
+    }
+    if (item.pvTemporarioConcedido !== null) {
+      setPvTemporario((atual) => ganharPvTemporario(atual, item.pvTemporarioConcedido!));
     }
   }
 
@@ -730,6 +739,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
           <CombatTab
             pvAtual={pvAtual}
             pvMax={personagem.pvMax}
+            pvTemporario={pvTemporario}
             onAlterarPv={alterarPv}
             turnState={turnState}
             onMarcarUsado={marcarUsado}

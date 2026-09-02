@@ -51,9 +51,19 @@ quando a entrada for escrita), ordem aprovada pelo Osmar:
       Invocações" na aba Magias. Confirmado via Playwright: as 3
       aparecem, `usar` funciona, Respirar na Água trava até Descanso
       Longo (ilimitadas não travam).
-- [ ] **IM.2 — Vigor Ínfero.** Quase igual ao IM.1, mas concede PV
-      temporário — Ficha não tem campo de PV temporário ainda, precisa
-      criar antes.
+- [x] **IM.2 — Vigor Ínfero.** Novo `core/pvTemporario.ts` (testado) —
+      `aplicarAlteracaoPv` (dano desconta do PV Temporário primeiro, só
+      o excedente desconta do PV normal; cura nunca soma em PV
+      Temporário) + `ganharPvTemporario` (pega o maior valor, não
+      soma). Novo campo `pvTemporarioAtual` persistido, badge "+N temp"
+      na aba Combate ao lado de "Pontos de Vida". Vigor Ínfero ganhou
+      campo próprio `pvTemporarioConcedido` (12 = 2d4+4 máximo, sem
+      rolar) — mantém botão "Usar" de verdade mesmo sendo `avontade`
+      (ilimitada), diferente das outras 9 do IM.1, porque cada uso
+      pode atualizar o PV Temporário. Confirmado via Playwright: 12 PV
+      Temp concedidos, -5 de dano vira 7 temp (PV normal intacto),
+      +10 de dano zera o temp e vaza 3 pro PV normal (30→27) — conta
+      bate exatamente com a regra.
 - [ ] **IM.3 — Lança Mística** (parte calculável do Grupo B: "escolha 1
       truque de dano"). Explosão Agonizante/Repulsiva ficam pra depois
       do motor de dano de magia existir (pendência separada).
