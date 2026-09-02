@@ -46,7 +46,21 @@ Luta troca a cada level-up, não é fixo"): confirmar direto no
 PDF/planilha, nunca copiar de memória ou de um resumo externo sem
 checar.
 
+**Antes de codar a 3ª classe em diante, auditar acoplamento implícito
+deixado pela(s) classe(s) anterior(es)** — confirmado 2x seguidas: a
+2ª classe (Bardo) expôs 3 lugares que assumiam "é sempre Guerreiro"
+sem checar o recurso real (ver "Bardo — decisões" abaixo), e o
+postmortem Guerreiro+Bardo (2026-09) achou pelo menos 1 caso que só
+vai quebrar na 3ª (`core/ataque.ts` soma Bônus de Proficiência em
+qualquer arma sem checar proficiência real — invisível com Guerreiro
+E Bardo, porque as duas têm acesso amplo a arma; Bruxo, só
+proficiente em arma Simples, é a 1ª que vai expor isso — ver
+`PENDENCIAS.md`). Padrão: buscar por comparação hardcoded de nome de
+classe ou suposição "toda classe tem X" antes de importar a classe
+seguinte, não só quando o bug aparecer.
+
 **Data/origem:** 2026-08, plano do Guerreiro + repetido no Bardo.
+Postmortem Guerreiro+Bardo, 2026-09, antes do Bruxo.
 
 ## Motor de Level Up genérico (`core/levelUp.ts`)
 

@@ -14,21 +14,6 @@
 
 ---
 
-## Postmortem de Bardo + Guerreiro (fazer antes de começar Bruxo)
-
-**O que é:** antes de começar a próxima classe (Bruxo), revisar a
-implementação total de Bardo e Guerreiro de ponta a ponta — o que
-funcionou bem, o que não funcionou, e como otimizar o processo de
-implementar classe daqui pra frente (essas duas foram as classes-piloto,
-com processos um pouco diferentes entre si).
-
-**Por que foi adiado:** pedido do Osmar pra fazer essa revisão só
-quando for de fato começar Bruxo, não agora no meio de uma entrega
-pontual (Origem Nobre).
-
-**O que falta pra resolver:** ainda não feito. Fazer antes de propor o
-plano de implementação do Bruxo.
-
 ## Plano de Equipamento — COMPLETO (E1-E4 feitas)
 
 **O que é:** plano de 4 entregas nascido de uma revisão geral pedida
@@ -105,13 +90,16 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   existir no Combat (vale também pra qualquer magia/talento que peça
   salvaguarda do alvo, não é exclusivo do Ataque Desarmado).
 - **Proficiência com arma equipada — assumida sempre verdadeira, só
-  Guerreiro existe hoje.** `core/ataque.ts` soma o Bônus de
+  Guerreiro e Bardo existem hoje.** `core/ataque.ts` soma o Bônus de
   Proficiência em qualquer ataque com arma, sem checar se o
   personagem é realmente proficiente com aquela arma específica —
-  hoje inofensivo porque a única classe (Guerreiro) é proficiente em
-  toda arma Simples/Marcial. Quando uma 2ª classe com proficiência de
-  arma restrita for importada, essa checagem precisa entrar antes de
-  somar o bônus.
+  hoje inofensivo porque Guerreiro é proficiente em toda arma
+  Simples/Marcial e Bardo também (armas Simples + espada longa,
+  rapieira, sabre e besta de mão). **Isso vai quebrar de verdade no
+  Bruxo** (próxima classe, ver postmortem em `DECISOES-CLASSES.md`) —
+  Bruxo só é proficiente em arma Simples, é a 1ª classe com
+  proficiência de arma restrita de verdade. Essa checagem precisa
+  entrar em `core/ataque.ts` ANTES de importar o Bruxo, não depois.
 - ~~**E4 — Sintonização (3 itens simultâneos).**~~ **Completa**
   (E4.1 catálogo + E4.2 UI, ver DECISOES-FICHA.md). Com isso o Plano
   de Equipamento inteiro (E1-E4) está feito. **Segue fora de
