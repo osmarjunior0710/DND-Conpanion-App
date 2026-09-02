@@ -133,7 +133,7 @@ export default function ReacaoPanelContent({
           {magiasReacao.map((m) => (
             <div key={m.id} className={styles.spellMiniRow} onClick={() => conjurarMagia(m)}>
               <span>
-                <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                <MagiaComDescricao magia={m} /> {iconesMagia(m)}
               </span>
               <span className="tag">{m.circulo === 0 ? 'Truque' : `${m.circulo}º círculo`}</span>
             </div>

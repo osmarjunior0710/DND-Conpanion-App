@@ -758,7 +758,7 @@ export default function LevelUpShell({
                     >
                       <div className={`check-box ${marcado ? 'checked' : ''}`} />
                       <span className="check-label">
-                        <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                        <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                         {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
                           ({m.escola}
                           {removendo ? ' · 🔻 será removido' : jaTinha ? ' · já tinha' : ''})
@@ -837,7 +837,7 @@ export default function LevelUpShell({
                     >
                       <div className={`check-box ${marcado ? 'checked' : ''}`} />
                       <span className="check-label">
-                        <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                        <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                         {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
                           ({m.circulo}º círculo
                           {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''}
@@ -873,7 +873,7 @@ export default function LevelUpShell({
                     >
                       <div className={`check-box ${marcado ? 'checked' : ''}`} />
                       <span className="check-label">
-                        <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                        <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                         {' '}<span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
                           ({m.circulo === 0 ? m.escola : `${m.circulo}º círculo`}
                           {removendo ? ' · 🔻 será removida' : jaTinha ? ' · já tinha' : ''})

@@ -265,7 +265,7 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                 <div key={m.id} className="check-row" onClick={() => toggleTruque(m.nome)}>
                   <div className={`check-box ${selection.truquesEscolhidos.includes(m.nome) ? 'checked' : ''}`} />
                   <span className="check-label">
-                    <MagiaComDescricao magia={m} rotulo={m.nome} variante="icone" />
+                    <MagiaComDescricao magia={m} rotulo={m.nome} />
                     {' '}{iconesMagia(m)}
                   </span>
                 </div>
@@ -286,7 +286,7 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                 <div key={m.id} className="check-row" onClick={() => toggleMagiaPreparada(m.nome)}>
                   <div className={`check-box ${selection.magiasPreparadasEscolhidas.includes(m.nome) ? 'checked' : ''}`} />
                   <span className="check-label">
-                    <MagiaComDescricao magia={m} rotulo={m.nome} variante="icone" />
+                    <MagiaComDescricao magia={m} rotulo={m.nome} />
                     {' '}{iconesMagia(m)}
                   </span>
                 </div>

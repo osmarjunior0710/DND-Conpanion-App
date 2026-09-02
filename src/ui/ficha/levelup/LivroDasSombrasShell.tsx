@@ -83,7 +83,7 @@ export default function LivroDasSombrasShell({
           <div key={m.id} className="check-row" onClick={() => toggleTruque(m.nome)}>
             <div className={`check-box ${truquesEscolhidos.includes(m.nome) ? 'checked' : ''}`} />
             <span className="check-label">
-              <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}{' '}
+              <MagiaComDescricao magia={m} /> {iconesMagia(m)}{' '}
               <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>({m.classes.join(', ')})</span>
             </span>
           </div>
@@ -96,7 +96,7 @@ export default function LivroDasSombrasShell({
           <div key={m.id} className="check-row" onClick={() => toggleMagia(m.nome)}>
             <div className={`check-box ${magiasEscolhidas.includes(m.nome) ? 'checked' : ''}`} />
             <span className="check-label">
-              <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}{' '}
+              <MagiaComDescricao magia={m} /> {iconesMagia(m)}{' '}
               <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>({m.classes.join(', ')})</span>
             </span>
           </div>

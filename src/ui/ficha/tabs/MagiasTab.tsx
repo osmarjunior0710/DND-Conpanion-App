@@ -186,16 +186,20 @@ export default function MagiasTab({
             return (
               <div key={item.invocacaoId} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={item.magia} variante="icone" /> {iconesMagia(item.magia)}
+                  <MagiaComDescricao magia={item.magia} /> {iconesMagia(item.magia)}
                   <div style={{ color: 'var(--text-faint)', fontSize: 11 }}>{item.invocacaoNome}</div>
                 </div>
                 <span className={styles.spellCirculo}>{item.magia.circulo}º círculo</span>
-                <div
-                  className={`${styles.usarBtn} ${jaGasta ? styles.usarBtnDesabilitado : ''}`}
-                  onClick={() => usarMagiaGratis(item)}
-                >
-                  {jaGasta ? 'Usada' : 'Usar de graça'}
-                </div>
+                {item.recarga === 'ilimitado' ? (
+                  <span className="tag">sem custo</span>
+                ) : (
+                  <div
+                    className={`${styles.usarBtn} ${jaGasta ? styles.usarBtnDesabilitado : ''}`}
+                    onClick={() => usarMagiaGratis(item)}
+                  >
+                    {jaGasta ? 'Usada' : 'Usar de graça'}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -215,7 +219,7 @@ export default function MagiasTab({
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                  <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                 </div>
                 <span className={styles.spellCirculo}>Truque</span>
                 <div
@@ -242,7 +246,7 @@ export default function MagiasTab({
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                  <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                 </div>
                 <span className={styles.spellCirculo}>{m.circulo === 0 ? 'Truque' : `${m.circulo}º círculo`}</span>
                 <div
@@ -279,7 +283,7 @@ export default function MagiasTab({
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                  <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                 </div>
                 <span className={styles.spellCirculo}>{m.circulo === 0 ? 'Truque' : `${m.circulo}º círculo`}</span>
                 <div
@@ -308,7 +312,7 @@ export default function MagiasTab({
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
-                  <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                  <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                 </div>
                 <span className={styles.spellCirculo}>{m.circulo}º círculo</span>
                 <div

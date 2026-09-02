@@ -941,3 +941,49 @@ primeiro rolado.
 
 **Data/origem:** 2026-09.
 
+
+## Pill padrão pra toda menção a magia/truque na tela (2026-09)
+
+**Achado do Osmar:** cada tela mostrava magia/truque de um jeito
+diferente — algumas com texto sublinhado sem ícone, outras com texto
+solto + ícone ⓘ separado do lado, sem consistência entre wizard, Level
+Up, Ficha e Combat. "Tá virando uma loucura a inconsistência."
+
+**Decisão:** existe agora **1 formatação só** pra qualquer nome de
+magia/truque clicável em qualquer tela — pill com fundo lilás claro
+(`var(--accent-dim)`, mesmo tom já usado em cards selecionados) com o
+ⓘ **dentro** da própria pill, nunca separado. Implementado em
+`MagiaComDescricao.tsx`/`.module.css` (`variante` removida — só existe
+1 variante agora, então nem faz mais sentido a prop existir; todos os
+~19 pontos de chamada limpos). Como todo lugar do app já usava esse
+componente compartilhado, a mudança propagou sozinha pra wizard/Level
+Up/Ficha/Combat sem precisar tocar em cada tela individualmente —
+prova de que reaproveitar o componente certo (regra 6.1 do CLAUDE.md)
+compensa exatamente nessa hora.
+
+**Regra permanente:** toda tela nova que mostrar nome de magia/truque
+usa `<MagiaComDescricao magia={m} />` — nunca inventar um jeito
+próprio de mostrar/formatar magia numa tela nova.
+
+**Data/origem:** 2026-09.
+
+## "Usar de graça" só existe quando algo é rastreado por uso
+
+**Achado do Osmar:** o botão "Usar de graça" (Invocações Místicas Fase
+2 — magia concedida sem gastar Espaço de Pacto) não fazia sentido pra
+invocações `ilimitado` (ex: Salto Sobrenatural) — clicar não muda
+nada, não há contador, não há efeito rastreável (diferente de uma cura
+real, onde cada clique teria efeito). Botão clicável sem efeito nenhum
+confunde o jogador (parece que faz algo).
+
+**Decisão:** quando não há NADA contado por uso (`recarga: 'ilimitado'`),
+não existe botão — vira uma tag muda `<span className="tag">sem
+custo</span>`, mesma formatação já usada pra "já possui"
+(`TalentoOrigemEscolhasStep.tsx`) — reaproveito direto da classe global
+`.tag`, não um componente novo. Só quando existe estado real por trás
+(`recarga: 'descansoLongo'`, rastreado em `magiasGratisGastas`) que o
+botão "Usar de graça"/"Usada" continua existindo. Regra generalizável:
+**todo botão de ação precisa ter algo rastreável por trás — senão vira
+tag informativa, não botão.**
+
+**Data/origem:** 2026-09.

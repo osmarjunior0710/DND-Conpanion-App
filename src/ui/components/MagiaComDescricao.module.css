@@ -1,22 +1,23 @@
-.termo {
-  cursor: pointer;
-  text-decoration: underline dashed;
-  text-underline-offset: 2px;
-  text-decoration-color: var(--text-faint);
-}
-
-.icone {
+/* Pill padrão pra qualquer menção a magia/truque na tela (2026-09) —
+ * fundo lilás claro (mesmo `--accent-dim` já usado em cards
+ * selecionados) só pra marcar visualmente "isso é diferente, toque pra
+ * saber mais", com o ⓘ sempre dentro da própria pill. */
+.pill {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 3px;
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  background: var(--accent-dim);
   cursor: pointer;
+  line-height: 1.5;
+}
+
+.pillIcone {
+  display: inline-flex;
   color: var(--accent);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
-  padding: var(--space-2);
-  margin: calc(var(--space-2) * -1);
-  min-width: 32px;
-  min-height: 32px;
 }
 
 .overlay {

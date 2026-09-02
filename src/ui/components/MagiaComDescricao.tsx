@@ -7,8 +7,6 @@ interface MagiaComDescricaoProps {
   magia: Magia;
   /** texto a mostrar (ex: nome já formatado) — se omitido, usa `magia.nome` */
   rotulo?: string;
-  /** ver ItemComDescricao — mesmo padrão de gatilho */
-  variante?: 'sublinhado' | 'icone';
 }
 
 function tipoMagia(circulo: number): string {
@@ -18,8 +16,13 @@ function tipoMagia(circulo: number): string {
 /** Card padronizado pra qualquer magia/truque — sempre os mesmos campos,
  * na mesma ordem, com toggle Desc. curta/longa (padrão da versão anterior
  * do app). Ainda só usado pra Magias; PENDENCIAS.md tem a nota de
- * replicar esse padrão pra Itens/Armas/Armaduras/Itens Mágicos depois. */
-export default function MagiaComDescricao({ magia, rotulo, variante = 'sublinhado' }: MagiaComDescricaoProps) {
+ * replicar esse padrão pra Itens/Armas/Armaduras/Itens Mágicos depois.
+ * Padrão de formatação único (2026-09, achado do Osmar): toda menção a
+ * magia/truque em qualquer tela vira essa MESMA pill (fundo lilás claro
+ * + ⓘ dentro dela) — antes cada tela tinha um jeito diferente
+ * (sublinhado sem ícone, texto solto + ícone separado). Não deixar
+ * nenhuma tela nova inventar formatação própria. */
+export default function MagiaComDescricao({ magia, rotulo }: MagiaComDescricaoProps) {
   const [aberto, setAberto] = useState(false);
   const [descLonga, setDescLonga] = useState(false);
   useLockBodyScroll(aberto);
@@ -36,18 +39,10 @@ export default function MagiaComDescricao({ magia, rotulo, variante = 'sublinhad
 
   return (
     <>
-      {variante === 'icone' ? (
-        <>
-          {rotulo ?? magia.nome}
-          <span className={styles.icone} onClick={abrir}>
-            ⓘ
-          </span>
-        </>
-      ) : (
-        <span className={styles.termo} onClick={abrir}>
-          {rotulo ?? magia.nome}
-        </span>
-      )}
+      <span className={styles.pill} onClick={abrir}>
+        {rotulo ?? magia.nome}
+        <span className={styles.pillIcone}>ⓘ</span>
+      </span>
       {aberto && (
         <div
           className={styles.overlay}

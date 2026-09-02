@@ -71,7 +71,7 @@ export default function SelecionarMagiaShell({
                   onClick={() => (truque ? onEscolherTruque(m) : onEscolherMagia(m, circulosDisponiveis))}
                 >
                   <span className="check-label">
-                    <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}
+                    <MagiaComDescricao magia={m} /> {iconesMagia(m)}
                     {!disponivel && (
                       <span style={{ color: 'var(--text-faint)', fontSize: 11 }}> · sem espaço disponível</span>
                     )}

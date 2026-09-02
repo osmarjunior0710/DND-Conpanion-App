@@ -38,7 +38,7 @@ export default function TextoComMagias({ texto, nomesMagias }: TextoComMagiasPro
         if (!parte.magia) return <span key={i}>{parte.texto}</span>;
         const magia = magias.find((m) => m.nome === parte.texto);
         if (!magia) return <span key={i}>{parte.texto}</span>;
-        return <MagiaComDescricao key={i} magia={magia} variante="icone" />;
+        return <MagiaComDescricao key={i} magia={magia} />;
       })}
     </>
   );

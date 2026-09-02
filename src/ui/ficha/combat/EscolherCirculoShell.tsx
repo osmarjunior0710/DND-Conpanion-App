@@ -43,7 +43,7 @@ export default function EscolherCirculoShell({
       <div className={styles.body}>
         <div className="opt-card" style={{ cursor: 'default', marginBottom: 12 }}>
           <div className="opt-card-name">
-            <MagiaComDescricao magia={magia} variante="icone" />
+            <MagiaComDescricao magia={magia} />
           </div>
           {magia.descricaoCurta && <div className="opt-card-desc">{magia.descricaoCurta}</div>}
         </div>
