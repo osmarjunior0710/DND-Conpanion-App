@@ -70,6 +70,7 @@ import MagiasTab from './tabs/MagiasTab';
 import CombatTab, { type EstadoRecurso, type RecursoTurno } from './tabs/CombatTab';
 import LevelUpShell, { type PersonagemNivel } from './levelup/LevelUpShell';
 import CompletarMagiasShell from './levelup/CompletarMagiasShell';
+import LivroDasSombrasShell from './levelup/LivroDasSombrasShell';
 
 type TabName = 'atributos' | 'perfil' | 'mochila' | 'magias' | 'combat';
 
@@ -147,6 +148,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [magiasDescobertasMagicasAtuais, setMagiasDescobertasMagicasAtuais] = useState<string[]>(
     personagemSalvo.magiasDescobertasMagicasAtual ?? [],
   );
+  const [livroDasSombrasAtuais, setLivroDasSombrasAtuais] = useState<string[]>(
+    personagemSalvo.livroDasSombrasAtual ?? [...selecao.livroDasSombrasTruques, ...selecao.livroDasSombrasMagias],
+  );
   const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
   const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
@@ -172,6 +176,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   );
   const [levelUpAberto, setLevelUpAberto] = useState(false);
   const [completarAberto, setCompletarAberto] = useState<'truques' | 'magiasPreparadas' | null>(null);
+  const [livroDasSombrasAberto, setLivroDasSombrasAberto] = useState(false);
   const [levelUpHpModo, setLevelUpHpModo] = useState<'media' | 'rolar' | null>(personagemSalvo.levelUpHpModo ?? null);
   const [levelUpHpRolado, setLevelUpHpRolado] = useState<number | null>(personagemSalvo.levelUpHpRolado ?? null);
   const [itensDetalhados, setItensDetalhados] = useColapsavel('itens-detalhados', false);
@@ -211,13 +216,14 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const truques = truquesDoPersonagem(truquesAtuais);
   const magiasPreparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
   const magiasDescobertasMagicas = magiasPreparadasDoPersonagem(magiasDescobertasMagicasAtuais);
+  const livroDasSombras = magiasPreparadasDoPersonagem(livroDasSombrasAtuais);
   const faltamTruques = deficitTruques(classe, personagem.nivel, truquesAtuais);
   const faltamMagiasPreparadas = deficitMagiasPreparadas(classe, personagem.nivel, magiasPreparadasAtuais);
-  // Descobertas Mágicas conta como magia de Bardo (texto da
-  // característica) — entra no que dá pra conjurar em combate, mas é
-  // um array PRÓPRIO separado, só unido aqui pra montar a lista de
-  // "o que aparece nos painéis de Ação/Reação".
-  const magiasConjuraveis = [...magiasPreparadas, ...magiasDescobertasMagicas];
+  // Descobertas Mágicas/Livro das Sombras contam como magia sempre
+  // preparada (fora do limite normal) — entram no que dá pra conjurar
+  // em combate, mas são arrays PRÓPRIOS separados, só unidos aqui pra
+  // montar a lista de "o que aparece nos painéis de Ação/Reação".
+  const magiasConjuraveis = [...magiasPreparadas, ...magiasDescobertasMagicas, ...livroDasSombras];
   const magiasPreparadasReacao = magiasConjuraveis.filter(ehMagiaDeReacao);
   const magiasPreparadasAcao = magiasConjuraveis.filter((m) => !ehMagiaDeReacao(m));
   const modAcertoConjuracao = calcularModAcertoConjuracao(selecao, classe, personagem.nivel);
@@ -293,6 +299,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       periciasEspecialistaAtual: periciasEspecialistaAtuais,
       periciasSubclasseBonusAtual: periciasSubclasseBonusAtuais,
       magiasDescobertasMagicasAtual: magiasDescobertasMagicasAtuais,
+      livroDasSombrasAtual: livroDasSombrasAtuais,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
       itensMochilaAtual: itensMochila,
@@ -319,6 +326,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     periciasEspecialistaAtuais,
     periciasSubclasseBonusAtuais,
     magiasDescobertasMagicasAtuais,
+    livroDasSombrasAtuais,
     talentosGeraisAtuais,
     talentosFavoritos,
     itensMochila,
@@ -597,6 +605,21 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     );
   }
 
+  if (livroDasSombrasAberto) {
+    return (
+      <LivroDasSombrasShell
+        atuais={livroDasSombrasAtuais}
+        truquesConhecidos={truquesAtuais}
+        magiasPreparadasConhecidas={magiasPreparadasAtuais}
+        onFechar={() => setLivroDasSombrasAberto(false)}
+        onConfirmar={(novaLista) => {
+          setLivroDasSombrasAtuais(novaLista);
+          setLivroDasSombrasAberto(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className={styles.screen}>
       <div className={styles.header}>
@@ -683,6 +706,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             truquesAtuais={truquesAtuais}
             magiasPreparadasAtuais={magiasPreparadasAtuais}
             magiasDescobertasMagicasAtuais={magiasDescobertasMagicasAtuais}
+            livroDasSombrasAtuais={livroDasSombrasAtuais}
+            temPactoDoTomo={invocacoesMisticasAtuais.includes('pacto-do-tomo')}
+            onReconjurarLivro={() => setLivroDasSombrasAberto(true)}
             faltamTruques={faltamTruques}
             faltamMagiasPreparadas={faltamMagiasPreparadas}
             onCompletarTruques={() => setCompletarAberto('truques')}

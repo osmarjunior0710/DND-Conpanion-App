@@ -63,21 +63,15 @@ que o grupo do Osmar vai jogar primeiro). Ficam de fora por enquanto:
 - **Pacto do Tomo — maior que uma invocação normal, é uma escolha
   estrutural própria, não só falta de bônus.** Achado do Osmar
   (2026-09): escolher Pacto do Tomo hoje não dá acesso a nenhuma
-  escolha de conteúdo — pela regra real, o jogador precisa escolher 3
-  truques + 2 magias de 1º círculo com marcador Ritual (de qualquer
-  classe) pro Livro das Sombras, e essa escolha é **re-feita a cada
-  Descanso Curto ou Longo** (não é fixa por invocação, nem trocada só
-  em level-up). Precisa de: (1) um passo extra no wizard quando o
-  jogador escolhe Pacto do Tomo na criação, pra já montar o 1º livro;
-  (2) um botão recorrente na Ficha (provavelmente perto de Descanso
-  Curto/Longo) pra "reconjurar o livro" e trocar as 5 escolhas quando
-  quiser. Enquanto o livro existe, os truques/rituais escolhidos
-  funcionam como magias de Bruxo sempre preparadas (não contam no
-  limite normal de Magias Preparadas). Maior que uma entrada normal de
-  Fase 2 — cogitar tratar como entrega própria, antes do resto das 28,
-  já que sem isso a invocação fica inútil/incompleta (diferente das
-  outras, que só ficam sem bônus mecânico mas continuam "escolhíveis
-  de verdade").
+  escolha de conteúdo. Regra completa em `DND-Regras.md` ("Bruxo —
+  Invocação Mística 'Pacto do Tomo'"). Precisa de: (1) um passo extra
+  no wizard quando o jogador escolhe Pacto do Tomo na criação, pra já
+  montar o 1º Livro das Sombras; (2) um botão recorrente na Ficha
+  (perto de Descanso Curto/Longo) pra "reconjurar o livro" e re-fazer
+  a escolha das 5. Maior que uma entrada normal de Fase 2 — tratar como
+  entrega própria, antes do resto das 28, já que sem isso a invocação
+  fica inútil/incompleta (diferente das outras, que só ficam sem bônus
+  mecânico mas continuam "escolhíveis de verdade").
 - **Características nomeadas do Bruxo sem mecânica ainda** (texto já
   importado em B1, "wiring" de verdade fica pra depois do B6, mesmo
   tratamento do Bardo — grosso primeiro, especialização depois):

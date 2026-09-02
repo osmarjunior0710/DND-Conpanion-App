@@ -26,6 +26,7 @@ import ClasseEscolhasStep from './steps/ClasseEscolhasStep';
 import OrigemStep from './steps/OrigemStep';
 import OrigemEscolhasStep from './steps/OrigemEscolhasStep';
 import TalentoOrigemEscolhasStep from './steps/TalentoOrigemEscolhasStep';
+import LivroDasSombrasStep from './steps/LivroDasSombrasStep';
 import EspecieStep from './steps/EspecieStep';
 import EspecieEscolhasStep from './steps/EspecieEscolhasStep';
 import AtributosStep from './steps/AtributosStep';
@@ -221,6 +222,13 @@ export default function WizardShell() {
       },
       mensagemInvalida: 'Complete todas as escolhas da classe antes de avançar.',
       randomize: randomizarEscolhasClasse,
+    },
+    {
+      name: '1c. Livro das Sombras',
+      render: (p) => <LivroDasSombrasStep {...p} />,
+      condicao: (s) => s.invocacoesMisticasEscolhidas.includes('pacto-do-tomo'),
+      isValid: (s) => s.livroDasSombrasTruques.length === 3 && s.livroDasSombrasMagias.length === 2,
+      mensagemInvalida: 'Escolha 3 truques e 2 magias rituais de 1º círculo pro Livro das Sombras.',
     },
     {
       name: '2. Origem',

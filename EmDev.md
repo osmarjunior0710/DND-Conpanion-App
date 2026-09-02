@@ -11,7 +11,38 @@
 
 ---
 
-## Bruxo — base + Patrono Ínfero
+## Bruxo — Pendências pós-base, ordem escolhida pelo Osmar: Pacto do Tomo → Invocações Fase 2 → características nomeadas → subclasses restantes
+
+B6 (Patrono Ínfero) fica pausado até essa lista fechar — decisão do
+Osmar (2026-09), não esquecido.
+
+### 1. Pacto do Tomo (regra completa em `DND-Regras.md`)
+
+- [x] **PT.1** — Wizard: passo condicional "1c. Livro das Sombras" (só
+      aparece se `pacto-do-tomo` estiver entre as Invocações
+      escolhidas) — escolhe 3 truques + 2 magias de 1º círculo com
+      Ritual, de qualquer classe, que o personagem ainda não tenha.
+      Confirmado via Playwright: passo aparece/some certo, catálogo
+      mostra a classe de origem de cada magia, valida exatamente
+      3+2 antes de avançar. Ficha ganhou seção "Livro das Sombras" na
+      aba Magias (mesmo padrão visual de "Descobertas Mágicas",
+      reaproveita `usarMagiaTemAcaoAutomatizada`/ícones automaticamente).
+- [x] **PT.2** — Botão "Reconjurar o Livro das Sombras" na aba Magias
+      (dentro da própria seção do livro, não perto de Descanso — mais
+      descobrível) — reabre tela de escolha livre (sem trava de "só 1
+      troca", regra real: não é fixo) pré-marcada com o livro atual.
+      Confirmado via Playwright: abre com 3/2 pré-marcados, Confirmar
+      atualiza o livro na Ficha.
+
+### 2. Invocações Místicas Fase 2 (efeito mecânico das 28) — ainda não quebrado em lotes
+
+### 3. Características nomeadas sem mecânica (Astúcia Mágica, Contatar Patrono, Arcana Mística, Dádiva Épica, Mestre Místico) — ainda não quebrado em lotes
+
+### 4. Patrono Arquifada, Celestial, Grande Antigo — ainda não quebrado em lotes
+
+---
+
+## Bruxo — base + Patrono Ínfero (PAUSADO — só falta B6, ver acima)
 
 Fonte: SDD completo (4 patronos) + PDF do livro (Cap. 3, seção Bruxo,
 p. 69-79) conferidos contra `dnd-master-referencia.xlsx` — tudo bate,

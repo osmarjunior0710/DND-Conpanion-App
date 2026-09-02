@@ -79,3 +79,28 @@ Passivo + Reação + Passivo na mesma célula de texto) — nunca assumir
 "1 talento = 1 categoria de ação" ao ler a coluna de Benefícios.
 
 Fonte: `dnd-master-referencia.xlsx`, aba "Talentos".
+
+## Bruxo — Invocação Mística "Pacto do Tomo"
+
+**Livro das Sombras:** conjurado ao final de um Descanso Curto ou
+Longo (aparência livre, escolha do jogador). Desaparece só se o Bruxo
+conjurar outro livro com essa característica de novo, ou morrer —
+**não** desaparece sozinho a cada descanso.
+
+**Truques e Rituais:** quando o livro surge, o jogador escolhe **3
+truques + 2 magias de 1º círculo com o marcador Ritual**. As magias
+podem ser da lista de **qualquer classe** (não só Bruxo) e **precisam
+ser magias que o personagem ainda não tem preparadas** (não pode
+duplicar um truque/magia que já veio de Truques Conhecidos/Magias
+Preparadas normais do Bruxo). Enquanto o livro existir, essas 5
+escolhas contam como magias de Bruxo sempre preparadas — **não** entram
+no limite normal de Magias Preparadas.
+
+**Foco de Conjuração:** o livro também serve como Foco de Conjuração.
+
+**Escolha não é fixa:** re-feita toda vez que o livro é conjurado
+(cada Descanso Curto ou Longo) — diferente de Truques/Magias
+Preparadas normais, que só trocam 1 por level-up.
+
+Fonte: `dnd-master-referencia.xlsx`, aba "Opções de Classe", linha
+`Classe_Bruxo_InvMist_PacTomo` (conferida contra o livro).

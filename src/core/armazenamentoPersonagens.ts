@@ -61,6 +61,13 @@ export interface PersonagemSalvo {
    * `truquesAtual`. Ausente = cai pra `selecao.invocacoesMisticasEscolhidas`
    * (retrato da criação). */
   invocacoesMisticasAtual?: string[];
+  /** Livro das Sombras (Bruxo, Pacto do Tomo) — 3 truques + 2 magias
+   * rituais atuais, combinados numa lista só (ver DND-Regras.md).
+   * Trocável a qualquer momento via "Reconjurar o Livro" na Ficha
+   * (não é fixo por level-up, regra real: re-escolhido a cada
+   * Descanso). Ausente = cai pro livro escolhido na criação
+   * (`selecao.livroDasSombrasTruques` + `livroDasSombrasMagias`). */
+  livroDasSombrasAtual?: string[];
   /** Perícias escolhidas pra Especialização (dobra o Bônus de
    * Proficiência) — característica "Especialista" do Bardo, ganha nos
    * níveis 2 e 9 (2 escolhas por vez, acumulativas, sem troca — ver

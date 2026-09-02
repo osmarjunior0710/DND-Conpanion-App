@@ -21,6 +21,12 @@ export interface WizardSelection {
   invocacoesMisticasEscolhidas: string[];
   truquesEscolhidos: string[];
   magiasPreparadasEscolhidas: string[];
+  /** Livro das Sombras (Invocação Mística "Pacto do Tomo", ver
+   * DND-Regras.md) — 3 truques + 2 magias de 1º círculo Ritual, de
+   * qualquer classe. Só preenchido quando `pacto-do-tomo` está entre
+   * `invocacoesMisticasEscolhidas`. */
+  livroDasSombrasTruques: string[];
+  livroDasSombrasMagias: string[];
   equipamentoClasseEscolhido: 'A' | 'B' | 'C' | null;
   origem: string | null;
   ferramentaOrigemEscolhida: string | null;
@@ -53,6 +59,8 @@ export function criarSelecaoInicial(): WizardSelection {
     invocacoesMisticasEscolhidas: [],
     truquesEscolhidos: [],
     magiasPreparadasEscolhidas: [],
+    livroDasSombrasTruques: [],
+    livroDasSombrasMagias: [],
     equipamentoClasseEscolhido: null,
     origem: null,
     ferramentaOrigemEscolhida: null,
