@@ -248,14 +248,17 @@ no celular ficar perceptivelmente lento: parar de embutir
 aplicar code-splitting. Ninguém decidiu fazer isso ainda — só
 registrado como possibilidade.
 
-**Emblemas das outras 10 classes são placeholder (cópia do emblema do
+**Emblemas das outras 9 classes são placeholder (cópia do emblema do
 Guerreiro).** O Osmar já subiu os emblemas novos (formato redondo) de
-Guerreiro e Bardo — as 10 restantes (Bárbaro, Bruxo, Clérigo, Druida,
-Feiticeiro, Guardião, Ladino, Mago, Monge, Paladino) usam uma cópia do
-emblema do Guerreiro por enquanto (aparecem cinza, dentro do card "em
-breve"). Trocar pelo arquivo real assim que existir — é só substituir
-`src/assets/icones-classes/{id}-banner.png`, o código não muda. Ver
-DECISOES-DESIGN.md "Ícones novos (emblema redondo)".
+Guerreiro, Bardo e **Bruxo** (classe + os 4 Patronos, gerados por IA em
+grid 2x2, recortados e comprimidos em `webp`) — as 9 restantes
+(Bárbaro, Clérigo, Druida, Feiticeiro, Guardião, Ladino, Mago, Monge,
+Paladino) usam uma cópia do emblema do Guerreiro por enquanto (aparecem
+cinza, dentro do card "em breve"). Trocar pelo arquivo real assim que
+existir — é só substituir `src/assets/icones-classes/{id}-banner.webp`,
+o código não muda (`IconeClasse` acha pelo nome do arquivo
+automaticamente). Ver DECISOES-DESIGN.md "Ícones novos (emblema
+redondo)".
 
 **Contexto:** decisão do Osmar após fechar o Plano de Equipamento —
 "vamos pra sintonização" (E4) e depois "a gente vai começar uma
