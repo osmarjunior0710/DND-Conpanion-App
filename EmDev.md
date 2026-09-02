@@ -33,9 +33,22 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
 - [x] **B3** — Ficha/aba Magias: Espaço de Pacto (pool único
       quantidade+círculo, upcast automático, recupera Descanso Curto
       OU Longo).
-- [ ] **B4** — Level Up: Truques/Magias Preparadas crescem (reaproveita
-      padrão do Bardo); Invocações Místicas crescem/trocam (mesmo
-      componente); ASI 4/8/12/16.
+- [ ] **B4.1** — Level Up: Truques e Magias Preparadas crescem.
+      Deve reaproveitar 100% o motor genérico já validado no Bardo
+      (`valorRecursoClasse` + `espacosDeMagiaAtivos`, já dá suporte ao
+      pool único do Bruxo desde o B3) — código deve ser zero ou quase
+      zero, esta etapa é principalmente **verificar** que o Bruxo (1º
+      caster com formato de recurso diferente) não quebra o passo.
+- [ ] **B4.2** — Level Up: ASI nos níveis 4/8/12/16. Mesma ideia do
+      B4.1 — `niveisComASI` já lê a progressão real da classe, deve
+      funcionar sem código novo; etapa de verificação.
+- [ ] **B4.3** — Level Up: Invocações Místicas crescem e trocam
+      (**unlock de verdade** — sistema novo, sem equivalente ainda no
+      motor de Level Up). Passo novo reaproveitando o componente de
+      lista única já usado em Truques/Magias, catálogo filtrado por
+      `prerequisitos.nivelMinimo <= novoNível` — continua Fase 1 (sem
+      checar dependência entre invocações nem aplicar mecânica, ver
+      PENDENCIAS.md).
 - [ ] **B5** — Combat: Usar Magia real; Astúcia Mágica; Contatar
       Patrono (nível 9); Arcana Mística (nível 11+).
 - [ ] **B6 — Patrono Ínfero**: Bênção do Tenebroso, Magias de Pacto do

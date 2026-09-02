@@ -51,6 +51,16 @@ que o grupo do Osmar vai jogar primeiro). Ficam de fora por enquanto:
   ex: Passos Feéricos do Arquifada tem múltiplas opções de efeito
   escolhidas na hora de conjurar).
 
+**Regra de processo pra quando qualquer subclasse de Bruxo entrar
+(Ínfero incluso, B6):** quebrar a implementação em entregas pequenas
+por "unlock" — cada característica/sistema **genuinamente novo** (sem
+equivalente já existente no motor) vira sua própria entrega pequena,
+separada das que só reaproveitam padrão já validado (essas últimas
+viram etapa de verificação, não de código novo). Mesmo padrão já usado
+no B4 da base (B4.1/B4.2 = verificação de reuso, B4.3 = unlock de
+verdade — Invocações Místicas). Isso reduz o risco de uma entrega
+grande quebrar várias coisas de uma vez.
+
 **Por que foi adiado:** decisão do Osmar — Patrono Ínfero primeiro
 porque é o que o grupo de mesa dele vai usar; as outras 3 completam
 depois, sem pressa.
