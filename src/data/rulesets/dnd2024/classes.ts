@@ -306,8 +306,11 @@ export const classes: Classe[] = [
       { nivel: 19, bonusProficiencia: '+6', caracteristicas: ['Dádiva Épica'] },
       { nivel: 20, bonusProficiencia: '+6', caracteristicas: ['Mestre Místico'] },
     ],
-    // B1 (dados) feito — ainda não disponível no wizard (falta B2).
-    disponivel: false,
+    // B2 feito — wizard sabe criar um Bruxo de ponta a ponta (perícias,
+    // truques, magias preparadas, 1ª Invocação Mística, equipamento).
+    // Falta a aba Magias/Combat da Ficha usar esses dados de verdade
+    // (B3+), mas a criação em si já funciona.
+    disponivel: true,
     fonte: FONTE,
   },
 ];

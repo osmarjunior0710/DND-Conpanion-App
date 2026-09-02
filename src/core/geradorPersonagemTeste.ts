@@ -18,6 +18,7 @@ import { estilosDeLuta } from '../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../data/rulesets/dnd2024/ferramentas';
 import { magiasDaClasse } from '../data/rulesets/dnd2024/magias';
+import { invocacoesMisticas } from '../data/rulesets/dnd2024/invocacoesMisticas';
 import { talentos, type Talento } from '../data/rulesets/dnd2024/talentos';
 import { dadoVidaValor } from '../data/levelUpFixtures';
 import {
@@ -106,6 +107,13 @@ function gerarSelecaoNivel1(classe: Classe, origemNome: string, especieNome: str
     }
     const opcoesEquip = proficiencias.equipamentoInicial;
     selection.equipamentoClasseEscolhido = (sorteiaUm(opcoesEquip)?.rotulo ?? 'A') as 'A' | 'B' | 'C';
+  }
+  const maxInvocacoes = valorRecursoClasse(classe, 'Invocações Místicas', 1);
+  if (maxInvocacoes > 0) {
+    const elegiveis = invocacoesMisticas.filter((i) => i.prerequisitos.nivelMinimo === null);
+    selection.invocacoesMisticasEscolhidas = embaralhar(elegiveis)
+      .slice(0, maxInvocacoes)
+      .map((i) => i.id);
   }
   const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', 1);
   if (maxTruques > 0) {

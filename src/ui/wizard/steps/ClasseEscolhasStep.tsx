@@ -5,6 +5,7 @@ import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/clas
 import { proficienciasArmaArmaduraClasse } from '../../../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
 import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
 import { magiasDaClasse } from '../../../data/rulesets/dnd2024/magias';
+import { invocacoesMisticas } from '../../../data/rulesets/dnd2024/invocacoesMisticas';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../../core/maestriaArma';
@@ -52,6 +53,14 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
   // conforme o personagem sobe de nível, não na criação.
   const magiasNivel1 = maxMagiasPreparadas > 0 ? magiasDaClasse(classe.nome, 1) : [];
 
+  // Invocações Místicas (Bruxo) — Fase 1 (ver PENDENCIAS.md "Bruxo —
+  // Invocações Místicas Fase 2"): só catálogo + escolha, sem checar
+  // dependência entre invocações nem aplicar mecânica ainda. Na
+  // criação (nível 1), só entram as que não pedem nível mínimo — as
+  // com pré-requisito de nível maior ficam pro Level Up.
+  const maxInvocacoes = valorRecursoClasse(classe, 'Invocações Místicas', 1);
+  const invocacoesElegiveis = maxInvocacoes > 0 ? invocacoesMisticas.filter((i) => i.prerequisitos.nivelMinimo === null) : [];
+
   function toggleEstiloDeLuta(nome: string) {
     update({ estiloDeLutaEscolhido: selection.estiloDeLutaEscolhido === nome ? null : nome });
   }
@@ -92,6 +101,16 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
       update({ truquesEscolhidos: atual.filter((x) => x !== nome) });
     } else if (atual.length < maxTruques) {
       update({ truquesEscolhidos: [...atual, nome] });
+    }
+  }
+
+  function toggleInvocacao(id: string) {
+    const atual = selection.invocacoesMisticasEscolhidas;
+    const i = atual.indexOf(id);
+    if (i > -1) {
+      update({ invocacoesMisticasEscolhidas: atual.filter((x) => x !== id) });
+    } else if (atual.length < maxInvocacoes) {
+      update({ invocacoesMisticasEscolhidas: [...atual, id] });
     }
   }
 
@@ -178,6 +197,31 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                   {a.dano} · <ItemComDescricao nome={a.maestria} descricao={buscarDescricaoMaestria(a.maestria)} variante="icone" />
                 </span>
               </div>
+            </div>
+          ))}
+        </>
+      )}
+
+      {maxInvocacoes > 0 && (
+        <>
+          <div className="section-title">
+            Invocações Místicas — escolha {maxInvocacoes} ({selection.invocacoesMisticasEscolhidas.length}/{maxInvocacoes})
+          </div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            [PH] sem efeito mecânico ainda — só o texto de regra.
+          </div>
+          {invocacoesElegiveis.map((inv) => (
+            <div
+              key={inv.id}
+              className="opt-card"
+              style={{ padding: '10px 12px', cursor: 'pointer' }}
+              onClick={() => toggleInvocacao(inv.id)}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div className={`check-box ${selection.invocacoesMisticasEscolhidas.includes(inv.id) ? 'checked' : ''}`} />
+                <span className="opt-card-name">{inv.nome}</span>
+              </div>
+              <div className="opt-card-desc">{inv.beneficios}</div>
             </div>
           ))}
         </>

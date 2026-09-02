@@ -16,6 +16,9 @@ export interface WizardSelection {
    * escolhe 3 Instrumentos Musicais) — diferente de
    * `ferramentaOrigemEscolhida` (Origem só concede 1). */
   ferramentasClasseEscolhidas: string[];
+  /** IDs de `invocacoesMisticas.ts` (Bruxo) — Fase 1, ver
+   * PENDENCIAS.md "Bruxo — Invocações Místicas Fase 2". */
+  invocacoesMisticasEscolhidas: string[];
   truquesEscolhidos: string[];
   magiasPreparadasEscolhidas: string[];
   equipamentoClasseEscolhido: 'A' | 'B' | 'C' | null;
@@ -47,6 +50,7 @@ export function criarSelecaoInicial(): WizardSelection {
     maestriaArmaEscolhida: [],
     periciasClasseEscolhidas: [],
     ferramentasClasseEscolhidas: [],
+    invocacoesMisticasEscolhidas: [],
     truquesEscolhidos: [],
     magiasPreparadasEscolhidas: [],
     equipamentoClasseEscolhido: null,

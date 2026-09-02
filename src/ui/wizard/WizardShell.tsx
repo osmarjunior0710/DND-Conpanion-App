@@ -10,6 +10,7 @@ import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
 import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
+import { invocacoesMisticas } from '../../data/rulesets/dnd2024/invocacoesMisticas';
 import { criarSelecaoInicial, type WizardSelection } from '../../core/personagem';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../core/maestriaArma';
@@ -114,6 +115,13 @@ export default function WizardShell() {
       const opcoes = proficiencias.equipamentoInicial;
       patch.equipamentoClasseEscolhido = opcoes[Math.floor(Math.random() * opcoes.length)].rotulo as 'A' | 'B' | 'C';
     }
+    const maxInvocacoes = valorRecursoClasse(classeSelecionada, 'Invocações Místicas', 1);
+    if (maxInvocacoes > 0) {
+      const elegiveis = invocacoesMisticas.filter((i) => i.prerequisitos.nivelMinimo === null);
+      patch.invocacoesMisticasEscolhidas = embaralhar(elegiveis)
+        .slice(0, maxInvocacoes)
+        .map((i) => i.id);
+    }
     const maxTruques = valorRecursoClasse(classeSelecionada, 'Truques Conhecidos', 1);
     if (maxTruques > 0) {
       patch.truquesEscolhidos = embaralhar(magiasDaClasse(classeSelecionada.nome, 0))
@@ -193,6 +201,8 @@ export default function WizardShell() {
         if (temEstiloDeLutaTrocavel(classeSelecionada, 1) && s.estiloDeLutaEscolhido === null) return false;
         const qtdMaestria = quantidadeMaestriaEmArma(classeSelecionada, 1);
         if (s.maestriaArmaEscolhida.length !== qtdMaestria) return false;
+        const maxInvocacoes = valorRecursoClasse(classeSelecionada, 'Invocações Místicas', 1);
+        if (s.invocacoesMisticasEscolhidas.length !== maxInvocacoes) return false;
         const maxTruques = valorRecursoClasse(classeSelecionada, 'Truques Conhecidos', 1);
         if (s.truquesEscolhidos.length !== maxTruques) return false;
         const maxMagias = valorRecursoClasse(classeSelecionada, 'Magias Preparadas', 1);

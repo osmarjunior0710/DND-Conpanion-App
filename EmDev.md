@@ -26,7 +26,7 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
       (10 características base), proficiências (Simples/Leve),
       equipamento inicial, catálogo das 28 Invocações Místicas (dado
       puro, sem UI), stub das 4 subclasses (nome/ícone).
-- [ ] **B2** — Criação de personagem (wizard): Bruxo selecionável,
+- [x] **B2** — Criação de personagem (wizard): Bruxo selecionável,
       escolhas de perícia/truque/magia preparada/equipamento; escolha
       da 1ª Invocação Mística (Fase 1 — lista simples, sem
       pré-requisito/mecânica ainda).
