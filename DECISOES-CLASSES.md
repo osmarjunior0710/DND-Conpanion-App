@@ -376,3 +376,41 @@ entra no cálculo — não é só o que foi escolhido em Level Up.
 **Data/origem:** 2026-08, Talentos Fases 1-4 lote 1 (histórico
 completo das iterações de UI arquivado — só o padrão final acima
 segue relevante).
+
+## Bruxo — B1 (Dados) feito: schema de pool único + catálogo de Invocações
+
+**Espaço de Magia de Pacto — pool único, não array por círculo (diferente do Bardo):**
+modelado como 2 `RecursoClasse` separados em `classes.ts`
+("Espaço de Magia de Pacto (quantidade)" + "Círculo do Espaço de Magia
+de Pacto"), reaproveitando o schema genérico sem precisar de campo
+novo em `Classe`. Recupera em "Descanso Curto ou Longo" (texto livre
+do campo `recuperaEm`, igual outros recursos) — diferente de todo
+caster documentado até aqui (Bardo só Descanso Longo). Quando a
+Etapa 3 (Ficha/aba Magias) chegar, upcast é automático pro círculo do
+espaço gasto (não é escolha do jogador) — vai precisar de uma função
+`espacoDePactoAtivo(classe, nivel): { quantidade, circulo }` própria,
+`espacosDeMagiaAtivos` (do Bardo) não serve pra esse formato.
+
+**Catálogo de Invocações Místicas — dado que a planilha não tem, vem
+do livro (Cap. 3, "Opções de Invocações Místicas"), novo arquivo
+`invocacoesMisticas.ts`.** Schema: `tipo` (`passiva | avontade |
+limitada`) classifica a frequência real de cada uma — achado central
+do SDD do Osmar, **não é um pool de usos genérico**, cada invocação
+tem sua própria regra de custo/teto (`custoOuLimite`, texto livre, só
+quando `tipo === 'limitada'`). `prerequisitos.invocacaoRequeridaId`
+modela a dependência encadeada (ex: Lâmina Devoradora exige Lâmina
+Sedenta) — a Etapa 4 (Level Up) vai precisar bloquear troca de uma
+invocação que é pré-requisito de outra já escolhida.
+
+**Achado do SDD corrigido contra o livro:** a característica "Magias
+Psíquicas" (nível 3) é do Patrono O Grande Antigo, não do Patrono
+Ínfero (SDD v2 tinha essa atribuição errada; planilha mestra já
+estava certa). Vale quando a hora do Grande Antigo/Ínfero chegar.
+
+**Fase 1 vs Fase 2 (mesmo padrão dos Talentos):** B1-B5 do plano
+cobrem só catálogo + escolha da Invocação (sem checar pré-requisito
+de dependência nem aplicar mecânica) — efeito real de cada uma das 28
+entra depois, em lotes pequenos, registrado em `PENDENCIAS.md`.
+
+**Data/origem:** 2026-09, plano "Bruxo — base + Patrono Ínfero"
+(EmDev.md), B1.

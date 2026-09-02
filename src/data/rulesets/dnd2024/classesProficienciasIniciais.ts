@@ -123,4 +123,33 @@ export const proficienciasIniciaisClasse: Record<string, ProficienciasIniciaisCl
     ],
     fonte: 'Livro do Jogador (D&D 5e 2024), Cap. 3, pág. 57',
   },
+  bruxo: {
+    classeId: 'bruxo',
+    periciasEscolha: {
+      quantidade: 2,
+      opcoes: ['Arcanismo', 'Enganação', 'História', 'Intimidação', 'Investigação', 'Natureza', 'Religião'],
+    },
+    // Sem ferramentasEscolha — Bruxo não tem proficiência de
+    // ferramenta na criação (diferente do Bardo).
+    equipamentoInicial: [
+      {
+        rotulo: 'A',
+        itens: [
+          { nome: 'Couro', quantidade: 1, unidade: null },
+          { nome: 'Foice', quantidade: 1, unidade: null },
+          { nome: 'Adaga', quantidade: 2, unidade: null },
+          { nome: 'Orbe', quantidade: 1, unidade: null },
+          { nome: 'Livro', quantidade: 1, unidade: null },
+          { nome: 'Kit de Erudito', quantidade: 1, unidade: null },
+        ],
+        ouro: 15,
+      },
+      {
+        rotulo: 'B',
+        itens: [],
+        ouro: 100,
+      },
+    ],
+    fonte: 'Livro do Jogador (D&D 5e 2024), Cap. 3, pág. 69',
+  },
 };

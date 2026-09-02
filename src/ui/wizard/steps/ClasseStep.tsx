@@ -4,7 +4,6 @@ import type { StepProps } from './StepProps';
 
 const CLASSES_EM_BREVE = [
   { nome: 'Bárbaro', id: 'barbaro' },
-  { nome: 'Bruxo', id: 'bruxo' },
   { nome: 'Clérigo', id: 'clerigo' },
   { nome: 'Druida', id: 'druida' },
   { nome: 'Feiticeiro', id: 'feiticeiro' },
@@ -72,8 +71,8 @@ export default function ClasseStep({ selection, update }: StepProps) {
         </div>
       ))}
       <div className="label" style={{ marginTop: 6 }}>
-        Só o Guerreiro está pronto por enquanto — as outras classes ainda não foram implementadas de
-        ponta a ponta. Ver <code>PENDENCIAS.md</code>.
+        Guerreiro e Bardo estão prontos por enquanto — as outras classes ainda não foram implementadas
+        de ponta a ponta. Ver <code>PENDENCIAS.md</code>.
       </div>
     </>
   );

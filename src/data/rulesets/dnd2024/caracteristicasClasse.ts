@@ -240,4 +240,85 @@ export const caracteristicasClasse: CaracteristicaClasse[] = [
       'Você dominou duas das Palavras de Criação: as palavras de vida e morte. Portanto, você sempre tem as magias Palavra de Poder: Matar e Palavra de Poder: Salvar preparadas. Quando você conjura qualquer uma dessas magias, pode escolher uma segunda criatura que está a até 3 metros do primeiro alvo.',
     tipoAcao: 'Passiva / Estática',
   },
+  // Bruxo — a célula "Magia de Pacto" (nível 1) na planilha vem com a
+  // tabela "Características de Bruxo" inteira colada dentro do texto
+  // (mesmo problema de extração já visto em Guerreiro/Bardo) —
+  // removida aqui, mantendo o parágrafo de regra igual ao livro
+  // (Cap. 3, p. 69-70, conferido célula a célula contra o PDF).
+  {
+    classe: 'Bruxo',
+    nivel: 1,
+    nome: 'Invocações Místicas',
+    descricao:
+      'Você descobriu Invocações Místicas, fragmentos de conhecimento proibido que lhe conferem uma habilidade mágica permanente ou outros ensinamentos. Você recebe uma invocação à sua escolha, como Pacto do Tomo. As invocações são descritas na seção "Opções de Invocações Místicas" mais adiante na descrição desta classe. Pré-requisitos. Se uma invocação tiver um pré-requisito, você deve atendê-lo para aprender essa invocação. Por exemplo, se uma invocação exigir que você seja um Bruxo de nível 5 ou superior, você pode selecionar a invocação quando alcançar o nível 5 de Bruxo. Substituindo e Recebendo outras Invocações. Ao alcançar um nível de Bruxo, você pode substituir uma de suas invocações por outra para a qual se qualifica. Você não pode substituir uma invocação se ela for um pré-requisito para outra invocação que você tenha. Ao alcançar certos níveis de Bruxo, você adquire mais invocações à sua escolha, conforme mostrado na coluna Invocações da tabela Características de Bruxo. Você não pode escolher a mesma invocação mais de uma vez, a menos que a descrição da invocação indique o contrário.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 1,
+    nome: 'Magia de Pacto',
+    descricao:
+      'Por meio de uma cerimônia oculta, você realizou um pacto com uma entidade misteriosa para obter poderes mágicos. Essa voz nas sombras é enigmática, mas a dádiva concedida por ela é clara: a habilidade de conjurar magias. Veja o capítulo 7 para as regras de conjuração. As informações a seguir explicam como aplicar essas regras às magias de Bruxo, que estão listadas mais adiante na descrição da classe. Truques. Você conhece dois truques de Bruxo à sua escolha. Prestidigitação Arcana e Raio Místico são recomendados. Ao alcançar um nível de Bruxo, você pode substituir um dos seus truques dessa característica por outro truque de Bruxo à sua escolha. Ao atingir os níveis 4 e 10 de Bruxo, você aprende mais um truque de Bruxo à sua escolha, conforme detalhado na coluna Truques da tabela Características de Bruxo. Espaços de Magia. A tabela Características de Bruxo mostra quantos espaços de magia você tem para conjurar suas magias de Bruxo de 1º a 5º círculo. A tabela também mostra o círculo desses espaços, todos do mesmo círculo. Você restaura todos os espaços de Magia de Pacto gastos ao completar um Descanso Curto ou Longo. Por exemplo, quando você é um Bruxo de nível 5, você tem dois espaços de magia de 3º círculo. Para conjurar a magia Raio de Bruxa de 1º círculo, você deve gastar um desses espaços e conjurá-la como uma magia de 3º círculo. Magias Preparadas de 1º Círculo ou Superior. Você prepara a lista de magias de 1º círculo ou superior que estão disponíveis para você conjurar com essa característica. Para começar, escolha duas magias de Bruxo de 1º círculo. Danação e Enfeitiçar Pessoa são recomendadas. O número de magias em sua lista aumenta à medida que você alcança níveis de Bruxo, conforme mostrado na coluna Magias Preparadas da tabela Características de Bruxo. Quando esse número aumentar, escolha magias adicionais de Bruxo até que o número de magias em sua lista corresponda ao número da tabela. As magias escolhidas devem ser de um círculo não superior mostrado na coluna círculo do Espaço da tabela para o seu nível. Quando você atinge o nível 6, por exemplo, você aprende uma nova magia de Bruxo, que pode ser de 1º a 3º círculo. Se outra característica de Bruxo lhe concede magias sempre preparadas, elas não contam para o número de magias que você pode preparar com essa característica, mas ainda são consideradas magias de Bruxo para você. Mudando Suas Magias Preparadas. Sempre que você ganha um nível de Bruxo, pode substituir uma magia da sua lista por outra magia de Bruxo elegível. Atributo de Conjuração. Carisma é o atributo de conjuração para suas magias de Bruxo. Foco de Conjuração. Você pode usar um Foco Arcano como um Foco de Conjuração para suas magias de Bruxo.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 2,
+    nome: 'Astúcia Mágica',
+    descricao:
+      'Ao final de um rito esotérico que você pode realizar por 1 minuto, você recupera os espaços de magia das Magias de Pacto gastos em um número igual à metade da sua quantidade máxima (arredondado para cima). Você pode usar esta característica novamente após completar um Descanso Longo.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 3,
+    nome: 'Subclasse de Bruxo',
+    descricao:
+      'Você adquire uma subclasse de Bruxo à sua escolha. As subclasses Patrono Arquifada, Patrono Celestial, Patrono O Grande Antigo e Patrono Ínfero estão detalhadas após a descrição desta classe. Uma subclasse é uma especialidade que concede a você características em determinados níveis de Bruxo. Durante toda sua jornada, você adquire cada uma das características de sua subclasse de seu nível de Bruxo ou menor.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 4,
+    nome: 'Aumento no Valor de Atributo',
+    descricao:
+      'Você adquire o talento Aumento no Valor de Atributo (veja o capítulo 5) ou outro talento à sua escolha para o qual atenda os pré-requisitos. Você adquire essa característica novamente nos níveis 8, 12 e 16 de Bruxo.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 9,
+    nome: 'Contatar Patrono',
+    descricao:
+      'No passado, você entrava em contato com seu patrono por meio de intermediários. Agora, você pode se comunicar diretamente com ele. Você sempre tem a magia Contato Extraplanar preparada. Com esta característica, você pode conjurar a magia sem gastar um espaço de magia para entrar em contato com seu patrono, e você é bem-sucedido automaticamente na salvaguarda da magia. Você pode conjurar a magia com esta característica novamente após completar um Descanso Longo.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 11,
+    nome: 'Arcana Mística',
+    descricao:
+      'Seu patrono lhe concede um segredo mágico chamado arcanum. Escolha uma magia de Bruxo de 6º círculo com este arcanum. Você pode conjurar sua magia arcanum uma vez sem gastar um espaço de magia, e novamente desta forma após completar um Descanso Longo. Conforme mostrado na tabela Características de Bruxo, você recebe outra magia de Bruxo à sua escolha que pode ser conjurada deste modo ao atingir os níveis de Bruxo 13 (magia de 7º círculo), 15 (magia de 8º círculo) e 17 (magia de 9º círculo). Você restaura todos os usos da sua Arcana Mística ao completar um Descanso Longo. Ao alcançar um nível de Bruxo, você pode substituir uma de suas magias de arcanum por outra magia de Bruxo do mesmo círculo.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 19,
+    nome: 'Dádiva Épica',
+    descricao:
+      'Você adquire o talento Dádiva Épica (veja o capítulo 5) ou outro talento à sua escolha para o qual se qualifica. O talento Dádiva do Destino é recomendado.',
+    tipoAcao: 'Passiva / Estática',
+  },
+  {
+    classe: 'Bruxo',
+    nivel: 20,
+    nome: 'Mestre Místico',
+    descricao:
+      'Ao usar sua característica Astúcia Mágica, você restaura todos os seus espaços de magia gastos das suas Magias de Pacto.',
+    // Coluna auto-classificada da planilha diz "Reação" — provável
+    // falso positivo do heurístico (não é uma Reação de verdade, é
+    // upgrade automático de Astúcia Mágica), mas mantido como veio,
+    // sem editar à mão (campo não é lido por nenhum código hoje).
+    tipoAcao: 'Reação',
+  },
 ];

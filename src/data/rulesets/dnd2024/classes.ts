@@ -230,4 +230,84 @@ export const classes: Classe[] = [
     disponivel: true,
     fonte: FONTE,
   },
+  {
+    id: 'bruxo',
+    nome: 'Bruxo',
+    atributoPrimario: 'Carisma',
+    dadoDeVida: 'd8',
+    salvaguardas: ['SAB', 'CAR'],
+    nivelSubclasse: 3,
+    recursos: [
+      {
+        nome: 'Invocações Místicas',
+        recuperaEm: null,
+        valorPorNivel: {
+          1: 1, 2: 3, 3: 3, 4: 3, 5: 5, 6: 5, 7: 6, 8: 6, 9: 7, 10: 7,
+          11: 7, 12: 8, 13: 8, 14: 8, 15: 9, 16: 9, 17: 9, 18: 10, 19: 10, 20: 10,
+        },
+      },
+      {
+        nome: 'Truques Conhecidos',
+        recuperaEm: null,
+        valorPorNivel: {
+          1: 2, 2: 2, 3: 2, 4: 3, 5: 3, 6: 3, 7: 3, 8: 3, 9: 3, 10: 4,
+          11: 4, 12: 4, 13: 4, 14: 4, 15: 4, 16: 4, 17: 4, 18: 4, 19: 4, 20: 4,
+        },
+      },
+      {
+        nome: 'Magias Preparadas',
+        recuperaEm: null,
+        valorPorNivel: {
+          1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 10,
+          11: 11, 12: 11, 13: 12, 14: 12, 15: 13, 16: 13, 17: 14, 18: 14, 19: 15, 20: 15,
+        },
+      },
+      {
+        // Diferente do Bardo (array de 9 recursos, 1 por círculo): o
+        // Bruxo tem um pool ÚNICO de espaços, todos do MESMO círculo
+        // (coluna "Círculo do Espaço" abaixo) — conjurar qualquer
+        // magia com um desses espaços faz upcast automático pro
+        // círculo do espaço, não é escolha. Ver DECISOES-CLASSES.md.
+        nome: 'Espaço de Magia de Pacto (quantidade)',
+        recuperaEm: 'Descanso Curto ou Longo',
+        valorPorNivel: {
+          1: 1, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 2,
+          11: 3, 12: 3, 13: 3, 14: 3, 15: 3, 16: 3, 17: 4, 18: 4, 19: 4, 20: 4,
+        },
+      },
+      {
+        nome: 'Círculo do Espaço de Magia de Pacto',
+        recuperaEm: null,
+        valorPorNivel: {
+          1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4, 8: 4, 9: 5, 10: 5,
+          11: 5, 12: 5, 13: 5, 14: 5, 15: 5, 16: 5, 17: 5, 18: 5, 19: 5, 20: 5,
+        },
+      },
+    ],
+    progressao: [
+      { nivel: 1, bonusProficiencia: '+2', caracteristicas: ['Invocações Místicas', 'Magia de Pacto'] },
+      { nivel: 2, bonusProficiencia: '+2', caracteristicas: ['Astúcia Mágica'] },
+      { nivel: 3, bonusProficiencia: '+2', caracteristicas: ['Subclasse de Bruxo'] },
+      { nivel: 4, bonusProficiencia: '+2', caracteristicas: ['Aumento no Valor de Atributo'] },
+      { nivel: 5, bonusProficiencia: '+3', caracteristicas: [] },
+      { nivel: 6, bonusProficiencia: '+3', caracteristicas: ['Característica de Subclasse'] },
+      { nivel: 7, bonusProficiencia: '+3', caracteristicas: [] },
+      { nivel: 8, bonusProficiencia: '+3', caracteristicas: ['Aumento no Valor de Atributo'] },
+      { nivel: 9, bonusProficiencia: '+4', caracteristicas: ['Contatar Patrono'] },
+      { nivel: 10, bonusProficiencia: '+4', caracteristicas: ['Característica de Subclasse'] },
+      { nivel: 11, bonusProficiencia: '+4', caracteristicas: ['Arcana Mística (6º círculo)'] },
+      { nivel: 12, bonusProficiencia: '+4', caracteristicas: ['Aumento no Valor de Atributo'] },
+      { nivel: 13, bonusProficiencia: '+5', caracteristicas: ['Arcana Mística (7º círculo)'] },
+      { nivel: 14, bonusProficiencia: '+5', caracteristicas: ['Característica de Subclasse'] },
+      { nivel: 15, bonusProficiencia: '+5', caracteristicas: ['Arcana Mística (8º círculo)'] },
+      { nivel: 16, bonusProficiencia: '+5', caracteristicas: ['Aumento no Valor de Atributo'] },
+      { nivel: 17, bonusProficiencia: '+6', caracteristicas: ['Arcana Mística (9º círculo)'] },
+      { nivel: 18, bonusProficiencia: '+6', caracteristicas: [] },
+      { nivel: 19, bonusProficiencia: '+6', caracteristicas: ['Dádiva Épica'] },
+      { nivel: 20, bonusProficiencia: '+6', caracteristicas: ['Mestre Místico'] },
+    ],
+    // B1 (dados) feito — ainda não disponível no wizard (falta B2).
+    disponivel: false,
+    fonte: FONTE,
+  },
 ];

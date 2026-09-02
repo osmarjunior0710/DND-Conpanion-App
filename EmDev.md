@@ -22,9 +22,9 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
 - [x] **B0** — `core/ataque.ts` passa a checar proficiência de arma
       real (hoje assume sempre true — inofensivo em Guerreiro/Bardo,
       quebra no Bruxo, que só é proficiente em Armas Simples).
-- [ ] **B1** — Dados: `classes.ts` (progressão 1-20), `caracteristicasClasse.ts`
+- [x] **B1** — Dados: `classes.ts` (progressão 1-20), `caracteristicasClasse.ts`
       (10 características base), proficiências (Simples/Leve),
-      equipamento inicial, catálogo das 29 Invocações Místicas (dado
+      equipamento inicial, catálogo das 28 Invocações Místicas (dado
       puro, sem UI), stub das 4 subclasses (nome/ícone).
 - [ ] **B2** — Criação de personagem (wizard): Bruxo selecionável,
       escolhas de perícia/truque/magia preparada/equipamento; escolha
