@@ -7,7 +7,7 @@ import {
   magiasPreparadasDoPersonagem,
   circulosDisponiveisParaConjurar,
 } from '../../../core/magiasPersonagem';
-import { classificarMagia } from '../../../core/classificarMagia';
+import { classificarMagia, usarMagiaTemAcaoAutomatizada } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TickPips from '../../components/TickPips';
 import { useColapsavel } from '../../hooks/useColapsavel';
@@ -146,17 +146,23 @@ export default function MagiasTab({
               ⚠️ Faltam {faltamTruques} truque{faltamTruques > 1 ? 's' : ''} pro seu nível — toque pra escolher
             </div>
           )}
-          {truques.map((m) => (
-            <div key={m.id} className={styles.spellRow}>
-              <div className={styles.spellName}>
-                <MagiaComDescricao magia={m} variante="icone" />
+          {truques.map((m) => {
+            const temAcao = usarMagiaTemAcaoAutomatizada(m);
+            return (
+              <div key={m.id} className={styles.spellRow}>
+                <div className={styles.spellName}>
+                  <MagiaComDescricao magia={m} variante="icone" />
+                </div>
+                <span className={styles.spellCirculo}>Truque</span>
+                <div
+                  className={`${styles.usarBtn} ${temAcao ? '' : styles.usarBtnPendencia}`}
+                  onClick={() => temAcao && usarMagia(m)}
+                >
+                  {temAcao ? 'Usar' : 'Usar (pendência)'}
+                </div>
               </div>
-              <span className={styles.spellCirculo}>Truque</span>
-              <div className={styles.usarBtn} onClick={() => usarMagia(m)}>
-                Usar
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </>
       )}
 
@@ -168,6 +174,7 @@ export default function MagiasTab({
           </div>
           {descobertasMagicas.map((m) => {
             const semEspaco = m.circulo > 0 && circulosDisponiveisParaConjurar(m.circulo, espacos, espacosGastosPorCirculo).length === 0;
+            const temAcao = usarMagiaTemAcaoAutomatizada(m);
             return (
               <div key={m.id} className={styles.spellRow}>
                 <div className={styles.spellName}>
@@ -175,10 +182,10 @@ export default function MagiasTab({
                 </div>
                 <span className={styles.spellCirculo}>{m.circulo === 0 ? 'Truque' : `${m.circulo}º círculo`}</span>
                 <div
-                  className={`${styles.usarBtn} ${semEspaco ? styles.usarBtnDesabilitado : ''}`}
-                  onClick={() => usarMagia(m)}
+                  className={`${styles.usarBtn} ${!temAcao ? styles.usarBtnPendencia : semEspaco ? styles.usarBtnDesabilitado : ''}`}
+                  onClick={() => temAcao && usarMagia(m)}
                 >
-                  Usar
+                  {temAcao ? 'Usar' : 'Usar (pendência)'}
                 </div>
               </div>
             );

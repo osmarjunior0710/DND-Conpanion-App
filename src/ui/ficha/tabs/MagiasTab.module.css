@@ -67,6 +67,19 @@
   pointer-events: none;
 }
 
+/* Truque/magia sem jogada automatizável ainda (ex: magia de
+ * salvaguarda do alvo, sem UI de resistência no Combat) — marcação
+ * visual permanente, não é "sem espaço" (usarBtnDesabilitado) nem
+ * fixture: o jogador precisa saber que ISSO não funciona pra lembrar
+ * de cobrar a correção depois. Ver PENDENCIAS.md "Magia/truque de
+ * salvaguarda sem jogada automatizável". */
+.usarBtnPendencia {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  cursor: not-allowed;
+}
+
 .avisoFaltando {
   padding: var(--space-3);
   margin-bottom: var(--space-2);

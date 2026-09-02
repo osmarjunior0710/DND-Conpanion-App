@@ -149,6 +149,18 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   resistência de terceiro. Fica de fora até esse tipo de mecânica
   existir no Combat (vale também pra qualquer magia/talento que peça
   salvaguarda do alvo, não é exclusivo do Ataque Desarmado).
+  **Confirmado na prática (Osmar, 2026-09):** truque de Bruxo Badalar
+  Fúnebre (salvaguarda de Sabedoria do alvo, não jogada de ataque do
+  conjurador) — clicar "Usar" na aba Magias não fazia nada, em
+  silêncio. Em vez de fixture/toast (perde o tracking do que falta
+  corrigir), a aba Magias agora marca visualmente qualquer truque
+  nessa situação: botão vira "Usar (pendência)" em vermelho, sem
+  ação — `core/classificarMagia.ts`'s `usarMagiaTemAcaoAutomatizada(magia)`
+  decide isso (truque com "Salv." na descrição curta e sem "Ataque:" =
+  sem jogada automatizável ainda; magia preparada nunca entra nessa
+  regra, porque gastar o espaço já é uma ação válida por si só). Segue
+  valendo pra qualquer classe, não só Bruxo — resolver junto quando o
+  Combat ganhar UI de teste de resistência de terceiro.
 - ~~**E4 — Sintonização (3 itens simultâneos).**~~ **Completa**
   (E4.1 catálogo + E4.2 UI, ver DECISOES-FICHA.md). Com isso o Plano
   de Equipamento inteiro (E1-E4) está feito. **Segue fora de
