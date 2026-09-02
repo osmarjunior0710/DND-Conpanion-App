@@ -14,6 +14,7 @@ import { temEstiloDeLutaTrocavel } from '../../../core/levelUp';
 import { iconesMagia } from '../../../core/classificarMagia';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
+import TextoComMagias from '../../components/TextoComMagias';
 import InfoChip from '../../components/InfoChip';
 import styles from './ClasseEscolhasStep.module.css';
 import type { StepProps } from './StepProps';
@@ -221,7 +222,9 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
                 <div className={`check-box ${selection.invocacoesMisticasEscolhidas.includes(inv.id) ? 'checked' : ''}`} />
                 <span className="opt-card-name">{inv.nome}</span>
               </div>
-              <div className="opt-card-desc">{inv.beneficios}</div>
+              <div className="opt-card-desc">
+                <TextoComMagias texto={inv.beneficios} nomesMagias={inv.magiasMencionadas} />
+              </div>
             </div>
           ))}
         </>

@@ -24,6 +24,7 @@ import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../
 import { invocacoesElegiveisAteNivel } from '../../../core/invocacoesMisticas';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
+import TextoComMagias from '../../components/TextoComMagias';
 import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
 import IconeClasse from '../../components/IconeClasse';
 import DistribuirPontosAtributo from '../../components/DistribuirPontosAtributo';
@@ -796,13 +797,18 @@ export default function LevelUpShell({
                   onClick={() => toggleInvocacao(inv.id)}
                 >
                   <div className={`check-box ${marcado ? 'checked' : ''}`} />
-                  <span className="check-label">
-                    {inv.nome}
-                    {' '}
-                    <span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
-                      ({removendo ? '🔻 será removida' : jaTinha ? 'já tinha' : inv.beneficios})
-                    </span>
-                  </span>
+                  <div className="check-label" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <div className="opt-card-name">
+                      {inv.nome}
+                      {removendo && <span style={{ color: 'var(--danger)', fontSize: 11 }}> · 🔻 será removida</span>}
+                      {jaTinha && !removendo && (
+                        <span style={{ color: 'var(--text-faint)', fontSize: 11 }}> · já tinha</span>
+                      )}
+                    </div>
+                    <div className="opt-card-desc">
+                      <TextoComMagias texto={inv.beneficios} nomesMagias={inv.magiasMencionadas} />
+                    </div>
+                  </div>
                 </div>
               );
             })}
