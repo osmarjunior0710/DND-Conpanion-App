@@ -7,6 +7,7 @@ import {
   calcularIniciativa,
   calcularPercepcaoPassiva,
   calcularPericias,
+  calcularProficienciasFerramenta,
 } from './calculoPersonagem';
 import { classes } from '../data/rulesets/dnd2024/classes';
 import { criarSelecaoInicial, type WizardSelection } from './personagem';
@@ -135,5 +136,29 @@ describe('calcularPericias (periciasBonusExtras — ex: "Proficiências Bônus" 
     const arcanismo = resultado.find((p) => p.nome === 'Arcanismo');
     expect(arcanismo?.proficiente).toBe(true);
     expect(arcanismo?.mod).toBe(0 + bonusProficiencia(guerreiro, 1)); // INT 10 -> mod 0
+  });
+});
+
+describe('calcularProficienciasFerramenta', () => {
+  it('lista só as ferramentas concedidas (Classe), com mod. atributo + Bônus de Proficiência', () => {
+    const s = selecaoGuerreiro({ ferramentasClasseEscolhidas: ['Ferramentas de Ladrão'] }); // Destreza
+    const resultado = calcularProficienciasFerramenta(s, 1);
+    expect(resultado).toHaveLength(1);
+    expect(resultado[0].nome).toBe('Ferramentas de Ladrão');
+    expect(resultado[0].atributo).toBe('DES');
+    expect(resultado[0].mod).toBe(2 + bonusProficiencia(guerreiro, 1)); // DES 14 -> mod +2
+  });
+
+  it('sem nenhuma ferramenta concedida, devolve lista vazia (borda)', () => {
+    expect(calcularProficienciasFerramenta(selecaoGuerreiro(), 1)).toEqual([]);
+  });
+
+  it('não duplica quando a mesma ferramenta vem de mais de uma fonte (Origem + Classe)', () => {
+    const s = selecaoGuerreiro({
+      origem: 'Andarilho', // ferramenta fixa: Ferramentas de Ladrão
+      ferramentasClasseEscolhidas: ['Ferramentas de Ladrão'],
+    });
+    const resultado = calcularProficienciasFerramenta(s, 1);
+    expect(resultado).toHaveLength(1);
   });
 });

@@ -13,7 +13,4 @@
 
 ---
 
-- **Ficha não mostra proficiência em ferramentas em lugar nenhum.**
-  Perícias aparecem na aba Perfil, mas ferramenta (da Origem, da
-  Classe, ou de talentos como Habilidoso) não tem exibição nenhuma na
-  Ficha hoje. Onde mostrar (aba Perfil? Mochila?) ainda não decidido.
+_Nenhum item registrado no momento._

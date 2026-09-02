@@ -7,6 +7,7 @@ import { classes, type Classe } from '../data/rulesets/dnd2024/classes';
 import { origens } from '../data/rulesets/dnd2024/origens';
 import { armaduras } from '../data/rulesets/dnd2024/armaduras';
 import { pericias } from '../data/rulesets/dnd2024/pericias';
+import { gruposFerramenta } from '../data/rulesets/dnd2024/ferramentas';
 import { talentos, type EfeitoMecanicoTalento } from '../data/rulesets/dnd2024/talentos';
 import { estilosDeLuta } from '../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
@@ -345,6 +346,73 @@ export function calcularPericias(
           ...(bonusFinal !== 0 ? [{ label: labelBonus, valor: fmtMod(bonusFinal) }] : []),
         ],
         total: { label: pericia.nome, valor: fmtMod(atribMod + bonusFinal) },
+      },
+    });
+  }
+  return resultado;
+}
+
+/** Atributo (nome completo) de cada ferramenta do catálogo, achatando
+ * `gruposFerramenta` — mesma ferramenta pode aparecer em mais de um
+ * grupo (ex: "Ferramentas de Ladrão"), sempre com o mesmo atributo. */
+const ATRIBUTO_DA_FERRAMENTA: Record<string, string | null> = Object.fromEntries(
+  Object.values(gruposFerramenta)
+    .flat()
+    .map((f) => [f.nome, f.atributo]),
+);
+
+/** Nomes das ferramentas em que o personagem é proficiente — Origem
+ * (fixa ou escolhida), Classe, e a parte de `proficienciasTalentoOrigemEscolhidas`
+ * que não é nome de perícia (ex: as 3 escolhas de Habilidoso, quando o
+ * jogador mistura perícia e ferramenta). */
+export function ferramentasProficientes(selection: WizardSelection): string[] {
+  const origem = origens.find((o) => o.nome === selection.origem);
+  const nomesPericias = new Set(pericias.map((p) => p.nome));
+  const ferramentasDoTalento = selection.proficienciasTalentoOrigemEscolhidas.filter(
+    (nome) => !nomesPericias.has(nome),
+  );
+  const daOrigem: string[] = [];
+  if (origem) {
+    if (origem.ferramenta.categoria === 'fixa') {
+      daOrigem.push(origem.ferramenta.nome);
+    } else if (selection.ferramentaOrigemEscolhida) {
+      daOrigem.push(selection.ferramentaOrigemEscolhida);
+    }
+  }
+  return [...new Set([...daOrigem, ...selection.ferramentasClasseEscolhidas, ...ferramentasDoTalento])];
+}
+
+export interface FerramentaFinal {
+  nome: string;
+  atributo: Atributo | null;
+  mod: number;
+  explicacao: ExplicacaoCalculo;
+}
+
+/** Só as ferramentas em que o personagem É proficiente (diferente de
+ * `calcularPericias`, que lista as 18 sempre) — a lista de proficiência
+ * de ferramenta não tem um catálogo fechado pra "todas, marcando quem
+ * tem", então só faz sentido mostrar o que o personagem realmente tem. */
+export function calcularProficienciasFerramenta(selection: WizardSelection, nivel: number): FerramentaFinal[] {
+  const classe = classeDaSelecao(selection);
+  if (!classe) return [];
+  const bonus = bonusProficiencia(classe, nivel);
+  const resultado: FerramentaFinal[] = [];
+  for (const nome of ferramentasProficientes(selection)) {
+    const atributoCompleto = ATRIBUTO_DA_FERRAMENTA[nome] ?? null;
+    const atributo = atributoCompleto ? (ATRIBUTO_POR_NOME_COMPLETO[atributoCompleto] ?? null) : null;
+    const valorAtributo = atributo ? valorFinalAtributo(selection, atributo) : null;
+    const atribMod = valorAtributo !== null ? modificador(valorAtributo) : 0;
+    resultado.push({
+      nome,
+      atributo,
+      mod: atribMod + bonus,
+      explicacao: {
+        linhas: [
+          ...(atributo ? [{ label: `mod. ${atributo}`, valor: fmtMod(atribMod) }] : []),
+          { label: 'Bônus de Proficiência', valor: fmtMod(bonus) },
+        ],
+        total: { label: nome, valor: fmtMod(atribMod + bonus) },
       },
     });
   }

@@ -9,6 +9,7 @@ import {
   calcularIniciativa,
   calcularPercepcaoPassiva,
   calcularPericias,
+  calcularProficienciasFerramenta,
   calcularPvMaximoNivel1,
   classeDaSelecao,
   explicarCAEquipado,
@@ -190,6 +191,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     atributosOrdem.map((a) => [a, valorFinalAtributo(selecao, a) ?? 10]),
   ) as Record<Atributo, number>;
   const pericias = calcularPericias(selecao, personagem.nivel, periciasEspecialistaAtuais, periciasSubclasseBonusAtuais);
+  const proficienciasFerramenta = calcularProficienciasFerramenta(selecao, personagem.nivel);
   const bonusProficienciaAtual = classe ? bonusProficiencia(classe, personagem.nivel) : 0;
   const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
   const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
@@ -624,6 +626,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             explicacaoPercepcaoPassiva={explicacaoPercepcaoPassiva}
             atributos={atributos}
             pericias={pericias}
+            proficienciasFerramenta={proficienciasFerramenta}
             onDescansoLongo={descansoLongo}
             onDescansoCurto={descansoCurto}
             restStatus={restStatus}

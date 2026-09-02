@@ -1,4 +1,4 @@
-import type { AtributoFinal, ExplicacaoCalculo, PericiaFinal } from '../../../core/calculoPersonagem';
+import type { AtributoFinal, ExplicacaoCalculo, FerramentaFinal, PericiaFinal } from '../../../core/calculoPersonagem';
 import type { Arma } from '../../../data/rulesets/dnd2024/armas';
 import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { useRoll } from '../../roll/RollContext';
@@ -21,6 +21,7 @@ interface AtributosTabProps {
   explicacaoPercepcaoPassiva: ExplicacaoCalculo;
   atributos: AtributoFinal[];
   pericias: PericiaFinal[];
+  proficienciasFerramenta: FerramentaFinal[];
   onDescansoLongo: () => void;
   onDescansoCurto: () => void;
   restStatus: string | null;
@@ -45,6 +46,7 @@ export default function AtributosTab({
   explicacaoPercepcaoPassiva,
   atributos,
   pericias,
+  proficienciasFerramenta,
   onDescansoLongo,
   onDescansoCurto,
   restStatus,
@@ -150,6 +152,28 @@ export default function AtributosTab({
       <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
         toque num atributo, perícia ou iniciativa pra rolar o dado.
       </div>
+
+      {proficienciasFerramenta.length > 0 && (
+        <>
+          <div style={{ borderTop: '1px dashed var(--line)', margin: '4px 0 12px' }} />
+          <div className="section-title">Proficiência com Ferramentas</div>
+          {proficienciasFerramenta.map((f) => (
+            <div key={f.nome} className={styles.skillRow}>
+              <span>
+                {f.nome}
+                {f.atributo ? ` (${f.atributo})` : ''} <InfoValor titulo={f.nome} explicacao={f.explicacao} />
+              </span>
+              <span>
+                {f.mod >= 0 ? '+' : ''}
+                {f.mod}
+              </span>
+            </div>
+          ))}
+          <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
+            valor = mod. de atributo da ferramenta + Bônus de Proficiência.
+          </div>
+        </>
+      )}
 
       {maestriaArma.length > 0 && (
         <>
