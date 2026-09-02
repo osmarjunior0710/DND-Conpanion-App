@@ -37,6 +37,9 @@ interface MagiasTabProps {
   /** `true` só quando o personagem tem a Invocação Mística Pacto do
    * Tomo — controla se o botão "Reconjurar o Livro" aparece. */
   temPactoDoTomo: boolean;
+  /** `true` = já reconjurado desde o último Descanso Curto/Longo —
+   * botão "Reconjurar" fica travado até o próximo descanso. */
+  livroDasSombrasGasto: boolean;
   onReconjurarLivro: () => void;
   faltamTruques: number;
   faltamMagiasPreparadas: number;
@@ -56,6 +59,7 @@ export default function MagiasTab({
   magiasDescobertasMagicasAtuais,
   livroDasSombrasAtuais,
   temPactoDoTomo,
+  livroDasSombrasGasto,
   onReconjurarLivro,
   faltamTruques,
   faltamMagiasPreparadas,
@@ -214,8 +218,14 @@ export default function MagiasTab({
             Pacto do Tomo — sempre preparadas enquanto o livro existir, não contam na conta de Magias Preparadas. A
             escolha pode ser refeita a cada Descanso Curto ou Longo.
           </div>
-          <div className={styles.avisoFaltando} onClick={onReconjurarLivro}>
-            🔮 Reconjurar o Livro das Sombras — toque pra escolher
+          <div
+            className={`${styles.reconjurarBtn} ${livroDasSombrasGasto ? styles.reconjurarBtnGasto : ''}`}
+            onClick={onReconjurarLivro}
+          >
+            🔮{' '}
+            {livroDasSombrasGasto
+              ? 'Livro já reconjurado — disponível de novo após Descanso Curto ou Longo'
+              : 'Reconjurar o Livro das Sombras — toque pra escolher'}
           </div>
           {livroDasSombras.map((m) => {
             const semEspaco = m.circulo > 0 && circulosDisponiveisParaConjurar(m.circulo, espacos, espacosGastosPorCirculo).length === 0;

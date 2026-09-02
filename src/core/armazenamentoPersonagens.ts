@@ -68,6 +68,11 @@ export interface PersonagemSalvo {
    * Descanso). Ausente = cai pro livro escolhido na criação
    * (`selecao.livroDasSombrasTruques` + `livroDasSombrasMagias`). */
   livroDasSombrasAtual?: string[];
+  /** `true` = o Livro já foi reconjurado desde o último Descanso Curto
+   * ou Longo — botão "Reconjurar" fica travado até o próximo descanso
+   * (a regra real só permite escolher de novo ao final de um
+   * descanso). Resetado pra `false` em `descansoCurto`/`descansoLongo`. */
+  livroDasSombrasGasto?: boolean;
   /** Perícias escolhidas pra Especialização (dobra o Bônus de
    * Proficiência) — característica "Especialista" do Bardo, ganha nos
    * níveis 2 e 9 (2 escolhas por vez, acumulativas, sem troca — ver

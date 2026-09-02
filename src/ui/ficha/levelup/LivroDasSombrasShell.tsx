@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { magias } from '../../../data/rulesets/dnd2024/magias';
 import { truquesElegiveisLivroDasSombras, magiasRituaisElegiveisLivroDasSombras } from '../../../core/livroDasSombras';
+import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import styles from './LevelUpShell.module.css';
 
@@ -82,7 +83,7 @@ export default function LivroDasSombrasShell({
           <div key={m.id} className="check-row" onClick={() => toggleTruque(m.nome)}>
             <div className={`check-box ${truquesEscolhidos.includes(m.nome) ? 'checked' : ''}`} />
             <span className="check-label">
-              <MagiaComDescricao magia={m} variante="icone" />{' '}
+              <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}{' '}
               <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>({m.classes.join(', ')})</span>
             </span>
           </div>
@@ -95,7 +96,7 @@ export default function LivroDasSombrasShell({
           <div key={m.id} className="check-row" onClick={() => toggleMagia(m.nome)}>
             <div className={`check-box ${magiasEscolhidas.includes(m.nome) ? 'checked' : ''}`} />
             <span className="check-label">
-              <MagiaComDescricao magia={m} variante="icone" />{' '}
+              <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}{' '}
               <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>({m.classes.join(', ')})</span>
             </span>
           </div>

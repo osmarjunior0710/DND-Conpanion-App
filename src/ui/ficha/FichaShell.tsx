@@ -151,6 +151,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [livroDasSombrasAtuais, setLivroDasSombrasAtuais] = useState<string[]>(
     personagemSalvo.livroDasSombrasAtual ?? [...selecao.livroDasSombrasTruques, ...selecao.livroDasSombrasMagias],
   );
+  const [livroDasSombrasGasto, setLivroDasSombrasGasto] = useState<boolean>(personagemSalvo.livroDasSombrasGasto ?? false);
   const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
   const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
@@ -300,6 +301,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       periciasSubclasseBonusAtual: periciasSubclasseBonusAtuais,
       magiasDescobertasMagicasAtual: magiasDescobertasMagicasAtuais,
       livroDasSombrasAtual: livroDasSombrasAtuais,
+      livroDasSombrasGasto,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
       itensMochilaAtual: itensMochila,
@@ -327,6 +329,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     periciasSubclasseBonusAtuais,
     magiasDescobertasMagicasAtuais,
     livroDasSombrasAtuais,
+    livroDasSombrasGasto,
     talentosGeraisAtuais,
     talentosFavoritos,
     itensMochila,
@@ -413,6 +416,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setIndomavelGasto(0);
     setSurtoGasto(0);
     setInspiracaoGasto(0);
+    setLivroDasSombrasGasto(false);
     fimDoTurno();
     setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação e Inspiração de Bardo recuperados.`);
   }
@@ -428,6 +432,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     }
     if (fonteDeInspiracao) setInspiracaoGasto(0);
     setFolegoGasto((v) => Math.max(0, v - 1));
+    setLivroDasSombrasGasto(false);
     setRestStatus(
       `Descanso Curto: ${circulosQueRecuperam.length > 0 ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
     );
@@ -614,6 +619,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         onFechar={() => setLivroDasSombrasAberto(false)}
         onConfirmar={(novaLista) => {
           setLivroDasSombrasAtuais(novaLista);
+          setLivroDasSombrasGasto(true);
           setLivroDasSombrasAberto(false);
         }}
       />
@@ -708,7 +714,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             magiasDescobertasMagicasAtuais={magiasDescobertasMagicasAtuais}
             livroDasSombrasAtuais={livroDasSombrasAtuais}
             temPactoDoTomo={invocacoesMisticasAtuais.includes('pacto-do-tomo')}
-            onReconjurarLivro={() => setLivroDasSombrasAberto(true)}
+            livroDasSombrasGasto={livroDasSombrasGasto}
+            onReconjurarLivro={() => !livroDasSombrasGasto && setLivroDasSombrasAberto(true)}
             faltamTruques={faltamTruques}
             faltamMagiasPreparadas={faltamMagiasPreparadas}
             onCompletarTruques={() => setCompletarAberto('truques')}

@@ -93,3 +93,28 @@
   align-items: center;
   cursor: pointer;
 }
+
+/* Botão "Reconjurar o Livro das Sombras" — ação disponível (accent,
+ * não é aviso de erro como .avisoFaltando) vs. já gasto até o próximo
+ * Descanso Curto/Longo (cinza/travado, mesmo tratamento visual do
+ * painel de Ação/Ação Bônus quando "Usada" — ver CombatTab). */
+.reconjurarBtn {
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--accent);
+  border-radius: var(--shape-xs);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 12px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.reconjurarBtnGasto {
+  border-color: var(--line);
+  background: var(--panel2);
+  color: var(--text-faint);
+  cursor: default;
+}

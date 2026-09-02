@@ -1,4 +1,5 @@
 import { truquesElegiveisLivroDasSombras, magiasRituaisElegiveisLivroDasSombras } from '../../../core/livroDasSombras';
+import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import type { StepProps } from './StepProps';
 
@@ -44,7 +45,7 @@ export default function LivroDasSombrasStep({ selection, update }: StepProps) {
         <div key={m.id} className="check-row" onClick={() => toggleTruque(m.nome)}>
           <div className={`check-box ${selection.livroDasSombrasTruques.includes(m.nome) ? 'checked' : ''}`} />
           <span className="check-label">
-            <MagiaComDescricao magia={m} variante="icone" />{' '}
+            <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}{' '}
             <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>({m.classes.join(', ')})</span>
           </span>
         </div>
@@ -57,7 +58,7 @@ export default function LivroDasSombrasStep({ selection, update }: StepProps) {
         <div key={m.id} className="check-row" onClick={() => toggleMagia(m.nome)}>
           <div className={`check-box ${selection.livroDasSombrasMagias.includes(m.nome) ? 'checked' : ''}`} />
           <span className="check-label">
-            <MagiaComDescricao magia={m} variante="icone" />{' '}
+            <MagiaComDescricao magia={m} variante="icone" /> {iconesMagia(m)}{' '}
             <span style={{ color: 'var(--text-faint)', fontSize: 11 }}>({m.classes.join(', ')})</span>
           </span>
         </div>
