@@ -14,6 +14,21 @@
 
 ---
 
+## Postmortem de Bardo + Guerreiro (fazer antes de começar Bruxo)
+
+**O que é:** antes de começar a próxima classe (Bruxo), revisar a
+implementação total de Bardo e Guerreiro de ponta a ponta — o que
+funcionou bem, o que não funcionou, e como otimizar o processo de
+implementar classe daqui pra frente (essas duas foram as classes-piloto,
+com processos um pouco diferentes entre si).
+
+**Por que foi adiado:** pedido do Osmar pra fazer essa revisão só
+quando for de fato começar Bruxo, não agora no meio de uma entrega
+pontual (Origem Nobre).
+
+**O que falta pra resolver:** ainda não feito. Fazer antes de propor o
+plano de implementação do Bruxo.
+
 ## Plano de Equipamento — COMPLETO (E1-E4 feitas)
 
 **O que é:** plano de 4 entregas nascido de uma revisão geral pedida
