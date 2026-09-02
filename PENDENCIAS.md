@@ -14,6 +14,39 @@
 
 ---
 
+## Planilha mestra não tem os IDs que o app usa internamente (Magias, Opções de Classe)
+
+**O que é:** a planilha mestra já tem coluna `ID` própria em várias
+abas (ex: "Magias" — `Truq_BadaFune` pra Badalar Fúnebre; "Opções de
+Classe" — `Classe_Bruxo_InvMist_PacTomo` pra Pacto do Tomo), mas o app
+**não usa esses IDs** — gera os próprios ao importar, como slug do
+nome (ex: `"badalarfunebre"`, `"pacto-do-tomo"` em
+`src/data/rulesets/dnd2024/magias.ts` e `invocacoesMisticas.ts`).
+Achado do Osmar (2026-09), perguntando se os IDs novos (usados na
+Invocações Místicas do Level Up, seção 13 do CLAUDE.md) batiam com a
+planilha — não batem.
+
+**Por que importa:** o Osmar precisa saber o ID que o app usa (não o
+da planilha) pra conseguir apontar exatamente qual item tem bug/precisa
+de fix, sem ter que adivinhar o slug gerado. Ele quer atualizar a
+planilha mestra com uma coluna extra guardando o **ID do app**
+(diferente do `ID` da planilha, que já serve pra outra coisa) — assim
+os dois lados falam a mesma língua.
+
+**Por que não migrar os IDs do app pros da planilha agora:** os slugs
+do app já estão persistidos em personagens salvos no `localStorage`
+(`truquesAtual`, `invocacoesMisticasAtual`, `magiasPreparadasAtual`
+etc.) — trocar o formato quebra saves existentes sem migração. Manter
+os slugs do app como estão; só adicionar de onde vêm na planilha.
+
+**O que falta pra resolver:** o Osmar vai adicionar a coluna com o ID
+do app nas abas relevantes da planilha mestra (pelo menos "Magias" e
+"Opções de Classe" — outras abas com dado usado programaticamente por
+ID podem precisar do mesmo, ex: Talentos, Características de Classe,
+Subclasses). Quando a planilha tiver essa coluna, nada muda no código
+— é só documentação pro Osmar rastrear bug, não fonte de dado
+importada.
+
 ## Bruxo — Invocações Místicas Fase 2 + 3 subclasses restantes (Arquifada, Celestial, Grande Antigo)
 
 **O que é:** o plano de implementação do Bruxo (`EmDev.md`) cobre a
