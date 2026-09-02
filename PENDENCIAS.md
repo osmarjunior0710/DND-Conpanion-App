@@ -14,6 +14,38 @@
 
 ---
 
+## Bruxo — Invocações Místicas Fase 2 + 3 subclasses restantes (Arquifada, Celestial, Grande Antigo)
+
+**O que é:** o plano de implementação do Bruxo (`EmDev.md`) cobre a
+base completa (B0-B5) + só o Patrono Ínfero (B6, escolhido por ser o
+que o grupo do Osmar vai jogar primeiro). Ficam de fora por enquanto:
+
+- **Invocações Místicas Fase 2** — efeito mecânico real das 29
+  invocações (hoje só a Fase 1 entra no plano: escolher da lista, sem
+  checar pré-requisito/dependência nem aplicar mecânica). Cada
+  invocação tem sua própria regra de frequência/custo (ver SDD
+  completo do Osmar — passiva, à vontade, ou limitada com teto
+  próprio) — vai precisar de vários lotes pequenos, mesmo padrão dos
+  Talentos Fase 4.
+- **Patrono Arquifada, Patrono Celestial, Patrono O Grande Antigo** —
+  as outras 3 subclasses de Bruxo, cada uma com 4-5 características
+  ativas próprias (algumas sem equivalente ainda no motor genérico,
+  ex: Passos Feéricos do Arquifada tem múltiplas opções de efeito
+  escolhidas na hora de conjurar).
+
+**Por que foi adiado:** decisão do Osmar — Patrono Ínfero primeiro
+porque é o que o grupo de mesa dele vai usar; as outras 3 completam
+depois, sem pressa.
+
+**Achado do SDD que precisa ser aplicado ao implementar Grande
+Antigo:** a característica "Magias Psíquicas" (nível 3) é do **Patrono
+O Grande Antigo**, não do Patrono Ínfero — o SDD v2 do Osmar tinha essa
+atribuição errada (planilha mestra já está certa, conferido contra o
+livro).
+
+**O que falta pra resolver:** nada travado — só esperar a base +
+Ínfero serem entregues e testados antes de retomar.
+
 ## Plano de Equipamento — COMPLETO (E1-E4 feitas)
 
 **O que é:** plano de 4 entregas nascido de uma revisão geral pedida
