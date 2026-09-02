@@ -414,3 +414,33 @@ entra depois, em lotes pequenos, registrado em `PENDENCIAS.md`.
 
 **Data/origem:** 2026-09, plano "Bruxo — base + Patrono Ínfero"
 (EmDev.md), B1.
+
+## Bruxo — B3 (aba Magias) feito: pool único vira array de 1 item, zero mudança no resto do app
+
+**Achado principal:** `EspacoDeMagiaAtivo[]` (array genérico já usado
+pelo Bardo — pips, upcast, gasto por círculo, Descanso) não precisa de
+nenhuma mudança pra suportar o Bruxo. `core/magiasPersonagem.ts`'s
+`espacosDeMagiaAtivos()` ganhou um fallback: quando não acha o padrão
+"1 recurso por círculo" do Bardo, procura o padrão de pool único do
+Bruxo ("Espaço de Magia de Pacto (quantidade)" + "Círculo do Espaço de
+Magia de Pacto") e devolve um array de **1 item só** com o círculo
+daquele nível. Toda a UI/lógica que já existia (`MagiasTab.tsx`,
+`EscolherCirculoShell`, Descanso Curto/Longo, `armazenamentoPersonagens`'s
+`espacosGastosPorCirculo`) funcionou sem tocar em mais nada — "upcast
+automático" do Bruxo já é só a regra normal de upcast quando só existe
+1 círculo disponível pra gastar. Ao chegar uma classe nova com formato
+de recurso diferente do que já existe, procurar primeiro se dá pra
+mapear pro mesmo tipo genérico (array de {circulo, maximo,
+recuperaNoDescansoCurto}) em vez de criar caminho próprio.
+
+**Bugfix relacionado (texto, não lógica):** a mensagem de recuperação
+em `MagiasTab.tsx` tinha uma ramificação "misto por círculo" que nunca
+foi exercitada de verdade (Bardo é sempre 100% Descanso Longo) e não
+fazia sentido pro Bruxo (Descanso Longo sempre restaura tudo,
+incondicional, em `FichaShell.tsx`'s `descansoLongo()` — `recuperaNoDescansoCurto`
+só marca "esse círculo TAMBÉM recupera cedo no Curto", nunca "só no
+Curto"). Simplificado pra mensagem binária: tem algum círculo marcado
+Curto → "Recupera no Descanso Curto ou Longo."; senão → "Recupera no
+Descanso Longo."
+
+**Data/origem:** 2026-09, plano "Bruxo — base + Patrono Ínfero", B3.

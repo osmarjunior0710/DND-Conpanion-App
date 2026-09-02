@@ -103,14 +103,13 @@ export default function MagiasTab({
     );
   }
 
+  // Descanso Longo sempre restaura tudo (ver FichaShell.tsx's
+  // descansoLongo, reset incondicional) — `recuperaNoDescansoCurto`
+  // só marca o extra: esse(s) círculo(s) TAMBÉM recuperam cedo, no
+  // Curto. Por isso a mensagem é sempre binária, nunca "misto por
+  // círculo": ou soma o Curto como opção extra, ou é só o Longo.
   const temCurto = espacos.some((e) => e.recuperaNoDescansoCurto);
-  const temLongo = espacos.some((e) => !e.recuperaNoDescansoCurto);
-  const avisoRecuperacao =
-    temCurto && temLongo
-      ? 'Recupera no Descanso Curto ou Longo, conforme o círculo.'
-      : temCurto
-        ? 'Recupera no Descanso Curto.'
-        : 'Recupera no Descanso Longo.';
+  const avisoRecuperacao = temCurto ? 'Recupera no Descanso Curto ou Longo.' : 'Recupera no Descanso Longo.';
 
   return (
     <>

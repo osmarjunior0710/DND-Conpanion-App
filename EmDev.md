@@ -30,7 +30,7 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
       escolhas de perícia/truque/magia preparada/equipamento; escolha
       da 1ª Invocação Mística (Fase 1 — lista simples, sem
       pré-requisito/mecânica ainda).
-- [ ] **B3** — Ficha/aba Magias: Espaço de Pacto (pool único
+- [x] **B3** — Ficha/aba Magias: Espaço de Pacto (pool único
       quantidade+círculo, upcast automático, recupera Descanso Curto
       OU Longo).
 - [ ] **B4** — Level Up: Truques/Magias Preparadas crescem (reaproveita

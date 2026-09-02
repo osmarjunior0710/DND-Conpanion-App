@@ -30,10 +30,18 @@ const REGEX_CIRCULO = /^Espaços de Magia — (\d+)º Círculo$/;
 /** TODOS os círculos de Espaço de Magia ativos no nível atual (Etapa
  * 4.2) — array vazio se a classe não conjura. Bardo ganha o 2º
  * círculo no nível 3 sem perder o 1º, então a partir daí isso retorna
- * 2 entradas simultâneas; ordenado por círculo crescente. */
+ * 2 entradas simultâneas; ordenado por círculo crescente.
+ *
+ * Bruxo (Magia de Pacto) usa um schema diferente em `classes.ts` — 1
+ * pool ÚNICO ("Espaço de Magia de Pacto (quantidade)" +
+ * "Círculo do Espaço de Magia de Pacto"), não 1 recurso por círculo —
+ * mas sempre resolve pra um array de **1 item só**, então todo o resto
+ * do app (pips, gasto por círculo, upcast em `circulosDisponiveisParaConjurar`,
+ * Descanso) funciona sem mudança nenhuma: upcast "automático" do Bruxo
+ * já é só a regra normal de upcast com um único círculo disponível. */
 export function espacosDeMagiaAtivos(classe: Classe | null, nivel: number): EspacoDeMagiaAtivo[] {
   if (!classe) return [];
-  return classe.recursos
+  const porCirculo = classe.recursos
     .map((r): { circulo: number; recurso: RecursoClasse } | null => {
       const m = r.nome.match(REGEX_CIRCULO);
       return m ? { circulo: Number(m[1]), recurso: r } : null;
@@ -46,6 +54,20 @@ export function espacosDeMagiaAtivos(classe: Classe | null, nivel: number): Espa
       maximo: c.recurso.valorPorNivel[nivel] ?? 0,
       recuperaNoDescansoCurto: (c.recurso.recuperaEm ?? '').toLowerCase().includes('curto'),
     }));
+  if (porCirculo.length > 0) return porCirculo;
+
+  const quantidade = classe.recursos.find((r) => r.nome === 'Espaço de Magia de Pacto (quantidade)');
+  const circuloAtivo = classe.recursos.find((r) => r.nome === 'Círculo do Espaço de Magia de Pacto');
+  const maximo = quantidade?.valorPorNivel[nivel] ?? 0;
+  const circulo = circuloAtivo?.valorPorNivel[nivel] ?? 0;
+  if (!quantidade || maximo <= 0 || circulo <= 0) return [];
+  return [
+    {
+      circulo,
+      maximo,
+      recuperaNoDescansoCurto: (quantidade.recuperaEm ?? '').toLowerCase().includes('curto'),
+    },
+  ];
 }
 
 /** Círculos em que dá pra conjurar uma magia de círculo `magiaCirculo`
