@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { alinhamentos, arrayPadrao, atributosOrdem, type Atributo } from '../../data/wizardFixtures';
 import { origens } from '../../data/rulesets/dnd2024/origens';
+import { talentosOrigem, type ConcedeProficienciasTalento } from '../../data/rulesets/dnd2024/talentos';
 import { especies } from '../../data/rulesets/dnd2024/especies';
 import { idiomas } from '../../data/rulesets/dnd2024/idiomas';
 import { classes } from '../../data/rulesets/dnd2024/classes';
@@ -21,6 +22,7 @@ import ClasseStep from './steps/ClasseStep';
 import ClasseEscolhasStep from './steps/ClasseEscolhasStep';
 import OrigemStep from './steps/OrigemStep';
 import OrigemEscolhasStep from './steps/OrigemEscolhasStep';
+import TalentoOrigemEscolhasStep from './steps/TalentoOrigemEscolhasStep';
 import EspecieStep from './steps/EspecieStep';
 import EspecieEscolhasStep from './steps/EspecieEscolhasStep';
 import AtributosStep from './steps/AtributosStep';
@@ -54,6 +56,17 @@ interface WizardStepDef {
   isValid: (s: WizardSelection) => boolean;
   mensagemInvalida?: string;
   randomize?: () => void;
+  /** Ausente = passo sempre ativo. Presente = passo só entra na
+   * sequência quando `true` (ex: passo de escolha do Talento de Origem,
+   * que só existe pra origem cujo talento concede escolha de
+   * proficiência — ver `TalentoOrigemEscolhasStep`). */
+  condicao?: (s: WizardSelection) => boolean;
+}
+
+function concedeProficienciasDaOrigem(s: WizardSelection): ConcedeProficienciasTalento | undefined {
+  const origemSelecionada = origens.find((o) => o.nome === s.origem);
+  if (!origemSelecionada) return undefined;
+  return talentosOrigem.find((t) => t.id === origemSelecionada.talentoOrigemId)?.concedeProficiencias;
 }
 
 export default function WizardShell() {
@@ -214,6 +227,17 @@ export default function WizardShell() {
       randomize: randomizarEscolhasOrigem,
     },
     {
+      name: '2c. Talento da Origem',
+      render: (p) => <TalentoOrigemEscolhasStep {...p} />,
+      condicao: (s) => concedeProficienciasDaOrigem(s) !== undefined,
+      isValid: (s) => {
+        const concede = concedeProficienciasDaOrigem(s);
+        if (!concede) return true;
+        return s.proficienciasTalentoOrigemEscolhidas.length === concede.quantidade;
+      },
+      mensagemInvalida: 'Complete as escolhas do talento da origem antes de avançar.',
+    },
+    {
       name: '3. Espécie',
       render: (p) => <EspecieStep {...p} />,
       isValid: (s) => s.especie !== null,
@@ -254,8 +278,14 @@ export default function WizardShell() {
     },
   ];
 
-  const step = steps[wizIndex];
-  const isLast = wizIndex === steps.length - 1;
+  // Passos com `condicao` (ex: "2c. Talento da Origem") só entram na
+  // sequência quando a condição bate com a seleção atual — filtrado de
+  // novo a cada render, então `wizIndex` (guardado como número simples)
+  // é grampeado (`idx`) pra nunca apontar pra fora dos passos ativos.
+  const stepsAtivos = steps.filter((s) => !s.condicao || s.condicao(selection));
+  const idx = Math.min(wizIndex, stepsAtivos.length - 1);
+  const step = stepsAtivos[idx];
+  const isLast = idx === stepsAtivos.length - 1;
 
   function wizNext() {
     if (!step.isValid(selection)) {
@@ -279,16 +309,16 @@ export default function WizardShell() {
       navigate('/lista');
       return;
     }
-    setWizIndex((i) => i + 1);
+    setWizIndex(idx + 1);
   }
 
   function wizPrev() {
     setAviso(null);
-    if (wizIndex === 0) {
+    if (idx === 0) {
       navigate('/home');
       return;
     }
-    setWizIndex((i) => i - 1);
+    setWizIndex(idx - 1);
   }
 
   return (
@@ -298,10 +328,10 @@ export default function WizardShell() {
           <div className={styles.stepName}>{step.name}</div>
         </div>
         <div className={styles.progress}>
-          {steps.map((s, i) => (
+          {stepsAtivos.map((s, i) => (
             <div
               key={s.name}
-              className={`${styles.dot} ${i < wizIndex ? styles.dotDone : ''} ${i === wizIndex ? styles.dotCurrent : ''}`}
+              className={`${styles.dot} ${i < idx ? styles.dotDone : ''} ${i === idx ? styles.dotCurrent : ''}`}
             />
           ))}
         </div>

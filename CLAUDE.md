@@ -138,6 +138,31 @@ tela nova daqui pra frente.
 Proponha um plano de entregas pequenas e espere aprovação. Nunca comece a
 implementar sem esse plano ter sido confirmado.
 
+### 6.1 Reaproveite o padrão que já existe — não invente um novo
+
+Antes de desenhar schema, componente ou fluxo novo, procure ativamente
+se já existe algo parecido no código (schema de dado semelhante,
+componente de escolha semelhante, tela com a mesma forma de interação)
+e siga esse padrão em vez de criar um jeito novo de fazer a mesma
+coisa. Isso vale tanto pra dado (`data/`) quanto pra UI (`ui/`):
+
+- Antes de criar um campo/interface novo, procure se um campo parecido
+  já resolve o problema (ex.: um mecanismo de "escolha de item de um
+  grupo" já existente pode servir pra um caso novo sem precisar de
+  estrutura própria).
+- Antes de desenhar uma tela/passo novo do wizard, veja como uma tela
+  parecida já resolve (mesmo componente de pill, mesmo padrão de
+  destaque pra "já possui", mesmo jeito de mostrar escolha em lista).
+- Se o pedido parecer exigir 2 coisas novas mas 1 delas já é coberta
+  por um mecanismo existente, implemente só a parte genuinamente nova.
+
+**Por quê:** o app já tem vários casos parecidos-mas-não-iguais
+acumulados (ex.: diferentes formas de "escolher 1 de um grupo", de
+"escolher N itens", de exibir "concedido por X") — cada padrão novo
+que não reaproveita o que já existe aumenta esse ruído e torna a
+manutenção mais difícil. Antes de propor o plano da seção 6, gaste um
+momento conferindo o schema/componente mais próximo do que já existe.
+
 ## 7. Regra de atualização da família DECISOES-*.md
 
 Sempre que você tomar (ou o usuário tomar, com sua ajuda) uma decisão de

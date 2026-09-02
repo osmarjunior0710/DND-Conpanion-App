@@ -22,6 +22,11 @@ export interface WizardSelection {
   origem: string | null;
   ferramentaOrigemEscolhida: string | null;
   equipamentoOrigemEscolhido: 'A' | 'B' | null;
+  /** Escolhas livres de perícia/ferramenta concedidas pelo talento da
+   * origem (ex.: Habilidoso — 3 escolhas, qualquer combinação). Nomes
+   * de perícia (`Pericia.nome`) e de ferramenta (nome de item do
+   * catálogo/`gruposFerramenta`) misturados na mesma lista. */
+  proficienciasTalentoOrigemEscolhidas: string[];
   especie: string | null;
   linguas: string[];
   alinhamento: string | null;
@@ -48,6 +53,7 @@ export function criarSelecaoInicial(): WizardSelection {
     origem: null,
     ferramentaOrigemEscolhida: null,
     equipamentoOrigemEscolhido: null,
+    proficienciasTalentoOrigemEscolhidas: [],
     especie: null,
     linguas: ['Comum'],
     alinhamento: null,

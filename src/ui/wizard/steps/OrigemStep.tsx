@@ -30,7 +30,10 @@ export default function OrigemStep({ selection, update }: StepProps) {
           <div
             key={o.id}
             className={`opt-card ${selection.origem === o.nome ? 'selected' : ''} ${!o.disponivel ? 'btn-disabled' : ''} ${duplicada ? 'opt-card-duplicada' : ''}`}
-            onClick={() => o.disponivel && update({ origem: o.nome, ferramentaOrigemEscolhida: null })}
+            onClick={() =>
+              o.disponivel &&
+              update({ origem: o.nome, ferramentaOrigemEscolhida: null, proficienciasTalentoOrigemEscolhidas: [] })
+            }
           >
             <div className="opt-card-row">
               <div className="opt-card-img">🖼</div>
@@ -71,8 +74,8 @@ export default function OrigemStep({ selection, update }: StepProps) {
         );
       })}
       <div className="label" style={{ marginTop: 6 }}>
-        6 origens ficam "(em breve)" — o talento delas (Habilidoso ou Iniciado em Magia) pede uma seleção extra que
-        ainda não tem tela própria. Ver <code>PENDENCIAS.md</code>.
+        3 origens ficam "(em breve)" — o talento delas (Iniciado em Magia) pede uma seleção extra que ainda não tem
+        tela própria. Ver <code>PENDENCIAS.md</code>.
       </div>
     </>
   );

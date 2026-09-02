@@ -78,6 +78,18 @@ export type EfeitoMecanicoTalento =
    * nenhuma outra arma (Duelismo, do Estilo de Luta). */
   | { tipo: 'bonus-dano-uma-mao-sem-outra-arma'; bonus: number };
 
+/** Escolha de proficiência concedida pelo próprio talento (diferente de
+ * `ConcedeAsiTalento`, que é ajuste de atributo) — hoje só Habilidoso
+ * usa isso ("3 escolhas de perícia ou ferramenta, em qualquer
+ * combinação"), mas o formato é genérico pra qualquer talento futuro
+ * que peça a mesma coisa (ver CLAUDE.md 6.1 e PENDENCIAS.md "Origens
+ * com seleção extra no Talento de Origem"). Ausente = talento não
+ * concede escolha de proficiência nenhuma. */
+export type ConcedeProficienciasTalento = {
+  quantidade: number;
+  tipos: ('pericia' | 'ferramenta')[];
+};
+
 export interface Talento {
   id: string;
   nome: string;
@@ -85,6 +97,7 @@ export interface Talento {
   repetivel: boolean;
   prerequisitos: PrerequisitosTalento;
   concedeAsi: ConcedeAsiTalento;
+  concedeProficiencias?: ConcedeProficienciasTalento;
   /** Texto bruto da coluna "Benefícios" — Fase 2 classifica em
    * Ação/Ação Bônus/Reação/Passiva, quebrando em frases quando o
    * talento tiver múltiplos efeitos (ex: Conjurador Bélico). */
@@ -149,6 +162,7 @@ export const talentos: Talento[] = [
     repetivel: true,
     prerequisitos: { nivelMinimo: null, atributosMinimos: [], outro: null },
     concedeAsi: { tipo: 'nenhum' },
+    concedeProficiencias: { quantidade: 3, tipos: ['pericia', 'ferramenta'] },
     beneficios: "Proficiência em 3 perícias ou ferramentas à escolha, em qualquer combinação.",
     pagina: 201,
     fonte: "PHB 2024",

@@ -721,3 +721,46 @@ itens de Classe + Origem, CA 12 com a Couro equipada automaticamente)
 sem passar pela Lista nem pelo wizard antes.
 
 **Data/origem:** 2026-09.
+
+## Passo condicional no wizard + escolha livre de proficiência (Talento de Origem)
+
+**Padrão pra passo do wizard que só existe pra algumas escolhas
+anteriores** (ex: "2c. Talento da Origem", que só aparece quando o
+talento da origem escolhida concede uma escolha extra — hoje só
+Habilidoso, futuramente Iniciado em Magia): `WizardStepDef` ganhou um
+campo opcional `condicao?: (s: WizardSelection) => boolean`. A lista
+de passos continua sendo declarada inteira e fixa (`steps`), mas é
+filtrada em `condicao` a cada render (`stepsAtivos`) antes de indexar
+— com `wizIndex` (estado bruto) sempre grampeado pro tamanho da lista
+filtrada (`idx = Math.min(wizIndex, stepsAtivos.length - 1)`) pra
+nunca apontar fora dos passos ativos se uma escolha anterior mudar. As
+funções de navegação (`wizNext`/`wizPrev`) e os pontinhos de progresso
+usam `idx`/`stepsAtivos`, não mais o `wizIndex`/`steps` brutos.
+
+**Escolha livre de perícia/ferramenta (Habilidoso) — schema genérico,
+não hardcoded pro talento específico:** `Talento` ganhou
+`concedeProficiencias?: { quantidade: number; tipos: ('pericia' |
+'ferramenta')[] }` (`talentos.ts`) — reconhecido pelo **ID** do
+talento (`habilidoso`), nunca pelo nome de exibição (seção 13 do
+CLAUDE.md). `WizardSelection` ganhou
+`proficienciasTalentoOrigemEscolhidas: string[]` (nomes de perícia e
+ferramenta misturados na mesma lista). Novo
+`core/proficienciasOrigem.ts`'s `proficienciasJaConcedidas(selection,
+origem)` deriva o conjunto do que o personagem já tem por Origem/
+Classe (2 perícias fixas + ferramenta já escolhida + o que a Classe já
+concedeu) — usado só pra marcar visualmente "já possui" na lista de
+escolha (`check-row`/`check-box`, mesmo padrão de qualquer outra
+escolha múltipla do wizard), sem bloquear a escolha (duplicar é válido
+em D&D, só não ganha nada a mais).
+
+**Por que isso desbloqueou 3 origens de uma vez (Nobre, Escriba,
+Charlatão):** as 3 usam Habilidoso e já tinham todo o resto do dado
+pronto na planilha (só ficavam com `disponivel: false` esperando essa
+UI) — o passo novo é genérico por talento, não por origem, então as 3
+foram destravadas juntas sem custo extra. Ver PENDENCIAS.md "Origens
+com seleção extra no Talento de Origem" pro que ainda falta (Iniciado
+em Magia, mesma ideia mas escolha de truque+magia de lista de classe,
+schema diferente).
+
+**Data/origem:** 2026-09. Pedido do Osmar pra implementar a Origem
+Nobre.

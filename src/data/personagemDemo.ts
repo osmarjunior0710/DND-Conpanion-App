@@ -39,6 +39,7 @@ export const personagemDemo: PersonagemSalvo = {
     origem: 'Artista',
     ferramentaOrigemEscolhida: 'Flauta de Pan',
     equipamentoOrigemEscolhido: 'A',
+    proficienciasTalentoOrigemEscolhidas: [],
     especie: 'Humano',
     linguas: ['Comum', 'Infernal', 'Gigante'],
     alinhamento: 'Caótico e Bom',

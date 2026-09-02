@@ -145,7 +145,7 @@ export const origens: Origem[] = [
       ouro: 15,
     },
     equipamentoOpcaoB: { ouro: 50 },
-    disponivel: false,
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {
@@ -216,7 +216,7 @@ export const origens: Origem[] = [
       ouro: 23,
     },
     equipamentoOpcaoB: { ouro: 50 },
-    disponivel: false,
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {
@@ -354,7 +354,7 @@ export const origens: Origem[] = [
       ouro: 29,
     },
     equipamentoOpcaoB: { ouro: 50 },
-    disponivel: false,
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {
