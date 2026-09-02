@@ -207,10 +207,17 @@ qualquer outra coisa vira `true` (inclui "Opcional..." — sintonizar
 dá bônus extra). Texto original preservado à parte pra conferência
 manual.
 
-**Assumido, ainda sem checagem (só 1 classe existe hoje):**
-proficiência com a arma equipada é sempre assumida — falta checar
-antes de somar Bônus de Proficiência quando uma classe com
-proficiência de arma restrita existir.
+**Proficiência com arma real (resolvido no B0 do Bruxo):**
+`core/proficienciaArma.ts`'s `classeProficienteComArma(classe, arma)`
+lê a coluna "Proficiência com Armas" de `proficienciasArmaArmaduraClasse`
+(texto livre) e resolve contra `arma.categoria`/`arma.propriedades` —
+sem Bônus de Proficiência se a classe não for proficiente (a regra
+real só tira o bônus, não trava o ataque). Padrões cobertos: "Simples
+e Marciais" (tudo), "Simples" sozinho, e as 2 exceções por propriedade
+já confirmadas na planilha (Ladino: Acuidade OU Leve em qualquer
+Marcial; Monge: Leve só em Marcial Corpo a Corpo) — mesma função serve
+sem mudança quando essas 2 classes forem importadas. Sem entrada pra
+uma classe = não proficiente, nunca assume.
 
 **Data/origem:** 2026-08, plano de Equipamento E2-E4 completo +
 verificação de schema contra PDFs reais em chat paralelo.

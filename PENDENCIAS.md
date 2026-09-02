@@ -121,17 +121,6 @@ soma o +2), compras na Loja, ou qualquer mudança depois.
   resistência de terceiro. Fica de fora até esse tipo de mecânica
   existir no Combat (vale também pra qualquer magia/talento que peça
   salvaguarda do alvo, não é exclusivo do Ataque Desarmado).
-- **Proficiência com arma equipada — assumida sempre verdadeira, só
-  Guerreiro e Bardo existem hoje.** `core/ataque.ts` soma o Bônus de
-  Proficiência em qualquer ataque com arma, sem checar se o
-  personagem é realmente proficiente com aquela arma específica —
-  hoje inofensivo porque Guerreiro é proficiente em toda arma
-  Simples/Marcial e Bardo também (armas Simples + espada longa,
-  rapieira, sabre e besta de mão). **Isso vai quebrar de verdade no
-  Bruxo** (próxima classe, ver postmortem em `DECISOES-CLASSES.md`) —
-  Bruxo só é proficiente em arma Simples, é a 1ª classe com
-  proficiência de arma restrita de verdade. Essa checagem precisa
-  entrar em `core/ataque.ts` ANTES de importar o Bruxo, não depois.
 - ~~**E4 — Sintonização (3 itens simultâneos).**~~ **Completa**
   (E4.1 catálogo + E4.2 UI, ver DECISOES-FICHA.md). Com isso o Plano
   de Equipamento inteiro (E1-E4) está feito. **Segue fora de

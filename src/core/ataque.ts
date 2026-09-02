@@ -9,6 +9,7 @@ import type { Classe } from '../data/rulesets/dnd2024/classes';
 import { estilosDeLuta } from '../data/rulesets/dnd2024/estilosDeLuta';
 import { bonusProficiencia } from './calculoPersonagem';
 import { identificarEquipamento } from './equipamento';
+import { classeProficienteComArma } from './proficienciaArma';
 import type { AtaqueInfo } from '../data/exampleCombat';
 
 /** Efeito mecânico (Fase 4) do Estilo de Luta escolhido pelo
@@ -53,9 +54,6 @@ export function ataqueDesarmado(classe: Classe, nivel: number, forMod: number): 
  * (Corpo a Corpo) ou Destreza (à Distância) por padrão; com a
  * propriedade Acuidade, usa o maior entre os dois (Cap. 1: "a
  * propriedade Acuidade... permite que você use Força ou Destreza").
- * Assume proficiência com a arma (única classe hoje, Guerreiro, é
- * proficiente em todas — ver `core/maestriaArma.ts`); auditoria de
- * proficiência por classe/arma fica pra quando houver 2ª classe.
  *
  * `semModAtributoNoDano` é o ataque bônus da propriedade Leve (E3.3):
  * o dano não soma o modificador de atributo, a menos que ele seja
@@ -70,6 +68,11 @@ export function ataqueDesarmado(classe: Classe, nivel: number, forMod: number): 
  * Arquearia (+2 no acerto à Distância) e/ou Duelismo (+2 no dano corpo
  * a corpo com 1 arma numa mão e nenhuma outra — precisa
  * `outraArmaNaMaoSecundaria === false` e não estar em modo 2 mãos).
+ *
+ * Bônus de Proficiência só soma se a classe é realmente proficiente
+ * com a arma (`classeProficienteComArma`) — sem isso, atacar com arma
+ * fora da proficiência ainda funciona (regra real: só perde o bônus,
+ * não trava o ataque).
  */
 export function ataqueComArma(
   arma: Arma,
@@ -85,7 +88,7 @@ export function ataqueComArma(
   const acuidade = arma.propriedades.includes('Acuidade');
   const distancia = arma.categoria.includes('à Distância');
   const atribMod = acuidade ? Math.max(forMod, desMod) : distancia ? desMod : forMod;
-  const prof = bonusProficiencia(classe, nivel);
+  const prof = classeProficienteComArma(classe, arma) ? bonusProficiencia(classe, nivel) : 0;
   const dadoVersatil = identificarEquipamento(arma.nome).dadoVersatil;
   const usaVersatil = duasMaosAtivo && dadoVersatil;
   const { quantidade, lados, tipo } = usaVersatil ? parseDano(`${dadoVersatil} ${arma.dano.replace(/^\d+d\d+\s*/, '')}`) : parseDano(arma.dano);

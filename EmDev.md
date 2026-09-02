@@ -19,7 +19,7 @@ exceto 1 divergência do SDD já corrigida (ver `DECISOES-CLASSES.md`
 quando a entrada for escrita): "Magias Psíquicas" é do Patrono O
 Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
 
-- [ ] **B0** — `core/ataque.ts` passa a checar proficiência de arma
+- [x] **B0** — `core/ataque.ts` passa a checar proficiência de arma
       real (hoje assume sempre true — inofensivo em Guerreiro/Bardo,
       quebra no Bruxo, que só é proficiente em Armas Simples).
 - [ ] **B1** — Dados: `classes.ts` (progressão 1-20), `caracteristicasClasse.ts`
