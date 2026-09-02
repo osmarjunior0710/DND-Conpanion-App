@@ -444,3 +444,30 @@ Curto → "Recupera no Descanso Curto ou Longo."; senão → "Recupera no
 Descanso Longo."
 
 **Data/origem:** 2026-09, plano "Bruxo — base + Patrono Ínfero", B3.
+
+## Bruxo — B4.3 feito: Invocações Místicas no Level Up, mesmo padrão de Truques
+
+**Reaproveitamento direto:** o passo "Invocações Místicas" no Level Up
+é uma cópia do padrão já usado em Truques/Magias Preparadas — lista
+única pré-marcada, `contarTrocas` valida "só 1 trocada por level-up",
+mesmo componente de check-row. Zero mecanismo novo de UI, só um
+catálogo diferente (`invocacoesElegiveisAteNivel(novoNivel)`, novo
+`core/invocacoesMisticas.ts`, filtra por `prerequisitos.nivelMinimo`)
+reaproveitado tanto no wizard (B2) quanto no Level Up (B4.3) — extraído
+pra função só depois de notar a mesma lógica duplicada nos dois
+lugares (regra 6.1 do CLAUDE.md).
+
+**Gap achado no caminho: nada na Ficha mostrava as Invocações
+escolhidas.** O wizard deixava escolher (B2) mas não existia lugar
+nenhum pra CONFERIR o que foi escolhido depois — sem isso, "crescer/
+trocar" no Level Up seria invisível. `PerfilTab.tsx` ganhou uma seção
+"Invocações Místicas" (mesmo padrão `[PH] sem efeito mecânico ainda`
+já usado em Talentos), populada por um novo estado
+`invocacoesMisticasAtuais` em `FichaShell.tsx`/`armazenamentoPersonagens.ts`
+(mesmo par `Atual`/`personagemSalvo.campoAtual ?? selecao.campoEscolhido`
+já usado por Truques/Magias). Lição pra próxima classe com escolha
+parecida: checar se existe display na Ficha ANTES de considerar o
+Level Up "completo" — a escolha sem lugar pra ver o resultado é meio
+trabalho só.
+
+**Data/origem:** 2026-09, plano "Bruxo — base + Patrono Ínfero", B4.3.

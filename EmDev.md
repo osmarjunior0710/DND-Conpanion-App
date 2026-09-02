@@ -41,13 +41,12 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
       "Atributo ou Talento" aparece certinho no nível 4 (com os
       requisitos de talento reconhecendo Magia de Pacto do Bruxo) e
       some no nível 5 — zero código novo.
-- [ ] **B4.3** — Level Up: Invocações Místicas crescem e trocam
-      (**unlock de verdade** — sistema novo, sem equivalente ainda no
-      motor de Level Up). Passo novo reaproveitando o componente de
-      lista única já usado em Truques/Magias, catálogo filtrado por
-      `prerequisitos.nivelMinimo <= novoNível` — continua Fase 1 (sem
-      checar dependência entre invocações nem aplicar mecânica, ver
-      PENDENCIAS.md).
+- [x] **B4.3** — Level Up: Invocações Místicas crescem e trocam. Novo
+      `core/invocacoesMisticas.ts`'s `invocacoesElegiveisAteNivel` +
+      passo "Invocações Místicas" no Level Up (mesmo padrão de
+      Truques). De brinde: Perfil da Ficha ganhou seção mostrando as
+      invocações atuais (não existia lugar nenhum mostrando isso
+      antes). Continua Fase 1 (sem dependência/mecânica).
 - [ ] **B5** — Combat: Usar Magia real; Astúcia Mágica; Contatar
       Patrono (nível 9); Arcana Mística (nível 11+).
 - [ ] **B6 — Patrono Ínfero**: Bênção do Tenebroso, Magias de Pacto do

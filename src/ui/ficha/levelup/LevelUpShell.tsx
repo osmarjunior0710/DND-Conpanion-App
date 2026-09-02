@@ -21,6 +21,7 @@ import {
 import { pericias } from '../../../data/rulesets/dnd2024/pericias';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
 import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
+import { invocacoesElegiveisAteNivel } from '../../../core/invocacoesMisticas';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import GrupoMagiaColapsavel from '../../components/GrupoMagiaColapsavel';
@@ -51,6 +52,7 @@ interface LevelUpShellProps {
     estiloDeLutaEscolhido: string | null;
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
+    invocacoesMisticasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
     periciasSubclasseBonusEscolhidas: string[] | null;
     magiasDescobertasMagicasEscolhidas: string[] | null;
@@ -72,6 +74,9 @@ interface LevelUpShellProps {
   truquesDaClasse: Magia[];
   /** Magias Preparadas que o personagem já tem (Etapa 4.3). */
   magiasPreparadasAtuais: string[];
+  /** Invocações Místicas (Bruxo) que o personagem já tem — Etapa 4.3
+   * do Bruxo, mesmo padrão de troca de Truques (1 por level-up). */
+  invocacoesMisticasAtuais: string[];
   /** Catálogo de magias de círculo > 0 da classe (todos os círculos —
    * filtrado por círculo ativo no nível novo aqui dentro). */
   magiasDaClasseDisponiveis: Magia[];
@@ -119,6 +124,7 @@ type LuStep =
   | 'estiloDeLuta'
   | 'truques'
   | 'magiasPreparadas'
+  | 'invocacoes'
   | 'descobertasMagicas'
   | 'especialista'
   | 'asi'
@@ -143,6 +149,7 @@ export default function LevelUpShell({
   truquesDaClasse,
   magiasPreparadasAtuais,
   magiasDaClasseDisponiveis,
+  invocacoesMisticasAtuais,
   periciasEspecialistaAtuais,
   periciasProficientesDoPersonagem,
   periciasSubclasseBonusAtuais,
@@ -157,6 +164,8 @@ export default function LevelUpShell({
   const novoNivel = personagem.nivel + 1;
   const maxTruques = valorRecursoClasse(classe, 'Truques Conhecidos', novoNivel);
   const maxMagiasPreparadas = valorRecursoClasse(classe, 'Magias Preparadas', novoNivel);
+  const maxInvocacoes = valorRecursoClasse(classe, 'Invocações Místicas', novoNivel);
+  const invocacoesCatalogo = invocacoesElegiveisAteNivel(novoNivel);
   const circuloMaximoNovoNivel = Math.max(0, ...espacosDeMagiaAtivos(classe, novoNivel).map((e) => e.circulo));
   const magiasPreparadasDaClasse = magiasDaClasseDisponiveis.filter((m) => m.circulo <= circuloMaximoNovoNivel);
   const descobertasMagicasCatalogo = poolDescobertasMagicas.filter(
@@ -204,6 +213,7 @@ export default function LevelUpShell({
   if (temEstiloDeLutaTrocavel(classe, novoNivel)) luSteps.push('estiloDeLuta');
   if (maxTruques > 0) luSteps.push('truques');
   if (maxMagiasPreparadas > 0) luSteps.push('magiasPreparadas');
+  if (maxInvocacoes > 0) luSteps.push('invocacoes');
   // Descobertas Mágicas aparece TODA vez que já estiver desbloqueada
   // (mesmo padrão de Truques) — sempre pode trocar 1 das 2, mesmo sem
   // ser a primeira vez.
@@ -243,6 +253,7 @@ export default function LevelUpShell({
   const [estiloDeLutaEscolhido, setEstiloDeLutaEscolhido] = useState<string | null>(personagem.estiloDeLuta);
   const [truquesEscolhidos, setTruquesEscolhidos] = useState<string[]>(truquesAtuais);
   const [magiasPreparadasEscolhidas, setMagiasPreparadasEscolhidas] = useState<string[]>(magiasPreparadasAtuais);
+  const [invocacoesEscolhidas, setInvocacoesEscolhidas] = useState<string[]>(invocacoesMisticasAtuais);
   const [especialistaEscolhidas, setEspecialistaEscolhidas] = useState<string[]>(periciasEspecialistaAtuais);
   const [proficienciasBonusEscolhidas, setProficienciasBonusEscolhidas] = useState<string[]>(periciasSubclasseBonusAtuais);
   const [descobertasMagicasEscolhidas, setDescobertasMagicasEscolhidas] = useState<string[]>(magiasDescobertasMagicasAtuais);
@@ -288,6 +299,18 @@ export default function LevelUpShell({
 
   const trocasDeTruque = contarTrocas(truquesAtuais, truquesEscolhidos);
   const truquesValido = truquesEscolhidos.length === maxTruques && trocasDeTruque <= 1;
+
+  function toggleInvocacao(id: string) {
+    const i = invocacoesEscolhidas.indexOf(id);
+    if (i > -1) {
+      setInvocacoesEscolhidas((prev) => prev.filter((x) => x !== id));
+      return;
+    }
+    if (invocacoesEscolhidas.length < maxInvocacoes) setInvocacoesEscolhidas((prev) => [...prev, id]);
+  }
+
+  const trocasDeInvocacao = contarTrocas(invocacoesMisticasAtuais, invocacoesEscolhidas);
+  const invocacoesValido = invocacoesEscolhidas.length === maxInvocacoes && trocasDeInvocacao <= 1;
 
   // Descobertas Mágicas: sempre 2 (número fixo da própria
   // característica, não escala com nível — diferente de Truques/Magias
@@ -409,6 +432,7 @@ export default function LevelUpShell({
     estiloDeLuta: 'Estilo de Luta',
     truques: 'Truques',
     magiasPreparadas: 'Magias Preparadas',
+    invocacoes: 'Invocações Místicas',
     descobertasMagicas: 'Descobertas Mágicas',
     especialista: 'Especialista',
     asi: 'Atributo ou Talento',
@@ -453,6 +477,14 @@ export default function LevelUpShell({
       );
       return;
     }
+    if (step === 'invocacoes' && !invocacoesValido) {
+      setAviso(
+        trocasDeInvocacao > 1
+          ? 'Você só pode trocar 1 Invocação Mística por level-up — desmarque menos invocações que já tinha.'
+          : `Escolha exatamente ${maxInvocacoes} Invocações Místicas antes de avançar.`,
+      );
+      return;
+    }
     if (step === 'descobertasMagicas' && !descobertasMagicasValido) {
       setAviso(
         trocasDeDescobertaMagica > 1
@@ -488,6 +520,7 @@ export default function LevelUpShell({
         estiloDeLutaEscolhido,
         truquesEscolhidos: luSteps.includes('truques') ? truquesEscolhidos : null,
         magiasPreparadasEscolhidas: luSteps.includes('magiasPreparadas') ? magiasPreparadasEscolhidas : null,
+        invocacoesMisticasEscolhidas: luSteps.includes('invocacoes') ? invocacoesEscolhidas : null,
         periciasEspecialistaEscolhidas: luSteps.includes('especialista') ? especialistaEscolhidas : null,
         periciasSubclasseBonusEscolhidas: luSteps.includes('proficienciasBonus') ? proficienciasBonusEscolhidas : null,
         magiasDescobertasMagicasEscolhidas: luSteps.includes('descobertasMagicas') ? descobertasMagicasEscolhidas : null,
@@ -743,6 +776,44 @@ export default function LevelUpShell({
           </>
         )}
 
+        {step === 'invocacoes' && (
+          <>
+            <div className="section-title">
+              Invocações Místicas — escolha {maxInvocacoes} ({invocacoesEscolhidas.length}/{maxInvocacoes})
+            </div>
+            <div className="label" style={{ marginBottom: 8 }}>
+              Regra oficial: a cada nível, você pode substituir 1 das invocações que já conhece por outra da lista
+              — não precisa mexer se não quiser. [PH] sem efeito mecânico ainda — só o texto de regra.
+            </div>
+            {invocacoesCatalogo.map((inv) => {
+              const jaTinha = invocacoesMisticasAtuais.includes(inv.id);
+              const marcado = invocacoesEscolhidas.includes(inv.id);
+              const removendo = jaTinha && !marcado;
+              return (
+                <div
+                  key={inv.id}
+                  className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
+                  onClick={() => toggleInvocacao(inv.id)}
+                >
+                  <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                  <span className="check-label">
+                    {inv.nome}
+                    {' '}
+                    <span style={{ color: removendo ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
+                      ({removendo ? '🔻 será removida' : jaTinha ? 'já tinha' : inv.beneficios})
+                    </span>
+                  </span>
+                </div>
+              );
+            })}
+            {trocasDeInvocacao > 1 && (
+              <div className="label" style={{ color: 'var(--danger)', marginTop: 6 }}>
+                ⚠️ {trocasDeInvocacao} invocações trocadas — só pode trocar 1 por level-up.
+              </div>
+            )}
+          </>
+        )}
+
         {step === 'magiasPreparadas' && (
           <>
             {agruparMagiasPorCirculo(magiasPreparadasDaClasse).map((grupo) => (
@@ -974,6 +1045,12 @@ export default function LevelUpShell({
               <div className="summary-row">
                 <span>Magias Preparadas</span>
                 <span>{trocasDeMagia > 0 ? `${trocasDeMagia} trocada(s)` : 'sem troca'}</span>
+              </div>
+            )}
+            {luSteps.includes('invocacoes') && (
+              <div className="summary-row">
+                <span>Invocações Místicas</span>
+                <span>{trocasDeInvocacao > 0 ? `${trocasDeInvocacao} trocada(s)` : 'sem troca'}</span>
               </div>
             )}
             {luSteps.includes('descobertasMagicas') && (

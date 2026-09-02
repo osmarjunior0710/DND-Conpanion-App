@@ -10,7 +10,7 @@ import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
 import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
-import { invocacoesMisticas } from '../../data/rulesets/dnd2024/invocacoesMisticas';
+import { invocacoesElegiveisAteNivel } from '../../core/invocacoesMisticas';
 import { criarSelecaoInicial, type WizardSelection } from '../../core/personagem';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../core/maestriaArma';
@@ -117,7 +117,7 @@ export default function WizardShell() {
     }
     const maxInvocacoes = valorRecursoClasse(classeSelecionada, 'Invocações Místicas', 1);
     if (maxInvocacoes > 0) {
-      const elegiveis = invocacoesMisticas.filter((i) => i.prerequisitos.nivelMinimo === null);
+      const elegiveis = invocacoesElegiveisAteNivel(1);
       patch.invocacoesMisticasEscolhidas = embaralhar(elegiveis)
         .slice(0, maxInvocacoes)
         .map((i) => i.id);

@@ -5,7 +5,7 @@ import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/clas
 import { proficienciasArmaArmaduraClasse } from '../../../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
 import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
 import { magiasDaClasse } from '../../../data/rulesets/dnd2024/magias';
-import { invocacoesMisticas } from '../../../data/rulesets/dnd2024/invocacoesMisticas';
+import { invocacoesElegiveisAteNivel } from '../../../core/invocacoesMisticas';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../../core/maestriaArma';
@@ -59,7 +59,7 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
   // criação (nível 1), só entram as que não pedem nível mínimo — as
   // com pré-requisito de nível maior ficam pro Level Up.
   const maxInvocacoes = valorRecursoClasse(classe, 'Invocações Místicas', 1);
-  const invocacoesElegiveis = maxInvocacoes > 0 ? invocacoesMisticas.filter((i) => i.prerequisitos.nivelMinimo === null) : [];
+  const invocacoesElegiveis = maxInvocacoes > 0 ? invocacoesElegiveisAteNivel(1) : [];
 
   function toggleEstiloDeLuta(nome: string) {
     update({ estiloDeLutaEscolhido: selection.estiloDeLutaEscolhido === nome ? null : nome });

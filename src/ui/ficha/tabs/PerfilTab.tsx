@@ -8,6 +8,7 @@ import {
   NOME_PLACEHOLDER_CARACTERISTICA_SUBCLASSE,
 } from '../../../core/levelUp';
 import type { WizardSelection } from '../../../core/personagem';
+import { invocacoesMisticas } from '../../../data/rulesets/dnd2024/invocacoesMisticas';
 
 interface PerfilTabProps {
   selecao: WizardSelection;
@@ -15,9 +16,19 @@ interface PerfilTabProps {
   nivel: number;
   subclasse: string | null;
   talentosGeraisAtuais: string[];
+  /** Invocações Místicas (Bruxo) atuais — vazio pra qualquer outra
+   * classe, a seção some sozinha. */
+  invocacoesMisticasAtuais: string[];
 }
 
-export default function PerfilTab({ selecao, classe, nivel, subclasse, talentosGeraisAtuais }: PerfilTabProps) {
+export default function PerfilTab({
+  selecao,
+  classe,
+  nivel,
+  subclasse,
+  talentosGeraisAtuais,
+  invocacoesMisticasAtuais,
+}: PerfilTabProps) {
   // O placeholder "Característica de Subclasse" (ver levelUp.ts) nunca
   // vira card aqui — a característica REAL já aparece certa na seção
   // "Subclasse" logo abaixo (`caracteristicasDaSubclasse`); mostrar o
@@ -33,6 +44,9 @@ export default function PerfilTab({ selecao, classe, nivel, subclasse, talentosG
   const talentosGeraisEscolhidos = talentosGeraisAtuais
     .map((id) => talentos.find((t) => t.id === id))
     .filter((t) => t !== undefined);
+  const invocacoesEscolhidas = invocacoesMisticasAtuais
+    .map((id) => invocacoesMisticas.find((i) => i.id === id))
+    .filter((i) => i !== undefined);
 
   return (
     <>
@@ -54,6 +68,20 @@ export default function PerfilTab({ selecao, classe, nivel, subclasse, talentosG
           )}
         </div>
       ))}
+
+      {invocacoesEscolhidas.length > 0 && (
+        <>
+          <div className="section-title" style={{ marginTop: 16 }}>
+            Invocações Místicas
+          </div>
+          {invocacoesEscolhidas.map((inv) => (
+            <div key={inv.id} className="opt-card" style={{ cursor: 'default' }}>
+              <div className="opt-card-name">{inv.nome}</div>
+              <div className="opt-card-desc">[PH] sem efeito mecânico ainda — {inv.beneficios}</div>
+            </div>
+          ))}
+        </>
+      )}
 
       {caracteristicasDaSubclasse.length > 0 && (
         <>

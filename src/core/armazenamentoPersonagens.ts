@@ -56,6 +56,11 @@ export interface PersonagemSalvo {
    * ainda; `FichaShell.tsx` cai pra `selecao.magiasPreparadasEscolhidas`
    * (retrato da criação) nesse caso. */
   magiasPreparadasAtual?: string[];
+  /** Invocações Místicas (Bruxo) conhecidas DEPOIS da criação — cresce/
+   * troca no Level Up (Etapa 4.3 do Bruxo), mesmo padrão de
+   * `truquesAtual`. Ausente = cai pra `selecao.invocacoesMisticasEscolhidas`
+   * (retrato da criação). */
+  invocacoesMisticasAtual?: string[];
   /** Perícias escolhidas pra Especialização (dobra o Bônus de
    * Proficiência) — característica "Especialista" do Bardo, ganha nos
    * níveis 2 e 9 (2 escolhas por vez, acumulativas, sem troca — ver

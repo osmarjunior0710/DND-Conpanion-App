@@ -134,6 +134,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [magiasPreparadasAtuais, setMagiasPreparadasAtuais] = useState<string[]>(
     personagemSalvo.magiasPreparadasAtual ?? selecao.magiasPreparadasEscolhidas,
   );
+  const [invocacoesMisticasAtuais, setInvocacoesMisticasAtuais] = useState<string[]>(
+    personagemSalvo.invocacoesMisticasAtual ?? selecao.invocacoesMisticasEscolhidas,
+  );
   const [periciasEspecialistaAtuais, setPericiasEspecialistaAtuais] = useState<string[]>(
     personagemSalvo.periciasEspecialistaAtual ?? [],
   );
@@ -285,6 +288,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       inspiracaoGasto,
       truquesAtual: truquesAtuais,
       magiasPreparadasAtual: magiasPreparadasAtuais,
+      invocacoesMisticasAtual: invocacoesMisticasAtuais,
       periciasEspecialistaAtual: periciasEspecialistaAtuais,
       periciasSubclasseBonusAtual: periciasSubclasseBonusAtuais,
       magiasDescobertasMagicasAtual: magiasDescobertasMagicasAtuais,
@@ -310,6 +314,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     inspiracaoGasto,
     truquesAtuais,
     magiasPreparadasAtuais,
+    invocacoesMisticasAtuais,
     periciasEspecialistaAtuais,
     periciasSubclasseBonusAtuais,
     magiasDescobertasMagicasAtuais,
@@ -479,6 +484,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     estiloDeLutaEscolhido: string | null;
     truquesEscolhidos: string[] | null;
     magiasPreparadasEscolhidas: string[] | null;
+    invocacoesMisticasEscolhidas: string[] | null;
     periciasEspecialistaEscolhidas: string[] | null;
     periciasSubclasseBonusEscolhidas: string[] | null;
     magiasDescobertasMagicasEscolhidas: string[] | null;
@@ -501,6 +507,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setPvAtual((v) => v + resultado.pvGanho);
     if (resultado.truquesEscolhidos) setTruquesAtuais(resultado.truquesEscolhidos);
     if (resultado.magiasPreparadasEscolhidas) setMagiasPreparadasAtuais(resultado.magiasPreparadasEscolhidas);
+    if (resultado.invocacoesMisticasEscolhidas) setInvocacoesMisticasAtuais(resultado.invocacoesMisticasEscolhidas);
     if (resultado.periciasEspecialistaEscolhidas) setPericiasEspecialistaAtuais(resultado.periciasEspecialistaEscolhidas);
     if (resultado.periciasSubclasseBonusEscolhidas) setPericiasSubclasseBonusAtuais(resultado.periciasSubclasseBonusEscolhidas);
     if (resultado.magiasDescobertasMagicasEscolhidas) setMagiasDescobertasMagicasAtuais(resultado.magiasDescobertasMagicasEscolhidas);
@@ -540,6 +547,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         truquesDaClasse={magiasDaClasse(classe.nome, 0)}
         magiasPreparadasAtuais={magiasPreparadasAtuais}
         magiasDaClasseDisponiveis={magiasDisponiveisParaPreparar(classe, personagem.nivel + 1)}
+        invocacoesMisticasAtuais={invocacoesMisticasAtuais}
         periciasEspecialistaAtuais={periciasEspecialistaAtuais}
         periciasProficientesDoPersonagem={[...periciasProficientes(selecao), ...periciasSubclasseBonusAtuais]}
         periciasSubclasseBonusAtuais={periciasSubclasseBonusAtuais}
@@ -644,6 +652,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             nivel={personagem.nivel}
             subclasse={personagem.subclasse}
             talentosGeraisAtuais={talentosGeraisAtuais}
+            invocacoesMisticasAtuais={invocacoesMisticasAtuais}
           />
         )}
         {tab === 'mochila' && (
