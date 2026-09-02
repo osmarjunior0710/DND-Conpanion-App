@@ -13,4 +13,9 @@
 
 ---
 
-_Nenhum item registrado no momento._
+- **Percepção Passiva merece um lugar melhor na aba Atributos.** Hoje
+  fica como mais uma linha dentro da lista de Perícias (depois das 18,
+  antes do separador de Proficiência com Ferramentas) — o Osmar achou
+  que devia ter destaque próprio em vez de ficar misturada na lista.
+  Onde exatamente (junto do bloco PV/CA/Iniciativa/Bônus Prof.? um box
+  separado?) ainda não decidido.
