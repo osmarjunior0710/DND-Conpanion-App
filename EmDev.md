@@ -47,12 +47,23 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
       Truques). De brinde: Perfil da Ficha ganhou seção mostrando as
       invocações atuais (não existia lugar nenhum mostrando isso
       antes). Continua Fase 1 (sem dependência/mecânica).
-- [ ] **B5** — Combat: Usar Magia real; Astúcia Mágica; Contatar
-      Patrono (nível 9); Arcana Mística (nível 11+).
+- [x] **B5 — Usar Magia real no Combat.** Confirmado via Playwright
+      (nível 3): painel de Ação → "Usar Magia" mostra Truques/Magias
+      Preparadas reais agrupados por círculo, "2º: 2/2" do pool único
+      de Pacto, gasta espaço de verdade, Escudo Arcano (Reação) some
+      do painel de Ação corretamente — zero código novo, mesmo
+      reaproveito total de B4.1/B4.2 (`personagemConjura` já reconhece
+      Bruxo pelo recurso "Magias Preparadas", `SelecionarMagiaShell` já
+      era genérico desde o Bardo). Astúcia Mágica/Contatar Patrono/
+      Arcana Mística/Dádiva Épica/Mestre Místico (as características
+      nomeadas que faltam) viram "especialização" — ver PENDENCIAS.md,
+      mesmo tratamento do Bardo (grosso funcionando primeiro).
 - [ ] **B6 — Patrono Ínfero**: Bênção do Tenebroso, Magias de Pacto do
       Ínfero, A Sorte do Próprio Tenebroso, Resistência Ínfera, Lançar
       no Inferno.
 
 **Fora deste plano, registrado em `PENDENCIAS.md`:** Invocações Fase 2
-(mecânica real das 29) e as outras 3 subclasses (Arquifada, Celestial,
+(mecânica real das 29), as características nomeadas do Bruxo ainda sem
+mecânica (Astúcia Mágica, Contatar Patrono, Arcana Mística, Dádiva
+Épica, Mestre Místico) e as outras 3 subclasses (Arquifada, Celestial,
 Grande Antigo).

@@ -78,6 +78,33 @@ que o grupo do Osmar vai jogar primeiro). Ficam de fora por enquanto:
   já que sem isso a invocação fica inútil/incompleta (diferente das
   outras, que só ficam sem bônus mecânico mas continuam "escolhíveis
   de verdade").
+- **Características nomeadas do Bruxo sem mecânica ainda** (texto já
+  importado em B1, "wiring" de verdade fica pra depois do B6, mesmo
+  tratamento do Bardo — grosso primeiro, especialização depois):
+  - **Astúcia Mágica** (nível 2) — recurso NOVO (não é Descanso Curto/
+    Longo comum): rito de 1 minuto que recupera metade (arred. pra
+    cima) dos Espaços de Pacto gastos, 1x entre Descansos Longos.
+    Precisa de contador de uso próprio (mesmo padrão de Surto de
+    Ação/Indomável do Guerreiro) + botão/ação pra ativar o rito.
+  - **Contatar Patrono** (nível 9) — Contato Extraplanar sempre
+    preparada, conjurável de graça (sem gastar espaço, sucesso
+    automático na salvaguarda) 1x por Descanso Longo. Precisa
+    confirmar se "Contato Extraplanar" já está no catálogo de magias.
+  - **Arcana Mística** (nível 11, 13, 15, 17) — escolhe 1 magia de
+    Bruxo de 6º/7º/8º/9º círculo (respectivamente) conjurável de
+    graça 1x por Descanso Longo cada; pode trocar 1 arcanum por
+    level-up. Maior que uma característica normal — é uma escolha
+    própria em 4 níveis diferentes, mais parecida com o tamanho do
+    Pacto do Tomo do que com uma invocação simples.
+  - **Dádiva Épica** (nível 19) — concede o talento Dádiva Épica (ou
+    outro talento à escolha que atenda pré-requisito) — mesmo
+    mecanismo de escolha de Talento Geral que já existe no Level Up
+    (ASI/Talento), só filtra pela categoria "Dádiva Épica"; checar se
+    essa categoria já existe no catálogo de Talentos antes de
+    implementar.
+  - **Mestre Místico** (nível 20) — Astúcia Mágica passa a recuperar
+    TODOS os espaços gastos, não só metade — ajuste pequeno na regra
+    de Astúcia Mágica acima, não vale entrega própria.
 - **Patrono Arquifada, Patrono Celestial, Patrono O Grande Antigo** —
   as outras 3 subclasses de Bruxo, cada uma com 4-5 características
   ativas próprias (algumas sem equivalente ainda no motor genérico,
