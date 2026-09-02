@@ -506,3 +506,35 @@ nova que lista magia pra ESCOLHER precisa do mesmo par
 chamadas separadas, fácil esquecer uma ao copiar o padrão.
 
 **Data/origem:** 2026-09, pendência "Bruxo — Pacto do Tomo" (PT.1/PT.2).
+
+## Bruxo — IM.1 feito: motor "magia concedida de graça" (10 Invocações de uma vez)
+
+**Uma mecânica, dez invocações:** ao invés de tratar cada "Conjura X
+sem gastar um espaço de magia" como entrega própria, um único campo
+novo (`magiaGratisConcedida: { nome, recarga } | null` em
+`invocacoesMisticas.ts`) + um único core module
+(`core/invocacoesMagiaGratis.ts`, `magiasGratisDasInvocacoes`)
+resolveram as 10 de uma vez — 9 `avontade` (ilimitadas) + Presente das
+Profundezas (`limitada`, 1x até Descanso Longo). Padrão pra próxima
+leva de invocações parecidas: primeiro perguntar "quantas dessas têm
+o MESMO formato de efeito?" antes de quebrar em lotes um-por-um.
+
+**Reaproveito do padrão "gasto até Descanso Longo" do Pacto do Tomo:**
+Presente das Profundezas usa a mesma ideia (boolean travado até
+`descansoLongo()` resetar), só que agora como `string[]` de IDs de
+invocação (`magiasGratisInvocacoesGastas`), não um boolean único — o
+Pacto do Tomo só tinha 1 "coisa gastável"; aqui pode ter várias
+simultâneas, cada invocação limitada precisa da própria entrada na
+lista. Generalização direta do padrão anterior, não um mecanismo novo.
+
+**Lista SEMPRE derivada, nunca persistida:** `magiasGratisConcedidas`
+não vira campo salvo — é recalculada toda vez a partir de
+`invocacoesMisticasAtuais` (a fonte de verdade). Só o que É estado de
+progressão (quais das `limitada` já foram usadas) precisa persistir.
+Mesmo princípio já usado no Livro das Sombras/Descobertas Mágicas.
+
+**Fora do motor genérico:** Vigor Ínfero parece igual (também é
+"conjura de graça"), mas concede PV temporário — campo que a Ficha
+ainda não tem — por isso ficou de fora do IM.1, vira IM.2 sozinha.
+
+**Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.1.

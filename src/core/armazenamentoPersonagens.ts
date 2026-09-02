@@ -73,6 +73,12 @@ export interface PersonagemSalvo {
    * (a regra real só permite escolher de novo ao final de um
    * descanso). Resetado pra `false` em `descansoCurto`/`descansoLongo`. */
   livroDasSombrasGasto?: boolean;
+  /** IDs de Invocações Místicas cuja magia de graça (`recarga:
+   * 'descansoLongo'`, ex: Presente das Profundezas) já foi usada desde
+   * o último Descanso Longo — cada uma trava até lá. Invocações
+   * `'ilimitado'` nunca entram aqui. Resetado pra `[]` em
+   * `descansoLongo`. */
+  magiasGratisInvocacoesGastas?: string[];
   /** Perícias escolhidas pra Especialização (dobra o Bônus de
    * Proficiência) — característica "Especialista" do Bardo, ganha nos
    * níveis 2 e 9 (2 escolhas por vez, acumulativas, sem troca — ver

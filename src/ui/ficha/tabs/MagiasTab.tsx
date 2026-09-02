@@ -8,6 +8,7 @@ import {
   circulosDisponiveisParaConjurar,
 } from '../../../core/magiasPersonagem';
 import { classificarMagia, iconesMagia, usarMagiaTemAcaoAutomatizada } from '../../../core/classificarMagia';
+import type { MagiaGratisDeInvocacao } from '../../../core/invocacoesMagiaGratis';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TickPips from '../../components/TickPips';
 import { useColapsavel } from '../../hooks/useColapsavel';
@@ -41,6 +42,14 @@ interface MagiasTabProps {
    * botão "Reconjurar" fica travado até o próximo descanso. */
   livroDasSombrasGasto: boolean;
   onReconjurarLivro: () => void;
+  /** Invocações Místicas Fase 2 — magias concedidas "de graça" (ex:
+   * Armadura de Sombras -> Armadura Arcana), derivadas das Invocações
+   * atuais do personagem. Vazio pra quem não tem nenhuma desse tipo. */
+  magiasGratisConcedidas: MagiaGratisDeInvocacao[];
+  /** IDs de Invocações cuja magia de graça `'descansoLongo'` já foi
+   * usada desde o último Descanso Longo (travadas até lá). */
+  magiasGratisGastas: string[];
+  onUsarMagiaGratis: (invocacaoId: string, recarga: 'ilimitado' | 'descansoLongo') => void;
   faltamTruques: number;
   faltamMagiasPreparadas: number;
   onCompletarTruques: () => void;
@@ -61,6 +70,9 @@ export default function MagiasTab({
   temPactoDoTomo,
   livroDasSombrasGasto,
   onReconjurarLivro,
+  magiasGratisConcedidas,
+  magiasGratisGastas,
+  onUsarMagiaGratis,
   faltamTruques,
   faltamMagiasPreparadas,
   onCompletarTruques,
@@ -92,6 +104,13 @@ export default function MagiasTab({
         mod: modAcertoConjuracao,
       });
     }
+  }
+
+  function usarMagiaGratis(item: MagiaGratisDeInvocacao) {
+    const jaGasta = item.recarga === 'descansoLongo' && magiasGratisGastas.includes(item.invocacaoId);
+    if (jaGasta) return;
+    onUsarMagiaGratis(item.invocacaoId, item.recarga);
+    rolarAtaqueSeForMagiaDeAtaque(item.magia);
   }
 
   function usarMagia(m: Magia) {
@@ -153,6 +172,33 @@ export default function MagiasTab({
               })}
             </>
           )}
+        </>
+      )}
+
+      {magiasGratisConcedidas.length > 0 && (
+        <>
+          <div className="section-title">Magias das Invocações</div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            Concedidas de graça pelas Invocações Místicas — não gastam Espaço de Pacto.
+          </div>
+          {magiasGratisConcedidas.map((item) => {
+            const jaGasta = item.recarga === 'descansoLongo' && magiasGratisGastas.includes(item.invocacaoId);
+            return (
+              <div key={item.invocacaoId} className={styles.spellRow}>
+                <div className={styles.spellName}>
+                  <MagiaComDescricao magia={item.magia} variante="icone" /> {iconesMagia(item.magia)}
+                  <div style={{ color: 'var(--text-faint)', fontSize: 11 }}>{item.invocacaoNome}</div>
+                </div>
+                <span className={styles.spellCirculo}>{item.magia.circulo}º círculo</span>
+                <div
+                  className={`${styles.usarBtn} ${jaGasta ? styles.usarBtnDesabilitado : ''}`}
+                  onClick={() => usarMagiaGratis(item)}
+                >
+                  {jaGasta ? 'Usada' : 'Usar de graça'}
+                </div>
+              </div>
+            );
+          })}
         </>
       )}
 

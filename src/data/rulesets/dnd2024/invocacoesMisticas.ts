@@ -44,6 +44,12 @@ export interface InvocacaoMistica {
    * tela (ver `TextoComMagias`), em vez de texto solto. Vazio quando o
    * benefício não referencia nenhuma magia específica. */
   magiasMencionadas: string[];
+  /** Fase 2 — só preenchido nas invocações "conjura X sem gastar um
+   * espaço de magia" (nome exato de `magias.ts`). `recarga: 'ilimitado'`
+   * = pode usar quantas vezes quiser (avontade); `'descansoLongo'` = só
+   * 1x, recarrega no próximo Descanso Longo (`tipo === 'limitada'`).
+   * `null` nas invocações que não seguem esse padrão. */
+  magiaGratisConcedida: { nome: string; recarga: 'ilimitado' | 'descansoLongo' } | null;
   pagina: number;
   fonte: string;
 }
@@ -64,6 +70,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Armadura Arcana em si sem gastar um espaço de magia.',
     magiasMencionadas: ['Armadura Arcana'],
+    magiaGratisConcedida: { nome: 'Armadura Arcana', recarga: 'ilimitado' },
     pagina: 71,
     fonte: FONTE,
   },
@@ -77,6 +84,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Escolha um truque de Bruxo conhecido que cause dano — soma o modificador de Carisma às jogadas de dano dessa magia.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -90,6 +98,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Escolha um truque de Bruxo que exija jogada de ataque. Ao acertar criatura Grande ou menor com esse truque, pode empurrá-la 3 metros.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -103,6 +112,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Seu familiar de Pacto da Corrente ganha voo ou natação 12m, Ataque Rápido (Ação Bônus), usa sua CD pra magias/efeitos, causa dano Necrótico ou Radiante em vez do normal, e concede Resistência a ele via Reação sua.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -115,6 +125,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Falar com Mortos sem gastar um espaço de magia.',
     magiasMencionadas: ['Falar com Mortos'],
+    magiaGratisConcedida: { nome: 'Falar com Mortos', recarga: 'ilimitado' },
     pagina: 71,
     fonte: FONTE,
   },
@@ -127,6 +138,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'O Ataque Extra de Lâmina Sedenta concede 2 ataques extras em vez de 1.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -139,6 +151,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Ganha Ataque Extra, restrito à sua arma de pacto.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -152,6 +165,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Escolha um truque de Bruxo que cause dano e tenha alcance de 3m ou mais — o alcance aumenta em 9 metros por nível de Bruxo.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -164,6 +178,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: true,
     beneficios: 'Concede permanentemente 1 talento de Origem à sua escolha (não é magia nem habilidade ativa).',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -176,6 +191,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Disfarçar-se sem gastar um espaço de magia.',
     magiasMencionadas: ['Disfarçar-se'],
+    magiaGratisConcedida: { nome: 'Disfarçar-se', recarga: 'ilimitado' },
     pagina: 72,
     fonte: FONTE,
   },
@@ -188,6 +204,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Vantagem em salvaguardas de Constituição pra manter Concentração.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -200,6 +217,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Alterar-se sem gastar um espaço de magia.',
     magiasMencionadas: ['Alterar-se'],
+    magiaGratisConcedida: { nome: 'Alterar-se', recarga: 'ilimitado' },
     pagina: 72,
     fonte: FONTE,
   },
@@ -213,6 +231,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Toca criatura voluntária e percebe pelos sentidos dela até o fim do próximo turno; pode conjurar como se estivesse no espaço dela, até 18m de distância entre vocês.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -226,6 +245,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Aprende Convocar Familiar permanentemente e conjura como ação Usar Magia sem gastar espaço de magia — formas especiais: Cobra Peçonhenta, Diabrete, Esfinge Maravilhosa, Esqueleto, Pseudodragão, Quasit, Slaad Girino, Sprite.',
     magiasMencionadas: ['Convocar Familiar'],
+    magiaGratisConcedida: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -239,6 +259,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Como Ação Bônus, cria/vincula uma arma de pacto (Simples ou Marcial) ou vincula uma arma mágica tocada — usa Carisma pra ataque/dano com ela, pode ser Foco de Conjuração.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -252,6 +273,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Conjura um Livro das Sombras ao final de um Descanso Curto ou Longo — escolha 3 truques e 2 magias de 1º círculo com a marca Ritual (de qualquer classe) pra ficarem sempre preparadas enquanto o livro existir; re-escolhidas toda vez que o livro surge, não fixas.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -264,6 +286,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Levitação em si sem gastar um espaço de magia.',
     magiasMencionadas: ['Levitação'],
+    magiaGratisConcedida: { nome: 'Levitação', recarga: 'ilimitado' },
     pagina: 72,
     fonte: FONTE,
   },
@@ -277,6 +300,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Respira debaixo d’água e nada no seu Deslocamento normal sempre (passivo); além disso, 1x entre Descansos Longos, conjura Respirar na Água sem gastar espaço de magia.',
     magiasMencionadas: ['Respirar na Água'],
+    magiaGratisConcedida: { nome: 'Respirar na Água', recarga: 'descansoLongo' },
     pagina: 72,
     fonte: FONTE,
   },
@@ -290,6 +314,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Nova página no Livro das Sombras — até (mod. Carisma, mín. 1) criaturas nomeadas ficam com 1 PV em vez de cair a 0, uma única vez até você completar um Descanso Longo.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -303,6 +328,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Ao acertar com a arma de pacto, gasta 1 espaço de Pacto: +1d8 dano Energético + 1d8 por círculo do espaço gasto; pode impor Caído se o alvo for Enorme ou menor.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -315,6 +341,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Salto em si sem gastar um espaço de magia.',
     magiasMencionadas: ['Salto'],
+    magiaGratisConcedida: { nome: 'Salto', recarga: 'ilimitado' },
     pagina: 73,
     fonte: FONTE,
   },
@@ -328,6 +355,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Ao acertar com a arma de pacto: +1d6 dano Necrótico/Psíquico/Radiante (grátis, à escolha) e pode gastar 1 Dado de Vida pra curar = resultado + mod. Constituição (mín. 1).',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -340,6 +368,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Em área de Meia-luz ou Escuridão, conjura Invisibilidade em si sem gastar um espaço de magia.',
     magiasMencionadas: ['Invisibilidade'],
+    magiaGratisConcedida: { nome: 'Invisibilidade', recarga: 'ilimitado' },
     pagina: 73,
     fonte: FONTE,
   },
@@ -353,6 +382,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     beneficios:
       'Conjura Vitalidade Vazia em si sem gastar um espaço de magia; PV temporários = valor máximo do dado (sem rolar).',
     magiasMencionadas: ['Vitalidade Vazia'],
+    magiaGratisConcedida: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -365,6 +395,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Visão Verdadeira, alcance de 9 metros.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -377,6 +408,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Vê normalmente em Meia-luz e Escuridão (mágica ou não) até 36 metros.',
     magiasMencionadas: [],
+    magiaGratisConcedida: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -389,6 +421,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Olho Arcano sem gastar um espaço de magia.',
     magiasMencionadas: ['Olho Arcano'],
+    magiaGratisConcedida: { nome: 'Olho Arcano', recarga: 'ilimitado' },
     pagina: 73,
     fonte: FONTE,
   },
@@ -401,6 +434,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     repetivel: false,
     beneficios: 'Conjura Imagem Silenciosa sem gastar um espaço de magia.',
     magiasMencionadas: ['Imagem Silenciosa'],
+    magiaGratisConcedida: { nome: 'Imagem Silenciosa', recarga: 'ilimitado' },
     pagina: 73,
     fonte: FONTE,
   },

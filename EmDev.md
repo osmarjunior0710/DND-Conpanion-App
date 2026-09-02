@@ -34,7 +34,43 @@ Osmar (2026-09), não esquecido.
       Confirmado via Playwright: abre com 3/2 pré-marcados, Confirmar
       atualiza o livro na Ficha.
 
-### 2. Invocações Místicas Fase 2 (efeito mecânico das 28) — ainda não quebrado em lotes
+### 2. Invocações Místicas Fase 2 (efeito mecânico das 27 restantes — Pacto do Tomo já feito)
+
+Agrupadas por proximidade de implementação (ver DECISOES-CLASSES.md
+quando a entrada for escrita), ordem aprovada pelo Osmar:
+
+- [x] **IM.1 — Grupo A: "Conjura X sem gastar espaço" (10 invocações).**
+      Armadura de Sombras, Lamento das Sepulturas, Máscara das Muitas
+      Faces, Mestre das Infindáveis Formas, Passo Ascendente, Salto
+      Sobrenatural, Uno com as Sombras, Visões de Reinos Distantes,
+      Visões Nebulosas (todas `avontade`, ilimitadas) + Presente das
+      Profundezas (`limitada`, 1x até o próximo Descanso Longo — mesmo
+      padrão "gasto até descanso" do Pacto do Tomo). Novo campo
+      `magiaGratisConcedida` em `invocacoesMisticas.ts` + novo
+      `core/invocacoesMagiaGratis.ts` (testado) + seção "Magias das
+      Invocações" na aba Magias. Confirmado via Playwright: as 3
+      aparecem, `usar` funciona, Respirar na Água trava até Descanso
+      Longo (ilimitadas não travam).
+- [ ] **IM.2 — Vigor Ínfero.** Quase igual ao IM.1, mas concede PV
+      temporário — Ficha não tem campo de PV temporário ainda, precisa
+      criar antes.
+- [ ] **IM.3 — Lança Mística** (parte calculável do Grupo B: "escolha 1
+      truque de dano"). Explosão Agonizante/Repulsiva ficam pra depois
+      do motor de dano de magia existir (pendência separada).
+- [ ] **IM.4 — Pacto da Lâmina** (base do Grupo C — cria a arma de
+      pacto).
+- [ ] **IM.5 — Lâmina Sedenta + Lâmina Devoradora** (resto do Grupo C,
+      depende do IM.4).
+- [ ] **IM.6 — Lições dos Grandes Antigos** (concede Talento de Origem
+      permanente).
+- [ ] **IM.7 — Passivas de texto** (Mente Mística, Visão da Bruxa,
+      Visão Diabólica — sem motor pra calcular, só tira o `[PH]`).
+
+**Fora deste plano por enquanto** (dependem de sistemas que não
+existem — Familiar, motor de dano de magia, trigger de "salvar de 0
+PV"): Pacto da Corrente + Investimento do Mestre da Corrente, Punição
+Mística + Sorvedouro de Vida, Presente dos Protetores + Olhar de Duas
+Mentes. Registrado em `PENDENCIAS.md`.
 
 ### 3. Características nomeadas sem mecânica (Astúcia Mágica, Contatar Patrono, Arcana Mística, Dádiva Épica, Mestre Místico) — ainda não quebrado em lotes
 

@@ -40,6 +40,7 @@ import { alternarSintonizacao } from '../../core/sintonizacao';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
+import { magiasGratisDasInvocacoes } from '../../core/invocacoesMagiaGratis';
 import {
   espacosDeMagiaAtivos,
   ehMagiaDeReacao,
@@ -150,6 +151,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo.livroDasSombrasAtual ?? [...selecao.livroDasSombrasTruques, ...selecao.livroDasSombrasMagias],
   );
   const [livroDasSombrasGasto, setLivroDasSombrasGasto] = useState<boolean>(personagemSalvo.livroDasSombrasGasto ?? false);
+  const [magiasGratisGastas, setMagiasGratisGastas] = useState<string[]>(
+    personagemSalvo.magiasGratisInvocacoesGastas ?? [],
+  );
   const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
   const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
@@ -215,6 +219,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const magiasPreparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
   const magiasDescobertasMagicas = magiasPreparadasDoPersonagem(magiasDescobertasMagicasAtuais);
   const livroDasSombras = magiasPreparadasDoPersonagem(livroDasSombrasAtuais);
+  const magiasGratisConcedidas = magiasGratisDasInvocacoes(invocacoesMisticasAtuais);
   const faltamTruques = deficitTruques(classe, personagem.nivel, truquesAtuais);
   const faltamMagiasPreparadas = deficitMagiasPreparadas(classe, personagem.nivel, magiasPreparadasAtuais);
   // Descobertas Mágicas/Livro das Sombras contam como magia sempre
@@ -299,6 +304,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       magiasDescobertasMagicasAtual: magiasDescobertasMagicasAtuais,
       livroDasSombrasAtual: livroDasSombrasAtuais,
       livroDasSombrasGasto,
+      magiasGratisInvocacoesGastas: magiasGratisGastas,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
       itensMochilaAtual: itensMochila,
@@ -327,6 +333,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     magiasDescobertasMagicasAtuais,
     livroDasSombrasAtuais,
     livroDasSombrasGasto,
+    magiasGratisGastas,
     talentosGeraisAtuais,
     talentosFavoritos,
     itensMochila,
@@ -414,6 +421,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setSurtoGasto(0);
     setInspiracaoGasto(0);
     setLivroDasSombrasGasto(false);
+    setMagiasGratisGastas([]);
     fimDoTurno();
     setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação e Inspiração de Bardo recuperados.`);
   }
@@ -433,6 +441,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setRestStatus(
       `Descanso Curto: ${circulosQueRecuperam.length > 0 ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
     );
+  }
+
+  function usarMagiaGratisDeInvocacao(invocacaoId: string, recarga: 'ilimitado' | 'descansoLongo') {
+    if (recarga === 'descansoLongo' && !magiasGratisGastas.includes(invocacaoId)) {
+      setMagiasGratisGastas((prev) => [...prev, invocacaoId]);
+    }
   }
 
   function trocarArmaMaestria(armaAntiga: string, armaNova: string) {
@@ -703,6 +717,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             temPactoDoTomo={invocacoesMisticasAtuais.includes('pacto-do-tomo')}
             livroDasSombrasGasto={livroDasSombrasGasto}
             onReconjurarLivro={() => !livroDasSombrasGasto && setLivroDasSombrasAberto(true)}
+            magiasGratisConcedidas={magiasGratisConcedidas}
+            magiasGratisGastas={magiasGratisGastas}
+            onUsarMagiaGratis={usarMagiaGratisDeInvocacao}
             faltamTruques={faltamTruques}
             faltamMagiasPreparadas={faltamMagiasPreparadas}
             onCompletarTruques={() => setCompletarAberto('truques')}
