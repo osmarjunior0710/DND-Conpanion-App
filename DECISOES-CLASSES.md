@@ -471,3 +471,38 @@ Level Up "completo" — a escolha sem lugar pra ver o resultado é meio
 trabalho só.
 
 **Data/origem:** 2026-09, plano "Bruxo — base + Patrono Ínfero", B4.3.
+
+## Bruxo — Pacto do Tomo feito: padrão de "recurso gasto até o próximo Descanso"
+
+**Escolha livre de fora do catálogo da própria classe:** o Livro das
+Sombras (`core/livroDasSombras.ts`) filtra o catálogo COMPLETO de 390
+magias por círculo+Ritual, não `magiasDaClasse` — regra real permite
+"qualquer classe". Padrão pra próxima vez que uma característica disser
+"de qualquer classe": filtrar direto o catálogo genérico, excluindo só
+o que o personagem já tem (Truques/Magias Preparadas normais), nunca
+restringir pela classe do personagem.
+
+**Recurso "gasto até o próximo Descanso" (não é contador, é boolean):**
+diferente de Surto de Ação/Indomável (N usos, contador numérico), o
+"Reconjurar o Livro" é 1x disponível, trava até `descansoCurto()` OU
+`descansoLongo()` resetar — implementado como boolean simples
+(`livroDasSombrasGasto`) resetado nas duas funções de descanso,
+`PersonagemSalvo` ganhou o campo espelhando o padrão `*Gasto` já usado.
+Visual: botão muda de accent (disponível) pra cinza/texto-fraco
+(travado) com mensagem explicando quando libera — reaproveitável pra
+qualquer futura característica "1x por descanso, sem contador".
+
+**Dado do livro reaproveita "Descobertas Mágicas":** mesma seção
+visual (nome, sempre preparada, fora do limite normal), mesmo
+`magiasPreparadasDoPersonagem(nomes)` genérico — zero componente novo
+pra exibir, só uma 3ª lista de nomes ao lado de Truques/Magias
+Preparadas/Descobertas Mágicas.
+
+**Bug encontrado depois do 1º push (Osmar, 2026-09):** as telas de
+ESCOLHA do livro (passo do wizard, tela "Reconjurar") esqueceram
+`iconesMagia()` — só a aba Magias (exibição) tinha. Lição: toda tela
+nova que lista magia pra ESCOLHER precisa do mesmo par
+`MagiaComDescricao` + `iconesMagia()` que as de EXIBIR já usam — são
+chamadas separadas, fácil esquecer uma ao copiar o padrão.
+
+**Data/origem:** 2026-09, pendência "Bruxo — Pacto do Tomo" (PT.1/PT.2).
