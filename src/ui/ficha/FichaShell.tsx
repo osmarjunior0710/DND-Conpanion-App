@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { armazenamentoPersonagens, type PersonagemSalvo } from '../../core/armazenamentoPersonagens';
 import { garantirPersonagemDemo, ID_PERSONAGEM_DEMO } from '../../core/personagemDemo';
@@ -73,8 +73,6 @@ import CompletarMagiasShell from './levelup/CompletarMagiasShell';
 import LivroDasSombrasShell from './levelup/LivroDasSombrasShell';
 
 type TabName = 'atributos' | 'perfil' | 'mochila' | 'magias' | 'combat';
-
-const ORDEM_ABAS: TabName[] = ['atributos', 'perfil', 'mochila', 'magias', 'combat'];
 
 const TABS: { id: TabName; label: string; icon: string }[] = [
   { id: 'atributos', label: 'Atributos', icon: '🧬' },
@@ -182,7 +180,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [levelUpHpRolado, setLevelUpHpRolado] = useState<number | null>(personagemSalvo.levelUpHpRolado ?? null);
   const [itensDetalhados, setItensDetalhados] = useColapsavel('itens-detalhados', false);
   const [pesoAtivo, setPesoAtivo] = useState(true);
-  const touchX = useRef(0);
 
   const desValor = valorFinalAtributo(selecao, 'DES') ?? 10;
   // Talentos que entram no cálculo (Fase 4): os escolhidos em Level
@@ -536,16 +533,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setLevelUpAberto(false);
   }
 
-  function onTouchStart(e: React.TouchEvent) {
-    touchX.current = e.touches[0].clientX;
-  }
-  function onTouchEnd(e: React.TouchEvent) {
-    const dx = e.changedTouches[0].clientX - touchX.current;
-    const idx = ORDEM_ABAS.indexOf(tab);
-    if (dx < -50 && idx < ORDEM_ABAS.length - 1) setTab(ORDEM_ABAS[idx + 1]);
-    if (dx > 50 && idx > 0) setTab(ORDEM_ABAS[idx - 1]);
-  }
-
   if (levelUpAberto && classe) {
     return (
       <LevelUpShell
@@ -648,7 +635,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         />
       </div>
 
-      <div className={styles.tabContent} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <div className={styles.tabContent}>
         {tab === 'atributos' && (
           <AtributosTab
             nivel={personagem.nivel}
