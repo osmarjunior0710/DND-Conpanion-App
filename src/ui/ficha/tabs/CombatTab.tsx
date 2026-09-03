@@ -333,7 +333,7 @@ export default function CombatTab({
             {pvAtual} / {pvMax}
           </div>
         </div>
-        <LinearProgressBar valor={pvAtual} maximo={pvMax} />
+        <LinearProgressBar valor={pvAtual} maximo={pvMax} temporario={pvTemporario} />
       </div>
       <div className={styles.hpBtnRow}>
         <div className={styles.hpBtnSmall} onClick={() => onAlterarPv(-5)}>

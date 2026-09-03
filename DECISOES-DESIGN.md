@@ -987,3 +987,32 @@ botão "Usar de graça"/"Usada" continua existindo. Regra generalizável:
 tag informativa, não botão.**
 
 **Data/origem:** 2026-09.
+
+## Barra de PV: PV Temporário estende a escala + animação suave (2026-09)
+
+**Barra de PV Temporário:** pedido do Osmar — quando o personagem tem
+PV Temporário, a barra de Pontos de Vida (aba Combat) estende a escala
+além do máximo: verde até o PV máximo, azul do máximo até
+máximo+temporário. Sem PV Temporário, a barra continua idêntica a
+antes (escala = só o máximo, sem trecho azul). `LinearProgressBar.tsx`
+ganhou prop opcional `temporario` — reaproveitado pra CombatTab sem
+quebrar nenhum outro uso do componente.
+
+**Animação (~0,5s) ao mudar de valor — achado técnico importante:**
+CSS `transition` em atributos de geometria SVG (`x1`/`x2` de `<line>`,
+até `x`/`width` de `<rect>`) **não anima de forma confiável** — testado
+com Playwright amostrando o atributo ao longo do tempo, o valor pula
+seco pro final em vez de interpolar. Resolvido animando em **JS puro**
+(`requestAnimationFrame`, ease-out quadrático, hook `useValorAnimado`
+dentro do próprio componente) — funciona sempre, não depende de
+suporte do navegador a transição de geometria SVG. Confirmado via
+Playwright: amostrando a largura do retângulo a cada 80ms durante a
+transição, os valores interpolam suavemente (69→63→57→52→48→46→45),
+não pulam.
+
+**Lição pra próxima barra/indicador animado do app:** não usar CSS
+`transition` em atributo de geometria SVG — usar o padrão
+`useValorAnimado` (ou extrair pra hook compartilhado se aparecer um
+2º caso).
+
+**Data/origem:** 2026-09.
