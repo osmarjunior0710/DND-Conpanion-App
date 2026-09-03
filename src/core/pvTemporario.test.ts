@@ -17,9 +17,24 @@ describe('aplicarAlteracaoPv', () => {
     expect(r).toEqual({ pvAtual: 0, pvTemporario: 0 });
   });
 
-  it('cura nunca soma em PV Temporário, só no PV normal (até o máximo)', () => {
-    const r = aplicarAlteracaoPv(25, 30, 12, 10);
-    expect(r).toEqual({ pvAtual: 30, pvTemporario: 12 });
+  it('cura que não passa do máximo só enche o PV normal, sem mexer no Temporário', () => {
+    const r = aplicarAlteracaoPv(25, 30, 12, 4);
+    expect(r).toEqual({ pvAtual: 29, pvTemporario: 12 });
+  });
+
+  it('cura que passa do máximo (house rule): enche até o máximo, o resto vira PV Temporário', () => {
+    const r = aplicarAlteracaoPv(90, 100, 0, 15);
+    expect(r).toEqual({ pvAtual: 100, pvTemporario: 5 });
+  });
+
+  it('cura excedente SOMA com o PV Temporário que já existia (não é "pega o maior")', () => {
+    const r = aplicarAlteracaoPv(90, 100, 12, 15);
+    expect(r).toEqual({ pvAtual: 100, pvTemporario: 17 });
+  });
+
+  it('já no máximo: qualquer cura vira PV Temporário inteiro', () => {
+    const r = aplicarAlteracaoPv(100, 100, 0, 5);
+    expect(r).toEqual({ pvAtual: 100, pvTemporario: 5 });
   });
 });
 

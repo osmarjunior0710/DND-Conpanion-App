@@ -1016,3 +1016,22 @@ não pulam.
 2º caso).
 
 **Data/origem:** 2026-09.
+
+## Cura acima do máximo vira PV Temporário — HOUSE RULE, não regra oficial (2026-09)
+
+**Pedido do Osmar:** cura que passaria do PV máximo não se perde mais
+— enche até o máximo primeiro, o excedente vira PV Temporário (soma
+com o que já tinha, não "pega o maior"). Ex: 90/100 + cura de 15 = 100
+PV + 5 PV Temporário. Se já estiver no máximo, a cura inteira vira PV
+Temporário.
+
+**Importante — isso é house rule, NÃO regra oficial:** pela regra real
+(Glossário do Livro do Jogador), cura acima do máximo é simplesmente
+perdida — nenhuma menção a virar PV Temporário. Por isso essa decisão
+fica aqui (design), não em `DND-Regras.md` (só fatos confirmados no
+livro). Não confundir com `ganharPvTemporario()` (habilidade que
+concede PV Temporário direto, tipo Vigor Ínfero) — essa continua
+"pega o maior valor", regra real, intocada; a soma só vale pro
+transbordo de cura normal (`aplicarAlteracaoPv`).
+
+**Data/origem:** 2026-09.
