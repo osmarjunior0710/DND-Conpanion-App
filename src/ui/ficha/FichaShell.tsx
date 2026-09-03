@@ -37,7 +37,7 @@ import {
 } from '../../core/equipamento';
 import { ataqueAtual, ataqueBonusMaoSecundaria } from '../../core/ataque';
 import { alternarSintonizacao } from '../../core/sintonizacao';
-import { armaDePactoAtual, vincularArmaDePacto, desvincularArmaDePacto } from '../../core/pactoDaLamina';
+import { armaDePactoAtual, vincularArmaDePacto, desvincularArmaDePacto, ataqueExtraDoPactoDaLamina } from '../../core/pactoDaLamina';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
@@ -237,7 +237,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosInspiracaoRestantes = Math.max(0, usosInspiracaoMax - inspiracaoGasto);
   const tamanhoDadoInspiracao = dadoInspiracao(classe, personagem.nivel);
   const fonteDeInspiracao = fonteDeInspiracaoDesbloqueada(classe, personagem.nivel);
-  const numAtaques = classe ? numeroDeAtaques(classe, personagem.nivel) : 1;
+  const numAtaquesBase = classe ? numeroDeAtaques(classe, personagem.nivel) : 1;
   const indomavelMaximo = classe ? contarRepeticoesCaracteristica(classe, 'Indomável', personagem.nivel) : 0;
   const indomavelRestantes = Math.max(0, indomavelMaximo - indomavelGasto);
   const surtoMaximo = classe ? contarRepeticoesCaracteristica(classe, 'Surto de Ação', personagem.nivel) : 0;
@@ -267,6 +267,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         armaEquipada?.armaDePacto ? carMod : undefined,
       )
     : null;
+  const numAtaques = Math.max(
+    numAtaquesBase,
+    1 + ataqueExtraDoPactoDaLamina(invocacoesMisticasAtuais, armaEquipada?.armaDePacto === true),
+  );
   const ataqueBonus = classe
     ? ataqueBonusMaoSecundaria(
         armaEquipada?.nome ?? null,

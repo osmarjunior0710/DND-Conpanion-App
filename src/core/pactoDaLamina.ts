@@ -43,3 +43,15 @@ export function vincularArmaDePacto(itens: ItemMochila[], nomeArma: string): Ite
 export function desvincularArmaDePacto(itens: ItemMochila[]): ItemMochila[] {
   return itens.filter((it) => !it.armaDePacto);
 }
+
+/**
+ * Ataques extras concedidos por Lâmina Sedenta (1) / Lâmina Devoradora
+ * (troca pra 2) — "restrito à sua arma de pacto" (regra real), então só
+ * conta quando a arma atualmente na Mão Principal é a arma de pacto.
+ * `armaEquipadaEhDePacto` já vem resolvido de fora (`ItemMochila.armaDePacto`
+ * do item equipado) — esta função não sabe nada de Mochila/slot.
+ */
+export function ataqueExtraDoPactoDaLamina(invocacoesAtuais: string[], armaEquipadaEhDePacto: boolean): number {
+  if (!armaEquipadaEhDePacto || !invocacoesAtuais.includes('lamina-sedenta')) return 0;
+  return invocacoesAtuais.includes('lamina-devoradora') ? 2 : 1;
+}

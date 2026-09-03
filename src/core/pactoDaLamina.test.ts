@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { armaDePactoAtual, vincularArmaDePacto, desvincularArmaDePacto } from './pactoDaLamina';
+import { armaDePactoAtual, vincularArmaDePacto, desvincularArmaDePacto, ataqueExtraDoPactoDaLamina } from './pactoDaLamina';
 import type { ItemMochila } from './mochila';
 
 describe('vincularArmaDePacto', () => {
@@ -48,5 +48,23 @@ describe('desvincularArmaDePacto', () => {
 describe('armaDePactoAtual', () => {
   it('null quando não há arma de pacto', () => {
     expect(armaDePactoAtual([{ id: 'a2', nome: 'Poção de Cura', quantidade: 1, peso: null, origemDoItem: 'Loja' }])).toBeNull();
+  });
+});
+
+describe('ataqueExtraDoPactoDaLamina', () => {
+  it('sem nenhuma invocação: 0', () => {
+    expect(ataqueExtraDoPactoDaLamina([], true)).toBe(0);
+  });
+
+  it('com Lâmina Sedenta, atacando com a arma de pacto: 1', () => {
+    expect(ataqueExtraDoPactoDaLamina(['pacto-da-lamina', 'lamina-sedenta'], true)).toBe(1);
+  });
+
+  it('com Lâmina Sedenta, mas SEM estar com a arma de pacto equipada: 0 (restrito à arma de pacto)', () => {
+    expect(ataqueExtraDoPactoDaLamina(['pacto-da-lamina', 'lamina-sedenta'], false)).toBe(0);
+  });
+
+  it('com Lâmina Sedenta + Lâmina Devoradora, com a arma de pacto: 2', () => {
+    expect(ataqueExtraDoPactoDaLamina(['pacto-da-lamina', 'lamina-sedenta', 'lamina-devoradora'], true)).toBe(2);
   });
 });

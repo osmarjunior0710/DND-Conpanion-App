@@ -79,8 +79,14 @@ quando a entrada for escrita), ordem aprovada pelo Osmar:
       Bruxo não é proficiente em Marcial). Fora do escopo (sem uso
       mecânico no app hoje): "vincular arma mágica tocada" e "servir
       de Foco de Conjuração".
-- [ ] **IM.5 — Lâmina Sedenta + Lâmina Devoradora** (resto do Grupo C,
-      depende do IM.4).
+- [x] **IM.5 — Lâmina Sedenta + Lâmina Devoradora.** Nova função pura
+      `ataqueExtraDoPactoDaLamina` em `core/pactoDaLamina.ts` (testada) +
+      `numAtaques` em `FichaShell.tsx` virou
+      `Math.max(numeroDeAtaques(classe, nível), 1 + extra)`. Zero UI
+      nova — o botão "Atacar" do Guerreiro já mostrava "(ataque N/M)".
+      Confirmado via Playwright: Bruxo nível 12 com Pacto da Lâmina +
+      Lâmina Sedenta + Lâmina Devoradora, arma de pacto equipada,
+      mostra "Atacar — Rapieira (ataque 1/3)".
 - [ ] **IM.6 — Lições dos Grandes Antigos** (concede Talento de Origem
       permanente).
 - [ ] **IM.7 — Passivas de texto** (Mente Mística, Visão da Bruxa,

@@ -597,3 +597,25 @@ mágica tocada" (dependeria do catálogo de itens mágicos) e "servir de
 Foco de Conjuração" (nada no app checa isso ainda).
 
 **Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.4.
+
+## Bruxo — IM.5 feito: Lâmina Sedenta/Devoradora reaproveitou 100% o "Ataque Extra" do Guerreiro
+
+**"Ataque Extra" de fonte não-classe vira só um `Math.max` no número
+final, não um sistema novo.** `numeroDeAtaques(classe, nível)`
+(Guerreiro) já alimentava o botão "Atacar" do Combat (contador "ataque
+N/M", trava por turno). Lâmina Sedenta/Devoradora do Bruxo concedem
+Ataque Extra por INVOCAÇÃO, não por classe — em vez de estender aquela
+função pra também olhar invocação, ficou uma função separada e pura
+(`ataqueExtraDoPactoDaLamina`, `core/pactoDaLamina.ts`) que só devolve
+quantos ataques extras a invocação dá, e o número final vira
+`Math.max(numeroDeAtaques(...), 1 + extra)` — zero mudança na UI do
+Combat, que já sabia lidar com "mais de 1 ataque por turno" desde o
+Guerreiro.
+
+**"Restrito à arma de pacto" é condição de cada leitura, não estado
+salvo.** O extra só conta quando a Mão Principal (agora) é a arma de
+pacto — se o jogador trocar de arma no meio da sessão, o número de
+ataques cai sozinho no próximo cálculo, sem precisar de nenhuma trava
+manual.
+
+**Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.5.
