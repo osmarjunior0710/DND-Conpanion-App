@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
+import { armas } from '../../../data/rulesets/dnd2024/armas';
+import type { ItemMochila } from '../../../core/mochila';
 import {
   espacosDeMagiaAtivos,
   truquesDoPersonagem,
@@ -15,6 +17,9 @@ import { useColapsavel } from '../../hooks/useColapsavel';
 import { useRoll } from '../../roll/RollContext';
 import EscolherCirculoShell from '../combat/EscolherCirculoShell';
 import styles from './MagiasTab.module.css';
+
+const armasSimples = armas.filter((a) => a.categoria.includes('Simples'));
+const armasMarciais = armas.filter((a) => a.categoria.includes('Marciais'));
 
 interface MagiasTabProps {
   classe: Classe | null;
@@ -50,6 +55,12 @@ interface MagiasTabProps {
    * usada desde o último Descanso Longo (travadas até lá). */
   magiasGratisGastas: string[];
   onUsarMagiaGratis: (item: MagiaGratisDeInvocacao) => void;
+  /** `true` só quando o personagem tem a Invocação Mística Pacto da
+   * Lâmina — controla se a seção de vincular arma de pacto aparece. */
+  temPactoDaLamina: boolean;
+  armaDePactoAtual: ItemMochila | null;
+  onVincularArmaDePacto: (nomeArma: string) => void;
+  onDesvincularArmaDePacto: () => void;
   faltamTruques: number;
   faltamMagiasPreparadas: number;
   onCompletarTruques: () => void;
@@ -73,6 +84,10 @@ export default function MagiasTab({
   magiasGratisConcedidas,
   magiasGratisGastas,
   onUsarMagiaGratis,
+  temPactoDaLamina,
+  armaDePactoAtual,
+  onVincularArmaDePacto,
+  onDesvincularArmaDePacto,
   faltamTruques,
   faltamMagiasPreparadas,
   onCompletarTruques,
@@ -80,6 +95,7 @@ export default function MagiasTab({
 }: MagiasTabProps) {
   const { rolarD20 } = useRoll();
   const [telaCirculo, setTelaCirculo] = useState<{ magia: Magia; circulos: number[] } | null>(null);
+  const [armaDePactoEscolhida, setArmaDePactoEscolhida] = useState('');
 
   if (!conjura) {
     return (
@@ -206,6 +222,55 @@ export default function MagiasTab({
               </div>
             );
           })}
+        </>
+      )}
+
+      {temPactoDaLamina && (
+        <>
+          <div className="section-title">Pacto da Lâmina</div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            Como Ação Bônus, vincula uma arma Simples ou Marcial — o ataque com ela usa Carisma, não Força/Destreza.
+            Aparece automaticamente na Mão Principal (aba Mochila) e no "Atacar" do Combat.
+          </div>
+          {armaDePactoAtual ? (
+            <div className={styles.reconjurarBtn} onClick={onDesvincularArmaDePacto}>
+              🗡️ Arma de Pacto: {armaDePactoAtual.nome} — toque pra desvincular
+            </div>
+          ) : (
+            <>
+              <select
+                className={styles.selectArma}
+                value={armaDePactoEscolhida}
+                onChange={(e) => setArmaDePactoEscolhida(e.target.value)}
+              >
+                <option value="">Escolha a arma...</option>
+                <optgroup label="Armas Simples">
+                  {armasSimples.map((a) => (
+                    <option key={a.id} value={a.nome}>
+                      {a.nome} ({a.dano})
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Armas Marciais">
+                  {armasMarciais.map((a) => (
+                    <option key={a.id} value={a.nome}>
+                      {a.nome} ({a.dano})
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+              <div
+                className={`${styles.reconjurarBtn} ${!armaDePactoEscolhida ? styles.reconjurarBtnGasto : ''}`}
+                onClick={() => {
+                  if (!armaDePactoEscolhida) return;
+                  onVincularArmaDePacto(armaDePactoEscolhida);
+                  setArmaDePactoEscolhida('');
+                }}
+              >
+                🗡️ Vincular arma de pacto
+              </div>
+            </>
+          )}
         </>
       )}
 

@@ -37,6 +37,7 @@ import {
 } from '../../core/equipamento';
 import { ataqueAtual, ataqueBonusMaoSecundaria } from '../../core/ataque';
 import { alternarSintonizacao } from '../../core/sintonizacao';
+import { armaDePactoAtual, vincularArmaDePacto, desvincularArmaDePacto } from '../../core/pactoDaLamina';
 import { armasParaMaestria as listarArmasParaMaestria } from '../../core/maestriaArma';
 import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
@@ -250,6 +251,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const periciaInigualavelDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Perícia Inigualável', personagem.nivel);
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
+  const carMod = atributos.find((a) => a.atributo === 'CAR')?.mod ?? 0;
   const equipadoAtual = resumoEquipado(itensMochila);
   const armaEquipada = equipadoAtual.maoPrincipal;
   const ataque = classe
@@ -262,6 +264,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         armaEquipada?.duasMaosAtivo === true,
         personagem.estiloDeLuta,
         equipadoAtual.maoSecundaria !== null,
+        armaEquipada?.armaDePacto ? carMod : undefined,
       )
     : null;
   const ataqueBonus = classe
@@ -490,6 +493,14 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function alternarSintonizacaoItem(id: string) {
     setItensMochila((prev) => alternarSintonizacao(prev, id));
+  }
+
+  function vincularArmaDePactoHandler(nomeArma: string) {
+    setItensMochila((prev) => vincularArmaDePacto(prev, nomeArma));
+  }
+
+  function desvincularArmaDePactoHandler() {
+    setItensMochila((prev) => desvincularArmaDePacto(prev));
   }
 
   function usarUsoFolego(): boolean {
@@ -729,6 +740,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             magiasGratisConcedidas={magiasGratisConcedidas}
             magiasGratisGastas={magiasGratisGastas}
             onUsarMagiaGratis={usarMagiaGratisDeInvocacao}
+            temPactoDaLamina={invocacoesMisticasAtuais.includes('pacto-da-lamina')}
+            armaDePactoAtual={armaDePactoAtual(itensMochila)}
+            onVincularArmaDePacto={vincularArmaDePactoHandler}
+            onDesvincularArmaDePacto={desvincularArmaDePactoHandler}
             faltamTruques={faltamTruques}
             faltamMagiasPreparadas={faltamMagiasPreparadas}
             onCompletarTruques={() => setCompletarAberto('truques')}

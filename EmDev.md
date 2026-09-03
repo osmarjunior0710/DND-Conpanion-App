@@ -69,8 +69,16 @@ quando a entrada for escrita), ordem aprovada pelo Osmar:
       distância"). Ver `PENDENCIAS.md` ("Lança Mística"). Junto com
       Explosão Agonizante/Repulsiva, todo o Grupo B fica pra quando o
       motor de dano/alcance de magia existir.
-- [ ] **IM.4 — Pacto da Lâmina** (base do Grupo C — cria a arma de
-      pacto).
+- [x] **IM.4 — Pacto da Lâmina.** `ItemMochila.armaDePacto`, novo
+      `core/pactoDaLamina.ts` (testado — `vincularArmaDePacto`/
+      `desvincularArmaDePacto`), `ataqueComArma`/`ataqueAtual` ganharam
+      `atribForcada` (testado), seção "Pacto da Lâmina" na aba Magias.
+      Confirmado via Playwright: vincular Rapieira equipa sozinho na
+      Mão Principal (aba Mochila), "Atacar" no Combat rola `1d20 + 3`
+      (Carisma 17, sem Força/Destreza, sem bônus de proficiência —
+      Bruxo não é proficiente em Marcial). Fora do escopo (sem uso
+      mecânico no app hoje): "vincular arma mágica tocada" e "servir
+      de Foco de Conjuração".
 - [ ] **IM.5 — Lâmina Sedenta + Lâmina Devoradora** (resto do Grupo C,
       depende do IM.4).
 - [ ] **IM.6 — Lições dos Grandes Antigos** (concede Talento de Origem

@@ -73,6 +73,11 @@ export function ataqueDesarmado(classe: Classe, nivel: number, forMod: number): 
  * com a arma (`classeProficienteComArma`) — sem isso, atacar com arma
  * fora da proficiência ainda funciona (regra real: só perde o bônus,
  * não trava o ataque).
+ *
+ * `atribForcada` (Pacto da Lâmina do Bruxo) substitui inteiramente a
+ * escolha Força/Destreza/Acuidade de cima — a arma de pacto usa
+ * Carisma pro ataque/dano, sempre, independente da propriedade da
+ * arma. `undefined` = comportamento normal, sem mudança.
  */
 export function ataqueComArma(
   arma: Arma,
@@ -84,10 +89,11 @@ export function ataqueComArma(
   duasMaosAtivo = false,
   estiloDeLutaEscolhido?: string | null,
   outraArmaNaMaoSecundaria = false,
+  atribForcada?: number,
 ): AtaqueResolvido {
   const acuidade = arma.propriedades.includes('Acuidade');
   const distancia = arma.categoria.includes('à Distância');
-  const atribMod = acuidade ? Math.max(forMod, desMod) : distancia ? desMod : forMod;
+  const atribMod = atribForcada ?? (acuidade ? Math.max(forMod, desMod) : distancia ? desMod : forMod);
   const prof = classeProficienteComArma(classe, arma) ? bonusProficiencia(classe, nivel) : 0;
   const dadoVersatil = identificarEquipamento(arma.nome).dadoVersatil;
   const usaVersatil = duasMaosAtivo && dadoVersatil;
@@ -115,7 +121,8 @@ export function ataqueComArma(
 
 /** Resolve o ataque disponível pelo nome do item na Mão Principal —
  * arma real do catálogo se identificar, senão Ataque Desarmado.
- * `duasMaosAtivo` vem do `ItemMochila.duasMaosAtivo` da arma. */
+ * `duasMaosAtivo` vem do `ItemMochila.duasMaosAtivo` da arma.
+ * `atribForcada` — ver `ataqueComArma` (Pacto da Lâmina). */
 export function ataqueAtual(
   nomeArmaEquipada: string | null,
   classe: Classe,
@@ -125,10 +132,11 @@ export function ataqueAtual(
   duasMaosAtivo = false,
   estiloDeLutaEscolhido?: string | null,
   outraArmaNaMaoSecundaria = false,
+  atribForcada?: number,
 ): AtaqueResolvido {
   const arma = nomeArmaEquipada ? armas.find((a) => a.nome === nomeArmaEquipada) : undefined;
   return arma
-    ? ataqueComArma(arma, classe, nivel, forMod, desMod, false, duasMaosAtivo, estiloDeLutaEscolhido, outraArmaNaMaoSecundaria)
+    ? ataqueComArma(arma, classe, nivel, forMod, desMod, false, duasMaosAtivo, estiloDeLutaEscolhido, outraArmaNaMaoSecundaria, atribForcada)
     : ataqueDesarmado(classe, nivel, forMod);
 }
 

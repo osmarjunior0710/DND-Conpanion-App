@@ -70,6 +70,11 @@ export interface ItemMochila {
    * (`core/sintonizacao.ts`). Limite de 3 simultâneos é aplicado na
    * hora de ligar, não é uma trava de tipo aqui. */
   sintonizado?: boolean;
+  /** Arma de pacto do Bruxo (Invocação Mística Pacto da Lâmina, ver
+   * `core/pactoDaLamina.ts`) — conjurada, não "possuída" de verdade:
+   * some da Mochila ao desvincular, em vez de ficar guardada. Usa
+   * Carisma pro ataque em vez de Força/Destreza (`core/ataque.ts`). */
+  armaDePacto?: boolean;
 }
 
 let contadorId = 0;

@@ -568,3 +568,32 @@ comentado com a fonte — não um motor de "maior valor de uma expressão
 de dado" (não existe ainda, só serve pra esse caso único hoje).
 
 **Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.2.
+
+## Bruxo — IM.4 feito: Pacto da Lâmina (arma conjurada = item normal + ataque com atributo forçado)
+
+**Arma conjurada vira `ItemMochila` de verdade, não estado à parte.**
+Em vez de inventar um sistema novo pra "coisa que existe só enquanto
+durar o vínculo", `vincularArmaDePacto`/`desvincularArmaDePacto`
+(`core/pactoDaLamina.ts`) criam/removem um `ItemMochila` comum
+(`armaDePacto: true`), reaproveitando 100% do equipar/desequipar/CA/
+Atacar que já existiam (E2/E3 do Plano de Equipamento) — zero UI nova
+precisou saber que a arma é "de pacto", só o cálculo de ataque.
+`desvincular` remove o item por completo (não fica "guardado" — é
+conjurado), diferente de um desequipar comum.
+
+**Atributo de ataque forçado (Carisma em vez de Força/Destreza)
+virou parâmetro opcional, não um branch novo.** `ataqueComArma`/
+`ataqueAtual` ganharam `atribForcada?: number` — quando presente,
+substitui inteiramente a escolha Força/Destreza/Acuidade de sempre.
+Padrão pronto pra qualquer outra fonte que troque o atributo de
+ataque no futuro (ex.: outro Pacto, algum talento), sem precisar
+reabrir essa função de novo.
+
+**Só existe 1 arma de pacto por vez** — vincular uma nova substitui a
+anterior automaticamente (`vincularArmaDePacto` filtra `armaDePacto`
+antes de adicionar a nova). Fora do escopo desta entrega (sem uso
+mecânico no app hoje, registrar se algum dia importar): "vincular arma
+mágica tocada" (dependeria do catálogo de itens mágicos) e "servir de
+Foco de Conjuração" (nada no app checa isso ainda).
+
+**Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.4.

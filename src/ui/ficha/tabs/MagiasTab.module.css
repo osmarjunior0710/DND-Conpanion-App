@@ -118,3 +118,17 @@
   color: var(--text-faint);
   cursor: default;
 }
+
+/* Seletor de arma do Pacto da Lâmina — mesma altura mínima de toque
+ * dos outros controles da tela (44px). */
+.selectArma {
+  width: 100%;
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--shape-xs);
+  background: var(--panel2);
+  color: var(--text);
+  font-size: 13px;
+  min-height: 44px;
+}
