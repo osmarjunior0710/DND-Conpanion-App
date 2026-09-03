@@ -652,3 +652,33 @@ específico por invocação.
 
 **Data/origem:** 2026-09, achado do Osmar revisando a cadeia de Pacto
 da Lâmina (IM.4/IM.5).
+
+## Bruxo — Dádiva Épica (nível 19) reaproveitou 100% a tela de Talento Geral
+
+**Escolha de talento por categoria virou 1 prop, não 1 componente
+novo.** `TelaEscolherTalento.tsx` só filtrava `categoria === 'Geral'`
+(hardcoded) — virou uma prop `categoria` (padrão `'Geral'`, sem mudar
+o passo `asi` existente). O passo `dadivaEpica` do Level Up, que já
+existia estruturalmente (nível certo, navegação certa) mas só mostrava
+uma caixa "entra numa próxima entrega", passou a usar a mesma tela com
+`categoria="Dádiva Épica"` — sem aplicar ASI (Dádivas Épicas 2024 não
+concedem Aumento de Atributo, diferente dos Talentos Gerais). O
+resultado cai no mesmo array `talentosGeraisAtuais` de sempre (nunca
+teve trava por categoria ali).
+
+**Achado ao mexer nisso: o mesmo bug do `[PH]` das Invocações (ver
+entrada IM.7) também existia nos Talentos.** `PerfilTab.tsx` mostrava
+`[PH] sem efeito mecânico ainda` em **todo** Talento, mesmo nos 5 que
+já ganharam `efeitoMecanico` real na Fase 4 (Alerta, Defensivo,
+Arquearia, Duelismo, Mestre em Armaduras Médias). Corrigido com o
+mesmo padrão: `talentoTemPlaceholder(t)` em `core/classificarTalento.ts`
+lê `efeitoMecanico === undefined` de verdade, em vez de assumir `[PH]`
+sempre. **Padrão geral pra qualquer catálogo com "fase 2/4" incremental
+(Invocações, Talentos, e o que vier depois):** nunca hardcodar `[PH]`
+fixo numa tela de listagem — sempre derivar de um campo real (`efeitoMecanico`,
+`magiaGratisConcedida`, etc.), porque a lista de "o que já foi
+implementado" cresce entrega a entrega e o texto fixo fica desatualizado
+silenciosamente.
+
+**Data/origem:** 2026-09, plano "Características nomeadas do Bruxo",
+item 1.

@@ -541,6 +541,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     magiasDescobertasMagicasEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
+    dadivaEpicaEscolhida: string | null;
   }) {
     const novosAtributos = resultado.atributosAumentados
       ? aumentarAtributos(selecao.atributos, resultado.atributosAumentados)
@@ -567,6 +568,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       // Já foi escolhido de verdade — não faz mais sentido continuar
       // "planejado" na seção de Favoritos.
       setTalentosFavoritos((prev) => prev.filter((id) => id !== resultado.talentoGeralEscolhido));
+    }
+    if (resultado.dadivaEpicaEscolhida) {
+      setTalentosGeraisAtuais((prev) => [...prev, resultado.dadivaEpicaEscolhida!]);
+      setTalentosFavoritos((prev) => prev.filter((id) => id !== resultado.dadivaEpicaEscolhida));
     }
     setLevelUpHpModo(null);
     setLevelUpHpRolado(null);

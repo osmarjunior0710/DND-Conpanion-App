@@ -133,7 +133,29 @@ PV"): Pacto da Corrente + Investimento do Mestre da Corrente, Punição
 Mística + Sorvedouro de Vida, Presente dos Protetores + Olhar de Duas
 Mentes. Registrado em `PENDENCIAS.md`.
 
-### 3. Características nomeadas sem mecânica (Astúcia Mágica, Contatar Patrono, Arcana Mística, Dádiva Épica, Mestre Místico) — ainda não quebrado em lotes
+### 3. Características nomeadas sem mecânica (Astúcia Mágica, Contatar Patrono, Arcana Mística, Dádiva Épica, Mestre Místico)
+
+Ordem aprovada pelo Osmar ("vamos"): 1) Dádiva Épica → 2) Astúcia
+Mágica + Mestre Místico → 3) Contatar Patrono → 4) Arcana Mística.
+Pedido extra: sempre que aparecer algo no caminho que ainda não tem
+efeito mecânico de verdade (ex: os talentos de Dádiva Épica em si),
+marcar `[PH]` — não deixar implícito.
+
+- [x] **1. Dádiva Épica (nível 19) — FEITA.** `TelaEscolherTalento.tsx`
+      ganhou prop `categoria` (reaproveitada pelo passo `asi` sem
+      mudar comportamento, e pelo novo passo `dadivaEpica`, sem
+      aplicar ASI). `LevelUpShell.tsx`/`FichaShell.tsx` levam a
+      escolha até `talentosGeraisAtuais`. Corrigido também o mesmo bug
+      do IM.7 nos Talentos: `PerfilTab.tsx` mostrava `[PH]` fixo em
+      todo Talento, mesmo nos 5 que já têm `efeitoMecanico` real (Fase
+      4) — nova `talentoTemPlaceholder(t)` em `core/classificarTalento.ts`
+      (testada) resolve. Confirmado via Playwright: Bruxo nível 18→19
+      escolhe "Dádiva da Fortitude" na tela real (não mais a caixa
+      "próxima entrega"), aparece em Perfil marcada `[PH]` (nenhuma
+      Dádiva Épica tem efeito mecânico ainda, como esperado).
+- [ ] **2. Astúcia Mágica (nível 2) + Mestre Místico (nível 20).**
+- [ ] **3. Contatar Patrono (nível 9).**
+- [ ] **4. Arcana Mística (níveis 11/13/15/17).**
 
 ### 4. Patrono Arquifada, Celestial, Grande Antigo — ainda não quebrado em lotes
 

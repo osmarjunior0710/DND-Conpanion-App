@@ -10,6 +10,7 @@ import {
 import type { WizardSelection } from '../../../core/personagem';
 import { invocacoesMisticas } from '../../../data/rulesets/dnd2024/invocacoesMisticas';
 import { invocacaoTemPlaceholder } from '../../../core/invocacoesMisticas';
+import { talentoTemPlaceholder } from '../../../core/classificarTalento';
 
 interface PerfilTabProps {
   selecao: WizardSelection;
@@ -109,7 +110,10 @@ export default function PerfilTab({
           {talentosGeraisEscolhidos.map((t, i) => (
             <div key={`${t.id}-${i}`} className="opt-card" style={{ cursor: 'default' }}>
               <div className="opt-card-name">{t.nome}</div>
-              <div className="opt-card-desc">[PH] sem efeito mecânico ainda — {t.beneficios}</div>
+              <div className="opt-card-desc">
+                {talentoTemPlaceholder(t) ? '[PH] sem efeito mecânico ainda — ' : ''}
+                {t.beneficios}
+              </div>
             </div>
           ))}
         </>

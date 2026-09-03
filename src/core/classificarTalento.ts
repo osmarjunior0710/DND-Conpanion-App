@@ -10,6 +10,8 @@
 // texto é quebrado em frases antes de classificar cada uma, nunca
 // tratado como 1 categoria só pro talento inteiro.
 
+import type { Talento } from '../data/rulesets/dnd2024/talentos';
+
 export type TipoEfeitoTalento = 'Ação' | 'Ação Bônus' | 'Reação' | 'Passiva';
 
 export interface EfeitoTalento {
@@ -39,4 +41,12 @@ export function classificarBeneficios(beneficios: string): EfeitoTalento[] {
     .map((frase) => frase.trim())
     .filter((frase) => frase.length > 0)
     .map((texto) => ({ texto, tipo: classificarFrase(texto) }));
+}
+
+/** `true` quando a Ficha ainda deve mostrar `[PH] sem efeito mecânico
+ * ainda` pro talento — a Fase 4 ainda não chegou nele. `efeitoMecanico`
+ * ausente = `[PH]`; presente (só 5 hoje: Alerta, Defensivo, Arquearia,
+ * Duelismo, Mestre em Armaduras Médias) = sem `[PH]`. */
+export function talentoTemPlaceholder(t: Talento): boolean {
+  return t.efeitoMecanico === undefined;
 }

@@ -64,6 +64,7 @@ interface LevelUpShellProps {
     magiasDescobertasMagicasEscolhidas: string[] | null;
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
+    dadivaEpicaEscolhida: string | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -196,6 +197,10 @@ export default function LevelUpShell({
   // extra "asiAtributo" entra na sequência (ver mais abaixo).
   const [talentoEscolhido, setTalentoEscolhido] = useState<string | null>(null);
   const talentoObjEscolhido = talentoEscolhido ? (talentos.find((t) => t.id === talentoEscolhido) ?? null) : null;
+  // Dádiva Épica (nível 19) — mesma mecânica de "Talento Geral" do
+  // passo `asi`, só filtrada por categoria, sem aplicar ASI (Dádivas
+  // Épicas não concedem Aumento de Atributo).
+  const [dadivaEpicaEscolhida, setDadivaEpicaEscolhida] = useState<string | null>(null);
   /** Talento escolhido pede uma escolha de atributo real (não é
    * `'nenhum'`, nem `escolha-unica` com 1 atributo só, que já aplica
    * direto sem passo extra). */
@@ -513,6 +518,10 @@ export default function LevelUpShell({
       setAviso('Escolha um Talento antes de avançar.');
       return;
     }
+    if (step === 'dadivaEpica' && dadivaEpicaEscolhida === null) {
+      setAviso('Escolha uma Dádiva Épica antes de avançar.');
+      return;
+    }
     if (step === 'asiAtributo') {
       if (talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && pontosAsiRestantes > 0) {
         setAviso(`Distribua os ${PONTOS_ASI} pontos do talento antes de avançar.`);
@@ -538,6 +547,7 @@ export default function LevelUpShell({
         magiasDescobertasMagicasEscolhidas: luSteps.includes('descobertasMagicas') ? descobertasMagicasEscolhidas : null,
         atributosAumentados: luSteps.includes('asi') && asiEscolhas.length > 0 ? asiEscolhas : null,
         talentoGeralEscolhido: luSteps.includes('asi') ? talentoEscolhido : null,
+        dadivaEpicaEscolhida: luSteps.includes('dadivaEpica') ? dadivaEpicaEscolhida : null,
       });
       return;
     }
@@ -1034,9 +1044,19 @@ export default function LevelUpShell({
           <>
             <div className="section-title">Dádiva Épica</div>
             {dadivaEpica?.descricao && <div className="label" style={{ marginBottom: 10 }}>{dadivaEpica.descricao}</div>}
-            <div className="box" style={{ padding: 14, textAlign: 'center', color: 'var(--text-faint)', fontSize: 12 }}>
-              ＋ lista de Dádivas Épicas (Cap. 5) entra numa próxima entrega
-            </div>
+            <TelaEscolherTalento
+              categoria="Dádiva Épica"
+              nivelAtual={novoNivel}
+              atributosFinais={atributosFinaisAtuais}
+              talentosGeraisAtuais={talentosGeraisAtuais}
+              favoritos={talentosFavoritosAtuais}
+              onToggleFavorito={onToggleFavoritoTalento}
+              selecionado={dadivaEpicaEscolhida}
+              onSelecionar={(id) => {
+                if (id === dadivaEpicaEscolhida) return;
+                setDadivaEpicaEscolhida(id);
+              }}
+            />
           </>
         )}
 

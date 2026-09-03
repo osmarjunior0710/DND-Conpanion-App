@@ -1,9 +1,14 @@
 import type { Atributo } from '../../../data/wizardFixtures';
-import { talentos, type Talento } from '../../../data/rulesets/dnd2024/talentos';
+import { talentos, type CategoriaTalento, type Talento } from '../../../data/rulesets/dnd2024/talentos';
 
 interface TelaEscolherTalentoProps {
   nivelAtual: number;
   atributosFinais: Record<Atributo, number>;
+  /** Categoria filtrada — `'Geral'` (padrão) pro passo ASI/Talento do
+   * Level Up, `'Dádiva Épica'` pro passo próprio dela. Mesma tela,
+   * só troca o catálogo (CLAUDE.md 6.1: reaproveitar em vez de
+   * duplicar). */
+  categoria?: CategoriaTalento;
   talentosGeraisAtuais: string[];
   /** IDs marcados com 📌 — "quero pegar isso num level up futuro".
    * Persistido por personagem (ver DECISOES-DESIGN.md). */
@@ -115,6 +120,7 @@ function CardTalento({
 export default function TelaEscolherTalento({
   nivelAtual,
   atributosFinais,
+  categoria = 'Geral',
   talentosGeraisAtuais,
   favoritos,
   onToggleFavorito,
@@ -122,7 +128,7 @@ export default function TelaEscolherTalento({
   onSelecionar,
 }: TelaEscolherTalentoProps) {
   const opcoes = talentos.filter(
-    (t) => t.categoria === 'Geral' && (t.repetivel || !talentosGeraisAtuais.includes(t.id) || t.id === selecionado),
+    (t) => t.categoria === categoria && (t.repetivel || !talentosGeraisAtuais.includes(t.id) || t.id === selecionado),
   );
   const favoritosNaLista = opcoes.filter((t) => favoritos.includes(t.id) && t.id !== selecionado);
   const idsFavoritados = new Set(favoritosNaLista.map((t) => t.id));
@@ -147,8 +153,9 @@ export default function TelaEscolherTalento({
   return (
     <>
       <div className="label" style={{ marginTop: 14, marginBottom: 10 }}>
-        Talentos Gerais (Cap. 5) — escolher aqui não aplica nenhum efeito mecânico ainda,
-        só fica salvo e mostrado na Ficha (<code>[PH]</code>). Toque no 📌 pra planejar um talento pra um level up futuro.
+        {categoria === 'Geral' ? 'Talentos Gerais' : `Talentos de ${categoria}`} (Cap. 5) — alguns já têm efeito
+        mecânico de verdade, o resto ainda fica marcado <code>[PH]</code> na Ficha até chegar a vez dele. Toque no 📌
+        pra planejar um talento pra um level up futuro.
       </div>
       {favoritosNaLista.length > 0 && (
         <>
