@@ -11,6 +11,27 @@
 
 ---
 
+## Sentidos Especiais (Visão no Escuro, às Cegas, Verdadeira, Sismiconsciência) — dado estruturado — FEITA
+
+- [x] `src/data/rulesets/dnd2024/sentidos.ts` (novo) — `TipoSentido`
+      (visaoNoEscuro/visaoAsCegas/visaoVerdadeira/sismiconsciencia,
+      sem Comum) + nomes de exibição.
+- [x] `TracoEspecie` e `InvocacaoMistica` ganharam campo
+      `sentidoConcedido: { tipo, alcanceMetros } | null`.
+- [x] Marcados os traços "Visão no Escuro" das 8 espécies que têm isso
+      importado (Anão/Orc = 36m, hoje jogáveis; demais 18m, ainda "em
+      breve") — NÃO inclui "Conhecimento de Pedras" do Anão (ativado,
+      Ação Bônus, usos limitados — não é sentido passivo).
+- [x] Marcados Visão da Bruxa (Verdadeira, 9m) e Visão Diabólica (no
+      Escuro, 36m) do Bruxo.
+- [x] Novo `core/sentidos.ts` (testado) — junta espécie + Invocações
+      atuais, pega o MAIOR valor por tipo entre as fontes.
+- [x] Nova seção "Sentidos" na aba Atributos, antes de "Descanso" — só
+      aparece com pelo menos 1 valor > 0. Confirmado via Playwright:
+      Anão mostra "Visão no Escuro — 36m"; Humano sem nada não mostra a
+      seção; Bruxo com Visão da Bruxa + Visão Diabólica mostra os 2
+      tipos juntos (Escuro 36m, Verdadeira 9m) sem duplicar/somar.
+
 ## Bruxo — Pendências pós-base, ordem escolhida pelo Osmar: Pacto do Tomo → Invocações Fase 2 → características nomeadas → subclasses restantes
 
 B6 (Patrono Ínfero) fica pausado até essa lista fechar — decisão do

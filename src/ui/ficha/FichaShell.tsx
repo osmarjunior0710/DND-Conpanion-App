@@ -43,6 +43,7 @@ import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
 import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../core/invocacoesMagiaGratis';
 import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
+import { calcularSentidos } from '../../core/sentidos';
 import {
   espacosDeMagiaAtivos,
   ehMagiaDeReacao,
@@ -223,6 +224,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const magiasDescobertasMagicas = magiasPreparadasDoPersonagem(magiasDescobertasMagicasAtuais);
   const livroDasSombras = magiasPreparadasDoPersonagem(livroDasSombrasAtuais);
   const magiasGratisConcedidas = magiasGratisDasInvocacoes(invocacoesMisticasAtuais);
+  const sentidos = calcularSentidos(selecao.especie, invocacoesMisticasAtuais);
   const faltamTruques = deficitTruques(classe, personagem.nivel, truquesAtuais);
   const faltamMagiasPreparadas = deficitMagiasPreparadas(classe, personagem.nivel, magiasPreparadasAtuais);
   // Descobertas Mágicas/Livro das Sombras contam como magia sempre
@@ -698,6 +700,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             armasParaMaestria={classe ? listarArmasParaMaestria(classe) : []}
             onTrocarArmaMaestria={trocarArmaMaestria}
             onRolarIniciativa={inspiracaoSuperiorDesbloqueada ? recuperarInspiracaoAoRolarIniciativa : undefined}
+            sentidos={sentidos}
           />
         )}
         {tab === 'perfil' && (

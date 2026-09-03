@@ -18,6 +18,8 @@
 // - 'limitada': tem teto real (usos por descanso, custa recurso
 //   específico) — ver `custoOuLimite`.
 
+import type { SentidoConcedido } from './sentidos';
+
 export interface PrerequisitosInvocacao {
   nivelMinimo: number | null;
   /** `id` de outra invocação que precisa já estar conhecida. */
@@ -59,6 +61,9 @@ export interface InvocacaoMistica {
    * atualizar o PV Temporário atual (`ganharPvTemporario`, pega o
    * maior valor, não soma). */
   pvTemporarioConcedido: number | null;
+  /** Sentido passivo permanente concedido (ver `sentidos.ts`) — só
+   * Visão da Bruxa e Visão Diabólica hoje. `null` nas outras 26. */
+  sentidoConcedido: SentidoConcedido | null;
   pagina: number;
   fonte: string;
 }
@@ -81,6 +86,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Armadura Arcana'],
     magiaGratisConcedida: { nome: 'Armadura Arcana', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -96,6 +102,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -111,6 +118,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -126,6 +134,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -140,6 +149,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Falar com Mortos'],
     magiaGratisConcedida: { nome: 'Falar com Mortos', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -154,6 +164,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -168,6 +179,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 71,
     fonte: FONTE,
   },
@@ -183,6 +195,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -197,6 +210,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -211,6 +225,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Disfarçar-se'],
     magiaGratisConcedida: { nome: 'Disfarçar-se', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -225,6 +240,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -239,6 +255,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Alterar-se'],
     magiaGratisConcedida: { nome: 'Alterar-se', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -254,6 +271,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -269,6 +287,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Convocar Familiar'],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -284,6 +303,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -299,6 +319,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -313,6 +334,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Levitação'],
     magiaGratisConcedida: { nome: 'Levitação', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -328,6 +350,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Respirar na Água'],
     magiaGratisConcedida: { nome: 'Respirar na Água', recarga: 'descansoLongo' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 72,
     fonte: FONTE,
   },
@@ -343,6 +366,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -358,6 +382,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -372,6 +397,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Salto'],
     magiaGratisConcedida: { nome: 'Salto', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -387,6 +413,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -401,6 +428,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Invisibilidade'],
     magiaGratisConcedida: { nome: 'Invisibilidade', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -418,6 +446,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     // Vitalidade Vazia (magias.ts): "2d4 + 4 PV Temporários" — valor
     // MÁXIMO do dado (regra da própria invocação, sem rolar) = 2×4 + 4.
     pvTemporarioConcedido: 12,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -432,6 +461,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: { tipo: 'visaoVerdadeira', alcanceMetros: 9 },
     pagina: 73,
     fonte: FONTE,
   },
@@ -446,6 +476,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: [],
     magiaGratisConcedida: null,
     pvTemporarioConcedido: null,
+    sentidoConcedido: { tipo: 'visaoNoEscuro', alcanceMetros: 36 },
     pagina: 73,
     fonte: FONTE,
   },
@@ -460,6 +491,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Olho Arcano'],
     magiaGratisConcedida: { nome: 'Olho Arcano', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },
@@ -474,6 +506,7 @@ export const invocacoesMisticas: InvocacaoMistica[] = [
     magiasMencionadas: ['Imagem Silenciosa'],
     magiaGratisConcedida: { nome: 'Imagem Silenciosa', recarga: 'ilimitado' },
     pvTemporarioConcedido: null,
+    sentidoConcedido: null,
     pagina: 73,
     fonte: FONTE,
   },

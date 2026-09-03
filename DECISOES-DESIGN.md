@@ -1037,3 +1037,42 @@ essa continua "pega o maior valor", regra real, intocada; a soma só
 vale pra cura normal já no máximo (`aplicarAlteracaoPv`).
 
 **Data/origem:** 2026-09.
+
+## Sentidos Especiais viram dado estruturado (não mais só texto) (2026-09)
+
+**Antes:** Visão no Escuro/às Cegas/Verdadeira/Sismiconsciência só
+existiam como texto solto dentro da descrição de traço de espécie ou
+de Invocação Mística (ex: "Você tem Visão no Escuro com um alcance de
+36 metros.") — sem jeito de somar/comparar entre fontes diferentes.
+
+**Agora:** campo estruturado `sentidoConcedido: { tipo, alcanceMetros }
+| null` em `TracoEspecie` (`especies.ts`) e `InvocacaoMistica`
+(`invocacoesMisticas.ts`), tipo `TipoSentido` centralizado em
+`data/rulesets/dnd2024/sentidos.ts` (Visão Comum não entra — todo
+personagem já tem, não é algo "concedido"). `core/sentidos.ts` junta
+todas as fontes do personagem (espécie + Invocações Místicas atuais,
+mais fontes no futuro — itens mágicos, outras classes) num resultado
+por tipo.
+
+**Regra de empilhamento — pega o MAIOR valor, nunca soma.** Confirmado
+com o Osmar: quando 2+ fontes dão o MESMO tipo de sentido (ex: espécie
+já dá Visão no Escuro 36m + uma invocação que também dá Visão no
+Escuro), o valor final é o maior entre elas — é a regra padrão do
+Apêndice C. Somar só valeria se o texto de uma fonte específica pedisse
+isso de propósito (nenhuma hoje pede — o exemplo cogitado foi uma
+característica do Patrono Ínfero, ainda não importada; quando essa
+hora chegar, decidir um mecanismo de override específico pra ela, não
+mudar a regra padrão).
+
+**"Conhecimento de Pedras" do Anão (Sismiconsciência temporária, Ação
+Bônus, usos limitados) fica de fora do campo estruturado** — só sentido
+passivo permanente entra; habilidade ativada/temporária continua só
+como texto do traço, não aparece na seção "Sentidos" da Ficha (que
+mostra o que o personagem TEM agora, não o que ele pode ativar).
+
+**Tela:** seção "Sentidos" nova na aba Atributos, antes de "Descanso"
+— só aparece se pelo menos 1 valor for > 0 (personagem sem nenhum
+sentido especial não vê seção nenhuma).
+
+**Data/origem:** 2026-09, pedido do Osmar depois de revisar a cadeia
+de pré-requisito das Invocações Místicas.

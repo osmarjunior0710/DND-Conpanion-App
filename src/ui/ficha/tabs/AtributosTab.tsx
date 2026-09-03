@@ -1,6 +1,8 @@
 import type { AtributoFinal, ExplicacaoCalculo, FerramentaFinal, PericiaFinal } from '../../../core/calculoPersonagem';
 import type { Arma } from '../../../data/rulesets/dnd2024/armas';
 import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
+import { NOME_SENTIDO, type TipoSentido } from '../../../data/rulesets/dnd2024/sentidos';
+import { sentidosAtivos } from '../../../core/sentidos';
 import { useRoll } from '../../roll/RollContext';
 import InfoValor from '../../components/InfoValor';
 import ItemComDescricao from '../../components/ItemComDescricao';
@@ -30,6 +32,10 @@ interface AtributosTabProps {
   armasParaMaestria: Arma[];
   onTrocarArmaMaestria: (armaAntiga: string, armaNova: string) => void;
   onRolarIniciativa?: () => void;
+  /** Sentidos Especiais (Visão no Escuro/às Cegas/Verdadeira,
+   * Sismiconsciência) já somados de espécie + Invocações Místicas —
+   * ver `core/sentidos.ts`. Seção some sozinha se tudo for 0. */
+  sentidos: Record<TipoSentido, number>;
 }
 
 export default function AtributosTab({
@@ -55,8 +61,10 @@ export default function AtributosTab({
   armasParaMaestria,
   onTrocarArmaMaestria,
   onRolarIniciativa,
+  sentidos,
 }: AtributosTabProps) {
   const { rolarD20 } = useRoll();
+  const sentidosParaExibir = sentidosAtivos(sentidos);
 
   return (
     <>
@@ -202,6 +210,21 @@ export default function AtributosTab({
           })}
           <div className="label" style={{ marginTop: 2, marginBottom: 12 }}>
             você pode trocar 1 arma a cada Descanso Longo.
+          </div>
+        </>
+      )}
+
+      {sentidosParaExibir.length > 0 && (
+        <>
+          <div className="section-title">Sentidos</div>
+          {sentidosParaExibir.map(({ tipo, alcanceMetros }) => (
+            <div key={tipo} className={styles.skillRow}>
+              <span>{NOME_SENTIDO[tipo]}</span>
+              <span>{alcanceMetros}m</span>
+            </div>
+          ))}
+          <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
+            já soma espécie + Invocações Místicas — o maior valor entre as fontes do mesmo tipo.
           </div>
         </>
       )}
