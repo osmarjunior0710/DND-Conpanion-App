@@ -44,6 +44,7 @@ import { personagemConjura } from '../../core/conjuracao';
 import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../core/invocacoesMagiaGratis';
 import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
 import { calcularSentidos } from '../../core/sentidos';
+import { espacosARecuperar } from '../../core/astuciaMagica';
 import {
   espacosDeMagiaAtivos,
   ehMagiaDeReacao,
@@ -164,6 +165,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
   const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
+  const [astuciaMagicaGasta, setAstuciaMagicaGasta] = useState(personagemSalvo.astuciaMagicaGasta ?? false);
   const [surtoUsadoTurno, setSurtoUsadoTurno] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
@@ -224,6 +226,13 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const magiasDescobertasMagicas = magiasPreparadasDoPersonagem(magiasDescobertasMagicasAtuais);
   const livroDasSombras = magiasPreparadasDoPersonagem(livroDasSombrasAtuais);
   const magiasGratisConcedidas = magiasGratisDasInvocacoes(invocacoesMisticasAtuais);
+  const astuciaMagicaDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Astúcia Mágica', personagem.nivel) !== null : false;
+  const mestreMisticoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Mestre Místico', personagem.nivel) !== null : false;
+  const espacoPactoAtual = espacos[0] ?? null;
+  const espacosGastosPacto = espacoPactoAtual ? (espacosGastosPorCirculo[espacoPactoAtual.circulo] ?? 0) : 0;
+  const astuciaMagicaRecupera = espacoPactoAtual
+    ? espacosARecuperar(espacoPactoAtual.maximo, espacosGastosPacto, mestreMisticoDisponivel)
+    : 0;
   const sentidos = calcularSentidos(selecao.especie, invocacoesMisticasAtuais);
   const faltamTruques = deficitTruques(classe, personagem.nivel, truquesAtuais);
   const faltamMagiasPreparadas = deficitMagiasPreparadas(classe, personagem.nivel, magiasPreparadasAtuais);
@@ -316,6 +325,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       magiasDescobertasMagicasAtual: magiasDescobertasMagicasAtuais,
       livroDasSombrasAtual: livroDasSombrasAtuais,
       livroDasSombrasGasto,
+      astuciaMagicaGasta,
       magiasGratisInvocacoesGastas: magiasGratisGastas,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
@@ -346,6 +356,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     magiasDescobertasMagicasAtuais,
     livroDasSombrasAtuais,
     livroDasSombrasGasto,
+    astuciaMagicaGasta,
     magiasGratisGastas,
     talentosGeraisAtuais,
     talentosFavoritos,
@@ -436,6 +447,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setSurtoGasto(0);
     setInspiracaoGasto(0);
     setLivroDasSombrasGasto(false);
+    setAstuciaMagicaGasta(false);
     setMagiasGratisGastas([]);
     fimDoTurno();
     setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação e Inspiração de Bardo recuperados.`);
@@ -456,6 +468,13 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setRestStatus(
       `Descanso Curto: ${circulosQueRecuperam.length > 0 ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
     );
+  }
+
+  function usarAstuciaMagica() {
+    if (astuciaMagicaGasta || !espacoPactoAtual || astuciaMagicaRecupera <= 0) return;
+    const circulo = espacoPactoAtual.circulo;
+    setEspacosGastosPorCirculo((prev) => ({ ...prev, [circulo]: Math.max(0, (prev[circulo] ?? 0) - astuciaMagicaRecupera) }));
+    setAstuciaMagicaGasta(true);
   }
 
   function usarMagiaGratisDeInvocacao(item: MagiaGratisDeInvocacao) {
@@ -749,6 +768,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             temPactoDoTomo={invocacoesMisticasAtuais.includes('pacto-do-tomo')}
             livroDasSombrasGasto={livroDasSombrasGasto}
             onReconjurarLivro={() => !livroDasSombrasGasto && setLivroDasSombrasAberto(true)}
+            astuciaMagicaDisponivel={astuciaMagicaDisponivel}
+            astuciaMagicaGasta={astuciaMagicaGasta}
+            astuciaMagicaRecupera={astuciaMagicaRecupera}
+            onUsarAstuciaMagica={usarAstuciaMagica}
             magiasGratisConcedidas={magiasGratisConcedidas}
             magiasGratisGastas={magiasGratisGastas}
             onUsarMagiaGratis={usarMagiaGratisDeInvocacao}

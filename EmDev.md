@@ -153,7 +153,15 @@ marcar `[PH]` — não deixar implícito.
       escolhe "Dádiva da Fortitude" na tela real (não mais a caixa
       "próxima entrega"), aparece em Perfil marcada `[PH]` (nenhuma
       Dádiva Épica tem efeito mecânico ainda, como esperado).
-- [ ] **2. Astúcia Mágica (nível 2) + Mestre Místico (nível 20).**
+- [x] **2. Astúcia Mágica (nível 2) + Mestre Místico (nível 20) — FEITA.**
+      Nova `espacosARecuperar(maximoTotal, gastoAtual, mestreMistico)`
+      em `core/astuciaMagica.ts` (testada). Novo estado
+      `astuciaMagicaGasta` (persistido, reseta só no Descanso Longo) +
+      botão na aba Magias perto de "Espaços de Magia". Confirmado via
+      Playwright: Bruxo nível 2 com 2/2 espaços gastos recupera 1
+      (metade, arredondado pra cima) e trava até o próximo Descanso
+      Longo; Bruxo nível 20 (Mestre Místico) com 4/4 gastos recupera
+      os 4 (tudo, não só metade).
 - [ ] **3. Contatar Patrono (nível 9).**
 - [ ] **4. Arcana Mística (níveis 11/13/15/17).**
 

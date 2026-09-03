@@ -77,6 +77,10 @@ export interface PersonagemSalvo {
    * (a regra real só permite escolher de novo ao final de um
    * descanso). Resetado pra `false` em `descansoCurto`/`descansoLongo`. */
   livroDasSombrasGasto?: boolean;
+  /** `true` = Astúcia Mágica (Bruxo, nível 2) já foi usada desde o
+   * último Descanso Longo — só ele reseta (não é Descanso Curto,
+   * diferente do Livro das Sombras). Ver `core/astuciaMagica.ts`. */
+  astuciaMagicaGasta?: boolean;
   /** IDs de Invocações Místicas cuja magia de graça (`recarga:
    * 'descansoLongo'`, ex: Presente das Profundezas) já foi usada desde
    * o último Descanso Longo — cada uma trava até lá. Invocações

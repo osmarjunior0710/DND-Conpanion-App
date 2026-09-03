@@ -47,6 +47,15 @@ interface MagiasTabProps {
    * botão "Reconjurar" fica travado até o próximo descanso. */
   livroDasSombrasGasto: boolean;
   onReconjurarLivro: () => void;
+  /** `true` só quando o personagem já tem Astúcia Mágica (Bruxo,
+   * nível 2+) — controla se o botão aparece. */
+  astuciaMagicaDisponivel: boolean;
+  /** `true` = já usada desde o último Descanso Longo. */
+  astuciaMagicaGasta: boolean;
+  /** Quantos espaços de Pacto o rito recupera agora (0 = nada gasto
+   * pra recuperar, botão fica travado mesmo disponível). */
+  astuciaMagicaRecupera: number;
+  onUsarAstuciaMagica: () => void;
   /** Invocações Místicas Fase 2 — magias concedidas "de graça" (ex:
    * Armadura de Sombras -> Armadura Arcana), derivadas das Invocações
    * atuais do personagem. Vazio pra quem não tem nenhuma desse tipo. */
@@ -81,6 +90,10 @@ export default function MagiasTab({
   temPactoDoTomo,
   livroDasSombrasGasto,
   onReconjurarLivro,
+  astuciaMagicaDisponivel,
+  astuciaMagicaGasta,
+  astuciaMagicaRecupera,
+  onUsarAstuciaMagica,
   magiasGratisConcedidas,
   magiasGratisGastas,
   onUsarMagiaGratis,
@@ -189,6 +202,20 @@ export default function MagiasTab({
             </>
           )}
         </>
+      )}
+
+      {astuciaMagicaDisponivel && (
+        <div
+          className={`${styles.reconjurarBtn} ${astuciaMagicaGasta || astuciaMagicaRecupera <= 0 ? styles.reconjurarBtnGasto : ''}`}
+          onClick={onUsarAstuciaMagica}
+        >
+          🔮{' '}
+          {astuciaMagicaGasta
+            ? 'Astúcia Mágica já usada — disponível de novo após Descanso Longo'
+            : astuciaMagicaRecupera > 0
+              ? `Astúcia Mágica — rito de 1 minuto, recupera ${astuciaMagicaRecupera} espaço${astuciaMagicaRecupera > 1 ? 's' : ''} de Pacto`
+              : 'Astúcia Mágica — nenhum espaço de Pacto gasto pra recuperar agora'}
+        </div>
       )}
 
       {magiasGratisConcedidas.length > 0 && (

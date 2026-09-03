@@ -682,3 +682,26 @@ silenciosamente.
 
 **Data/origem:** 2026-09, plano "Características nomeadas do Bruxo",
 item 1.
+
+## Bruxo — Astúcia Mágica (nível 2) + Mestre Místico (nível 20)
+
+**"Recupera metade, arredondado pra cima" e "recupera tudo" viraram
+uma função pura só, não dois caminhos de código.** `espacosARecuperar(
+maximoTotal, gastoAtual, mestreMistico)` em `core/astuciaMagica.ts` —
+`mestreMistico: true` é só um branch a mais dentro da mesma função
+(devolve `gastoAtual` inteiro em vez de `ceil(maximoTotal/2)`), porque
+Mestre Místico (nível 20) é literalmente "a mesma característica,
+recuperando tudo em vez de metade" — nunca fez sentido ser uma entrega
+própria (já registrado assim em PENDENCIAS.md antes de implementar).
+
+**1x por Descanso Longo, nunca reseta no Curto** — diferente do Livro
+das Sombras/Recuperar Fôlego (que resetam nos dois). Campo
+`astuciaMagicaGasta: boolean` só zera dentro de `descansoLongo()`.
+
+**Botão trava sozinho quando não há nada pra recuperar** (0 espaços
+gastos) — não é regra oficial (RAW deixaria "usar" mesmo sem efeito),
+mas evita queimar o único uso do dia à toa; é house rule de UX, não de
+jogo (não altera nenhum número de personagem).
+
+**Data/origem:** 2026-09, plano "Características nomeadas do Bruxo",
+item 2.
