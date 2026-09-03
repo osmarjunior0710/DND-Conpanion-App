@@ -65,6 +65,13 @@ interface MagiasTabProps {
   /** `true` = já usada desde o último Descanso Longo. */
   contatarPatronoGasto: boolean;
   onUsarContatarPatrono: () => void;
+  /** Arcana Mística (Bruxo, níveis 11/13/15/17) — 1 entrada por
+   * círculo já escolhido (6/7/8/9), cada uma com uso independente.
+   * Vazio pra quem ainda não desbloqueou nenhum círculo. */
+  arcanaMisticaEscolhidas: { circulo: number; magia: Magia }[];
+  /** Círculos já usados de graça desde o último Descanso Longo. */
+  arcanaMisticaGastos: number[];
+  onUsarArcanaMistica: (circulo: number) => void;
   /** Invocações Místicas Fase 2 — magias concedidas "de graça" (ex:
    * Armadura de Sombras -> Armadura Arcana), derivadas das Invocações
    * atuais do personagem. Vazio pra quem não tem nenhuma desse tipo. */
@@ -107,6 +114,9 @@ export default function MagiasTab({
   contatoExtraplanar,
   contatarPatronoGasto,
   onUsarContatarPatrono,
+  arcanaMisticaEscolhidas,
+  arcanaMisticaGastos,
+  onUsarArcanaMistica,
   magiasGratisConcedidas,
   magiasGratisGastas,
   onUsarMagiaGratis,
@@ -249,6 +259,32 @@ export default function MagiasTab({
               {contatarPatronoGasto ? 'Usada' : 'Usar de graça'}
             </div>
           </div>
+        </>
+      )}
+
+      {arcanaMisticaEscolhidas.length > 0 && (
+        <>
+          <div className="section-title">Arcana Mística</div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            1 magia por círculo, cada uma conjurável de graça 1x por Descanso Longo (usos independentes entre si).
+          </div>
+          {arcanaMisticaEscolhidas.map(({ circulo, magia }) => {
+            const gasta = arcanaMisticaGastos.includes(circulo);
+            return (
+              <div key={circulo} className={styles.spellRow}>
+                <div className={styles.spellName}>
+                  <MagiaComDescricao magia={magia} /> {iconesMagia(magia)}
+                </div>
+                <span className={styles.spellCirculo}>{circulo}º círculo</span>
+                <div
+                  className={`${styles.usarBtn} ${gasta ? styles.usarBtnDesabilitado : ''}`}
+                  onClick={() => onUsarArcanaMistica(circulo)}
+                >
+                  {gasta ? 'Usada' : 'Usar de graça'}
+                </div>
+              </div>
+            );
+          })}
         </>
       )}
 

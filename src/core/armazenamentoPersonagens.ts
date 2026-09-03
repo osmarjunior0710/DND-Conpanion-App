@@ -85,6 +85,13 @@ export interface PersonagemSalvo {
    * último Descanso Longo — só ele reseta. Conjura Contato Extraplanar
    * sem gastar espaço, sucesso automático na salvaguarda. */
   contatarPatronoGasto?: boolean;
+  /** Arcana Mística (Bruxo, níveis 11/13/15/17) — círculo (6/7/8/9) →
+   * nome da magia escolhida pra esse arcanum. Cresce 1 entrada por
+   * nível desbloqueado (ver `core/arcanaMistica.ts`). */
+  arcanaMisticaAtual?: Record<number, string>;
+  /** Círculos de Arcana Mística já usados de graça desde o último
+   * Descanso Longo (usos independentes entre si) — só ele reseta. */
+  arcanaMisticaGastos?: number[];
   /** IDs de Invocações Místicas cuja magia de graça (`recarga:
    * 'descansoLongo'`, ex: Presente das Profundezas) já foi usada desde
    * o último Descanso Longo — cada uma trava até lá. Invocações

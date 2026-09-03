@@ -170,7 +170,22 @@ marcar `[PH]` — não deixar implícito.
       botão "Usar de graça"/"Usada"). Confirmado via Playwright: Bruxo
       nível 9 mostra a seção com Contato Extraplanar, "Usar de graça"
       funciona e trava depois de usado.
-- [ ] **4. Arcana Mística (níveis 11/13/15/17).**
+- [x] **4. Arcana Mística (níveis 11/13/15/17) — FEITA.** 4 magias
+      independentes (6º/7º/8º/9º círculo), cada 1 conjurável de graça
+      1x por Descanso Longo. Só a escolha inicial quando desbloqueia;
+      trocar arcanum depois fica pra outra entrega (PENDENCIAS.md).
+      Novo `core/arcanaMistica.ts` (testado). Level Up ganhou o passo
+      `arcanaMistica` (só nos níveis certos). Aba Magias ganhou a
+      seção com 1 botão "Usar de graça"/"Usada" por círculo já
+      escolhido. Confirmado via Playwright: Bruxo 10→11 escolheu
+      "Caldeirão Borbulhante de Tasha" (6º círculo) na tela real,
+      apareceu na aba Magias e travou depois de usar.
+
+**Com o item 4 feito, as 4 características nomeadas (Astúcia Mágica/
+Mestre Místico, Contatar Patrono, Dádiva Épica, Arcana Mística) estão
+completas.** Só falta o item 4 da lista principal (subclasses
+restantes: Arquifada, Celestial, Grande Antigo) pra fechar toda a
+lista "Pendências pós-base" do Bruxo.
 
 ### 4. Patrono Arquifada, Celestial, Grande Antigo — ainda não quebrado em lotes
 

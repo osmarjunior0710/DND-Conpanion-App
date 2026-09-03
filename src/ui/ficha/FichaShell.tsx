@@ -65,7 +65,7 @@ import {
 } from '../../core/levelUp';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { origens } from '../../data/rulesets/dnd2024/origens';
-import { magias, magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
+import { magias, magiasDaClasse, type Magia } from '../../data/rulesets/dnd2024/magias';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
 import AtributosTab from './tabs/AtributosTab';
@@ -167,6 +167,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
   const [astuciaMagicaGasta, setAstuciaMagicaGasta] = useState(personagemSalvo.astuciaMagicaGasta ?? false);
   const [contatarPatronoGasto, setContatarPatronoGasto] = useState(personagemSalvo.contatarPatronoGasto ?? false);
+  const [arcanaMisticaAtuais, setArcanaMisticaAtuais] = useState<Record<number, string>>(
+    personagemSalvo.arcanaMisticaAtual ?? {},
+  );
+  const [arcanaMisticaGastos, setArcanaMisticaGastos] = useState<number[]>(personagemSalvo.arcanaMisticaGastos ?? []);
   const [surtoUsadoTurno, setSurtoUsadoTurno] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
@@ -230,6 +234,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const astuciaMagicaDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Astúcia Mágica', personagem.nivel) !== null : false;
   const contatarPatronoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Contatar Patrono', personagem.nivel) !== null : false;
   const contatoExtraplanar = magias.find((m) => m.nome === 'Contato Extraplanar') ?? null;
+  const arcanaMisticaEscolhidas = Object.entries(arcanaMisticaAtuais)
+    .map(([circulo, nomeMagia]) => ({ circulo: Number(circulo), magia: magias.find((m) => m.nome === nomeMagia) ?? null }))
+    .filter((item): item is { circulo: number; magia: Magia } => item.magia !== null)
+    .sort((a, b) => a.circulo - b.circulo);
   const mestreMisticoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Mestre Místico', personagem.nivel) !== null : false;
   const espacoPactoAtual = espacos[0] ?? null;
   const espacosGastosPacto = espacoPactoAtual ? (espacosGastosPorCirculo[espacoPactoAtual.circulo] ?? 0) : 0;
@@ -330,6 +338,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       livroDasSombrasGasto,
       astuciaMagicaGasta,
       contatarPatronoGasto,
+      arcanaMisticaAtual: arcanaMisticaAtuais,
+      arcanaMisticaGastos,
       magiasGratisInvocacoesGastas: magiasGratisGastas,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
@@ -362,6 +372,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     livroDasSombrasGasto,
     astuciaMagicaGasta,
     contatarPatronoGasto,
+    arcanaMisticaAtuais,
+    arcanaMisticaGastos,
     magiasGratisGastas,
     talentosGeraisAtuais,
     talentosFavoritos,
@@ -454,6 +466,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setLivroDasSombrasGasto(false);
     setAstuciaMagicaGasta(false);
     setContatarPatronoGasto(false);
+    setArcanaMisticaGastos([]);
     setMagiasGratisGastas([]);
     fimDoTurno();
     setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação e Inspiração de Bardo recuperados.`);
@@ -486,6 +499,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function usarContatarPatrono() {
     if (contatarPatronoGasto) return;
     setContatarPatronoGasto(true);
+  }
+
+  function usarArcanaMistica(circulo: number) {
+    if (arcanaMisticaGastos.includes(circulo)) return;
+    setArcanaMisticaGastos((prev) => [...prev, circulo]);
   }
 
   function usarMagiaGratisDeInvocacao(item: MagiaGratisDeInvocacao) {
@@ -572,6 +590,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
     dadivaEpicaEscolhida: string | null;
+    arcanaMistica: { circulo: number; magia: string } | null;
   }) {
     const novosAtributos = resultado.atributosAumentados
       ? aumentarAtributos(selecao.atributos, resultado.atributosAumentados)
@@ -603,6 +622,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       setTalentosGeraisAtuais((prev) => [...prev, resultado.dadivaEpicaEscolhida!]);
       setTalentosFavoritos((prev) => prev.filter((id) => id !== resultado.dadivaEpicaEscolhida));
     }
+    if (resultado.arcanaMistica) {
+      const { circulo, magia } = resultado.arcanaMistica;
+      setArcanaMisticaAtuais((prev) => ({ ...prev, [circulo]: magia }));
+    }
     setLevelUpHpModo(null);
     setLevelUpHpRolado(null);
     setLevelUpAberto(false);
@@ -624,6 +647,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
         magiasPreparadasAtuais={magiasPreparadasAtuais}
         magiasDaClasseDisponiveis={magiasDisponiveisParaPreparar(classe, personagem.nivel + 1)}
         invocacoesMisticasAtuais={invocacoesMisticasAtuais}
+        arcanaMisticaAtuais={arcanaMisticaAtuais}
         periciasEspecialistaAtuais={periciasEspecialistaAtuais}
         periciasProficientesDoPersonagem={[...periciasProficientes(selecao), ...periciasSubclasseBonusAtuais]}
         periciasSubclasseBonusAtuais={periciasSubclasseBonusAtuais}
@@ -787,6 +811,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             contatoExtraplanar={contatoExtraplanar}
             contatarPatronoGasto={contatarPatronoGasto}
             onUsarContatarPatrono={usarContatarPatrono}
+            arcanaMisticaEscolhidas={arcanaMisticaEscolhidas}
+            arcanaMisticaGastos={arcanaMisticaGastos}
+            onUsarArcanaMistica={usarArcanaMistica}
             magiasGratisConcedidas={magiasGratisConcedidas}
             magiasGratisGastas={magiasGratisGastas}
             onUsarMagiaGratis={usarMagiaGratisDeInvocacao}

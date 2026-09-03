@@ -27,6 +27,7 @@ import {
   invocacaoBloqueadaPorRequisitoAusente,
   invocacoesQueDependemDe,
 } from '../../../core/invocacoesMisticas';
+import { circulosArcanaMisticaDesbloqueados, magiasElegiveisArcanaMistica } from '../../../core/arcanaMistica';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TextoComMagias from '../../components/TextoComMagias';
@@ -65,6 +66,7 @@ interface LevelUpShellProps {
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
     dadivaEpicaEscolhida: string | null;
+    arcanaMistica: { circulo: number; magia: string } | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -84,6 +86,10 @@ interface LevelUpShellProps {
   /** Invocações Místicas (Bruxo) que o personagem já tem — Etapa 4.3
    * do Bruxo, mesmo padrão de troca de Truques (1 por level-up). */
   invocacoesMisticasAtuais: string[];
+  /** Arcana Mística (Bruxo, níveis 11/13/15/17) — círculo → nome da
+   * magia já escolhida pra ele. Só a escolha inicial é feita aqui
+   * (trocar depois fica pra outra entrega, ver PENDENCIAS.md). */
+  arcanaMisticaAtuais: Record<number, string>;
   /** Catálogo de magias de círculo > 0 da classe (todos os círculos —
    * filtrado por círculo ativo no nível novo aqui dentro). */
   magiasDaClasseDisponiveis: Magia[];
@@ -137,6 +143,7 @@ type LuStep =
   | 'asi'
   | 'asiAtributo'
   | 'dadivaEpica'
+  | 'arcanaMistica'
   | 'resumo';
 type FaseDramatica = 'idle' | 'rolando' | 'resultado';
 
@@ -157,6 +164,7 @@ export default function LevelUpShell({
   magiasPreparadasAtuais,
   magiasDaClasseDisponiveis,
   invocacoesMisticasAtuais,
+  arcanaMisticaAtuais,
   periciasEspecialistaAtuais,
   periciasProficientesDoPersonagem,
   periciasSubclasseBonusAtuais,
@@ -201,6 +209,14 @@ export default function LevelUpShell({
   // passo `asi`, só filtrada por categoria, sem aplicar ASI (Dádivas
   // Épicas não concedem Aumento de Atributo).
   const [dadivaEpicaEscolhida, setDadivaEpicaEscolhida] = useState<string | null>(null);
+  // Arcana Mística (níveis 11/13/15/17) — o círculo novo é o que
+  // aparece em `novoNivel` mas não em `personagem.nivel` (a diferença
+  // entre os dois nunca é mais de 1 círculo, dado o espaçamento real
+  // da característica na tabela de Bruxo).
+  const circulosArcanaAntes = circulosArcanaMisticaDesbloqueados(classe, personagem.nivel);
+  const circulosArcanaDepois = circulosArcanaMisticaDesbloqueados(classe, novoNivel);
+  const novoCirculoArcanaMistica = circulosArcanaDepois.find((c) => !circulosArcanaAntes.includes(c)) ?? null;
+  const [arcanaMisticaEscolhida, setArcanaMisticaEscolhida] = useState<string | null>(null);
   /** Talento escolhido pede uma escolha de atributo real (não é
    * `'nenhum'`, nem `escolha-unica` com 1 atributo só, que já aplica
    * direto sem passo extra). */
@@ -240,6 +256,7 @@ export default function LevelUpShell({
     if (precisaEscolherAtributoDoTalento) luSteps.push('asiAtributo');
   }
   if (niveisComDadivaEpica(classe).includes(novoNivel)) luSteps.push('dadivaEpica');
+  if (novoCirculoArcanaMistica !== null) luSteps.push('arcanaMistica');
   luSteps.push('resumo');
 
   // Características que já ganham uma tela própria mais adiante nesse
@@ -257,6 +274,9 @@ export default function LevelUpShell({
   if (luSteps.includes('especialista')) NOMES_ESPECIALISTA.forEach((n) => nomesComTelaPropria.add(n));
   if (luSteps.includes('asi')) nomesComTelaPropria.add('Aumento no Valor de Atributo');
   if (luSteps.includes('dadivaEpica')) nomesComTelaPropria.add('Dádiva Épica');
+  if (luSteps.includes('arcanaMistica') && novoCirculoArcanaMistica !== null) {
+    nomesComTelaPropria.add(`Arcana Mística (${novoCirculoArcanaMistica}º círculo)`);
+  }
 
   const [luIndex, setLuIndex] = useState(0);
   const [faseDramatica, setFaseDramatica] = useState<FaseDramatica>('idle');
@@ -455,6 +475,7 @@ export default function LevelUpShell({
     asi: 'Atributo ou Talento',
     asiAtributo: 'Atributo do Talento',
     dadivaEpica: 'Dádiva Épica',
+    arcanaMistica: 'Arcana Mística',
     resumo: 'Resumo',
   };
 
@@ -522,6 +543,10 @@ export default function LevelUpShell({
       setAviso('Escolha uma Dádiva Épica antes de avançar.');
       return;
     }
+    if (step === 'arcanaMistica' && arcanaMisticaEscolhida === null) {
+      setAviso('Escolha uma magia de Arcana Mística antes de avançar.');
+      return;
+    }
     if (step === 'asiAtributo') {
       if (talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && pontosAsiRestantes > 0) {
         setAviso(`Distribua os ${PONTOS_ASI} pontos do talento antes de avançar.`);
@@ -548,6 +573,10 @@ export default function LevelUpShell({
         atributosAumentados: luSteps.includes('asi') && asiEscolhas.length > 0 ? asiEscolhas : null,
         talentoGeralEscolhido: luSteps.includes('asi') ? talentoEscolhido : null,
         dadivaEpicaEscolhida: luSteps.includes('dadivaEpica') ? dadivaEpicaEscolhida : null,
+        arcanaMistica:
+          luSteps.includes('arcanaMistica') && novoCirculoArcanaMistica !== null && arcanaMisticaEscolhida !== null
+            ? { circulo: novoCirculoArcanaMistica, magia: arcanaMisticaEscolhida }
+            : null,
       });
       return;
     }
@@ -567,6 +596,13 @@ export default function LevelUpShell({
     (f) => !nomesComTelaPropria.has(f.nome),
   );
   const dadivaEpica = caracteristicasDoNivel(classe, novoNivel).find((f) => f.nome === 'Dádiva Épica');
+  const arcanaMisticaFeature =
+    novoCirculoArcanaMistica !== null
+      ? caracteristicasDoNivel(classe, novoNivel).find((f) => f.nome === `Arcana Mística (${novoCirculoArcanaMistica}º círculo)`)
+      : undefined;
+  const jaConhecidasArcanaMistica = [...truquesAtuais, ...magiasPreparadasAtuais, ...Object.values(arcanaMisticaAtuais)];
+  const opcoesArcanaMistica =
+    novoCirculoArcanaMistica !== null ? magiasElegiveisArcanaMistica(novoCirculoArcanaMistica, jaConhecidasArcanaMistica) : [];
 
   if (faseDramatica !== 'idle') {
     return (
@@ -1057,6 +1093,28 @@ export default function LevelUpShell({
                 setDadivaEpicaEscolhida(id);
               }}
             />
+          </>
+        )}
+
+        {step === 'arcanaMistica' && (
+          <>
+            <div className="section-title">Arcana Mística — {novoCirculoArcanaMistica}º círculo</div>
+            {arcanaMisticaFeature?.descricao && (
+              <div className="label" style={{ marginBottom: 10 }}>
+                {arcanaMisticaFeature.descricao}
+              </div>
+            )}
+            {opcoesArcanaMistica.map((m) => (
+              <div
+                key={m.id}
+                className={`opt-card ${arcanaMisticaEscolhida === m.nome ? 'selected' : ''}`}
+                style={{ padding: '10px 12px', cursor: 'pointer' }}
+                onClick={() => setArcanaMisticaEscolhida(m.nome)}
+              >
+                <div className="opt-card-name">{m.nome}</div>
+                <div className="opt-card-desc">{m.descricaoCurta ?? m.descricaoCompleta}</div>
+              </div>
+            ))}
           </>
         )}
 

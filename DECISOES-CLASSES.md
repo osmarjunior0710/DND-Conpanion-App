@@ -705,3 +705,39 @@ jogo (não altera nenhum número de personagem).
 
 **Data/origem:** 2026-09, plano "Características nomeadas do Bruxo",
 item 2.
+
+## Bruxo — Arcana Mística (níveis 11/13/15/17): "N usos independentes que crescem 1 por vez" vira Record<chave, valor> + array de gastos
+
+**Padrão novo (não existia ainda no motor): uma característica que
+concede vários usos "de graça" INDEPENDENTES entre si, cada um
+desbloqueado num nível diferente.** Diferente do padrão já usado nas
+Invocações (`magiaGratisConcedida`, 1 magia por invocação, todas
+sempre disponíveis desde que a invocação exista) e de Astúcia Mágica/
+Contatar Patrono (1 uso só, boolean simples) — Arcana Mística tem 4
+"slots" (6º/7º/8º/9º círculo), cada um só existe a partir do nível que
+o desbloqueia, e cada um tem seu PRÓPRIO cooldown de Descanso Longo
+(usar o de 6º círculo não trava o de 7º).
+
+**Modelagem escolhida:** `arcanaMisticaAtual: Record<circulo, nome
+da magia>` (cresce 1 chave por nível desbloqueado, nunca reseta) +
+`arcanaMisticaGastos: number[]` (lista dos CÍRCULOS usados desde o
+último Descanso Longo, não um boolean único — permite qualquer
+combinação de "usei o de 6º mas não o de 7º"). Sempre que outra
+característica futura tiver essa forma ("N usos independentes,
+crescendo por nível, cada um com seu cooldown próprio"), reaproveitar
+esse par Record+array em vez de inventar de novo.
+
+**Novo passo de Level Up (`arcanaMistica`) descobre sozinho qual
+círculo é novo** comparando `circulosArcanaMisticaDesbloqueados` no
+nível atual vs. no nível novo (a diferença é o círculo que acabou de
+desbloquear) — não hardcoda "nível 11 = 6º círculo" na tela, só na
+função pura testada (`core/arcanaMistica.ts`), que é a única fonte de
+verdade sobre qual nível desbloqueia qual círculo.
+
+**Escopo consciente, fora desta entrega:** trocar 1 arcanum já
+escolhido por outro do mesmo círculo (permitido em qualquer level-up
+futuro, regra real) — registrado em PENDENCIAS.md, mesmo padrão de
+troca (1 por vez) que Truques/Invocações já usam, quando for a vez.
+
+**Data/origem:** 2026-09, plano "Características nomeadas do Bruxo",
+item 4 (último dos 4).
