@@ -1019,19 +1019,21 @@ não pulam.
 
 ## Cura acima do máximo vira PV Temporário — HOUSE RULE, não regra oficial (2026-09)
 
-**Pedido do Osmar:** cura que passaria do PV máximo não se perde mais
-— enche até o máximo primeiro, o excedente vira PV Temporário (soma
-com o que já tinha, não "pega o maior"). Ex: 90/100 + cura de 15 = 100
-PV + 5 PV Temporário. Se já estiver no máximo, a cura inteira vira PV
-Temporário.
+**Pedido do Osmar:** o PV enche até o máximo primeiro — se um clique de
+cura cruza o máximo, o excedente DESSE clique é descartado (não vira
+Temporário), igual à regra real. Só depois de já estar no máximo é que
+um novo clique de cura vira PV Temporário inteiro (soma com o que já
+tinha, não "pega o maior"). Ex: 90/100 + cura de 15 = 100/100 (os 5
+que passariam do máximo são descartados nesse clique); clicar de novo
+já em 100/100 com +5 aí sim vira +5 PV Temporário.
 
 **Importante — isso é house rule, NÃO regra oficial:** pela regra real
-(Glossário do Livro do Jogador), cura acima do máximo é simplesmente
-perdida — nenhuma menção a virar PV Temporário. Por isso essa decisão
-fica aqui (design), não em `DND-Regras.md` (só fatos confirmados no
-livro). Não confundir com `ganharPvTemporario()` (habilidade que
-concede PV Temporário direto, tipo Vigor Ínfero) — essa continua
-"pega o maior valor", regra real, intocada; a soma só vale pro
-transbordo de cura normal (`aplicarAlteracaoPv`).
+(Glossário do Livro do Jogador), cura acima do máximo é sempre
+perdida, mesmo já no máximo — nenhuma menção a virar PV Temporário.
+Por isso essa decisão fica aqui (design), não em `DND-Regras.md` (só
+fatos confirmados no livro). Não confundir com `ganharPvTemporario()`
+(habilidade que concede PV Temporário direto, tipo Vigor Ínfero) —
+essa continua "pega o maior valor", regra real, intocada; a soma só
+vale pra cura normal já no máximo (`aplicarAlteracaoPv`).
 
 **Data/origem:** 2026-09.

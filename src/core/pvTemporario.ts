@@ -3,12 +3,16 @@
 // PV normal; ganhar PV Temporário de uma habilidade (`ganharPvTemporario`)
 // NÃO soma com o que já tem, fica o maior valor entre os dois.
 //
-// "Cura que transborda vira PV Temporário" é HOUSE RULE do Osmar, não
-// regra oficial (RAW o excedente de cura acima do máximo é perdido) —
-// registrado como decisão de design, não em DND-Regras.md. Enche o PV
-// normal até o máximo primeiro; o que sobrar da cura SOMA (não é
-// "pega o maior") no PV Temporário — ex: 90/100 + cura de 15 = 100 PV
-// + 5 PV Temporário (ou +5 em cima do que já tinha de Temporário).
+// "Cura só vira PV Temporário depois de já estar no máximo" é HOUSE
+// RULE do Osmar, não regra oficial (RAW o excedente de cura acima do
+// máximo é simplesmente perdido) — registrado como decisão de design,
+// não em DND-Regras.md. O PV enche até o máximo primeiro — se a cura
+// cruza o máximo NESSE mesmo clique, o excedente desse clique é
+// descartado (não vira Temporário). Só um clique de cura feito com o
+// personagem JÁ no máximo é que soma inteiro em PV Temporário — ex:
+// 90/100 + cura de 15 = 100/100 (os 5 que passariam do máximo são
+// descartados); clicar de novo já em 100/100 com +5 aí sim vira +5 PV
+// Temporário.
 
 export function aplicarAlteracaoPv(
   pvAtual: number,
@@ -17,12 +21,10 @@ export function aplicarAlteracaoPv(
   delta: number,
 ): { pvAtual: number; pvTemporario: number } {
   if (delta >= 0) {
-    const pvAposCura = pvAtual + delta;
-    if (pvAposCura <= pvMax) {
-      return { pvAtual: pvAposCura, pvTemporario };
+    if (pvAtual >= pvMax) {
+      return { pvAtual: pvMax, pvTemporario: pvTemporario + delta };
     }
-    const transbordo = pvAposCura - pvMax;
-    return { pvAtual: pvMax, pvTemporario: pvTemporario + transbordo };
+    return { pvAtual: Math.min(pvMax, pvAtual + delta), pvTemporario };
   }
   let dano = -delta;
   const absorvidoPeloTemp = Math.min(pvTemporario, dano);
