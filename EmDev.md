@@ -162,7 +162,14 @@ marcar `[PH]` — não deixar implícito.
       (metade, arredondado pra cima) e trava até o próximo Descanso
       Longo; Bruxo nível 20 (Mestre Místico) com 4/4 gastos recupera
       os 4 (tudo, não só metade).
-- [ ] **3. Contatar Patrono (nível 9).**
+- [x] **3. Contatar Patrono (nível 9) — FEITA.** Contato Extraplanar
+      sempre preparada + conjurável de graça (sucesso automático na
+      salvaguarda) 1x por Descanso Longo. Novo estado
+      `contatarPatronoGasto` (persistido, reseta só no Descanso
+      Longo) + seção "Contatar Patrono" na aba Magias (pill padrão +
+      botão "Usar de graça"/"Usada"). Confirmado via Playwright: Bruxo
+      nível 9 mostra a seção com Contato Extraplanar, "Usar de graça"
+      funciona e trava depois de usado.
 - [ ] **4. Arcana Mística (níveis 11/13/15/17).**
 
 ### 4. Patrono Arquifada, Celestial, Grande Antigo — ainda não quebrado em lotes

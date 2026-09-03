@@ -56,6 +56,15 @@ interface MagiasTabProps {
    * pra recuperar, botão fica travado mesmo disponível). */
   astuciaMagicaRecupera: number;
   onUsarAstuciaMagica: () => void;
+  /** `true` só quando o personagem já tem Contatar Patrono (Bruxo,
+   * nível 9+) — controla se a seção aparece. */
+  contatarPatronoDisponivel: boolean;
+  /** Contato Extraplanar — `null` só se o catálogo não tiver a magia
+   * (nunca deveria acontecer, mas evita quebrar a tela se sumir). */
+  contatoExtraplanar: Magia | null;
+  /** `true` = já usada desde o último Descanso Longo. */
+  contatarPatronoGasto: boolean;
+  onUsarContatarPatrono: () => void;
   /** Invocações Místicas Fase 2 — magias concedidas "de graça" (ex:
    * Armadura de Sombras -> Armadura Arcana), derivadas das Invocações
    * atuais do personagem. Vazio pra quem não tem nenhuma desse tipo. */
@@ -94,6 +103,10 @@ export default function MagiasTab({
   astuciaMagicaGasta,
   astuciaMagicaRecupera,
   onUsarAstuciaMagica,
+  contatarPatronoDisponivel,
+  contatoExtraplanar,
+  contatarPatronoGasto,
+  onUsarContatarPatrono,
   magiasGratisConcedidas,
   magiasGratisGastas,
   onUsarMagiaGratis,
@@ -216,6 +229,27 @@ export default function MagiasTab({
               ? `Astúcia Mágica — rito de 1 minuto, recupera ${astuciaMagicaRecupera} espaço${astuciaMagicaRecupera > 1 ? 's' : ''} de Pacto`
               : 'Astúcia Mágica — nenhum espaço de Pacto gasto pra recuperar agora'}
         </div>
+      )}
+
+      {contatarPatronoDisponivel && contatoExtraplanar && (
+        <>
+          <div className="section-title">Contatar Patrono</div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            Sempre preparada — conjurável de graça 1x por Descanso Longo, com sucesso automático na salvaguarda.
+          </div>
+          <div className={styles.spellRow}>
+            <div className={styles.spellName}>
+              <MagiaComDescricao magia={contatoExtraplanar} /> {iconesMagia(contatoExtraplanar)}
+            </div>
+            <span className={styles.spellCirculo}>{contatoExtraplanar.circulo}º círculo</span>
+            <div
+              className={`${styles.usarBtn} ${contatarPatronoGasto ? styles.usarBtnDesabilitado : ''}`}
+              onClick={onUsarContatarPatrono}
+            >
+              {contatarPatronoGasto ? 'Usada' : 'Usar de graça'}
+            </div>
+          </div>
+        </>
       )}
 
       {magiasGratisConcedidas.length > 0 && (

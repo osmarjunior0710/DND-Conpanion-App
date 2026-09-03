@@ -81,6 +81,10 @@ export interface PersonagemSalvo {
    * último Descanso Longo — só ele reseta (não é Descanso Curto,
    * diferente do Livro das Sombras). Ver `core/astuciaMagica.ts`. */
   astuciaMagicaGasta?: boolean;
+  /** `true` = Contatar Patrono (Bruxo, nível 9) já foi usada desde o
+   * último Descanso Longo — só ele reseta. Conjura Contato Extraplanar
+   * sem gastar espaço, sucesso automático na salvaguarda. */
+  contatarPatronoGasto?: boolean;
   /** IDs de Invocações Místicas cuja magia de graça (`recarga:
    * 'descansoLongo'`, ex: Presente das Profundezas) já foi usada desde
    * o último Descanso Longo — cada uma trava até lá. Invocações

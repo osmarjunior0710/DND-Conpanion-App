@@ -65,7 +65,7 @@ import {
 } from '../../core/levelUp';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { origens } from '../../data/rulesets/dnd2024/origens';
-import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
+import { magias, magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
 import AtributosTab from './tabs/AtributosTab';
@@ -166,6 +166,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
   const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
   const [astuciaMagicaGasta, setAstuciaMagicaGasta] = useState(personagemSalvo.astuciaMagicaGasta ?? false);
+  const [contatarPatronoGasto, setContatarPatronoGasto] = useState(personagemSalvo.contatarPatronoGasto ?? false);
   const [surtoUsadoTurno, setSurtoUsadoTurno] = useState(false);
   const [restStatus, setRestStatus] = useState<string | null>(null);
   const [turnState, setTurnState] = useState<Record<RecursoTurno, EstadoRecurso>>(turnoInicial);
@@ -227,6 +228,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const livroDasSombras = magiasPreparadasDoPersonagem(livroDasSombrasAtuais);
   const magiasGratisConcedidas = magiasGratisDasInvocacoes(invocacoesMisticasAtuais);
   const astuciaMagicaDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Astúcia Mágica', personagem.nivel) !== null : false;
+  const contatarPatronoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Contatar Patrono', personagem.nivel) !== null : false;
+  const contatoExtraplanar = magias.find((m) => m.nome === 'Contato Extraplanar') ?? null;
   const mestreMisticoDisponivel = classe ? caracteristicaDesbloqueada(classe, 'Mestre Místico', personagem.nivel) !== null : false;
   const espacoPactoAtual = espacos[0] ?? null;
   const espacosGastosPacto = espacoPactoAtual ? (espacosGastosPorCirculo[espacoPactoAtual.circulo] ?? 0) : 0;
@@ -326,6 +329,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       livroDasSombrasAtual: livroDasSombrasAtuais,
       livroDasSombrasGasto,
       astuciaMagicaGasta,
+      contatarPatronoGasto,
       magiasGratisInvocacoesGastas: magiasGratisGastas,
       talentosGeraisAtual: talentosGeraisAtuais,
       talentosFavoritosAtual: talentosFavoritos,
@@ -357,6 +361,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     livroDasSombrasAtuais,
     livroDasSombrasGasto,
     astuciaMagicaGasta,
+    contatarPatronoGasto,
     magiasGratisGastas,
     talentosGeraisAtuais,
     talentosFavoritos,
@@ -448,6 +453,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setInspiracaoGasto(0);
     setLivroDasSombrasGasto(false);
     setAstuciaMagicaGasta(false);
+    setContatarPatronoGasto(false);
     setMagiasGratisGastas([]);
     fimDoTurno();
     setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação e Inspiração de Bardo recuperados.`);
@@ -475,6 +481,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     const circulo = espacoPactoAtual.circulo;
     setEspacosGastosPorCirculo((prev) => ({ ...prev, [circulo]: Math.max(0, (prev[circulo] ?? 0) - astuciaMagicaRecupera) }));
     setAstuciaMagicaGasta(true);
+  }
+
+  function usarContatarPatrono() {
+    if (contatarPatronoGasto) return;
+    setContatarPatronoGasto(true);
   }
 
   function usarMagiaGratisDeInvocacao(item: MagiaGratisDeInvocacao) {
@@ -772,6 +783,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             astuciaMagicaGasta={astuciaMagicaGasta}
             astuciaMagicaRecupera={astuciaMagicaRecupera}
             onUsarAstuciaMagica={usarAstuciaMagica}
+            contatarPatronoDisponivel={contatarPatronoDisponivel}
+            contatoExtraplanar={contatoExtraplanar}
+            contatarPatronoGasto={contatarPatronoGasto}
+            onUsarContatarPatrono={usarContatarPatrono}
             magiasGratisConcedidas={magiasGratisConcedidas}
             magiasGratisGastas={magiasGratisGastas}
             onUsarMagiaGratis={usarMagiaGratisDeInvocacao}
