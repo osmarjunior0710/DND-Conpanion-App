@@ -1,5 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { invocacoesElegiveisAteNivel } from './invocacoesMisticas';
+import {
+  invocacoesElegiveisAteNivel,
+  invocacaoRequeridaDe,
+  invocacaoBloqueadaPorRequisitoAusente,
+  invocacoesQueDependemDe,
+} from './invocacoesMisticas';
+import { invocacoesMisticas } from '../data/rulesets/dnd2024/invocacoesMisticas';
+
+const laminaSedenta = invocacoesMisticas.find((i) => i.id === 'lamina-sedenta')!;
+const laminaDevoradora = invocacoesMisticas.find((i) => i.id === 'lamina-devoradora')!;
+const pactoDaLamina = invocacoesMisticas.find((i) => i.id === 'pacto-da-lamina')!;
 
 describe('invocacoesElegiveisAteNivel', () => {
   it('nível 1: só as 5 sem pré-requisito de nível', () => {
@@ -19,5 +29,53 @@ describe('invocacoesElegiveisAteNivel', () => {
   it('borda: nível 0 devolve só as sem pré-requisito nenhum', () => {
     const elegiveis = invocacoesElegiveisAteNivel(0);
     expect(elegiveis.length).toBe(5);
+  });
+});
+
+describe('invocacaoRequeridaDe', () => {
+  it('Lâmina Sedenta exige Pacto da Lâmina', () => {
+    expect(invocacaoRequeridaDe(laminaSedenta)?.id).toBe('pacto-da-lamina');
+  });
+
+  it('sem requisito: null', () => {
+    expect(invocacaoRequeridaDe(pactoDaLamina)).toBeNull();
+  });
+});
+
+describe('invocacaoBloqueadaPorRequisitoAusente', () => {
+  it('Lâmina Sedenta sem Pacto da Lâmina marcado: bloqueada', () => {
+    expect(invocacaoBloqueadaPorRequisitoAusente(laminaSedenta, [])).toBe(true);
+  });
+
+  it('Lâmina Sedenta com Pacto da Lâmina marcado: liberada', () => {
+    expect(invocacaoBloqueadaPorRequisitoAusente(laminaSedenta, ['pacto-da-lamina'])).toBe(false);
+  });
+
+  it('Lâmina Devoradora com só Pacto da Lâmina (sem Lâmina Sedenta): ainda bloqueada', () => {
+    expect(invocacaoBloqueadaPorRequisitoAusente(laminaDevoradora, ['pacto-da-lamina'])).toBe(true);
+  });
+
+  it('sem requisito nenhum: nunca bloqueada', () => {
+    expect(invocacaoBloqueadaPorRequisitoAusente(pactoDaLamina, [])).toBe(false);
+  });
+});
+
+describe('invocacoesQueDependemDe', () => {
+  it('Pacto da Lâmina com Lâmina Sedenta marcada: tem 1 dependente (não pode remover)', () => {
+    const dependentes = invocacoesQueDependemDe('pacto-da-lamina', ['pacto-da-lamina', 'lamina-sedenta']);
+    expect(dependentes.map((i) => i.id)).toEqual(['lamina-sedenta']);
+  });
+
+  it('Pacto da Lâmina sozinho: sem dependente, pode remover', () => {
+    expect(invocacoesQueDependemDe('pacto-da-lamina', ['pacto-da-lamina'])).toEqual([]);
+  });
+
+  it('cadeia completa: Lâmina Sedenta tem Lâmina Devoradora como dependente', () => {
+    const dependentes = invocacoesQueDependemDe('lamina-sedenta', [
+      'pacto-da-lamina',
+      'lamina-sedenta',
+      'lamina-devoradora',
+    ]);
+    expect(dependentes.map((i) => i.id)).toEqual(['lamina-devoradora']);
   });
 });

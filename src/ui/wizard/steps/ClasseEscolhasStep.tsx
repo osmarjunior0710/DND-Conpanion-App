@@ -5,7 +5,12 @@ import { proficienciasIniciaisClasse } from '../../../data/rulesets/dnd2024/clas
 import { proficienciasArmaArmaduraClasse } from '../../../data/rulesets/dnd2024/proficienciasArmaArmaduraClasse';
 import { gruposFerramenta } from '../../../data/rulesets/dnd2024/ferramentas';
 import { magiasDaClasse } from '../../../data/rulesets/dnd2024/magias';
-import { invocacoesElegiveisAteNivel } from '../../../core/invocacoesMisticas';
+import {
+  invocacoesElegiveisAteNivel,
+  invocacaoRequeridaDe,
+  invocacaoBloqueadaPorRequisitoAusente,
+  invocacoesQueDependemDe,
+} from '../../../core/invocacoesMisticas';
 import { buscarDescricaoItem } from '../../../data/rulesets/dnd2024/buscarDescricaoItem';
 import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../../core/maestriaArma';
@@ -109,8 +114,13 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
     const atual = selection.invocacoesMisticasEscolhidas;
     const i = atual.indexOf(id);
     if (i > -1) {
+      if (invocacoesQueDependemDe(id, atual).length > 0) return;
       update({ invocacoesMisticasEscolhidas: atual.filter((x) => x !== id) });
-    } else if (atual.length < maxInvocacoes) {
+      return;
+    }
+    const inv = invocacoesElegiveis.find((c) => c.id === id);
+    if (inv && invocacaoBloqueadaPorRequisitoAusente(inv, atual)) return;
+    if (atual.length < maxInvocacoes) {
       update({ invocacoesMisticasEscolhidas: [...atual, id] });
     }
   }
@@ -211,22 +221,46 @@ export default function ClasseEscolhasStep({ selection, update }: StepProps) {
           <div className="label" style={{ marginBottom: 4 }}>
             [PH] sem efeito mecânico ainda — só o texto de regra.
           </div>
-          {invocacoesElegiveis.map((inv) => (
-            <div
-              key={inv.id}
-              className="opt-card"
-              style={{ padding: '10px 12px', cursor: 'pointer' }}
-              onClick={() => toggleInvocacao(inv.id)}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div className={`check-box ${selection.invocacoesMisticasEscolhidas.includes(inv.id) ? 'checked' : ''}`} />
-                <span className="opt-card-name">{inv.nome}</span>
+          {invocacoesElegiveis.map((inv) => {
+            const marcado = selection.invocacoesMisticasEscolhidas.includes(inv.id);
+            const requerida = invocacaoRequeridaDe(inv);
+            const bloqueadaPorRequisito =
+              !marcado && invocacaoBloqueadaPorRequisitoAusente(inv, selection.invocacoesMisticasEscolhidas);
+            const travadaPorDependente =
+              marcado && invocacoesQueDependemDe(inv.id, selection.invocacoesMisticasEscolhidas).length > 0;
+            return (
+              <div
+                key={inv.id}
+                className="opt-card"
+                style={{
+                  padding: '10px 12px',
+                  cursor: bloqueadaPorRequisito ? 'default' : 'pointer',
+                  opacity: bloqueadaPorRequisito ? 0.45 : 1,
+                  pointerEvents: bloqueadaPorRequisito ? 'none' : 'auto',
+                }}
+                onClick={() => toggleInvocacao(inv.id)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div className={`check-box ${marcado ? 'checked' : ''}`} />
+                  <span className="opt-card-name">{inv.nome}</span>
+                </div>
+                <div className="opt-card-desc">
+                  <TextoComMagias texto={inv.beneficios} nomesMagias={inv.magiasMencionadas} />
+                </div>
+                {requerida && (
+                  <div style={{ color: bloqueadaPorRequisito ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
+                    Requer: {requerida.nome}
+                    {bloqueadaPorRequisito && ' — marque essa primeiro'}
+                  </div>
+                )}
+                {travadaPorDependente && (
+                  <div style={{ color: 'var(--text-faint)', fontSize: 11 }}>
+                    🔒 não pode remover — é requisito de outra invocação que você mantém
+                  </div>
+                )}
               </div>
-              <div className="opt-card-desc">
-                <TextoComMagias texto={inv.beneficios} nomesMagias={inv.magiasMencionadas} />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </>
       )}
 

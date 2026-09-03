@@ -619,3 +619,36 @@ ataques cai sozinho no próximo cálculo, sem precisar de nenhuma trava
 manual.
 
 **Data/origem:** 2026-09, plano "Invocações Místicas Fase 2", IM.5.
+
+## Bruxo — bug corrigido: cadeia de pré-requisito entre Invocações Místicas não era checada
+
+**O que estava errado:** o dado (`invocacaoRequeridaId` em `invocacoesMisticas.ts`) já modelava
+corretamente cadeias como Pacto da Lâmina → Lâmina Sedenta → Lâmina
+Devoradora desde a Fase 1, mas nada no app lia esse campo — dava pra
+marcar "Lâmina Sedenta" sem ter "Pacto da Lâmina", ou tirar "Pacto da
+Lâmina" com "Lâmina Sedenta" ainda marcada (o que deixaria a Sedenta
+sem nada pra aplicar). Achado do Osmar: "boa parte delas tem requisito
+e o requisito não é uma troca e sim o componente base".
+
+**Correção — 3 funções puras novas em `core/invocacoesMisticas.ts`
+(testadas), reaproveitadas nos 2 lugares que escolhem invocação
+(wizard `ClasseEscolhasStep.tsx` + Level Up `LevelUpShell.tsx`):**
+- `invocacaoRequeridaDe(inv)` — devolve a invocação que `inv` exige (ou
+  `null`), pra mostrar a linha "Requer: X" sempre que existir.
+- `invocacaoBloqueadaPorRequisitoAusente(inv, atuais)` — bloqueia
+  MARCAR uma invocação cujo requisito não está entre as já marcadas
+  (card cinza, sem clique, com "— marque essa primeiro" em vermelho).
+- `invocacoesQueDependemDe(id, atuais)` — bloqueia DESMARCAR uma
+  invocação que ainda serve de requisito pra outra marcada (clique
+  ignorado, mostra "🔒 não pode remover — é requisito de outra
+  invocação que você mantém"). Regra real: pra abandonar uma cadeia,
+  precisa desmontar de trás pra frente, 1 troca por level-up.
+
+**Padrão pra futuras invocações com requisito:** basta preencher
+`invocacaoRequeridaId` no dado — as 3 telas (wizard + Level Up, hoje;
+qualquer tela nova de escolha de invocação, no futuro) já aplicam a
+trava e a linha "Requer: X" sozinhas, sem precisar de código
+específico por invocação.
+
+**Data/origem:** 2026-09, achado do Osmar revisando a cadeia de Pacto
+da Lâmina (IM.4/IM.5).

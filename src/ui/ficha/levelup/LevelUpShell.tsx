@@ -21,7 +21,12 @@ import {
 import { pericias } from '../../../data/rulesets/dnd2024/pericias';
 import { valorRecursoClasse } from '../../../core/recursosClasse';
 import { agruparMagiasPorCirculo, contarTrocas, espacosDeMagiaAtivos } from '../../../core/magiasPersonagem';
-import { invocacoesElegiveisAteNivel } from '../../../core/invocacoesMisticas';
+import {
+  invocacoesElegiveisAteNivel,
+  invocacaoRequeridaDe,
+  invocacaoBloqueadaPorRequisitoAusente,
+  invocacoesQueDependemDe,
+} from '../../../core/invocacoesMisticas';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TextoComMagias from '../../components/TextoComMagias';
@@ -304,9 +309,15 @@ export default function LevelUpShell({
   function toggleInvocacao(id: string) {
     const i = invocacoesEscolhidas.indexOf(id);
     if (i > -1) {
+      // Não deixa remover uma invocação que ainda serve de requisito
+      // pra outra que continua marcada (regra real: precisa desmontar
+      // a cadeia de trás pra frente, 1 troca por level-up).
+      if (invocacoesQueDependemDe(id, invocacoesEscolhidas).length > 0) return;
       setInvocacoesEscolhidas((prev) => prev.filter((x) => x !== id));
       return;
     }
+    const inv = invocacoesCatalogo.find((c) => c.id === id);
+    if (inv && invocacaoBloqueadaPorRequisitoAusente(inv, invocacoesEscolhidas)) return;
     if (invocacoesEscolhidas.length < maxInvocacoes) setInvocacoesEscolhidas((prev) => [...prev, id]);
   }
 
@@ -790,10 +801,14 @@ export default function LevelUpShell({
               const jaTinha = invocacoesMisticasAtuais.includes(inv.id);
               const marcado = invocacoesEscolhidas.includes(inv.id);
               const removendo = jaTinha && !marcado;
+              const requerida = invocacaoRequeridaDe(inv);
+              const bloqueadaPorRequisito = !marcado && invocacaoBloqueadaPorRequisitoAusente(inv, invocacoesEscolhidas);
+              const travadaPorDependente = marcado && invocacoesQueDependemDe(inv.id, invocacoesEscolhidas).length > 0;
               return (
                 <div
                   key={inv.id}
                   className={`check-row ${jaTinha ? (removendo ? styles.truqueRemovendo : styles.truqueAtual) : ''}`}
+                  style={bloqueadaPorRequisito ? { opacity: 0.45, pointerEvents: 'none' } : undefined}
                   onClick={() => toggleInvocacao(inv.id)}
                 >
                   <div className={`check-box ${marcado ? 'checked' : ''}`} />
@@ -808,6 +823,17 @@ export default function LevelUpShell({
                     <div className="opt-card-desc">
                       <TextoComMagias texto={inv.beneficios} nomesMagias={inv.magiasMencionadas} />
                     </div>
+                    {requerida && (
+                      <div style={{ color: bloqueadaPorRequisito ? 'var(--danger)' : 'var(--text-faint)', fontSize: 11 }}>
+                        Requer: {requerida.nome}
+                        {bloqueadaPorRequisito && ' — marque essa primeiro'}
+                      </div>
+                    )}
+                    {travadaPorDependente && (
+                      <div style={{ color: 'var(--text-faint)', fontSize: 11 }}>
+                        🔒 não pode remover — é requisito de outra invocação que você mantém
+                      </div>
+                    )}
                   </div>
                 </div>
               );
