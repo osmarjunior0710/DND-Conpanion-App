@@ -115,8 +115,17 @@ quando a entrada for escrita), ordem aprovada pelo Osmar:
       pediu pra construir primeiro o suporte genérico a invocação
       repetível com escolha extra por instância, em vez de fazer essa
       como escolha única sabendo que vai precisar refazer.
-- [ ] **IM.7 — Passivas de texto** (Mente Mística, Visão da Bruxa,
-      Visão Diabólica — sem motor pra calcular, só tira o `[PH]`).
+- [x] **IM.7 — Corrige `[PH]` de Invocações na aba Perfil.** Nova
+      `invocacaoTemPlaceholder(inv)` em `core/invocacoesMisticas.ts`
+      (testada) — sem `[PH]` quando `magiaGratisConcedida`/
+      `pvTemporarioConcedido`/`sentidoConcedido` não forem `null`, ou o
+      id tiver mecânica própria (`pacto-da-lamina`/`lamina-sedenta`/
+      `lamina-devoradora`/`pacto-do-tomo`), ou for passiva de texto
+      puro (`mente-mistica`; Visão da Bruxa/Diabólica já saíram
+      sozinhas via `sentidoConcedido`). `PerfilTab.tsx` usa essa função
+      em vez do `[PH]` fixo. Confirmado via Playwright: Armadura de
+      Sombras/Pacto da Lâmina/Mente Mística sem `[PH]`, Lança Mística
+      continua com `[PH]` (ainda depende do motor de dano/alcance).
 
 **Fora deste plano por enquanto** (dependem de sistemas que não
 existem — Familiar, motor de dano de magia, trigger de "salvar de 0

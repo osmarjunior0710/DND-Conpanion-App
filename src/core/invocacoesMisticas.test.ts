@@ -4,6 +4,7 @@ import {
   invocacaoRequeridaDe,
   invocacaoBloqueadaPorRequisitoAusente,
   invocacoesQueDependemDe,
+  invocacaoTemPlaceholder,
 } from './invocacoesMisticas';
 import { invocacoesMisticas } from '../data/rulesets/dnd2024/invocacoesMisticas';
 
@@ -77,5 +78,44 @@ describe('invocacoesQueDependemDe', () => {
       'lamina-devoradora',
     ]);
     expect(dependentes.map((i) => i.id)).toEqual(['lamina-devoradora']);
+  });
+});
+
+describe('invocacaoTemPlaceholder', () => {
+  it('invocação com magiaGratisConcedida: sem [PH]', () => {
+    const inv = invocacoesMisticas.find((i) => i.id === 'armadura-de-sombras')!;
+    expect(invocacaoTemPlaceholder(inv)).toBe(false);
+  });
+
+  it('Vigor Ínfero (pvTemporarioConcedido): sem [PH]', () => {
+    const inv = invocacoesMisticas.find((i) => i.id === 'vigor-infero')!;
+    expect(invocacaoTemPlaceholder(inv)).toBe(false);
+  });
+
+  it('Visão Diabólica (sentidoConcedido): sem [PH]', () => {
+    const inv = invocacoesMisticas.find((i) => i.id === 'visao-diabolica')!;
+    expect(invocacaoTemPlaceholder(inv)).toBe(false);
+  });
+
+  it('Pacto da Lâmina/Lâmina Sedenta/Lâmina Devoradora/Pacto do Tomo: sem [PH] (mecânica própria)', () => {
+    for (const id of ['pacto-da-lamina', 'lamina-sedenta', 'lamina-devoradora', 'pacto-do-tomo']) {
+      const inv = invocacoesMisticas.find((i) => i.id === id)!;
+      expect(invocacaoTemPlaceholder(inv)).toBe(false);
+    }
+  });
+
+  it('Mente Mística: sem [PH] (passiva de texto puro)', () => {
+    const inv = invocacoesMisticas.find((i) => i.id === 'mente-mistica')!;
+    expect(invocacaoTemPlaceholder(inv)).toBe(false);
+  });
+
+  it('Lança Mística: ainda [PH] (depende do motor de dano/alcance)', () => {
+    const inv = invocacoesMisticas.find((i) => i.id === 'lanca-mistica')!;
+    expect(invocacaoTemPlaceholder(inv)).toBe(true);
+  });
+
+  it('Pacto da Corrente: ainda [PH] (depende de sistema de Familiar)', () => {
+    const inv = invocacoesMisticas.find((i) => i.id === 'pacto-da-corrente')!;
+    expect(invocacaoTemPlaceholder(inv)).toBe(true);
   });
 });

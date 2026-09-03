@@ -38,3 +38,30 @@ export function invocacoesQueDependemDe(id: string, invocacoesAtuais: string[]):
     (i) => i.prerequisitos.invocacaoRequeridaId === id && invocacoesAtuais.includes(i.id),
   );
 }
+
+/** Invocações com mecânica própria que não passa por nenhum dos 3
+ * campos padrão (`magiaGratisConcedida`/`pvTemporarioConcedido`/
+ * `sentidoConcedido`) — Pacto da Lâmina (cria a arma), Lâmina
+ * Sedenta/Devoradora (Ataque Extra) e Pacto do Tomo (Livro das
+ * Sombras) têm implementação própria em outro lugar do app. */
+const IDS_COM_MECANICA_PROPRIA = ['pacto-da-lamina', 'lamina-sedenta', 'lamina-devoradora', 'pacto-do-tomo'];
+
+/** Invocações passivas de texto puro — regra real, sem cálculo
+ * possível (mesmo tratamento das ações genéricas do Cap.1, CLAUDE.md
+ * seção 12: texto de regra correto não é placeholder só por ter pouca
+ * interatividade). Visão da Bruxa/Visão Diabólica não entram aqui —
+ * já saem do `[PH]` sozinhas via `sentidoConcedido`. */
+const IDS_PASSIVAS_TEXTO_REAL = ['mente-mistica'];
+
+/** `true` quando a Ficha ainda deve mostrar `[PH] sem efeito mecânico
+ * ainda` pra essa invocação — só as que genuinamente dependem de um
+ * sistema que o app não tem (motor de dano/alcance de magia, Familiar,
+ * "salvar de 0 PV", ou uma escolha extra tipo Lições dos Grandes
+ * Antigos) continuam `true`. Ver PENDENCIAS.md pra cada uma. */
+export function invocacaoTemPlaceholder(inv: InvocacaoMistica): boolean {
+  if (inv.magiaGratisConcedida !== null || inv.pvTemporarioConcedido !== null || inv.sentidoConcedido !== null) {
+    return false;
+  }
+  if (IDS_COM_MECANICA_PROPRIA.includes(inv.id) || IDS_PASSIVAS_TEXTO_REAL.includes(inv.id)) return false;
+  return true;
+}

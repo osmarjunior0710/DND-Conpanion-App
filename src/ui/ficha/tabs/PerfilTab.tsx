@@ -9,6 +9,7 @@ import {
 } from '../../../core/levelUp';
 import type { WizardSelection } from '../../../core/personagem';
 import { invocacoesMisticas } from '../../../data/rulesets/dnd2024/invocacoesMisticas';
+import { invocacaoTemPlaceholder } from '../../../core/invocacoesMisticas';
 
 interface PerfilTabProps {
   selecao: WizardSelection;
@@ -77,7 +78,10 @@ export default function PerfilTab({
           {invocacoesEscolhidas.map((inv) => (
             <div key={inv.id} className="opt-card" style={{ cursor: 'default' }}>
               <div className="opt-card-name">{inv.nome}</div>
-              <div className="opt-card-desc">[PH] sem efeito mecânico ainda — {inv.beneficios}</div>
+              <div className="opt-card-desc">
+                {invocacaoTemPlaceholder(inv) ? '[PH] sem efeito mecânico ainda — ' : ''}
+                {inv.beneficios}
+              </div>
             </div>
           ))}
         </>
