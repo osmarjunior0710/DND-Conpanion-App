@@ -87,8 +87,13 @@ quando a entrada for escrita), ordem aprovada pelo Osmar:
       Confirmado via Playwright: Bruxo nível 12 com Pacto da Lâmina +
       Lâmina Sedenta + Lâmina Devoradora, arma de pacto equipada,
       mostra "Atacar — Rapieira (ataque 1/3)".
-- [ ] **IM.6 — Lições dos Grandes Antigos** (concede Talento de Origem
-      permanente).
+- [ ] **IM.6 — Lições dos Grandes Antigos — PAUSADA**, ver PENDENCIAS.md
+      ("Invocação Mística 'repetível' — mecanismo genérico"). Plano de
+      implementação em si já mapeado (reaproveita a tela de Talento
+      Geral do Level Up, filtro por categoria "Origem"), mas o Osmar
+      pediu pra construir primeiro o suporte genérico a invocação
+      repetível com escolha extra por instância, em vez de fazer essa
+      como escolha única sabendo que vai precisar refazer.
 - [ ] **IM.7 — Passivas de texto** (Mente Mística, Visão da Bruxa,
       Visão Diabólica — sem motor pra calcular, só tira o `[PH]`).
 

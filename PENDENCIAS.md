@@ -123,6 +123,44 @@ também falta pra outras coisas como Explosão Agonizante/Repulsiva).
 Decisão tomada em conversa (2026-09): "deixa esse como pendência e
 voltamos depois quanto tiver dano e distância."
 
+**Lições dos Grandes Antigos (Invocação Mística, Fase 2, IM.6) —
+adiada até o mecanismo genérico de invocação repetível abaixo
+existir.** Regra: "Concede permanentemente 1 talento de Origem à sua
+escolha." Plano de implementação já mapeado (praticamente zero código
+novo — reaproveita a tela de escolher Talento Geral do Level Up, só
+filtrando por categoria "Origem" em vez de "Geral", e a mesma lista
+`talentosGeraisAtual` guarda o resultado): a única peça que falta é a
+capacidade de a invocação ser pega mais de 1 vez (ver item abaixo).
+Osmar decidiu (2026-09): "deixa anotado e já voltamos nisso" — construir
+o mecanismo genérico de repetição primeiro, não fazer essa invocação
+como escolha única sabendo que vai precisar refazer depois.
+
+**Invocação Mística "repetível" — mecanismo genérico de múltiplas
+escolhas ainda não existe (bloqueia Lições dos Grandes Antigos e Lança
+Mística, provavelmente mais no futuro).** Hoje `invocacoesMisticasEscolhidas`/
+`invocacoesMisticasAtual` são só um array de ids, tipo checkbox — marcar
+de novo uma invocação `repetivel: true` (ex: Lança Mística, Lições dos
+Grandes Antigos) REMOVE em vez de adicionar uma 2ª instância, porque o
+array não tem duplicata. Pra invocações que só concedem um efeito fixo
+sem escolha extra amarrada (a maioria), isso nunca importou. Mas as
+`repetivel: true` que hoje têm (ou vão ter) uma escolha extra por
+instância (Lições dos Grandes Antigos = 1 talento por vez pego; Lança
+Mística = 1 truque por vez vinculado) precisam de verdade poder ser
+pegas 2x+, cada vez com sua própria escolha guardada separada — não dá
+pra generalizar isso como "1 escolha só" e fingir que resolve.
+
+**O que falta pra resolver:** desenhar o schema novo pra "invocação
+repetível com escolha extra" — provavelmente trocar de
+`invocacoesMisticasEscolhidas: string[]` pra algo que suporte múltiplas
+instâncias da mesma invocação, cada uma com sua própria escolha
+vinculada (ex: `{ invocacaoId: string; escolha?: string }[]`, ou um
+array plano com ids repetidos + um mapa `id → escolha[]` por instância).
+Precisa decidir migração de personagens salvos (o formato atual já está
+em `localStorage` de quem já tem Bruxo). Quando esse mecanismo existir,
+tanto Lições dos Grandes Antigos quanto Lança Mística voltam a ficar
+implementáveis (Lança Mística ainda depende TAMBÉM do motor de dano/
+alcance, ver pendência acima — não desbloqueia sozinha).
+
 **Achado do SDD que precisa ser aplicado ao implementar Grande
 Antigo:** a característica "Magias Psíquicas" (nível 3) é do **Patrono
 O Grande Antigo**, não do Patrono Ínfero — o SDD v2 do Osmar tinha essa
