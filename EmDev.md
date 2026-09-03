@@ -64,9 +64,11 @@ quando a entrada for escrita), ordem aprovada pelo Osmar:
       Temp concedidos, -5 de dano vira 7 temp (PV normal intacto),
       +10 de dano zera o temp e vaza 3 pro PV normal (30→27) — conta
       bate exatamente com a regra.
-- [ ] **IM.3 — Lança Mística** (parte calculável do Grupo B: "escolha 1
-      truque de dano"). Explosão Agonizante/Repulsiva ficam pra depois
-      do motor de dano de magia existir (pendência separada).
+- [x] **IM.3 — Lança Mística — ADIADA, virou pendência** (Osmar: "deixa
+      esse como pendência e voltamos depois quanto tiver dano e
+      distância"). Ver `PENDENCIAS.md` ("Lança Mística"). Junto com
+      Explosão Agonizante/Repulsiva, todo o Grupo B fica pra quando o
+      motor de dano/alcance de magia existir.
 - [ ] **IM.4 — Pacto da Lâmina** (base do Grupo C — cria a arma de
       pacto).
 - [ ] **IM.5 — Lâmina Sedenta + Lâmina Devoradora** (resto do Grupo C,

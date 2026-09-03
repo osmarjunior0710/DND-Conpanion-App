@@ -107,6 +107,22 @@ grande quebrar várias coisas de uma vez.
 porque é o que o grupo de mesa dele vai usar; as outras 3 completam
 depois, sem pressa.
 
+**Lança Mística (Invocação Mística, Fase 2) — adiada até existir motor
+de dano/alcance.** Regra: "escolha um truque de Bruxo que cause dano e
+alcance ≥3m — o alcance aumenta 9m por nível de Bruxo." Hoje isso não
+dá pra implementar de forma útil: o campo `alcance` das magias
+(`magias.ts`) é texto livre, não numérico, não existe motor de
+dano/ataque nem marcação estruturada de "esse truque causa dano", e o
+mecanismo de "escolher 1 item de uma lista e vincular a uma invocação
+específica" também não existe ainda (hoje a lista de Invocações é só
+um array de ids tipo checkbox, sem escolha extra amarrada — nenhuma
+outra invocação implementada até agora precisa disso). Osmar pediu pra
+deixar como pendência e voltar quando o app tiver dano e distância
+estruturados (provavelmente junto do motor de ataque/dano de magia, que
+também falta pra outras coisas como Explosão Agonizante/Repulsiva).
+Decisão tomada em conversa (2026-09): "deixa esse como pendência e
+voltamos depois quanto tiver dano e distância."
+
 **Achado do SDD que precisa ser aplicado ao implementar Grande
 Antigo:** a característica "Magias Psíquicas" (nível 3) é do **Patrono
 O Grande Antigo**, não do Patrono Ínfero — o SDD v2 do Osmar tinha essa
