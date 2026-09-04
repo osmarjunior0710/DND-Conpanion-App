@@ -238,9 +238,33 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
       Arcana Mística/Dádiva Épica/Mestre Místico (as características
       nomeadas que faltam) viram "especialização" — ver PENDENCIAS.md,
       mesmo tratamento do Bardo (grosso funcionando primeiro).
-- [ ] **B6 — Patrono Ínfero**: Bênção do Tenebroso, Magias de Pacto do
-      Ínfero, A Sorte do Próprio Tenebroso, Resistência Ínfera, Lançar
-      no Inferno.
+- **B6 — Patrono Ínfero** (despausado — "escolha de subclasse" no
+      Level Up nível 3 já é real desde o B1/B4.3, mesmo mecanismo
+      genérico do Bardo; só faltava o dado + a mecânica de cada
+      característica):
+  - [x] **B6.1 — Dado.** 5 características importadas em
+        `caracteristicasSubclasse.ts` (conferidas contra a planilha
+        mestra, aba "Subclasses") — Bênção do Tenebroso, Magias de
+        Pacto do Ínfero (+ campo estruturado `magiasFixasPorNivel`,
+        as 10 magias conferidas contra o catálogo), A Sorte do Próprio
+        Tenebroso, Resistência Ínfera, Lançar no Inferno (limpo o
+        texto do Clérigo colado no final + 1 typo de palavra quebrada
+        "t em"→"tem", mesmo bug já documentado no CLAUDE.md seção 8).
+        Confirmado via Playwright: as 5 aparecem certas na aba Perfil
+        pra um Bruxo com Patrono Ínfero escolhido, sem contaminação.
+  - [ ] **B6.2 — Bênção do Tenebroso.** Reaproveita `ganharPvTemporario`
+        (motor já existe desde o Vigor Ínfero) — botão manual
+        "Aplicar" no Combat.
+  - [ ] **B6.3 — Magias de Pacto do Ínfero.** Lista fixa sempre
+        preparada, cresce por nível (3/5/7/9) — usa
+        `magiasFixasPorNivel` já importado no B6.1.
+  - [ ] **B6.4 — A Sorte do Próprio Tenebroso.** Recurso com usos =
+        mod. Carisma (mín. 1), rola 1d10 avulso, reseta no Descanso
+        Longo.
+  - [ ] **B6.5 — Resistência Ínfera.** Escolha de tipo de dano ao
+        descansar — informativo (sem motor de dano recebido ainda).
+  - [ ] **B6.6 — Lançar no Inferno.** Ataque especial 1x/Descanso
+        Longo, com opção de gastar 1 espaço de Pacto pra repetir.
 
 **Fora deste plano, registrado em `PENDENCIAS.md`:** Invocações Fase 2
 (mecânica real das 29), as características nomeadas do Bruxo ainda sem
