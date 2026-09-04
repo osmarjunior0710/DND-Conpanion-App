@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { espacosDeMagiaAtivos, magiasDisponiveisParaPreparar, poolDescobertasMagicas } from './magiasPersonagem';
+import { espacosDeMagiaAtivos, magiasDisponiveisParaPreparar, poolDescobertasMagicas, cdConjuracao } from './magiasPersonagem';
 import { classes } from '../data/rulesets/dnd2024/classes';
 
 const bardo = classes.find((c) => c.nome === 'Bardo');
@@ -58,5 +58,15 @@ describe('poolDescobertasMagicas', () => {
     expect(pool.every((m) => m.circulo <= 3)).toBe(true);
     const ids = pool.map((m) => m.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('cdConjuracao', () => {
+  it('CD = 8 + bônus de acerto de conjuração', () => {
+    expect(cdConjuracao(5)).toBe(13);
+  });
+
+  it('mod negativo/zero: CD ainda soma normal (sem mínimo especial)', () => {
+    expect(cdConjuracao(0)).toBe(8);
   });
 });

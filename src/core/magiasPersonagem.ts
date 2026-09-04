@@ -234,3 +234,11 @@ export function modAcertoConjuracao(selecao: WizardSelection, classe: Classe | n
   if (valor === null) return null;
   return modificador(valor) + bonusProficiencia(classe, nivel);
 }
+
+/** CD pra evitar a magia/característica de conjuração (salvaguarda do
+ * alvo) — regra fixa: 8 + bônus de acerto de conjuração
+ * (`modAcertoConjuracao`, já soma mod. de atributo + Bônus de
+ * Proficiência). */
+export function cdConjuracao(modAcerto: number): number {
+  return 8 + modAcerto;
+}

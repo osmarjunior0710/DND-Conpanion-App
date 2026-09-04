@@ -4,6 +4,7 @@ import type { Magia } from '../../../data/rulesets/dnd2024/magias';
 import type { CaracteristicaNivel } from '../../../core/levelUp';
 import type { AtaqueResolvido } from '../../../core/ataque';
 import type { EspacoDeMagiaAtivo } from '../../../core/magiasPersonagem';
+import { cdConjuracao } from '../../../core/magiasPersonagem';
 import { useRoll } from '../../roll/RollContext';
 import InfoChip from '../../components/InfoChip';
 import LinearProgressBar from '../../components/LinearProgressBar';
@@ -11,6 +12,7 @@ import SidePanel from '../combat/SidePanel';
 import AcaoPanelContent, { type DanoPendente } from '../combat/AcaoPanelContent';
 import BonusPanelContent from '../combat/BonusPanelContent';
 import ReacaoPanelContent from '../combat/ReacaoPanelContent';
+import LancarNoInfernoModal from '../combat/LancarNoInfernoModal';
 import styles from './CombatTab.module.css';
 
 export type RecursoTurno = 'acao' | 'bonus' | 'reacao';
@@ -27,6 +29,12 @@ interface CombatTabProps {
    * Patrono Ínfero, nível 3+) — controla se o botão manual aparece. */
   bencaoDoTenebrosoDisponivel: boolean;
   onAplicarBencaoDoTenebroso: () => void;
+  /** Lançar no Inferno (Bruxo, Patrono Ínfero, nível 14) — 1x por
+   * Descanso Longo, ou gasta 1 Espaço de Pacto pra recuperar o uso. */
+  lancarNoInfernoDisponivel: boolean;
+  lancarNoInfernoGasto: boolean;
+  onUsarLancarNoInferno: () => boolean;
+  onRecuperarLancarNoInfernoComEspacoDePacto: () => boolean;
   turnState: Record<RecursoTurno, EstadoRecurso>;
   onMarcarUsado: (categoria: RecursoTurno) => void;
   onFimDoTurno: () => void;
@@ -83,6 +91,10 @@ export default function CombatTab({
   onAlterarPv,
   bencaoDoTenebrosoDisponivel,
   onAplicarBencaoDoTenebroso,
+  lancarNoInfernoDisponivel,
+  lancarNoInfernoGasto,
+  onUsarLancarNoInferno,
+  onRecuperarLancarNoInfernoComEspacoDePacto,
   turnState,
   onMarcarUsado,
   onFimDoTurno,
@@ -132,6 +144,9 @@ export default function CombatTab({
   const [ataquesFeitos, setAtaquesFeitos] = useState(0);
   const [iniciativaValor, setIniciativaValor] = useState<number | null>(null);
   const [periciaInigualavelPendente, setPericiaInigualavelPendente] = useState(false);
+  const [lancarNoInfernoAberto, setLancarNoInfernoAberto] = useState(false);
+  const cdLancarNoInferno = modAcertoConjuracao !== null ? cdConjuracao(modAcertoConjuracao) : null;
+  const temEspacoDePactoDisponivel = espacos.some((e) => (espacosGastosPorCirculo[e.circulo] ?? 0) < e.maximo);
   const { rolarD20, rolarDados } = useRoll();
 
   function alternarIniciativa() {
@@ -231,6 +246,16 @@ export default function CombatTab({
     if (!onUsarIndomavel()) return;
     rolarD20({ label: 'Indomável (nova salvaguarda)', formula: `1d20 + ${nivel}`, mod: nivel, categoria: 'atributoOuSalvaguarda' });
     setFeedback('🛡️ Indomável — use esse resultado como sua nova salvaguarda.');
+  }
+
+  function abrirLancarNoInferno() {
+    if (!onUsarLancarNoInferno()) return;
+    setLancarNoInfernoAberto(true);
+  }
+
+  function rolarDanoLancarNoInferno() {
+    setLancarNoInfernoAberto(false);
+    rolarDados({ label: 'Lançar no Inferno — Dano', formula: '8d10', quantidade: 8, lados: 10, mod: 0 });
   }
 
   function usarPericiaInigualavel() {
@@ -363,6 +388,39 @@ export default function CombatTab({
         <div className="opt-card" style={{ marginBottom: 12, cursor: 'pointer' }} onClick={onAplicarBencaoDoTenebroso}>
           <div className="opt-card-name">🩸 Bênção do Tenebroso</div>
           <div className="opt-card-desc">toque quando reduzir um inimigo a 0 PV (ou aliado a 3m) — ganha PV Temporário</div>
+        </div>
+      )}
+
+      {lancarNoInfernoDisponivel && (
+        <div
+          className="opt-card"
+          style={{ marginBottom: 12, cursor: lancarNoInfernoGasto ? 'default' : 'pointer', opacity: lancarNoInfernoGasto ? 0.5 : 1 }}
+          onClick={lancarNoInfernoGasto ? undefined : abrirLancarNoInferno}
+        >
+          <div className="opt-card-name">🔥 Lançar no Inferno</div>
+          <div className="opt-card-desc">
+            {lancarNoInfernoGasto
+              ? 'usado — disponível de novo no Descanso Longo'
+              : 'toque ao acertar um ataque (1x por turno)'}
+          </div>
+          {lancarNoInfernoGasto && (
+            <div
+              className="btn"
+              style={{
+                marginTop: 8,
+                padding: 8,
+                fontSize: 12,
+                opacity: temEspacoDePactoDisponivel ? 1 : 0.5,
+                pointerEvents: temEspacoDePactoDisponivel ? 'auto' : 'none',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRecuperarLancarNoInfernoComEspacoDePacto();
+              }}
+            >
+              🔄 gastar 1 Espaço de Pacto pra recuperar
+            </div>
+          )}
         </div>
       )}
 
@@ -566,6 +624,13 @@ export default function CombatTab({
           />
         )}
       </SidePanel>
+      {lancarNoInfernoAberto && (
+        <LancarNoInfernoModal
+          cd={cdLancarNoInferno}
+          onRolarDano={rolarDanoLancarNoInferno}
+          onFechar={() => setLancarNoInfernoAberto(false)}
+        />
+      )}
     </>
   );
 }

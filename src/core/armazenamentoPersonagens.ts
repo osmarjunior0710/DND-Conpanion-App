@@ -100,6 +100,10 @@ export interface PersonagemSalvo {
    * tipos de descanso, diferente da maioria dos outros "Gasto" do
    * Bruxo (que só resetam no Longo). */
   resistenciaInferaGasto?: boolean;
+  /** `true` = Lançar no Inferno (Bruxo, Patrono Ínfero, nível 14) já
+   * usado desde o último Descanso Longo — só ele reseta (ou gastar 1
+   * Espaço de Pacto pra recuperar antes disso). */
+  lancarNoInfernoGasto?: boolean;
   /** Arcana Mística (Bruxo, níveis 11/13/15/17) — círculo (6/7/8/9) →
    * nome da magia escolhida pra esse arcanum. Cresce 1 entrada por
    * nível desbloqueado (ver `core/arcanaMistica.ts`). */

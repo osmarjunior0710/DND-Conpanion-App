@@ -174,6 +174,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo.resistenciaInferaAtual ?? null,
   );
   const [resistenciaInferaGasto, setResistenciaInferaGasto] = useState(personagemSalvo.resistenciaInferaGasto ?? false);
+  const [lancarNoInfernoGasto, setLancarNoInfernoGasto] = useState(personagemSalvo.lancarNoInfernoGasto ?? false);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
   const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
   const [astuciaMagicaGasta, setAstuciaMagicaGasta] = useState(personagemSalvo.astuciaMagicaGasta ?? false);
@@ -288,6 +289,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const bencaoDoTenebrosoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Bênção do Tenebroso', personagem.nivel);
   const sorteDoTenebrosoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'A Sorte do Próprio Tenebroso', personagem.nivel);
   const resistenciaInferaDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Resistência Ínfera', personagem.nivel);
+  const lancarNoInfernoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Lançar no Inferno', personagem.nivel);
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const carMod = atributos.find((a) => a.atributo === 'CAR')?.mod ?? 0;
@@ -347,6 +349,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
       resistenciaInferaGasto,
+      lancarNoInfernoGasto,
       surtoGasto,
       espacosGastosPorCirculo,
       inspiracaoGasto,
@@ -384,6 +387,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
     resistenciaInferaGasto,
+    lancarNoInfernoGasto,
     surtoGasto,
     espacosGastosPorCirculo,
     inspiracaoGasto,
@@ -493,6 +497,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setAstuciaMagicaGasta(false);
     setContatarPatronoGasto(false);
     setResistenciaInferaGasto(false);
+    setLancarNoInfernoGasto(false);
     setArcanaMisticaGastos([]);
     setMagiasGratisGastas([]);
     fimDoTurno();
@@ -605,6 +610,19 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function usarSorteDoTenebroso(): boolean {
     if (sorteDoTenebrosoRestantes <= 0) return false;
     setSorteDoTenebrosoGasto((v) => v + 1);
+    return true;
+  }
+
+  function usarLancarNoInferno(): boolean {
+    if (lancarNoInfernoGasto) return false;
+    setLancarNoInfernoGasto(true);
+    return true;
+  }
+
+  function recuperarLancarNoInfernoComEspacoDePacto(): boolean {
+    if (!lancarNoInfernoGasto) return false;
+    if (!gastarQualquerSlot()) return false;
+    setLancarNoInfernoGasto(false);
     return true;
   }
 
@@ -920,6 +938,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             pvTemporario={pvTemporario}
             bencaoDoTenebrosoDisponivel={bencaoDoTenebrosoDisponivel}
             onAplicarBencaoDoTenebroso={aplicarBencaoDoTenebroso}
+            lancarNoInfernoDisponivel={lancarNoInfernoDisponivel}
+            lancarNoInfernoGasto={lancarNoInfernoGasto}
+            onUsarLancarNoInferno={usarLancarNoInferno}
+            onRecuperarLancarNoInfernoComEspacoDePacto={recuperarLancarNoInfernoComEspacoDePacto}
             onAlterarPv={alterarPv}
             turnState={turnState}
             onMarcarUsado={marcarUsado}

@@ -191,7 +191,7 @@ lista "Pendências pós-base" do Bruxo.
 
 ---
 
-## Bruxo — base + Patrono Ínfero (PAUSADO — só falta B6, ver acima)
+## Bruxo — base + Patrono Ínfero (COMPLETO — B0-B6 feitos, ver acima)
 
 Fonte: SDD completo (4 patronos) + PDF do livro (Cap. 3, seção Bruxo,
 p. 69-79) conferidos contra `dnd-master-referencia.xlsx` — tudo bate,
@@ -302,8 +302,17 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
         real permite trocar nos dois) — reseta nas duas funções de
         descanso, diferente da maioria dos outros "Gasto" do Bruxo
         (que só resetam no Longo).
-  - [ ] **B6.6 — Lançar no Inferno.** Ataque especial 1x/Descanso
-        Longo, com opção de gastar 1 espaço de Pacto pra repetir.
+  - [x] **B6.6 — Lançar no Inferno — FEITA.** Novo `cdConjuracao(modAcerto)`
+        em `core/magiasPersonagem.ts` (testado, 8 + bônus de acerto de
+        conjuração — 1ª vez que a Ficha calcula/mostra uma CD de
+        conjuração). Card no Combat (mesma seção de Bênção do
+        Tenebroso) "toque ao acertar um ataque" — abre popup
+        `LancarNoInfernoModal.tsx` (reaproveita o CSS de
+        `TrocarArmaMaestria`) com CD, sucesso/falha, e botão "Rolar
+        Dano" que aciona `rolarDados` (8d10) na tela de rolagem já
+        existente. Trava até o Descanso Longo (`lancarNoInfernoGasto`,
+        persistido) ou até gastar 1 Espaço de Pacto (reaproveita
+        `gastarQualquerSlot`, já existente).
 
 **Fora deste plano, registrado em `PENDENCIAS.md`:** Invocações Fase 2
 (mecânica real das 29), as características nomeadas do Bruxo ainda sem
