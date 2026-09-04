@@ -46,6 +46,7 @@ import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario'
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
+import { usosSorteDoTenebroso } from '../../core/sorteDoTenebroso';
 import { sortearLevelUpRapido } from '../../core/levelUpAleatorio';
 import { espacosARecuperar } from '../../core/astuciaMagica';
 import {
@@ -166,6 +167,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
+  const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
   const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
   const [astuciaMagicaGasta, setAstuciaMagicaGasta] = useState(personagemSalvo.astuciaMagicaGasta ?? false);
@@ -278,9 +280,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const palavrasDeInterrupcaoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Palavras de Interrupção', personagem.nivel);
   const periciaInigualavelDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Perícia Inigualável', personagem.nivel);
   const bencaoDoTenebrosoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Bênção do Tenebroso', personagem.nivel);
+  const sorteDoTenebrosoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'A Sorte do Próprio Tenebroso', personagem.nivel);
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const carMod = atributos.find((a) => a.atributo === 'CAR')?.mod ?? 0;
+  const sorteDoTenebrosoMaximo = sorteDoTenebrosoDisponivel ? usosSorteDoTenebroso(carMod) : 0;
+  const sorteDoTenebrosoRestantes = Math.max(0, sorteDoTenebrosoMaximo - sorteDoTenebrosoGasto);
   const equipadoAtual = resumoEquipado(itensMochila);
   const armaEquipada = equipadoAtual.maoPrincipal;
   const ataque = classe
@@ -332,6 +337,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       maestriaArmaAtual: maestriaArma,
       folegoGasto,
       indomavelGasto,
+      sorteDoTenebrosoGasto,
       surtoGasto,
       espacosGastosPorCirculo,
       inspiracaoGasto,
@@ -366,6 +372,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     maestriaArma,
     folegoGasto,
     indomavelGasto,
+    sorteDoTenebrosoGasto,
     surtoGasto,
     espacosGastosPorCirculo,
     inspiracaoGasto,
@@ -468,6 +475,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setEspacosGastosPorCirculo({});
     setFolegoGasto(0);
     setIndomavelGasto(0);
+    setSorteDoTenebrosoGasto(0);
     setSurtoGasto(0);
     setInspiracaoGasto(0);
     setLivroDasSombrasGasto(false);
@@ -578,6 +586,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function usarIndomavel(): boolean {
     if (indomavelRestantes <= 0) return false;
     setIndomavelGasto((v) => v + 1);
+    return true;
+  }
+
+  function usarSorteDoTenebroso(): boolean {
+    if (sorteDoTenebrosoRestantes <= 0) return false;
+    setSorteDoTenebrosoGasto((v) => v + 1);
     return true;
   }
 
@@ -888,6 +902,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             indomavelMaximo={indomavelMaximo}
             indomavelRestantes={indomavelRestantes}
             onUsarIndomavel={usarIndomavel}
+            sorteDoTenebrosoMaximo={sorteDoTenebrosoMaximo}
+            sorteDoTenebrosoRestantes={sorteDoTenebrosoRestantes}
+            onUsarSorteDoTenebroso={usarSorteDoTenebroso}
             surtoMaximo={surtoMaximo}
             surtoRestantes={surtoRestantes}
             surtoUsadoTurno={surtoUsadoTurno}

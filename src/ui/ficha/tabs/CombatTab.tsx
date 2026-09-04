@@ -47,6 +47,13 @@ interface CombatTabProps {
   indomavelMaximo: number;
   indomavelRestantes: number;
   onUsarIndomavel: () => boolean;
+  /** "A Sorte do Próprio Tenebroso" (Bruxo, Patrono Ínfero, nível 6) —
+   * mesmo padrão de Indomável (usos limitados, reseta no Descanso
+   * Longo), só que soma 1d10 a um teste de atributo/salvaguarda em vez
+   * de rolar uma nova salvaguarda. */
+  sorteDoTenebrosoMaximo: number;
+  sorteDoTenebrosoRestantes: number;
+  onUsarSorteDoTenebroso: () => boolean;
   surtoMaximo: number;
   surtoRestantes: number;
   surtoUsadoTurno: boolean;
@@ -103,6 +110,9 @@ export default function CombatTab({
   indomavelMaximo,
   indomavelRestantes,
   onUsarIndomavel,
+  sorteDoTenebrosoMaximo,
+  sorteDoTenebrosoRestantes,
+  onUsarSorteDoTenebroso,
   surtoMaximo,
   surtoRestantes,
   surtoUsadoTurno,
@@ -231,6 +241,12 @@ export default function CombatTab({
     if (!onUsarIndomavel()) return;
     rolarD20({ label: 'Indomável (nova salvaguarda)', formula: `1d20 + ${nivel}`, mod: nivel });
     setFeedback('🛡️ Indomável — use esse resultado como sua nova salvaguarda.');
+  }
+
+  function usarSorteDoTenebroso() {
+    if (!onUsarSorteDoTenebroso()) return;
+    rolarDados({ label: 'A Sorte do Próprio Tenebroso', formula: '1d10', quantidade: 1, lados: 10, mod: 0 });
+    setFeedback('🔥 A Sorte do Próprio Tenebroso — some o resultado a um teste de atributo ou salvaguarda (antes do efeito acontecer).');
   }
 
   function usarPericiaInigualavel() {
@@ -395,6 +411,28 @@ export default function CombatTab({
             <div className="label" style={{ marginTop: 2 }}>
               Rola de novo somando seu nível de Guerreiro ({indomavelRestantes}/{indomavelMaximo} usos — só recupera
               no Descanso Longo).
+            </div>
+          </div>
+        </>
+      )}
+
+      {sorteDoTenebrosoMaximo > 0 && (
+        <>
+          <div className="section-title">A Sorte do Próprio Tenebroso</div>
+          <div
+            className="box"
+            style={{
+              padding: 12,
+              marginBottom: 12,
+              cursor: sorteDoTenebrosoRestantes > 0 ? 'pointer' : 'default',
+              opacity: sorteDoTenebrosoRestantes > 0 ? 1 : 0.5,
+            }}
+            onClick={sorteDoTenebrosoRestantes > 0 ? usarSorteDoTenebroso : undefined}
+          >
+            <div style={{ fontSize: 13 }}>🔥 Antes do efeito de um teste de atributo ou salvaguarda, toque aqui</div>
+            <div className="label" style={{ marginTop: 2 }}>
+              Soma 1d10 à jogada ({sorteDoTenebrosoRestantes}/{sorteDoTenebrosoMaximo} usos — só recupera no Descanso
+              Longo).
             </div>
           </div>
         </>

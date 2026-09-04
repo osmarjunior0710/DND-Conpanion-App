@@ -85,6 +85,10 @@ export interface PersonagemSalvo {
    * último Descanso Longo — só ele reseta. Conjura Contato Extraplanar
    * sem gastar espaço, sucesso automático na salvaguarda. */
   contatarPatronoGasto?: boolean;
+  /** Usos gastos de "A Sorte do Próprio Tenebroso" (Bruxo, Patrono
+   * Ínfero, nível 6) desde o último Descanso Longo — só ele reseta.
+   * Máximo = mod. Carisma (mín. 1), ver `core/sorteDoTenebroso.ts`. */
+  sorteDoTenebrosoGasto?: number;
   /** Arcana Mística (Bruxo, níveis 11/13/15/17) — círculo (6/7/8/9) →
    * nome da magia escolhida pra esse arcanum. Cresce 1 entrada por
    * nível desbloqueado (ver `core/arcanaMistica.ts`). */

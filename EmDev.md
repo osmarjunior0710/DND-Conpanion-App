@@ -271,9 +271,13 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
         Confirmado via Playwright: Bruxo Patrono Ínfero nível 1 sem
         seção, nível 3 mostra só as 4 do primeiro degrau, nível 9
         acumula as 10 (3+5+7+9) sem duplicar.
-  - [ ] **B6.4 — A Sorte do Próprio Tenebroso.** Recurso com usos =
-        mod. Carisma (mín. 1), rola 1d10 avulso, reseta no Descanso
-        Longo.
+  - [x] **B6.4 — A Sorte do Próprio Tenebroso — FEITA.** Nova
+        `usosSorteDoTenebroso(carMod)` em `core/sorteDoTenebroso.ts`
+        (testada) — mín. 1 uso. Mesmo padrão de Indomável (usos
+        limitados, reseta só no Descanso Longo) — novo card no Combat
+        rola 1d10 avulso (mesmo mecanismo de "Mente Tática"), com aviso
+        pra somar numa jogada de teste de atributo ou salvaguarda antes
+        do efeito acontecer.
   - [ ] **B6.5 — Resistência Ínfera.** Escolha de tipo de dano ao
         descansar — informativo (sem motor de dano recebido ainda).
   - [ ] **B6.6 — Lançar no Inferno.** Ataque especial 1x/Descanso
