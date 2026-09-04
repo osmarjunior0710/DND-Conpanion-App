@@ -734,10 +734,45 @@ desbloquear) — não hardcoda "nível 11 = 6º círculo" na tela, só na
 função pura testada (`core/arcanaMistica.ts`), que é a única fonte de
 verdade sobre qual nível desbloqueia qual círculo.
 
-**Escopo consciente, fora desta entrega:** trocar 1 arcanum já
-escolhido por outro do mesmo círculo (permitido em qualquer level-up
-futuro, regra real) — registrado em PENDENCIAS.md, mesmo padrão de
-troca (1 por vez) que Truques/Invocações já usam, quando for a vez.
-
 **Data/origem:** 2026-09, plano "Características nomeadas do Bruxo",
 item 4 (último dos 4).
+
+## Arcana Mística — troca de arcanum (padrão de "troca" pra coleção por chave, não lista solta)
+
+**Problema:** `contarTrocas(originais: string[], finais: string[])`
+(usado em Truques/Invocações/Magias Preparadas) só funciona pra listas
+soltas, tipo checkbox — não dá pra aplicar direto num
+`Record<circulo, magia>` como Arcana Mística, onde cada círculo é um
+slot próprio (trocar o 6º círculo não deveria contar como "mexer no
+7º").
+
+**Solução:** nova `trocasArcanaMistica(atuais, escolhidas)` em
+`core/arcanaMistica.ts` (testada) — conta só os círculos presentes NOS
+DOIS lados com magia diferente; um círculo que só existe no lado
+`escolhidas` (a escolha inicial de um círculo recém-desbloqueado)
+nunca conta como troca. Mesmo limite de "1 troca por level-up" de
+Truques/Invocações, só que a unidade de comparação é a chave do
+Record, não a lista inteira.
+
+**Tela:** o passo `arcanaMistica` do Level Up agora tem 2 partes
+independentes, cada uma só aparece se fizer sentido: (1) escolha
+OBRIGATÓRIA do círculo novo (só nos níveis que desbloqueiam, mesma UI
+de sempre — lista de opt-cards com descrição) e (2) troca OPCIONAL de
+qualquer círculo já conhecido (aparece em QUALQUER level-up seguinte,
+não só nos de desbloqueio) — cada círculo já conhecido vira 1 linha
+com o nome atual + ícone 🔄 que abre `TrocarValorSimples` (mesmo
+componente genérico já usado em Resistência Ínfera) pra escolher outra
+magia do mesmo círculo. As duas partes competem pelo mesmo limite de 1
+troca — pode escolher o círculo novo E trocar 1 já conhecido no mesmo
+level-up (regra real permite os dois juntos).
+
+**`onConfirmar` mudou de forma:** era `arcanaMistica: { circulo, magia
+} | null` (só 1 círculo por vez, sempre o novo). Virou
+`arcanaMisticaAlteracoes: Record<circulo, magia> | null` — qualquer
+quantidade de círculos alterados (0, 1 ou 2) nesse level-up, todos
+aplicados de uma vez em `FichaShell.confirmarLevelUp` via spread. Quem
+mais chamava essa forma antiga (`core/levelUpAleatorio.ts`, Level Up
+Rápido) foi atualizado junto.
+
+**Data/origem:** 2026-09, pedido do Osmar revisando os itens ainda
+abertos do Bruxo.

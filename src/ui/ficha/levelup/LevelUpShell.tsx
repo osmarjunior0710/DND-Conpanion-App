@@ -27,7 +27,7 @@ import {
   invocacaoBloqueadaPorRequisitoAusente,
   invocacoesQueDependemDe,
 } from '../../../core/invocacoesMisticas';
-import { circulosArcanaMisticaDesbloqueados, magiasElegiveisArcanaMistica } from '../../../core/arcanaMistica';
+import { circulosArcanaMisticaDesbloqueados, magiasElegiveisArcanaMistica, trocasArcanaMistica } from '../../../core/arcanaMistica';
 import { iconesMagia } from '../../../core/classificarMagia';
 import MagiaComDescricao from '../../components/MagiaComDescricao';
 import TextoComMagias from '../../components/TextoComMagias';
@@ -37,6 +37,7 @@ import DistribuirPontosAtributo from '../../components/DistribuirPontosAtributo'
 import { useAvisoTemporario } from '../../hooks/useAvisoTemporario';
 import { talentos } from '../../../data/rulesets/dnd2024/talentos';
 import TelaEscolherTalento from './TelaEscolherTalento';
+import TrocarValorSimples from '../../components/TrocarValorSimples';
 import styles from './LevelUpShell.module.css';
 
 export interface PersonagemNivel {
@@ -66,7 +67,10 @@ interface LevelUpShellProps {
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
     dadivaEpicaEscolhida: string | null;
-    arcanaMistica: { circulo: number; magia: string } | null;
+    /** Só os círculos que MUDARAM nesse level-up — escolha inicial de
+     * um círculo novo, e/ou 1 troca de um círculo já conhecido (regra
+     * real permite os dois no mesmo level-up). `null` = nada mudou. */
+    arcanaMisticaAlteracoes: Record<number, string> | null;
   }) => void;
   /** Controlado pelo `FichaShell` (persistido junto com o resto do
    * progresso) em vez de estado local — uma vez rolado o dado de
@@ -216,7 +220,17 @@ export default function LevelUpShell({
   const circulosArcanaAntes = circulosArcanaMisticaDesbloqueados(classe, personagem.nivel);
   const circulosArcanaDepois = circulosArcanaMisticaDesbloqueados(classe, novoNivel);
   const novoCirculoArcanaMistica = circulosArcanaDepois.find((c) => !circulosArcanaAntes.includes(c)) ?? null;
-  const [arcanaMisticaEscolhida, setArcanaMisticaEscolhida] = useState<string | null>(null);
+  // Semeado com o que o personagem já tinha — a cada level-up (não só
+  // quando desbloqueia um círculo novo) o jogador pode trocar 1 magia
+  // de arcanum já escolhida por outra do mesmo círculo.
+  const [arcanaMisticaEscolhidas, setArcanaMisticaEscolhidas] = useState<Record<number, string>>(arcanaMisticaAtuais);
+  /** Círculos que MUDARAM em relação ao que o personagem já tinha —
+   * inclui tanto a escolha inicial de um círculo novo quanto uma troca
+   * de círculo já conhecido (os dois podem acontecer no mesmo
+   * level-up). Usado no resumo e no resultado final. */
+  const arcanaMisticaAlteracoesPendentes = Object.fromEntries(
+    Object.entries(arcanaMisticaEscolhidas).filter(([circulo, magia]) => arcanaMisticaAtuais[Number(circulo)] !== magia),
+  );
   /** Talento escolhido pede uma escolha de atributo real (não é
    * `'nenhum'`, nem `escolha-unica` com 1 atributo só, que já aplica
    * direto sem passo extra). */
@@ -256,7 +270,10 @@ export default function LevelUpShell({
     if (precisaEscolherAtributoDoTalento) luSteps.push('asiAtributo');
   }
   if (niveisComDadivaEpica(classe).includes(novoNivel)) luSteps.push('dadivaEpica');
-  if (novoCirculoArcanaMistica !== null) luSteps.push('arcanaMistica');
+  // Também aparece em qualquer level-up seguinte (não só quando um
+  // círculo novo desbloqueia) se o personagem já tiver pelo menos 1
+  // arcanum escolhido — regra real permite trocar a qualquer momento.
+  if (novoCirculoArcanaMistica !== null || Object.keys(arcanaMisticaAtuais).length > 0) luSteps.push('arcanaMistica');
   luSteps.push('resumo');
 
   // Características que já ganham uma tela própria mais adiante nesse
@@ -543,9 +560,15 @@ export default function LevelUpShell({
       setAviso('Escolha uma Dádiva Épica antes de avançar.');
       return;
     }
-    if (step === 'arcanaMistica' && arcanaMisticaEscolhida === null) {
-      setAviso('Escolha uma magia de Arcana Mística antes de avançar.');
-      return;
+    if (step === 'arcanaMistica') {
+      if (novoCirculoArcanaMistica !== null && !arcanaMisticaEscolhidas[novoCirculoArcanaMistica]) {
+        setAviso('Escolha uma magia de Arcana Mística antes de avançar.');
+        return;
+      }
+      if (trocasArcanaMistica(arcanaMisticaAtuais, arcanaMisticaEscolhidas) > 1) {
+        setAviso('Você só pode trocar 1 arcanum por level-up — desfaça a outra troca.');
+        return;
+      }
     }
     if (step === 'asiAtributo') {
       if (talentoObjEscolhido && talentoObjEscolhido.concedeAsi.tipo === 'distribuir-dois' && pontosAsiRestantes > 0) {
@@ -573,9 +596,9 @@ export default function LevelUpShell({
         atributosAumentados: luSteps.includes('asi') && asiEscolhas.length > 0 ? asiEscolhas : null,
         talentoGeralEscolhido: luSteps.includes('asi') ? talentoEscolhido : null,
         dadivaEpicaEscolhida: luSteps.includes('dadivaEpica') ? dadivaEpicaEscolhida : null,
-        arcanaMistica:
-          luSteps.includes('arcanaMistica') && novoCirculoArcanaMistica !== null && arcanaMisticaEscolhida !== null
-            ? { circulo: novoCirculoArcanaMistica, magia: arcanaMisticaEscolhida }
+        arcanaMisticaAlteracoes:
+          luSteps.includes('arcanaMistica') && Object.keys(arcanaMisticaAlteracoesPendentes).length > 0
+            ? arcanaMisticaAlteracoesPendentes
             : null,
       });
       return;
@@ -603,6 +626,20 @@ export default function LevelUpShell({
   const jaConhecidasArcanaMistica = [...truquesAtuais, ...magiasPreparadasAtuais, ...Object.values(arcanaMisticaAtuais)];
   const opcoesArcanaMistica =
     novoCirculoArcanaMistica !== null ? magiasElegiveisArcanaMistica(novoCirculoArcanaMistica, jaConhecidasArcanaMistica) : [];
+  // Pra trocar um círculo JÁ conhecido — exclui a própria magia dele
+  // (senão nunca apareceria como opção de troca) mas inclui as escolhas
+  // em andamento dos outros círculos (evita repetir a mesma magia em
+  // 2 círculos no mesmo level-up).
+  function opcoesTrocaArcana(circulo: number): string[] {
+    const jaConhecidas = [
+      ...truquesAtuais,
+      ...magiasPreparadasAtuais,
+      ...Object.entries(arcanaMisticaEscolhidas)
+        .filter(([c]) => Number(c) !== circulo)
+        .map(([, m]) => m),
+    ];
+    return magiasElegiveisArcanaMistica(circulo, jaConhecidas).map((m) => m.nome);
+  }
 
   if (faseDramatica !== 'idle') {
     return (
@@ -1098,23 +1135,68 @@ export default function LevelUpShell({
 
         {step === 'arcanaMistica' && (
           <>
-            <div className="section-title">Arcana Mística — {novoCirculoArcanaMistica}º círculo</div>
-            {arcanaMisticaFeature?.descricao && (
-              <div className="label" style={{ marginBottom: 10 }}>
-                {arcanaMisticaFeature.descricao}
-              </div>
+            {novoCirculoArcanaMistica !== null && (
+              <>
+                <div className="section-title">Arcana Mística — {novoCirculoArcanaMistica}º círculo</div>
+                {arcanaMisticaFeature?.descricao && (
+                  <div className="label" style={{ marginBottom: 10 }}>
+                    {arcanaMisticaFeature.descricao}
+                  </div>
+                )}
+                {opcoesArcanaMistica.map((m) => (
+                  <div
+                    key={m.id}
+                    className={`opt-card ${arcanaMisticaEscolhidas[novoCirculoArcanaMistica] === m.nome ? 'selected' : ''}`}
+                    style={{ padding: '10px 12px', cursor: 'pointer' }}
+                    onClick={() =>
+                      setArcanaMisticaEscolhidas((prev) => ({ ...prev, [novoCirculoArcanaMistica]: m.nome }))
+                    }
+                  >
+                    <div className="opt-card-name">{m.nome}</div>
+                    <div className="opt-card-desc">{m.descricaoCurta ?? m.descricaoCompleta}</div>
+                  </div>
+                ))}
+              </>
             )}
-            {opcoesArcanaMistica.map((m) => (
-              <div
-                key={m.id}
-                className={`opt-card ${arcanaMisticaEscolhida === m.nome ? 'selected' : ''}`}
-                style={{ padding: '10px 12px', cursor: 'pointer' }}
-                onClick={() => setArcanaMisticaEscolhida(m.nome)}
-              >
-                <div className="opt-card-name">{m.nome}</div>
-                <div className="opt-card-desc">{m.descricaoCurta ?? m.descricaoCompleta}</div>
-              </div>
-            ))}
+
+            {Object.keys(arcanaMisticaAtuais).length > 0 && (
+              <>
+                <div className="section-title" style={{ marginTop: novoCirculoArcanaMistica !== null ? 14 : 0 }}>
+                  Trocar um arcanum já conhecido
+                </div>
+                <div className="label" style={{ marginBottom: 8 }}>
+                  Opcional — no máximo 1 troca por level-up, mesmo se você já escolheu um círculo novo acima.
+                </div>
+                {Object.keys(arcanaMisticaAtuais)
+                  .map(Number)
+                  .sort((a, b) => a - b)
+                  .map((circulo) => {
+                    const atual = arcanaMisticaEscolhidas[circulo] ?? arcanaMisticaAtuais[circulo];
+                    const trocado = atual !== arcanaMisticaAtuais[circulo];
+                    return (
+                      <div key={circulo} className="opt-card" style={{ padding: '10px 12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                          <div className="opt-card-name">
+                            {circulo}º círculo — {atual}
+                            {trocado && <span style={{ color: 'var(--danger)', fontSize: 11 }}> · trocado</span>}
+                          </div>
+                          <TrocarValorSimples
+                            titulo={`Trocar arcanum do ${circulo}º círculo`}
+                            valorAtual={atual}
+                            opcoes={opcoesTrocaArcana(circulo)}
+                            onTrocar={(nova) => setArcanaMisticaEscolhidas((prev) => ({ ...prev, [circulo]: nova }))}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                {trocasArcanaMistica(arcanaMisticaAtuais, arcanaMisticaEscolhidas) > 1 && (
+                  <div className="label" style={{ color: 'var(--danger)', marginTop: 6 }}>
+                    ⚠️ mais de 1 arcanum trocado — só pode trocar 1 por level-up.
+                  </div>
+                )}
+              </>
+            )}
           </>
         )}
 
@@ -1179,6 +1261,16 @@ export default function LevelUpShell({
               <div className="summary-row">
                 <span>Proficiências Bônus</span>
                 <span>{proficienciasBonusEscolhidas.join(', ') || 'nenhuma escolhida'}</span>
+              </div>
+            )}
+            {luSteps.includes('arcanaMistica') && (
+              <div className="summary-row">
+                <span>Arcana Mística</span>
+                <span>
+                  {Object.keys(arcanaMisticaAlteracoesPendentes).length > 0
+                    ? `${Object.keys(arcanaMisticaAlteracoesPendentes).length} círculo(s) alterado(s)`
+                    : 'sem troca'}
+                </span>
               </div>
             )}
             {luSteps.includes('asi') && (

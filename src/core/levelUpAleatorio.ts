@@ -69,7 +69,7 @@ export interface ResultadoLevelUpRapido {
   atributosAumentados: Atributo[] | null;
   talentoGeralEscolhido: string | null;
   dadivaEpicaEscolhida: string | null;
-  arcanaMistica: { circulo: number; magia: string } | null;
+  arcanaMisticaAlteracoes: Record<number, string> | null;
 }
 
 /** Escolhe Invocações Místicas respeitando pré-requisito (uma pode
@@ -201,7 +201,7 @@ export function sortearLevelUpRapido(params: ParamsLevelUpRapido): ResultadoLeve
     dadivaEpicaEscolhida = sorteiaUm(opcoes)?.id ?? null;
   }
 
-  let arcanaMistica: { circulo: number; magia: string } | null = null;
+  let arcanaMisticaAlteracoes: Record<number, string> | null = null;
   const circulosAntes = circulosArcanaMisticaDesbloqueados(classe, personagem.nivel);
   const circulosDepois = circulosArcanaMisticaDesbloqueados(classe, novoNivel);
   const novoCirculoArcanaMistica = circulosDepois.find((c) => !circulosAntes.includes(c)) ?? null;
@@ -213,7 +213,7 @@ export function sortearLevelUpRapido(params: ParamsLevelUpRapido): ResultadoLeve
     ];
     const opcoes = magiasElegiveisArcanaMistica(novoCirculoArcanaMistica, jaConhecidas);
     const escolhida = sorteiaUm(opcoes);
-    arcanaMistica = escolhida ? { circulo: novoCirculoArcanaMistica, magia: escolhida.nome } : null;
+    arcanaMisticaAlteracoes = escolhida ? { [novoCirculoArcanaMistica]: escolhida.nome } : null;
   }
 
   return {
@@ -230,6 +230,6 @@ export function sortearLevelUpRapido(params: ParamsLevelUpRapido): ResultadoLeve
     atributosAumentados,
     talentoGeralEscolhido,
     dadivaEpicaEscolhida,
-    arcanaMistica,
+    arcanaMisticaAlteracoes,
   };
 }

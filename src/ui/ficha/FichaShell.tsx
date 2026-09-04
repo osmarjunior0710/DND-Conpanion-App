@@ -666,7 +666,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     atributosAumentados: Atributo[] | null;
     talentoGeralEscolhido: string | null;
     dadivaEpicaEscolhida: string | null;
-    arcanaMistica: { circulo: number; magia: string } | null;
+    arcanaMisticaAlteracoes: Record<number, string> | null;
   }) {
     const novosAtributos = resultado.atributosAumentados
       ? aumentarAtributos(selecao.atributos, resultado.atributosAumentados)
@@ -698,9 +698,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       setTalentosGeraisAtuais((prev) => [...prev, resultado.dadivaEpicaEscolhida!]);
       setTalentosFavoritos((prev) => prev.filter((id) => id !== resultado.dadivaEpicaEscolhida));
     }
-    if (resultado.arcanaMistica) {
-      const { circulo, magia } = resultado.arcanaMistica;
-      setArcanaMisticaAtuais((prev) => ({ ...prev, [circulo]: magia }));
+    if (resultado.arcanaMisticaAlteracoes) {
+      setArcanaMisticaAtuais((prev) => ({ ...prev, ...resultado.arcanaMisticaAlteracoes }));
     }
     setLevelUpHpModo(null);
     setLevelUpHpRolado(null);

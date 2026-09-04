@@ -1,9 +1,11 @@
 // Arcana Mística (Bruxo, níveis 11/13/15/17) — 4 magias independentes
 // (6º/7º/8º/9º círculo), cada uma escolhida quando o círculo
 // desbloqueia. Cada uma pode ser conjurada de graça 1x por Descanso
-// Longo (usos independentes entre si, não um pool). Trocar uma magia
-// de arcanum já escolhida por outra do mesmo círculo (permitido a
-// qualquer level-up) fica fora desta entrega — ver PENDENCIAS.md.
+// Longo (usos independentes entre si, não um pool). A cada level-up
+// (não só nos níveis que desbloqueiam um círculo novo), o jogador pode
+// trocar 1 magia de arcanum já escolhida por outra do mesmo círculo —
+// mesmo limite "1 troca por level-up" já usado em Truques/Invocações,
+// só que por círculo (Record) em vez de lista solta.
 
 import type { Classe } from '../data/rulesets/dnd2024/classes';
 import { caracteristicaDesbloqueada } from './levelUp';
@@ -30,4 +32,13 @@ export function circulosArcanaMisticaDesbloqueados(classe: Classe, nivelAtual: n
  * círculo. */
 export function magiasElegiveisArcanaMistica(circulo: number, jaConhecidas: string[]): Magia[] {
   return magiasDaClasse('Bruxo').filter((m) => m.circulo === circulo && !jaConhecidas.includes(m.nome));
+}
+
+/** Quantos círculos JÁ conhecidos (presentes nos dois lados) tiveram a
+ * magia trocada por outra — círculo novo (só do lado `escolhidas`,
+ * escolha inicial) nunca conta como troca, mesmo padrão de
+ * `contarTrocas` (Truques/Invocações), só que por círculo em vez de
+ * lista solta. */
+export function trocasArcanaMistica(atuais: Record<number, string>, escolhidas: Record<number, string>): number {
+  return Object.entries(atuais).filter(([circulo, magia]) => escolhidas[Number(circulo)] !== magia).length;
 }

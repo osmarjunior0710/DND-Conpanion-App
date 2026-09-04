@@ -170,16 +170,9 @@ livro).
 **O que falta pra resolver:** nada travado — só esperar a base +
 Ínfero serem entregues e testados antes de retomar.
 
-**Arcana Mística — trocar arcanum a cada level-up, adiado de
-propósito.** A escolha inicial de cada círculo (11/13/15/17) já é
-implementada; a regra real também permite, em QUALQUER level-up
-depois, trocar 1 magia de arcanum já escolhida por outra do mesmo
-círculo (mesmo espírito da troca de Invocação/Truque/Magia Preparada,
-1 por vez). Decisão do Osmar (2026-09): fazer só a escolha inicial
-agora, troca fica pra uma entrega separada — reduz o tamanho da
-entrega da Arcana Mística. **O que falta pra resolver:** quando
-chegar a vez, reaproveitar o mesmo padrão "toggle na tela de Level Up
-+ `contarTrocas` limitando a 1" já usado em Truques/Invocações.
+~~Arcana Mística — trocar arcanum a cada level-up~~ — **Completa**
+(2026-09). Ver `DECISOES-CLASSES.md` "Arcana Mística — troca de
+arcanum".
 
 ## Plano de Equipamento — COMPLETO (E1-E4 feitas)
 
