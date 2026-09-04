@@ -44,6 +44,10 @@ export interface WizardSelection {
   tamanhoEspecieEscolhido: string | null;
   periciaEspecieEscolhida: string | null;
   talentoEspecieEscolhido: string | null;
+  /** Opção de sub-escolha `identidade_permanente` (ex.: cor de dragão
+   * do Draconato, ancestralidade do Golias) — nome de
+   * `Especie.opcoesSubescolha`, escolhido 1x na criação. */
+  subescolhaEspecieEscolhida: string | null;
   linguas: string[];
   alinhamento: string | null;
   itens: ItemCarrinho[];
@@ -77,6 +81,7 @@ export function criarSelecaoInicial(): WizardSelection {
     tamanhoEspecieEscolhido: null,
     periciaEspecieEscolhida: null,
     talentoEspecieEscolhido: null,
+    subescolhaEspecieEscolhida: null,
     linguas: ['Comum'],
     alinhamento: null,
     itens: [],

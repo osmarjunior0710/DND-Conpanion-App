@@ -162,7 +162,13 @@ export default function WizardShell() {
   function randomizarEspecie() {
     const disponiveis = especies.filter((e) => e.disponivel);
     const e = disponiveis[Math.floor(Math.random() * disponiveis.length)];
-    update({ especie: e.nome, tamanhoEspecieEscolhido: null, periciaEspecieEscolhida: null, talentoEspecieEscolhido: null });
+    update({
+      especie: e.nome,
+      tamanhoEspecieEscolhido: null,
+      periciaEspecieEscolhida: null,
+      talentoEspecieEscolhido: null,
+      subescolhaEspecieEscolhida: null,
+    });
   }
   function randomizarEscolhasEspecie() {
     const especieSelecionada = especies.find((e) => e.nome === selection.especie);
@@ -177,6 +183,10 @@ export default function WizardShell() {
     }
     if (especieSelecionada.traços.some((t) => t.id === 'versatil')) {
       patch.talentoEspecieEscolhido = talentosOrigem[Math.floor(Math.random() * talentosOrigem.length)].id;
+    }
+    if (especieSelecionada.subescolha?.natureza === 'identidade_permanente' && especieSelecionada.opcoesSubescolha) {
+      const opcoes = especieSelecionada.opcoesSubescolha;
+      patch.subescolhaEspecieEscolhida = opcoes[Math.floor(Math.random() * opcoes.length)].nome;
     }
     update(patch);
   }
@@ -293,6 +303,13 @@ export default function WizardShell() {
         if (especieSelecionada.tamanho.opcoes && s.tamanhoEspecieEscolhido === null) return false;
         if (especieSelecionada.traços.some((t) => t.id === 'habil') && s.periciaEspecieEscolhida === null) return false;
         if (especieSelecionada.traços.some((t) => t.id === 'versatil') && s.talentoEspecieEscolhido === null) return false;
+        if (
+          especieSelecionada.subescolha?.natureza === 'identidade_permanente' &&
+          especieSelecionada.opcoesSubescolha &&
+          s.subescolhaEspecieEscolhida === null
+        ) {
+          return false;
+        }
         return true;
       },
       mensagemInvalida: 'Complete as escolhas da espécie antes de avançar.',

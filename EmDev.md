@@ -38,11 +38,19 @@ sempre que possível — ver 6.1):
     na tela de Perfil ("Hábil — escolhida: X", "Versátil — escolhido:
     Y"). `npx tsc -b`, `npm test -- --run` (162 testes) e
     `npm run build` passando.
-- [ ] **2. Draconato** — piloto da natureza `identidade_permanente`:
-      estruturar Herança Dracônica (10 dragões × tipo de dano) num
-      array próprio, tela de escolha na "Escolhas da Espécie", resolver
-      Ataque de Sopro/Resistência a Dano pelo tipo escolhido
-      (`traçosVinculadosASubescolha`, sem duplicar valor fixo).
+- [x] **2. Draconato** — piloto da natureza `identidade_permanente`:
+      Herança Dracônica estruturada em `Especie.opcoesSubescolha` (novo
+      campo genérico, reaproveitável pro Golias), tela de escolha das
+      10 cores de dragão na "Escolhas da Espécie", Ataque de
+      Sopro/Resistência a Dano resolvidos em tempo de leitura pelo tipo
+      de dano da cor escolhida (`core/especieSubescolha.ts`, com
+      teste) — nunca duplicado como valor fixo.
+  - Testado com Playwright: wizard bloqueia avançar sem escolher a cor
+    ("Complete as escolhas da espécie"), tela de escolha mostra as 10
+    cores com o tipo de dano de cada uma, e a Ficha (aba Perfil) mostra
+    "Herança Dracônica: Cobre"/"Azul" e "Ataque de Sopro (Tipo de dano:
+    Elétrico)" resolvidos corretamente pra 2 cores diferentes. `npx tsc
+    -b`, `npm test -- --run` (164 testes) e `npm run build` passando.
 - [ ] **3. Golias** — mesma natureza `identidade_permanente`,
       reaproveitando o padrão do Draconato (Ancestralidade Gigante, 5
       opções com usos = Bônus de Proficiência).

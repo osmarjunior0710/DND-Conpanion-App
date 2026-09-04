@@ -35,10 +35,17 @@ export interface TracoEspecie {
   sentidoConcedido?: SentidoConcedido | null;
   /** ID estável pra traço que o código precisa RECONHECER (não só
    * exibir) — ver CLAUDE.md seção 13. Nunca comparar por `nome`.
-   * Hoje só usado pelos 2 traços do Humano que abrem uma escolha
-   * própria no wizard: `'habil'` (perícia à escolha) e `'versatil'`
-   * (talento de Origem à escolha). */
+   * Hoje usado pelos 2 traços do Humano que abrem uma escolha própria
+   * no wizard (`'habil'`, `'versatil'`) e pelos traços de espécies
+   * `identidade_permanente` cujo texto depende do tipo de dano da
+   * sub-escolha (`usaTipoDanoDaSubescolha`, ver `Especie.opcoesSubescolha`). */
   id?: string;
+  /** Traço cujo efeito varia pelo tipo de dano da opção de sub-escolha
+   * escolhida (ex.: Ataque de Sopro e Resistência a Dano do Draconato,
+   * que mudam conforme a cor de dragão) — resolvido em tempo de
+   * leitura a partir de `Especie.opcoesSubescolha`, nunca duplicado
+   * como valor fixo aqui. */
+  usaTipoDanoDaSubescolha?: boolean;
 }
 
 export type NaturezaSubescolha =
@@ -49,6 +56,18 @@ export type NaturezaSubescolha =
 export interface Subescolha {
   nome: string;
   natureza: NaturezaSubescolha;
+}
+
+/** Uma opção de sub-escolha `identidade_permanente` (ex.: cada cor de
+ * dragão do Draconato, cada ancestralidade do Golias) — escolhida 1x
+ * na criação, nunca muda depois. `tipoDano` só existe pras espécies
+ * cujos traços dependem de um tipo de dano único (Draconato); Golias
+ * não usa esse campo — cada ancestralidade já é um benefício descrito
+ * por completo em `descricaoEfeito`. */
+export interface OpcaoIdentidadePermanente {
+  nome: string;
+  tipoDano?: string;
+  descricaoEfeito?: string;
 }
 
 export interface Especie {
@@ -62,6 +81,10 @@ export interface Especie {
   introducaoCurta: string;
   traços: TracoEspecie[];
   subescolha: Subescolha | null;
+  /** Opções da sub-escolha, só preenchido pras espécies já
+   * estruturadas (ver comentário no topo do arquivo) — `undefined`
+   * pras que ainda têm o dado só como texto corrido no traço. */
+  opcoesSubescolha?: OpcaoIdentidadePermanente[];
   disponivel: boolean;
   fonte: string;
 }
@@ -172,13 +195,25 @@ export const especies: Especie[] = [
     introducaoCurta: "Os ancestrais dos draconatos nasceram dos ovos de dragões cromáticos e metálicos. Uma narrativa diz que esses ovos foram abençoados pelos deuses dracônicos Bahamut e Tiamat, que desejavam criar seres à sua imagem no multiverso. Outra versão afirma que os dragões geraram o primeiro draconato sem a intervenção divina.",
     traços: [
       { nome: "Herança Dracônica", descricao: "Sua linhagem deriva de um progenitor dracônico. Escolha o tipo de dragão da tabela Herança Dracônica. Sua escolha afeta suas características de Ataque de Sopro e Resistência a Dano, bem como sua aparência. Tabela Herança Dracônica (Dragão: Tipo de Dano) — Azul: Elétrico; Branco: Gélido; Bronze: Elétrico; Cobre: Ácido; Latão: Ígneo; Negro: Ácido; Ouro: Ígneo; Prata: Gélido; Verde: Venenoso; Vermelho: Ígneo." },
-      { nome: "Ataque de Sopro", descricao: "Ao executar a ação Atacar no seu turno, você pode substituir um de seus ataques por uma emissão de energia mágica em um Cone de 4,5 metros ou em uma Linha de 9 metros de comprimento e 1,5 metros de largura (escolha a forma a cada vez). Cada criatura nessa área deve realizar uma salvaguarda de Destreza (CD 8 + seu modificador de Constituição e seu Bônus de Proficiência). Se falhar, uma criatura sofre 1d10 pontos de dano do tipo determinado por seu traço Herança Dracônica. Em caso de sucesso, uma criatura sofre metade do dano. Esse dano aumenta em 1d10 quando você atinge os níveis de personagem 5 (2d10), 11 (3d10) e 17 (4d10). Você pode usar esse Ataque de Sopro um número de vezes igual ao seu Bônus de Proficiência, e você restaura todos os usos gastos quando completa um Descanso Longo." },
-      { nome: "Resistência a Dano", descricao: "Você tem Resistência ao tipo de dano determinado por seu traço Herança Dracônica." },
+      { nome: "Ataque de Sopro", descricao: "Ao executar a ação Atacar no seu turno, você pode substituir um de seus ataques por uma emissão de energia mágica em um Cone de 4,5 metros ou em uma Linha de 9 metros de comprimento e 1,5 metros de largura (escolha a forma a cada vez). Cada criatura nessa área deve realizar uma salvaguarda de Destreza (CD 8 + seu modificador de Constituição e seu Bônus de Proficiência). Se falhar, uma criatura sofre 1d10 pontos de dano do tipo determinado por seu traço Herança Dracônica. Em caso de sucesso, uma criatura sofre metade do dano. Esse dano aumenta em 1d10 quando você atinge os níveis de personagem 5 (2d10), 11 (3d10) e 17 (4d10). Você pode usar esse Ataque de Sopro um número de vezes igual ao seu Bônus de Proficiência, e você restaura todos os usos gastos quando completa um Descanso Longo.", usaTipoDanoDaSubescolha: true },
+      { nome: "Resistência a Dano", descricao: "Você tem Resistência ao tipo de dano determinado por seu traço Herança Dracônica.", usaTipoDanoDaSubescolha: true },
       { nome: "Visão no Escuro", descricao: "Você tem Visão no Escuro com um alcance de 18 metros.", sentidoConcedido: { tipo: 'visaoNoEscuro', alcanceMetros: 18 } },
       { nome: "Voo Dracônico", descricao: "No nível 5 do personagem, você pode canalizar magia dracônica para beneficiar de um voo temporário. Como uma Ação Bônus, você cria asas espectrais nas costas que duram 10 minutos ou até que você as retraia (nenhuma ação é necessária) ou tem a condição Incapacitado. Pela duração, você tem um Deslocamento de Voo igual ao seu Deslocamento. Suas asas parecem feitas da mesma energia que o seu Ataque de Sopro. Após usar esse traço, você não pode usá-lo novamente até completar um Descanso Longo." },
     ],
     subescolha: { nome: "Herança Dracônica", natureza: "identidade_permanente" },
-    disponivel: false,
+    opcoesSubescolha: [
+      { nome: "Azul", tipoDano: "Elétrico" },
+      { nome: "Branco", tipoDano: "Gélido" },
+      { nome: "Bronze", tipoDano: "Elétrico" },
+      { nome: "Cobre", tipoDano: "Ácido" },
+      { nome: "Latão", tipoDano: "Ígneo" },
+      { nome: "Negro", tipoDano: "Ácido" },
+      { nome: "Ouro", tipoDano: "Ígneo" },
+      { nome: "Prata", tipoDano: "Gélido" },
+      { nome: "Verde", tipoDano: "Venenoso" },
+      { nome: "Vermelho", tipoDano: "Ígneo" },
+    ],
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {

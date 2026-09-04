@@ -58,11 +58,34 @@ export default function EspecieEscolhasStep({ selection, update }: StepProps) {
         </>
       )}
 
+      {especie.subescolha?.natureza === 'identidade_permanente' && especie.opcoesSubescolha && (
+        <>
+          <div className="section-title">{especie.subescolha.nome} — escolha 1</div>
+          {especie.opcoesSubescolha.map((opcao) => (
+            <div
+              key={opcao.nome}
+              className={`opt-card ${selection.subescolhaEspecieEscolhida === opcao.nome ? 'selected' : ''}`}
+              style={{ padding: '10px 12px' }}
+              onClick={() => update({ subescolhaEspecieEscolhida: opcao.nome })}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className="opt-card-name">{opcao.nome}</span>
+                {opcao.tipoDano && <span className="label">Dano {opcao.tipoDano}</span>}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+
       <div className="section-title">Traços da espécie</div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-        {especie.traços.map((t) => (
-          <InfoChip key={t.nome} nome={t.nome} descricao={t.descricao} />
-        ))}
+        {especie.traços.map((t) => {
+          const tipoDano = t.usaTipoDanoDaSubescolha
+            ? especie.opcoesSubescolha?.find((o) => o.nome === selection.subescolhaEspecieEscolhida)?.tipoDano
+            : null;
+          const descricao = tipoDano ? `${t.descricao} (Tipo de dano: ${tipoDano})` : t.descricao;
+          return <InfoChip key={t.nome} nome={t.nome} descricao={descricao} />;
+        })}
       </div>
 
       {temTraco('habil') && (

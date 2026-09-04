@@ -137,6 +137,9 @@ function gerarSelecaoNivel1(classe: Classe, origemNome: string, especieNome: str
   if (especieObj?.traços.some((t) => t.id === 'versatil')) {
     selection.talentoEspecieEscolhido = sorteiaUm(talentosOrigem)?.id ?? null;
   }
+  if (especieObj?.subescolha?.natureza === 'identidade_permanente' && especieObj.opcoesSubescolha) {
+    selection.subescolhaEspecieEscolhida = sorteiaUm(especieObj.opcoesSubescolha)?.nome ?? null;
+  }
 
   // Línguas, alinhamento — genérico, mesma lógica do wizard.
   const outrosIdiomas = idiomas.filter((i) => i.nome !== 'Comum').map((i) => i.nome);

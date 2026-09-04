@@ -47,6 +47,7 @@ export const personagemDemo: PersonagemSalvo = {
     tamanhoEspecieEscolhido: 'Médio (cerca de 1,20-2,10 metros de altura)',
     periciaEspecieEscolhida: 'Intimidação',
     talentoEspecieEscolhido: 'habilidoso',
+    subescolhaEspecieEscolhida: null,
     linguas: ['Comum', 'Infernal', 'Gigante'],
     alinhamento: 'Caótico e Bom',
     itens: [],
