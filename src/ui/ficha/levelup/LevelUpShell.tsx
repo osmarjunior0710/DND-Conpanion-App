@@ -3,7 +3,7 @@ import { dadoVidaValor } from '../../../data/levelUpFixtures';
 import type { Atributo } from '../../../data/wizardFixtures';
 import type { Classe } from '../../../data/rulesets/dnd2024/classes';
 import type { WizardSelection } from '../../../core/personagem';
-import type { Magia } from '../../../data/rulesets/dnd2024/magias';
+import { magiasDaClasse, type Magia } from '../../../data/rulesets/dnd2024/magias';
 import { subclasses } from '../../../data/rulesets/dnd2024/subclasses';
 import { estilosDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import {
@@ -623,6 +623,7 @@ export default function LevelUpShell({
     novoCirculoArcanaMistica !== null
       ? caracteristicasDoNivel(classe, novoNivel).find((f) => f.nome === `Arcana Mística (${novoCirculoArcanaMistica}º círculo)`)
       : undefined;
+  const magiasBruxo = magiasDaClasse('Bruxo');
   const jaConhecidasArcanaMistica = [...truquesAtuais, ...magiasPreparadasAtuais, ...Object.values(arcanaMisticaAtuais)];
   const opcoesArcanaMistica =
     novoCirculoArcanaMistica !== null ? magiasElegiveisArcanaMistica(novoCirculoArcanaMistica, jaConhecidasArcanaMistica) : [];
@@ -1173,11 +1174,13 @@ export default function LevelUpShell({
                   .map((circulo) => {
                     const atual = arcanaMisticaEscolhidas[circulo] ?? arcanaMisticaAtuais[circulo];
                     const trocado = atual !== arcanaMisticaAtuais[circulo];
+                    const magiaAtual = magiasBruxo.find((m) => m.nome === atual);
                     return (
                       <div key={circulo} className="opt-card" style={{ padding: '10px 12px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                           <div className="opt-card-name">
-                            {circulo}º círculo — {atual}
+                            {circulo}º círculo —{' '}
+                            {magiaAtual ? <MagiaComDescricao magia={magiaAtual} /> : atual}
                             {trocado && <span style={{ color: 'var(--danger)', fontSize: 11 }}> · trocado</span>}
                           </div>
                           <TrocarValorSimples
