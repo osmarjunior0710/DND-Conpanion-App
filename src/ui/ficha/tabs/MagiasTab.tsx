@@ -34,6 +34,12 @@ interface MagiasTabProps {
    * magias sempre preparadas, mostradas numa seção própria (não se
    * misturam com Magias Preparadas normais). */
   magiasDescobertasMagicasAtuais: string[];
+  /** Magias de Pacto do Ínfero (Patrono Ínfero, Bruxo) — lista fixa,
+   * sem escolha do jogador, que cresce por nível (3/5/7/9). Sempre
+   * preparadas, mesmo tratamento de "Descobertas Mágicas" (seção
+   * própria, fora do limite normal de Magias Preparadas). Vazio pra
+   * quem não tem essa característica. */
+  magiasPactoDoInferoAtuais: string[];
   /** Livro das Sombras (Bruxo, Pacto do Tomo) — 3 truques + 2 magias
    * rituais sempre preparadas enquanto o livro existir, mesmo
    * tratamento de "Descobertas Mágicas" (seção própria, fora do
@@ -102,6 +108,7 @@ export default function MagiasTab({
   truquesAtuais,
   magiasPreparadasAtuais,
   magiasDescobertasMagicasAtuais,
+  magiasPactoDoInferoAtuais,
   livroDasSombrasAtuais,
   temPactoDoTomo,
   livroDasSombrasGasto,
@@ -145,6 +152,7 @@ export default function MagiasTab({
   const truques = truquesDoPersonagem(truquesAtuais);
   const preparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
   const descobertasMagicas = magiasPreparadasDoPersonagem(magiasDescobertasMagicasAtuais);
+  const pactoDoInfero = magiasPreparadasDoPersonagem(magiasPactoDoInferoAtuais);
   const livroDasSombras = magiasPreparadasDoPersonagem(livroDasSombrasAtuais);
   const [espacosExpandido, setEspacosExpandido] = useColapsavel('espacos-de-magia', true);
 
@@ -406,6 +414,33 @@ export default function MagiasTab({
             Colégio do Conhecimento — sempre preparadas, não contam na conta de Magias Preparadas.
           </div>
           {descobertasMagicas.map((m) => {
+            const semEspaco = m.circulo > 0 && circulosDisponiveisParaConjurar(m.circulo, espacos, espacosGastosPorCirculo).length === 0;
+            const temAcao = usarMagiaTemAcaoAutomatizada(m);
+            return (
+              <div key={m.id} className={styles.spellRow}>
+                <div className={styles.spellName}>
+                  <MagiaComDescricao magia={m} /> {iconesMagia(m)}
+                </div>
+                <span className={styles.spellCirculo}>{m.circulo === 0 ? 'Truque' : `${m.circulo}º círculo`}</span>
+                <div
+                  className={`${styles.usarBtn} ${!temAcao ? styles.usarBtnPendencia : semEspaco ? styles.usarBtnDesabilitado : ''}`}
+                  onClick={() => temAcao && usarMagia(m)}
+                >
+                  {temAcao ? 'Usar' : 'Usar (pendência)'}
+                </div>
+              </div>
+            );
+          })}
+        </>
+      )}
+
+      {pactoDoInfero.length > 0 && (
+        <>
+          <div className="section-title">Magias de Pacto do Ínfero</div>
+          <div className="label" style={{ marginBottom: 4 }}>
+            Patrono Ínfero — sempre preparadas, não contam na conta de Magias Preparadas.
+          </div>
+          {pactoDoInfero.map((m) => {
             const semEspaco = m.circulo > 0 && circulosDisponiveisParaConjurar(m.circulo, espacos, espacosGastosPorCirculo).length === 0;
             const temAcao = usarMagiaTemAcaoAutomatizada(m);
             return (

@@ -260,9 +260,17 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
         o jogador clicar, regra real não tem limite). Confirmado via
         Playwright: Bruxo CAR 16 (+3) nível 5 → botão concede
         exatamente +8 PV Temp.
-  - [ ] **B6.3 — Magias de Pacto do Ínfero.** Lista fixa sempre
-        preparada, cresce por nível (3/5/7/9) — usa
-        `magiasFixasPorNivel` já importado no B6.1.
+  - [x] **B6.3 — Magias de Pacto do Ínfero — FEITA.** Nova
+        `magiasPactoDoInfero(nivel)` em `core/magiasPactoDoInfero.ts`
+        (testada) — lê `magiasFixasPorNivel` (já importado no B6.1) e
+        acumula por degrau (3/5/7/9). Nova seção "Magias de Pacto do
+        Ínfero" na aba Magias (mesmo padrão visual de "Descobertas
+        Mágicas" — sempre preparadas, fora do limite normal, mas ainda
+        gastam Espaço de Pacto de verdade ao conjurar). Entram também
+        em `magiasConjuraveis` (painéis de Ação/Reação do Combat).
+        Confirmado via Playwright: Bruxo Patrono Ínfero nível 1 sem
+        seção, nível 3 mostra só as 4 do primeiro degrau, nível 9
+        acumula as 10 (3+5+7+9) sem duplicar.
   - [ ] **B6.4 — A Sorte do Próprio Tenebroso.** Recurso com usos =
         mod. Carisma (mín. 1), rola 1d10 avulso, reseta no Descanso
         Longo.

@@ -45,6 +45,7 @@ import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../co
 import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
+import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
 import { espacosARecuperar } from '../../core/astuciaMagica';
 import {
   espacosDeMagiaAtivos,
@@ -252,7 +253,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   // preparada (fora do limite normal) — entram no que dá pra conjurar
   // em combate, mas são arrays PRÓPRIOS separados, só unidos aqui pra
   // montar a lista de "o que aparece nos painéis de Ação/Reação".
-  const magiasConjuraveis = [...magiasPreparadas, ...magiasDescobertasMagicas, ...livroDasSombras];
+  const magiasPactoDoInferoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Magias de Pacto do Ínfero', personagem.nivel);
+  const magiasPactoDoInferoAtuais = magiasPactoDoInferoDisponivel ? magiasPactoDoInfero(personagem.nivel) : [];
+  const magiasPactoDoInferoPreparadas = magiasPreparadasDoPersonagem(magiasPactoDoInferoAtuais);
+  const magiasConjuraveis = [...magiasPreparadas, ...magiasDescobertasMagicas, ...livroDasSombras, ...magiasPactoDoInferoPreparadas];
   const magiasPreparadasReacao = magiasConjuraveis.filter(ehMagiaDeReacao);
   const magiasPreparadasAcao = magiasConjuraveis.filter((m) => !ehMagiaDeReacao(m));
   const modAcertoConjuracao = calcularModAcertoConjuracao(selecao, classe, personagem.nivel);
@@ -824,6 +828,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             magiasGratisConcedidas={magiasGratisConcedidas}
             magiasGratisGastas={magiasGratisGastas}
             onUsarMagiaGratis={usarMagiaGratisDeInvocacao}
+            magiasPactoDoInferoAtuais={magiasPactoDoInferoAtuais}
             temPactoDaLamina={invocacoesMisticasAtuais.includes('pacto-da-lamina')}
             armaDePactoAtual={armaDePactoAtual(itensMochila)}
             onVincularArmaDePacto={vincularArmaDePactoHandler}
