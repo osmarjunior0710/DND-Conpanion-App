@@ -66,6 +66,7 @@ export default function ReacaoPanelContent({
       formula: '1d20 com Vantagem + seu mod. de salvaguarda',
       mod: 0,
       vantagem: 'vantagem',
+      categoria: 'atributoOuSalvaguarda',
     });
     onEscolher(
       '🎶 Contra-Encantamento',

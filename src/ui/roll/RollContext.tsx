@@ -4,6 +4,34 @@ type CritTipo = 'sucesso' | 'falha' | null;
 
 export type Vantagem = 'vantagem' | 'desvantagem';
 
+/** Categoria da rolagem 'd20' — hoje só usada pra decidir se um bônus
+ * extra registrado (ver `BonusExtraProvider`) pode aparecer nela.
+ * "Teste de atributo" cobre perícia também (perícia É um teste de
+ * atributo, regra 5e). Ataque/iniciativa ficam de fora de propósito —
+ * nenhuma característica que soma bônus avulso hoje se aplica a eles. */
+export type CategoriaRolagemD20 = 'atributoOuSalvaguarda';
+
+/** Uma característica tipo "A Sorte do Próprio Tenebroso" — soma
+ * 1 dado avulso a uma rolagem 'd20' já concluída, com usos limitados.
+ * Registrado pela Ficha (`FichaShell`) via `registrarBonusExtra`
+ * porque o `RollOverlay` é global (montado em `App.tsx`, fora da
+ * árvore da Ficha) e não tem acesso direto ao estado do personagem —
+ * mesmo problema que Vantagem/Desvantagem não tem (não depende de
+ * personagem nenhum). Genérico de propósito: a próxima característica
+ * parecida (ex: Orientação/Guidance +1d4) reaproveita sem precisar de
+ * um 2º mecanismo. */
+export interface BonusExtraProvider {
+  /** Rótulo curto pro botão — ex: "Sorte do Ten.". */
+  rotulo: string;
+  lados: number;
+  restantes: number;
+  maximo: number;
+  /** Consome 1 uso — `false` se não tinha mais uso (não deveria
+   * acontecer, já que o botão só aparece com `restantes > 0`, mas a
+   * função confia em quem chama pra não duplicar a regra de limite). */
+  usar: () => boolean;
+}
+
 export interface RollState {
   label: string;
   formula: string;
@@ -32,6 +60,13 @@ export interface RollState {
    * 'd20' já concluída, sem Vantagem/Desvantagem pré-definida e sem
    * 2º dado ainda escolhido. Vira false assim que o jogador decide. */
   podeEscolherVantagem: boolean;
+  /** Categoria opcional — `undefined`/ausente = nenhum bônus extra
+   * pode se aplicar a esta rolagem. */
+  categoria?: CategoriaRolagemD20;
+  /** Preenchido quando o jogador já aplicou o `BonusExtraProvider`
+   * registrado — guarda rótulo + valor rolado, pra mostrar a quebra
+   * do total e travar o botão (regra real: no máximo 1x por jogada). */
+  bonusExtra?: { rotulo: string; valor: number } | null;
 }
 
 interface RollD20Options {
@@ -42,6 +77,9 @@ interface RollD20Options {
    * ('desvantagem') — omitido = rolagem normal (1d20), com os botões
    * de Vantagem/Desvantagem disponíveis depois do resultado. */
   vantagem?: Vantagem;
+  /** Ver `CategoriaRolagemD20` — omitido = nenhum bônus extra
+   * registrado pode se aplicar a esta rolagem. */
+  categoria?: CategoriaRolagemD20;
   onResultado?: (total: number, d20: number) => void;
 }
 
@@ -64,6 +102,19 @@ interface RollContextValue {
    * total e crítico a partir do dado escolhido. */
   escolherVantagemPosRolagem: (tipo: Vantagem) => void;
   fechar: () => void;
+  /** Bônus extra registrado agora (ver `BonusExtraProvider`) — `null`
+   * quando nenhuma característica desse tipo está disponível pro
+   * personagem da tela atual. */
+  bonusExtraDisponivel: BonusExtraProvider | null;
+  /** A Ficha chama isso num `useEffect` toda vez que o recurso do
+   * personagem muda (usos restantes, nível, etc.) — passar `null`
+   * remove o registro (ex: ao sair da tela). */
+  registrarBonusExtra: (provider: BonusExtraProvider | null) => void;
+  /** Consome 1 uso do `bonusExtraDisponivel` atual e soma o dado
+   * rolado ao total da rolagem concluída em exibição — só tem efeito
+   * numa rolagem 'd20' concluída, com a categoria certa, sem bônus
+   * já aplicado, e com usos restantes. */
+  aplicarBonusExtra: () => void;
 }
 
 const RollContext = createContext<RollContextValue | null>(null);
@@ -82,7 +133,7 @@ export function RollProvider({ children }: { children: ReactNode }) {
   const [estado, setEstado] = useState<RollState | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const rolarD20 = useCallback(({ label, formula, mod, vantagem, onResultado }: RollD20Options) => {
+  const rolarD20 = useCallback(({ label, formula, mod, vantagem, categoria, onResultado }: RollD20Options) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setEstado({
       label,
@@ -96,6 +147,8 @@ export function RollProvider({ children }: { children: ReactNode }) {
       total: null,
       critico: null,
       podeEscolherVantagem: false,
+      categoria,
+      bonusExtra: null,
     });
     timeoutRef.current = setTimeout(() => {
       const rolagem1 = rolarD20Dado();
@@ -115,6 +168,8 @@ export function RollProvider({ children }: { children: ReactNode }) {
           total,
           critico: criticoDe(usado),
           podeEscolherVantagem: false,
+          categoria,
+          bonusExtra: null,
         });
         onResultado?.(total, usado);
       } else {
@@ -131,6 +186,8 @@ export function RollProvider({ children }: { children: ReactNode }) {
           total,
           critico: criticoDe(rolagem1),
           podeEscolherVantagem: true,
+          categoria,
+          bonusExtra: null,
         });
         onResultado?.(total, rolagem1);
       }
@@ -187,8 +244,33 @@ export function RollProvider({ children }: { children: ReactNode }) {
 
   const fechar = useCallback(() => setEstado(null), []);
 
+  const [bonusExtraProvider, setBonusExtraProvider] = useState<BonusExtraProvider | null>(null);
+  const registrarBonusExtra = useCallback((provider: BonusExtraProvider | null) => setBonusExtraProvider(provider), []);
+
+  const aplicarBonusExtra = useCallback(() => {
+    if (!estado || estado.fase !== 'concluido' || estado.tipo !== 'd20') return;
+    if (!estado.categoria || estado.bonusExtra) return;
+    if (!bonusExtraProvider || bonusExtraProvider.restantes <= 0) return;
+    if (!bonusExtraProvider.usar()) return;
+    const valor = 1 + Math.floor(Math.random() * bonusExtraProvider.lados);
+    setEstado((prev) =>
+      prev ? { ...prev, bonusExtra: { rotulo: bonusExtraProvider.rotulo, valor }, total: (prev.total ?? 0) + valor } : prev,
+    );
+  }, [estado, bonusExtraProvider]);
+
   return (
-    <RollContext.Provider value={{ estado, rolarD20, rolarDados, escolherVantagemPosRolagem, fechar }}>
+    <RollContext.Provider
+      value={{
+        estado,
+        rolarD20,
+        rolarDados,
+        escolherVantagemPosRolagem,
+        fechar,
+        bonusExtraDisponivel: bonusExtraProvider,
+        registrarBonusExtra,
+        aplicarBonusExtra,
+      }}
+    >
       {children}
     </RollContext.Provider>
   );

@@ -138,7 +138,14 @@ export default function AtributosTab({
           <div
             key={a.atributo}
             className="box stat-box"
-            onClick={() => rolarD20({ label: a.atributo, formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`, mod: a.mod })}
+            onClick={() =>
+              rolarD20({
+                label: a.atributo,
+                formula: `1d20 ${a.mod >= 0 ? '+' : '-'} ${Math.abs(a.mod)}`,
+                mod: a.mod,
+                categoria: 'atributoOuSalvaguarda',
+              })
+            }
           >
             <div className="stat-name">{a.atributo}</div>
             <div className="stat-mod">{a.valor}</div>
@@ -155,7 +162,14 @@ export default function AtributosTab({
         <div
           key={p.nome}
           className={styles.skillRow}
-          onClick={() => rolarD20({ label: p.nome, formula: `1d20 ${p.mod >= 0 ? '+' : '-'} ${Math.abs(p.mod)}`, mod: p.mod })}
+          onClick={() =>
+            rolarD20({
+              label: p.nome,
+              formula: `1d20 ${p.mod >= 0 ? '+' : '-'} ${Math.abs(p.mod)}`,
+              mod: p.mod,
+              categoria: 'atributoOuSalvaguarda',
+            })
+          }
         >
           <span>
             {p.proficiente ? '🔵' : '⚫'} {p.especialista && '⭐ '}

@@ -1103,3 +1103,31 @@ Up" normal (aba Atributos), cor diferente (`var(--warn)`) só pra não
 confundir os dois. Sobe exatamente 1 nível por clique (pra subir mais,
 clica de novo) — PV sempre pela média (nunca rola dado, é pra ser
 instantâneo). `core/levelUpAleatorio.ts` (testado).
+
+## Bônus opcional somado a uma rolagem concluída — vira linha no próprio modal de rolagem, não um card na tela (2026-09)
+
+Padrão pra qualquer característica tipo "A Sorte do Próprio Tenebroso"
+(Bruxo): soma um dado avulso a UMA rolagem de teste de
+atributo/salvaguarda já feita, com usos limitados. Em vez de um card
+separado na Ficha (que obrigava o jogador a rolar, decorar o resultado
+manualmente, olhar o card, somar de cabeça — jeito antigo, descartado),
+virou uma linha dentro do próprio `RollOverlay` (o modal que já
+aparece toda rolagem), do lado dos botões de Vantagem/Desvantagem —
+consistente com como Vantagem/Desvantagem já funciona (escolhida DEPOIS
+de ver o resultado, recalcula o total na hora).
+
+**Mecanismo (genérico, não é código exclusivo de nenhuma classe):**
+`RollContext.tsx` ganhou `BonusExtraProvider` (rótulo, lados do dado,
+usos restantes/máximo, função `usar()` que consome 1 uso) +
+`registrarBonusExtra`/`aplicarBonusExtra`. Como o `RollOverlay` é
+montado global (`App.tsx`, fora da árvore da Ficha), quem TEM o
+recurso (`FichaShell.tsx`) registra o provider num `useEffect` toda vez
+que o estado muda (e desregistra ao desmontar) — o Overlay só lê o que
+está registrado, sem saber nada de Bruxo/Patrono Ínfero. `RollState`
+ganhou `categoria` (hoje só `'atributoOuSalvaguarda'`) — só rolagens
+marcadas com essa categoria mostram o botão; ataque/dano/iniciativa
+nunca marcam, então nunca mostram, sem precisar de lista de exclusão.
+
+**Pra próxima característica parecida** (ex: um "Orientação"/Guidance
++1d4 futuro): reaproveitar o mesmo `BonusExtraProvider`, só trocando
+rótulo/lados/fonte do `usar()` — não criar um 2º mecanismo.

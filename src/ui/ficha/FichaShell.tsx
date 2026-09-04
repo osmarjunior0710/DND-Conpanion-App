@@ -47,6 +47,7 @@ import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
 import { usosSorteDoTenebroso } from '../../core/sorteDoTenebroso';
+import { useRoll } from '../roll/RollContext';
 import { sortearLevelUpRapido } from '../../core/levelUpAleatorio';
 import { espacosARecuperar } from '../../core/astuciaMagica';
 import {
@@ -124,6 +125,7 @@ export default function FichaShell() {
 
 function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }) {
   const navigate = useNavigate();
+  const { registrarBonusExtra } = useRoll();
   const [selecao, setSelecao] = useState<WizardSelection>(personagemSalvo.selecao);
   const classe = classeDaSelecao(selecao);
   const conValor = selecao.atributos.CON;
@@ -595,6 +597,25 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     return true;
   }
 
+  // Registra "A Sorte do Próprio Tenebroso" como bônus extra disponível
+  // no modal de rolagem global (ver RollContext) — some sozinho
+  // (`registrarBonusExtra(null)`) se a Ficha desmontar ou o personagem
+  // deixar de ter a característica.
+  useEffect(() => {
+    if (!sorteDoTenebrosoDisponivel) {
+      registrarBonusExtra(null);
+      return;
+    }
+    registrarBonusExtra({
+      rotulo: 'Sorte do Ten.',
+      lados: 10,
+      restantes: sorteDoTenebrosoRestantes,
+      maximo: sorteDoTenebrosoMaximo,
+      usar: usarSorteDoTenebroso,
+    });
+    return () => registrarBonusExtra(null);
+  }, [sorteDoTenebrosoDisponivel, sorteDoTenebrosoRestantes, sorteDoTenebrosoMaximo, registrarBonusExtra]);
+
   function usarSurto(): boolean {
     if (surtoRestantes <= 0 || surtoUsadoTurno) return false;
     setSurtoGasto((v) => v + 1);
@@ -902,9 +923,6 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             indomavelMaximo={indomavelMaximo}
             indomavelRestantes={indomavelRestantes}
             onUsarIndomavel={usarIndomavel}
-            sorteDoTenebrosoMaximo={sorteDoTenebrosoMaximo}
-            sorteDoTenebrosoRestantes={sorteDoTenebrosoRestantes}
-            onUsarSorteDoTenebroso={usarSorteDoTenebroso}
             surtoMaximo={surtoMaximo}
             surtoRestantes={surtoRestantes}
             surtoUsadoTurno={surtoUsadoTurno}

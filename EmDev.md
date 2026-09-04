@@ -273,11 +273,18 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
         acumula as 10 (3+5+7+9) sem duplicar.
   - [x] **B6.4 — A Sorte do Próprio Tenebroso — FEITA.** Nova
         `usosSorteDoTenebroso(carMod)` em `core/sorteDoTenebroso.ts`
-        (testada) — mín. 1 uso. Mesmo padrão de Indomável (usos
-        limitados, reseta só no Descanso Longo) — novo card no Combat
-        rola 1d10 avulso (mesmo mecanismo de "Mente Tática"), com aviso
-        pra somar numa jogada de teste de atributo ou salvaguarda antes
-        do efeito acontecer.
+        (testada) — mín. 1 uso, reseta só no Descanso Longo. Em vez de
+        um card separado na aba Combat, virou uma linha no PRÓPRIO
+        modal de rolagem (`RollOverlay`), do lado da Vantagem/
+        Desvantagem — mecanismo novo e genérico (`BonusExtraProvider`
+        em `RollContext.tsx`, registrado pela Ficha via
+        `registrarBonusExtra`) que soma um dado avulso à rolagem
+        concluída e atualiza o total na hora. Só aparece em rolagens
+        marcadas `categoria: 'atributoOuSalvaguarda'` (testes de
+        atributo, perícia, e as 2 "nova salvaguarda" — Indomável/
+        Contra-Encantamento) — nunca em ataque/iniciativa/dano.
+        Reaproveitável por qualquer característica parecida no futuro
+        (ex: Orientação/Guidance), não é código exclusivo do Bruxo.
   - [ ] **B6.5 — Resistência Ínfera.** Escolha de tipo de dano ao
         descansar — informativo (sem motor de dano recebido ainda).
   - [ ] **B6.6 — Lançar no Inferno.** Ataque especial 1x/Descanso

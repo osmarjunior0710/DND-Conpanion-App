@@ -2,7 +2,7 @@ import { useRoll } from './RollContext';
 import styles from './RollOverlay.module.css';
 
 export default function RollOverlay() {
-  const { estado, escolherVantagemPosRolagem, fechar } = useRoll();
+  const { estado, escolherVantagemPosRolagem, fechar, bonusExtraDisponivel, aplicarBonusExtra } = useRoll();
 
   if (!estado) return null;
 
@@ -57,6 +57,23 @@ export default function RollOverlay() {
             </div>
           </div>
         )}
+        {estado.categoria === 'atributoOuSalvaguarda' && estado.bonusExtra && (
+          <div className={styles.bonusExtraResultado}>
+            +1d{bonusExtraDisponivel?.lados ?? 10} ({estado.bonusExtra.rotulo}): {estado.bonusExtra.valor}
+          </div>
+        )}
+        {estado.fase === 'concluido' &&
+          estado.categoria === 'atributoOuSalvaguarda' &&
+          !estado.bonusExtra &&
+          bonusExtraDisponivel &&
+          bonusExtraDisponivel.maximo > 0 && (
+            <div
+              className={`${styles.bonusExtraBtn} ${bonusExtraDisponivel.restantes <= 0 ? styles.bonusExtraBtnDesabilitado : ''}`}
+              onClick={bonusExtraDisponivel.restantes > 0 ? aplicarBonusExtra : undefined}
+            >
+              🔥 {bonusExtraDisponivel.rotulo} {bonusExtraDisponivel.restantes}/{bonusExtraDisponivel.maximo}
+            </div>
+          )}
         <div className={styles.close} onClick={fechar}>
           FECHAR
         </div>
