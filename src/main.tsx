@@ -6,7 +6,7 @@ import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename="/DND-Conpanion-App">
+    <BrowserRouter basename="/Project0710">
       <App />
     </BrowserRouter>
   </StrictMode>,

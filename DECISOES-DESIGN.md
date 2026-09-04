@@ -268,7 +268,9 @@ repetir o pedido a cada tela nova.
 (`dndcompapp.netlify.app`) e passou a ser publicado no GitHub Pages,
 via GitHub Actions (`.github/workflows/deploy.yml`), que builda e
 publica automaticamente a cada push na branch de desenvolvimento. Novo
-link: `https://osmarjunior0710.github.io/DND-Conpanion-App/`.
+link: `https://osmarjunior0710.github.io/Project0710/` (repositório
+renomeado de `DND-Conpanion-App` pra `Project0710` em 2026-09 — ver
+"Repositório renomeado" logo abaixo).
 
 **Contexto:** o time do Netlify ficou sem crédito operacional
 ("operational credits"), o que pausou os deploys de produção — os
@@ -279,10 +281,10 @@ conversa direto do navegador, sem precisar de função de servidor), o
 GitHub Pages cobre o caso de uso sem depender de crédito pago.
 
 **O que mudou tecnicamente:**
-- `vite.config.ts`: `base: '/DND-Conpanion-App/'` (o GitHub Pages serve
+- `vite.config.ts`: `base: '/Project0710/'` (o GitHub Pages serve
   o site dentro de um subcaminho com o nome do repositório, diferente
   do Netlify que serve na raiz).
-- `src/main.tsx`: `BrowserRouter` ganhou `basename="/DND-Conpanion-App"`
+- `src/main.tsx`: `BrowserRouter` ganhou `basename="/Project0710"`
   pra as rotas do React Router baterem com esse subcaminho.
 - `public/404.html` + trecho em `index.html`: truque padrão
   "spa-github-pages" (rafgraph) pra recarregar uma rota tipo
@@ -298,6 +300,22 @@ repo é público, então não trava nada agora.
 
 **Data/origem:** 2026-08, mesmo dia da entrega acima — Osmar pediu a
 migração depois de descobrir a pausa de créditos do Netlify.
+
+## Repositório renomeado de DND-Conpanion-App pra Project0710 (2026-09)
+
+O Osmar renomeou o repositório no GitHub. Como o GitHub Pages serve o
+site num subcaminho com o nome do repositório (ver decisão acima),
+renomear o repo muda o link público e exige atualizar o subcaminho
+hardcoded em 3 lugares: `vite.config.ts` (`base`), `src/main.tsx`
+(`BrowserRouter basename`), `public/404.html` (`basePath` do truque de
+SPA). Os 3 já foram atualizados pra `/Project0710/`. Novo link:
+`https://osmarjunior0710.github.io/Project0710/`.
+
+**Se o repositório for renomeado de novo no futuro:** procurar por
+esses 3 lugares (mais qualquer entrada da família `DECISOES-*.md` que
+cite o nome antigo do repo, como a decisão acima) — não existe mais
+nenhum outro lugar no código com o nome hardcoded (confirmado por
+busca no repositório inteiro nesta entrega).
 
 ## Passada de legibilidade — fontes maiores e cinzas mais escuros
 
