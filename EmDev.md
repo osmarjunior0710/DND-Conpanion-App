@@ -51,9 +51,23 @@ sempre que possível — ver 6.1):
     "Herança Dracônica: Cobre"/"Azul" e "Ataque de Sopro (Tipo de dano:
     Elétrico)" resolvidos corretamente pra 2 cores diferentes. `npx tsc
     -b`, `npm test -- --run` (164 testes) e `npm run build` passando.
-- [ ] **3. Golias** — mesma natureza `identidade_permanente`,
-      reaproveitando o padrão do Draconato (Ancestralidade Gigante, 5
-      opções com usos = Bônus de Proficiência).
+- [x] **3. Golias** — mesma natureza `identidade_permanente`,
+      reaproveitando o padrão do Draconato (Ancestralidade Gigante, 6
+      opções — Gelo/Fogo/Pedra/Nuvem/Colina/Tempestade, usos = Bônus de
+      Proficiência). Diferença do Draconato: aqui o próprio traço já
+      lista as 6 opções por completo (não distribuídas em traços
+      separados), então criei a flag `usaDescricaoEfeitoDaSubescolha`
+      (vs. `usaTipoDanoDaSubescolha` do Draconato) e centralizei a
+      resolução num helper único `core/especieSubescolha.ts`
+      (`descricaoTracoResolvida`, com teste) reaproveitado pelo wizard
+      e pela Ficha — texto original do traço nunca alterado, só
+      complementado com "— Benefício escolhido: X".
+  - Testado com Playwright: Golias aparece na lista, e a Ficha mostra
+    corretamente "Ancestralidade Gigante — Queimadura de Fogo (Gigante
+    de Fogo)" e "Salto da Nuvem (Gigante das Nuvens)" em 2 personagens
+    diferentes, com o texto completo do benefício escolhido anexado ao
+    fim do card. `npx tsc -b`, `npm test -- --run` (168 testes) e
+    `npm run build` passando.
 - [ ] **4. Elfo** — piloto da natureza `linhagem_com_progressao_magica`:
       Linhagem Élfica (3 opções), magia de círculo superior automática
       nos níveis 3 e 5 — precisa "conversar" com o motor de level-up.

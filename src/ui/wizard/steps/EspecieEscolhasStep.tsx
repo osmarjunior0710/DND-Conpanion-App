@@ -4,6 +4,7 @@ import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { proficienciasJaConcedidas } from '../../../core/proficienciasOrigem';
 import { valorFinalAtributo } from '../../../core/personagem';
 import { atributosOrdem, type Atributo } from '../../../data/wizardFixtures';
+import { descricaoTracoResolvida } from '../../../core/especieSubescolha';
 import InfoChip from '../../components/InfoChip';
 import TelaEscolherTalento from '../../ficha/levelup/TelaEscolherTalento';
 import type { StepProps } from './StepProps';
@@ -79,13 +80,9 @@ export default function EspecieEscolhasStep({ selection, update }: StepProps) {
 
       <div className="section-title">Traços da espécie</div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-        {especie.traços.map((t) => {
-          const tipoDano = t.usaTipoDanoDaSubescolha
-            ? especie.opcoesSubescolha?.find((o) => o.nome === selection.subescolhaEspecieEscolhida)?.tipoDano
-            : null;
-          const descricao = tipoDano ? `${t.descricao} (Tipo de dano: ${tipoDano})` : t.descricao;
-          return <InfoChip key={t.nome} nome={t.nome} descricao={descricao} />;
-        })}
+        {especie.traços.map((t) => (
+          <InfoChip key={t.nome} nome={t.nome} descricao={descricaoTracoResolvida(t, especie, selection)} />
+        ))}
       </div>
 
       {temTraco('habil') && (

@@ -11,6 +11,7 @@ import type { WizardSelection } from '../../../core/personagem';
 import { invocacoesMisticas } from '../../../data/rulesets/dnd2024/invocacoesMisticas';
 import { invocacaoTemPlaceholder } from '../../../core/invocacoesMisticas';
 import { talentoTemPlaceholder } from '../../../core/classificarTalento';
+import { descricaoTracoResolvida } from '../../../core/especieSubescolha';
 
 interface PerfilTabProps {
   selecao: WizardSelection;
@@ -152,14 +153,11 @@ export default function PerfilTab({
             t.id === 'versatil' && selecao.talentoEspecieEscolhido
               ? talentos.find((tt) => tt.id === selecao.talentoEspecieEscolhido)
               : null;
-          const tipoDano = t.usaTipoDanoDaSubescolha
-            ? especie.opcoesSubescolha?.find((o) => o.nome === selecao.subescolhaEspecieEscolhida)?.tipoDano
-            : null;
           return (
             <div key={t.nome} className="opt-card" style={{ cursor: 'default' }}>
               <div className="opt-card-name">{t.nome}</div>
               <div className="opt-card-desc">
-                {t.descricao}
+                {descricaoTracoResolvida(t, especie, selecao)}
                 {t.id === 'habil' && selecao.periciaEspecieEscolhida && (
                   <> — escolhida: <strong>{selecao.periciaEspecieEscolhida}</strong></>
                 )}
@@ -167,12 +165,6 @@ export default function PerfilTab({
                   <>
                     {' '}
                     — escolhido: <strong>{talentoVersatil.nome}</strong>. {talentoVersatil.beneficios}
-                  </>
-                )}
-                {tipoDano && (
-                  <>
-                    {' '}
-                    (Tipo de dano: <strong>{tipoDano}</strong>)
                   </>
                 )}
               </div>

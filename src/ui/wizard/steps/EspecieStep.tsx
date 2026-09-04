@@ -24,7 +24,7 @@ export default function EspecieStep({ selection, update }: StepProps) {
         </div>
       ))}
       <div className="label" style={{ marginTop: 6 }}>
-        5 espécies ficam "(em breve)" — têm uma sub-escolha (linhagem, herança) que ainda não tem
+        4 espécies ficam "(em breve)" — têm uma sub-escolha (linhagem, herança) que ainda não tem
         tela própria. Ver <code>PENDENCIAS.md</code>.
       </div>
     </>

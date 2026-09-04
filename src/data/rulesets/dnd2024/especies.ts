@@ -46,6 +46,13 @@ export interface TracoEspecie {
    * leitura a partir de `Especie.opcoesSubescolha`, nunca duplicado
    * como valor fixo aqui. */
   usaTipoDanoDaSubescolha?: boolean;
+  /** Traço cujo texto já lista TODAS as opções de sub-escolha (ex.:
+   * Ancestralidade Gigante do Golias, que descreve as 6 ancestralidades
+   * dentro do próprio traço) — a UI mostra, junto do texto original
+   * (nunca alterado), qual `descricaoEfeito` de `Especie.opcoesSubescolha`
+   * foi escolhida. Diferente de `usaTipoDanoDaSubescolha` (efeito
+   * distribuído em outros traços, ex. Draconato). */
+  usaDescricaoEfeitoDaSubescolha?: boolean;
 }
 
 export type NaturezaSubescolha =
@@ -264,12 +271,20 @@ export const especies: Especie[] = [
     introducao: "Os golias, que se destacam pela altura, são descendentes distantes de gigantes. Cada um deles possui as bênçãos dos antigos gigantes, manifestadas em diversos dons sobrenaturais, como o crescimento rápido e a habilidade de alcançar temporariamente a estatura de seus parentes gigantes. Os golias possuem características físicas que refletem a aparência de gigantes em suas linhagens familiares. Alguns têm o aspecto de gigantes da pedra, enquanto outros se assemelham a gigantes do fogo. Apesar de suas origens, os golias traçaram seu próprio caminho no multiverso, livres dos conflitos internos que devastaram os gigantes por séculos, e almejam alcançar alturas superiores às de seus ancestrais.",
     introducaoCurta: "Os golias, que se destacam pela altura, são descendentes distantes de gigantes. Cada um deles possui as bênçãos dos antigos gigantes, manifestadas em diversos dons sobrenaturais, como o crescimento rápido e a habilidade de alcançar temporariamente a estatura de seus parentes gigantes.",
     traços: [
-      { nome: "Ancestralidade Gigante", descricao: "Você é descendente de Gigantes. Escolha um dos seguintes benefícios — um benefício sobrenatural de sua ancestralidade; você pode usar o benefício escolhido um número de vezes igual ao seu Bônus de Proficiência, e você restaura todos os usos gastos quando completa um Descanso Longo: Arrepio do Gelo (Gigante do Gelo). Ao atingir um alvo com uma jogada de ataque e causar dano a ele, você também pode infligir 1d6 pontos de dano Gélido a esse alvo e reduzir o Deslocamento dele em 3 metros até o início do seu próximo turno. Queimadura de Fogo (Gigante de Fogo). Ao atingir um alvo com uma jogada de ataque e causar dano a ele, você também pode causar 1d10 pontos de dano Ígneo a esse alvo. Resistência da Pedra (Gigante da Pedra). Ao sofrer dano, pode executar uma Reação para jogar 1d12. Adicione seu modificador de Constituição ao número obtido e reduza o dano desse total. Salto da Nuvem (Gigante das Nuvens). Como uma Ação Bônus, você se teleporta magicamente até 9 metros para um espaço desocupado à sua vista. Tombo da Colina (Gigante da Colina). Ao atingir uma criatura Grande ou menor com uma jogada de ataque e causar dano a ela, você pode impor a esse alvo a condição Caído. Trovão da Tempestade (Gigante da Tempestade). Ao sofrer dano de uma criatura a até 18 metros de você, você pode executar uma Reação para causar 1d8 pontos de dano Trovejante a essa criatura." },
+      { nome: "Ancestralidade Gigante", descricao: "Você é descendente de Gigantes. Escolha um dos seguintes benefícios — um benefício sobrenatural de sua ancestralidade; você pode usar o benefício escolhido um número de vezes igual ao seu Bônus de Proficiência, e você restaura todos os usos gastos quando completa um Descanso Longo: Arrepio do Gelo (Gigante do Gelo). Ao atingir um alvo com uma jogada de ataque e causar dano a ele, você também pode infligir 1d6 pontos de dano Gélido a esse alvo e reduzir o Deslocamento dele em 3 metros até o início do seu próximo turno. Queimadura de Fogo (Gigante de Fogo). Ao atingir um alvo com uma jogada de ataque e causar dano a ele, você também pode causar 1d10 pontos de dano Ígneo a esse alvo. Resistência da Pedra (Gigante da Pedra). Ao sofrer dano, pode executar uma Reação para jogar 1d12. Adicione seu modificador de Constituição ao número obtido e reduza o dano desse total. Salto da Nuvem (Gigante das Nuvens). Como uma Ação Bônus, você se teleporta magicamente até 9 metros para um espaço desocupado à sua vista. Tombo da Colina (Gigante da Colina). Ao atingir uma criatura Grande ou menor com uma jogada de ataque e causar dano a ela, você pode impor a esse alvo a condição Caído. Trovão da Tempestade (Gigante da Tempestade). Ao sofrer dano de uma criatura a até 18 metros de você, você pode executar uma Reação para causar 1d8 pontos de dano Trovejante a essa criatura.", usaDescricaoEfeitoDaSubescolha: true },
       { nome: "Forma Grande", descricao: "A partir do nível 5 de personagem, você pode alterar seu tamanho para Grande como uma Ação Bônus se estiver em um espaço grande o suficiente. Essa transformação se mantém por 10 minutos ou até que você a encerrar (nenhuma ação é necessária). Pela duração, você tem Vantagem em testes de Força, e seu Deslocamento aumenta em 3 metros. Após usar este traço, você não pode utilizá-lo novamente até completar um Descanso Longo." },
       { nome: "Porte Poderoso", descricao: "Você tem Vantagem em qualquer teste de atributo que realizar para encerrar a condição Imobilizado. Você também conta como um tamanho maior ao determinar sua capacidade de carga." },
     ],
     subescolha: { nome: "Ancestralidade Gigante", natureza: "identidade_permanente" },
-    disponivel: false,
+    opcoesSubescolha: [
+      { nome: "Arrepio do Gelo (Gigante do Gelo)", descricaoEfeito: "Ao atingir um alvo com uma jogada de ataque e causar dano a ele, você também pode infligir 1d6 pontos de dano Gélido a esse alvo e reduzir o Deslocamento dele em 3 metros até o início do seu próximo turno." },
+      { nome: "Queimadura de Fogo (Gigante de Fogo)", descricaoEfeito: "Ao atingir um alvo com uma jogada de ataque e causar dano a ele, você também pode causar 1d10 pontos de dano Ígneo a esse alvo." },
+      { nome: "Resistência da Pedra (Gigante da Pedra)", descricaoEfeito: "Ao sofrer dano, pode executar uma Reação para jogar 1d12. Adicione seu modificador de Constituição ao número obtido e reduza o dano desse total." },
+      { nome: "Salto da Nuvem (Gigante das Nuvens)", descricaoEfeito: "Como uma Ação Bônus, você se teleporta magicamente até 9 metros para um espaço desocupado à sua vista." },
+      { nome: "Tombo da Colina (Gigante da Colina)", descricaoEfeito: "Ao atingir uma criatura Grande ou menor com uma jogada de ataque e causar dano a ela, você pode impor a esse alvo a condição Caído." },
+      { nome: "Trovão da Tempestade (Gigante da Tempestade)", descricaoEfeito: "Ao sofrer dano de uma criatura a até 18 metros de você, você pode executar uma Reação para causar 1d8 pontos de dano Trovejante a essa criatura." },
+    ],
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {
