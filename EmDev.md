@@ -177,7 +177,22 @@ listada no reporte, sem esperar aprovação prévia por item.
         **1 correção de dado real**: Anel de Queda Suave exige
         sintonização no livro, planilha tinha "não". `npm test` (164
         passando) e `npm run build` OK.
-  - [ ] **Lote 3 (itens 101-150)**
+  - [x] **Lote 3 (itens 101-150) — FEITA.** Sem divergência de
+        sintonização/raridade contra o livro desta vez (conferido com
+        atenção a concordância de gênero — "raro/rara" — que tinha
+        gerado falso-positivo na checagem anterior). 6 dos 9 itens de
+        "Estátua de Poderes Incríveis" caem neste lote (Bodes de
+        Marfim, Cachorro de Ônix, Coruja de Serpentina, Elefante de
+        Mármore, Grifo de Bronze, Leões Dourados) — todos
+        `ativo-com-carga` (1 uso, recarrega em dias fixos), exceto
+        Bodes de Marfim (3 sub-bodes com mecânicas diferentes cada,
+        ficou `tipoItem: null`). 2 itens novos ficaram `null` (Corda
+        de Estrangulamento — CA/PV próprios, mesmo padrão da Corda de
+        Escalada). Achado de padrão: vários Cajados/Bastões/Maças têm
+        `tipoItem` E `cargas` ao mesmo tempo quando fazem sentido
+        (arma com bônus fixo E habilidade de carga separada) —
+        registrado como padrão, não é mais "ou uma coisa ou outra".
+        `npm test` (164 passando) e `npm run build` OK.
   - [ ] **Lote 4 (itens 151-200)**
   - [ ] **Lote 5 (itens 201-250)**
   - [ ] **Lote 6 (itens 251-288)** — inclui as famílias compostas

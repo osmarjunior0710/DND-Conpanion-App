@@ -1401,8 +1401,13 @@ simples), **Cajado da Píton** e **Cajado da Víbora** (transformam em
 criatura controlada com bloco de estatística próprio — Manual dos
 Monstros). No Lote 2, mais um: **Robe dos Itens Úteis** (remendos
 consumíveis em quantidade variável — 2 de cada item fixo + 4d4
-aleatórios — não dá pra representar como `cargas.max` fixo). Ficaram
-com `tipoItem: null` em vez de forçar uma categoria errada.
+aleatórios — não dá pra representar como `cargas.max` fixo). No Lote
+3, mais dois: **Bodes de Marfim** (3 sub-bodes com mecânicas e
+recargas diferentes dentro do mesmo item — não dá pra resumir num só
+`cargas`) e **Corda de Estrangulamento** (mesmo caso da Corda de
+Escalada — tem CA/PV próprios, mais parecido com objeto rastreável
+que item ativo simples). Ficaram com `tipoItem: null` em vez de
+forçar uma categoria errada.
 
 **Por que importa:** se algum desses 5 vier a precisar de UI própria
 na Mochila/Combat (ex: o Osmar quiser equipar um deles em mesa), a
