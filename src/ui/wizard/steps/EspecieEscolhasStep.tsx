@@ -66,13 +66,13 @@ export default function EspecieEscolhasStep({ selection, update }: StepProps) {
             <div
               key={opcao.nome}
               className={`opt-card ${selection.subescolhaEspecieEscolhida === opcao.nome ? 'selected' : ''}`}
-              style={{ padding: '10px 12px' }}
               onClick={() => update({ subescolhaEspecieEscolhida: opcao.nome })}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className="opt-card-name">{opcao.nome}</span>
                 {opcao.tipoDano && <span className="label">Dano {opcao.tipoDano}</span>}
               </div>
+              {opcao.descricaoEfeito && <div className="opt-card-desc">{opcao.descricaoEfeito}</div>}
             </div>
           ))}
         </>
