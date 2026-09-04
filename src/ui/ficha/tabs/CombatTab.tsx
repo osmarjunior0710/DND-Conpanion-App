@@ -23,6 +23,10 @@ interface CombatTabProps {
    * dano antes do PV normal. 0 = nenhum, linha some. */
   pvTemporario: number;
   onAlterarPv: (delta: number) => void;
+  /** `true` só quando o personagem já tem Bênção do Tenebroso (Bruxo,
+   * Patrono Ínfero, nível 3+) — controla se o botão manual aparece. */
+  bencaoDoTenebrosoDisponivel: boolean;
+  onAplicarBencaoDoTenebroso: () => void;
   turnState: Record<RecursoTurno, EstadoRecurso>;
   onMarcarUsado: (categoria: RecursoTurno) => void;
   onFimDoTurno: () => void;
@@ -77,6 +81,8 @@ export default function CombatTab({
   pvMax,
   pvTemporario,
   onAlterarPv,
+  bencaoDoTenebrosoDisponivel,
+  onAplicarBencaoDoTenebroso,
   turnState,
   onMarcarUsado,
   onFimDoTurno,
@@ -352,6 +358,13 @@ export default function CombatTab({
           +5
         </div>
       </div>
+
+      {bencaoDoTenebrosoDisponivel && (
+        <div className="opt-card" style={{ marginBottom: 12, cursor: 'pointer' }} onClick={onAplicarBencaoDoTenebroso}>
+          <div className="opt-card-name">🩸 Bênção do Tenebroso</div>
+          <div className="opt-card-desc">toque quando reduzir um inimigo a 0 PV (ou aliado a 3m) — ganha PV Temporário</div>
+        </div>
+      )}
 
       {(estiloDeLuta || mestreTatico || ataquesEstudados || ajusteTatico) && (
         <>

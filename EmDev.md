@@ -252,9 +252,14 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
         "t em"→"tem", mesmo bug já documentado no CLAUDE.md seção 8).
         Confirmado via Playwright: as 5 aparecem certas na aba Perfil
         pra um Bruxo com Patrono Ínfero escolhido, sem contaminação.
-  - [ ] **B6.2 — Bênção do Tenebroso.** Reaproveita `ganharPvTemporario`
-        (motor já existe desde o Vigor Ínfero) — botão manual
-        "Aplicar" no Combat.
+  - [x] **B6.2 — Bênção do Tenebroso — FEITA.** Nova
+        `valorBencaoDoTenebroso(carMod, nivel)` em
+        `core/bencaoDoTenebroso.ts` (testada) — mín. 1 PV Temp.
+        Reaproveita `ganharPvTemporario` (motor do Vigor Ínfero) —
+        botão manual no Combat, sem teto de usos (dispara toda vez que
+        o jogador clicar, regra real não tem limite). Confirmado via
+        Playwright: Bruxo CAR 16 (+3) nível 5 → botão concede
+        exatamente +8 PV Temp.
   - [ ] **B6.3 — Magias de Pacto do Ínfero.** Lista fixa sempre
         preparada, cresce por nível (3/5/7/9) — usa
         `magiasFixasPorNivel` já importado no B6.1.

@@ -44,6 +44,7 @@ import { personagemConjura } from '../../core/conjuracao';
 import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../core/invocacoesMagiaGratis';
 import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
 import { calcularSentidos } from '../../core/sentidos';
+import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { espacosARecuperar } from '../../core/astuciaMagica';
 import {
   espacosDeMagiaAtivos,
@@ -271,6 +272,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const inspiracaoSuperiorDesbloqueada = classe ? caracteristicaDesbloqueada(classe, 'Inspiração Superior', personagem.nivel) !== null : false;
   const palavrasDeInterrupcaoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Palavras de Interrupção', personagem.nivel);
   const periciaInigualavelDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Perícia Inigualável', personagem.nivel);
+  const bencaoDoTenebrosoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Bênção do Tenebroso', personagem.nivel);
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const carMod = atributos.find((a) => a.atributo === 'CAR')?.mod ?? 0;
@@ -499,6 +501,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function usarContatarPatrono() {
     if (contatarPatronoGasto) return;
     setContatarPatronoGasto(true);
+  }
+
+  function aplicarBencaoDoTenebroso() {
+    const valor = valorBencaoDoTenebroso(carMod, personagem.nivel);
+    setPvTemporario((atual) => ganharPvTemporario(atual, valor));
   }
 
   function usarArcanaMistica(circulo: number) {
@@ -832,6 +839,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             pvAtual={pvAtual}
             pvMax={personagem.pvMax}
             pvTemporario={pvTemporario}
+            bencaoDoTenebrosoDisponivel={bencaoDoTenebrosoDisponivel}
+            onAplicarBencaoDoTenebroso={aplicarBencaoDoTenebroso}
             onAlterarPv={alterarPv}
             turnState={turnState}
             onMarcarUsado={marcarUsado}
