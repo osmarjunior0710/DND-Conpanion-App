@@ -18,10 +18,13 @@
 > Coisas adiadas de propósito (ainda não resolvidas) ficam em
 > `PENDENCIAS.md` — leia esse também, e **atualize-o** sempre que adiar
 > algo ou resolver algo que estava lá (ver seção 11).
-> O plano da entrega que está em andamento AGORA mesmo fica em
+> O plano do foco que está em andamento AGORA mesmo fica em
 > `EmDev.md` — leia esse antes de continuar um trabalho em progresso, e
-> **mantenha atualizado** enquanto trabalha (ver seção 14). Bug/melhoria
-> que o Osmar apontar e não for corrigido na hora fica em
+> **mantenha atualizado** enquanto trabalha (ver seção 6 e 14).
+> Observação pequena e recorrente de UI/UX/processo (ainda sem virar
+> regra permanente) fica em `LICOES-RAPIDAS.md` — na 3ª repetição,
+> vira decisão de verdade num `DECISOES-*.md` (ver seção 16). Bug/
+> melhoria que o Osmar apontar e não for corrigido na hora fica em
 > `Feedback.md` — leia esse antes de propor a próxima entrega, pode ter
 > algo relevante já anotado lá (ver seção 15).
 
@@ -133,10 +136,42 @@ Ao implementar qualquer componente/tela nova, siga sempre esta ordem:
 Isso é um processo padrão, não uma escolha caso a caso — vale pra toda
 tela nova daqui pra frente.
 
-## 6. Antes de escrever qualquer código
+## 6. Ciclo de um foco de trabalho — abrir, executar, fechar
 
-Proponha um plano de entregas pequenas e espere aprovação. Nunca comece a
-implementar sem esse plano ter sido confirmado.
+Todo trabalho roda em cima de um **foco** (uma classe, uma aba, um
+sistema) registrado no `EmDev.md`. Nunca comece a implementar sem um
+plano aprovado.
+
+**Abrindo um foco:** proponha a quebra em entregas pequenas, checando
+antes o que já existe no código pra reaproveitar (ver 6.1), o que a
+família `DECISOES-*.md` já decidiu sobre assunto parecido, e o que
+`PENDENCIAS.md` já tinha registrado sobre esse foco (não reabrir sem
+saber o que já tinha contexto). Pra qualquer característica nova com
+interação ativa em Combat/UI (não é só reaproveitar um padrão já
+validado), **pergunte ao Osmar onde ela fica e como o jogador ativa
+ANTES de codar** — não construa e ajuste depois. Só comece a escrever
+código depois de aprovado.
+
+**Durante o foco:** um achado que dá pra resolver dentro do MESMO foco,
+só não nessa entrega, vira **item novo dentro do próprio `EmDev.md`**
+(quebrando mais se for grande) — nunca vai direto pro `PENDENCIAS.md`
+enquanto o foco não fechar. Só vai direto pro `PENDENCIAS.md`, mesmo no
+meio do foco, o que **trava estruturalmente** — depende de algo que não
+existe fora desse foco (motor que falta, dado que a planilha não tem,
+decisão do Osmar ainda em aberto) — porque isso não é "termino depois
+dentro desse foco", é "não dá pra terminar sem outra coisa existir
+primeiro" (ver seção 11). Fricção pequena de UI/UX/processo que se
+repete vai pro `LICOES-RAPIDAS.md` (seção 16), não vira regra
+permanente na hora.
+
+**Fechando um foco** (todos os passos relevantes do `EmDev.md` viraram
+`[x]`, ou o Osmar decide encerrar por outro motivo): (1) aprendizado
+generalizável vira entrada no `DECISOES-*.md` certo (seção 7); (2) o
+que ficou de propósito sem fazer vai pro `PENDENCIAS.md`, agrupado sob
+o tópico do foco (seção 11); (3) aproveite esse momento pra também
+limpar do `PENDENCIAS.md` qualquer coisa — mesmo de outro foco — que
+foi resolvida no caminho; (4) esvazie o `EmDev.md`; (5) pergunte qual o
+próximo foco.
 
 ### 6.1 Reaproveite o padrão que já existe — não invente um novo
 
@@ -302,19 +337,26 @@ v{AAAA}{MM}_{HHmm}
 
 ## 11. Regra de atualização do PENDENCIAS.md
 
-Sempre que uma entrega adiar algo de propósito — um dado que a planilha
-não tem completo ainda, uma UI que precisa de mais desenho antes de
-implementar, uma exceção estrutural que apareceu mas não trava a entrega
-atual — registre em `PENDENCIAS.md` o que é, por que foi adiado, e o que
-falta pra resolver. Isso vale tanto pra dados (ex: uma origem/classe que
-precisa de uma seleção que ainda não tem tela) quanto pra decisões de
-arquitetura deixadas em aberto (ex: multiclasse). Quando algo da lista for
-resolvido, mova a entrada pro arquivo `DECISOES-*.md` correspondente ao
-assunto (como decisão tomada — ver índice no topo de `DECISOES-DESIGN.md`)
-e remova de `PENDENCIAS.md` — não deixe as duas listas com a mesma coisa.
-Antes de propor uma entrega nova que toque em dado de regra (origens,
-classes, espécies, talentos, magias), **consulte esse arquivo primeiro**
-pra não reabrir uma pendência que já tinha contexto registrado.
+`PENDENCIAS.md` recebe só 2 tipos de entrada (ver ciclo de foco, seção
+6) — **nunca** joga aqui um "ainda não fiz" que dá pra terminar dentro
+do mesmo foco (isso fica no `EmDev.md`):
+1. **No fechamento de um foco** — o que ficou de propósito sem fazer.
+2. **A qualquer momento** — algo que trava estruturalmente: depende de
+   algo que não existe fora desse foco (motor que falta, dado que a
+   planilha não tem, decisão do Osmar ainda em aberto). Não é "termino
+   depois dentro desse foco", é "não dá pra terminar sem outra coisa
+   existir primeiro".
+
+**Organize por tópico** (`## Nome do foco/assunto`), agrupando as
+entregas relacionadas sob o mesmo cabeçalho — facilita achar tudo que
+falta de um assunto de uma vez, em vez de espalhado. Quando algo da
+lista for resolvido, mova a entrada pro arquivo `DECISOES-*.md`
+correspondente ao assunto (como decisão tomada — ver índice no topo de
+`DECISOES-DESIGN.md`) e remova de `PENDENCIAS.md` — não deixe as duas
+listas com a mesma coisa. Antes de propor uma entrega nova que toque em
+dado de regra (origens, classes, espécies, talentos, magias),
+**consulte esse arquivo primeiro** pra não reabrir uma pendência que já
+tinha contexto registrado.
 
 ## 12. Marcação de conteúdo placeholder — prefixo `[PH]`
 
@@ -371,29 +413,34 @@ conforme o motor de cálculo cresce:
 
 ## 14. Regra de atualização do EmDev.md
 
-`EmDev.md` é o plano da entrega **em andamento agora** — diferente da
-família `DECISOES-*.md` (o que já foi decidido, permanente) e de
-`PENDENCIAS.md` (o que foi adiado de propósito), este é só o
-checklist de passos de UMA entrega sendo executada neste momento, pra
-não perder o fio se a conversa for interrompida/retomada depois.
+`EmDev.md` é o plano do foco **em andamento agora** (ver ciclo de foco,
+seção 6) — diferente da família `DECISOES-*.md` (o que já foi
+decidido, permanente) e de `PENDENCIAS.md` (adiado de propósito ou
+travado estruturalmente), este é só o checklist de passos sendo
+executados neste momento, pra não perder o fio se a conversa for
+interrompida/retomada depois.
 
-- **Ao propor um plano de entregas pequenas** (seção 6, antes de
-  escrever qualquer código) e o Osmar aprovar, escreva os passos em
-  `EmDev.md` como checklist (`- [ ]` / `- [x]`), não só na resposta do
-  chat.
+- **Ao abrir um foco** (seção 6, antes de escrever qualquer código) e
+  o Osmar aprovar o plano, escreva os passos em `EmDev.md` como
+  checklist (`- [ ]` / `- [x]`), não só na resposta do chat.
 - **Marque cada passo como `[x]` assim que ele for concluído** —
   durante o trabalho, não só no final.
-- **Quando TODOS os passos do plano viram `[x]`**, apague o conteúdo
-  de `EmDev.md` (deixa vazio/só o cabeçalho) — não acumula plano
-  antigo já entregue. Se alguma decisão durável surgiu no caminho, ela
-  já devia ter ido pro arquivo `DECISOES-*.md` certo antes de apagar
-  daqui (ver seção 7) — `EmDev.md` nunca é o lugar definitivo pra
-  nada, só o rascunho de trabalho.
+- **Achado no caminho que dá pra resolver dentro do MESMO foco vira
+  item novo aqui** (quebrando mais se for grande) — não vai direto pro
+  `PENDENCIAS.md` (ver seção 6/11).
+- **Ao fechar o foco** (todos os passos relevantes viraram `[x]`, ou o
+  Osmar decide encerrar): mova aprendizado durável pro `DECISOES-*.md`
+  certo (seção 7), mova o que sobrou de propósito pro `PENDENCIAS.md`
+  agrupado (seção 11), aproveite pra limpar do `PENDENCIAS.md` o que
+  foi resolvido no caminho (mesmo de outro foco), e só DEPOIS esvazie
+  este arquivo. `EmDev.md` nunca é o lugar definitivo pra nada, só o
+  rascunho de trabalho.
 - Se o Osmar pedir pra trocar de assunto no meio de um plano ainda não
-  concluído, deixe o conteúdo como está (não apague plano incompleto)
-  — ele continua ali pra retomar depois.
+  concluído (pausa temporária, não fechamento de foco), deixe o
+  conteúdo como está (não apague plano incompleto) — ele continua ali
+  pra retomar depois.
 - Um plano recém-aprovado **substitui** o conteúdo anterior se o
-  anterior já estava 100% `[x]` (aí já deveria ter sido apagado); não
+  anterior já estava 100% `[x]` (aí já deveria ter sido fechado); não
   deveria haver 2 planos diferentes simultâneos aqui — se acontecer,
   pergunte ao Osmar qual está valendo.
 
@@ -419,3 +466,21 @@ prioridade depois, junto com ele.
   propósito por decisão técnica, ex: dado que a planilha não tem
   ainda) — `Feedback.md` é a lista que **o Osmar** alimenta testando
   o app, não o Claude Code decidindo adiar algo sozinho.
+
+## 16. Regra de atualização do LICOES-RAPIDAS.md
+
+`LICOES-RAPIDAS.md` guarda observação pequena e recorrente de UI/UX/
+processo que ainda não vale virar regra permanente em `DECISOES-*.md`
+— evita lotar aquela família com barulho (seção 7.1) sem perder o
+padrão de vista.
+
+- Sempre que notar uma fricção pequena que se repete (ex: "esqueci a
+  pill de novo", "perguntar onde a UI fica antes de codar deu certo de
+  novo") — anote aqui, 1-2 frases, com a data.
+- **Na 3ª vez que a MESMA lição aparecer**, pare e pergunte ao Osmar
+  se ela vira regra permanente. Se sim, escreva a versão generalizada
+  no `DECISOES-*.md` certo (seguindo o teste da seção 7.1) e apague
+  daqui. Se não, risque/apague também — 2 ocorrências sem virar regra
+  não precisam ficar acumulando pra sempre.
+- Diferente de `PENDENCIAS.md` (trabalho ainda não feito) — isso aqui
+  é só observação de padrão de comportamento/processo, não uma tarefa.
