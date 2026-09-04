@@ -18,6 +18,14 @@ describe('truquesEspecie', () => {
   it('retorna [] sem espécie/sub-escolha compatível', () => {
     expect(truquesEspecie(criarSelecaoInicial())).toEqual([]);
   });
+
+  it('junta o truque fixo da espécie (Taumaturgia) com o da linhagem escolhida (Tiferino)', () => {
+    expect(truquesEspecie(selecao('Tiferino', 'Infernal'))).toEqual(['Taumaturgia', 'Raio de Fogo']);
+  });
+
+  it('truque fixo aparece mesmo sem sub-escolha escolhida ainda', () => {
+    expect(truquesEspecie(selecao('Tiferino', null))).toEqual(['Taumaturgia']);
+  });
 });
 
 describe('magiasEspecie', () => {

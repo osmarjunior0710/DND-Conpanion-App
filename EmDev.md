@@ -121,8 +121,19 @@ sempre que possível — ver 6.1):
     nível 1 já mostra Ilusão Menor + Falar com Animais (1º círculo).
     `npx tsc -b`, `npm test -- --run` (183 testes) e `npm run build`
     passando.
-- [ ] **6. Tiferino** — mesma natureza, reaproveitando o padrão de
-      Elfo/Gnomo (Legados Ínferos, 3 opções, progressão 3/5 como Elfo).
+- [x] **6. Tiferino** — mesma natureza, reaproveitando o padrão de
+      Elfo/Gnomo (Legados Ínferos: Abissal/Ctônico/Infernal, progressão
+      3/5 como Elfo). Único caso novo: "Presença Sobrenatural" concede
+      Taumaturgia pra QUALQUER Tiferino, independente do legado — novo
+      campo `Especie.truqueFixo` (junta com os truques da linhagem em
+      `truquesEspecie()`). Zero mudança nas telas (wizard/Perfil/
+      gerador de teste já eram 100% genéricos desde o Gnomo).
+  - Testado com Playwright: as 9 espécies não-Aasimar já disponíveis;
+    Tiferino Ctônico mostra Taumaturgia (fixo) + Toque Necrótico
+    (legado) + Vitalidade Vazia (nível 3) + Raio do Enfraquecimento
+    (nível 5) na aba Magias, e "Legado Ínfero: Ctônico" resolvido na
+    aba Perfil. `npx tsc -b`, `npm test -- --run` (185 testes) e
+    `npm run build` passando.
 - [ ] **7. Aasimar** — natureza `escolha_reutilizavel` (Revelação
       Celestial): não é escolha do wizard, é escolha repetida toda vez
       que a habilidade é usada em combate. **Perguntar ao Osmar onde

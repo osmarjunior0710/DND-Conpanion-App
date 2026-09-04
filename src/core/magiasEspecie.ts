@@ -12,21 +12,26 @@ function opcaoEscolhida(selection: WizardSelection) {
   return especie?.opcoesSubescolha?.find((o) => o.nome === selection.subescolhaEspecieEscolhida) ?? null;
 }
 
-/** Nomes dos truques concedidos de forma permanente pela linhagem/
- * legado escolhido — `[]` se a espécie não tiver essa sub-escolha, ou
- * se ainda não foi escolhida. Normalmente 1 truque, Gnomo das Rochas
- * concede 2. */
+/** Nomes dos truques concedidos de forma permanente — junta o
+ * `Especie.truqueFixo` (igual pra qualquer personagem da espécie, ex.:
+ * Taumaturgia do Tiferino) com os `truquesConhecidos` da linhagem/
+ * legado escolhido (variam por opção, ex.: Rajada de Veneno só pro
+ * Legado Abissal). `[]` se a espécie não conceder nenhum. */
 export function truquesEspecie(selection: WizardSelection): string[] {
-  return opcaoEscolhida(selection)?.truquesConhecidos ?? [];
+  const especie = especies.find((e) => e.nome === selection.especie);
+  return [...(especie?.truqueFixo ? [especie.truqueFixo] : []), ...(opcaoEscolhida(selection)?.truquesConhecidos ?? [])];
 }
 
-/** `true` quando a espécie concede alguma magia própria (truque ou
- * magia de nível 1/3/5) — usado por `core/conjuracao.ts` pra contar
- * como fonte de conjuração mesmo numa classe sem magia (ex.: Guerreiro
- * Elfo ainda conjura o truque da linhagem). */
+/** `true` quando a espécie concede alguma magia própria (truque fixo
+ * ou de linhagem, ou magia de nível 1/3/5) — usado por
+ * `core/conjuracao.ts` pra contar como fonte de conjuração mesmo numa
+ * classe sem magia (ex.: Guerreiro Elfo ainda conjura o truque da
+ * linhagem). */
 export function temMagiaDeEspecie(selection: WizardSelection): boolean {
   const opcao = opcaoEscolhida(selection);
-  return Boolean(opcao?.truquesConhecidos?.length || opcao?.magiaNivel1 || opcao?.magiaNivel3 || opcao?.magiaNivel5);
+  return Boolean(
+    truquesEspecie(selection).length || opcao?.magiaNivel1 || opcao?.magiaNivel3 || opcao?.magiaNivel5,
+  );
 }
 
 /** Nomes das magias sempre preparadas já desbloqueadas no nível de

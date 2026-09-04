@@ -24,8 +24,8 @@ export default function EspecieStep({ selection, update }: StepProps) {
         </div>
       ))}
       <div className="label" style={{ marginTop: 6 }}>
-        2 espécies ficam "(em breve)" — têm uma sub-escolha (linhagem, herança) que ainda não tem
-        tela própria. Ver <code>PENDENCIAS.md</code>.
+        1 espécie fica "(em breve)" — tem uma sub-escolha (Revelação Celestial) escolhida a cada
+        uso em combate, não na criação. Ver <code>PENDENCIAS.md</code>.
       </div>
     </>
   );

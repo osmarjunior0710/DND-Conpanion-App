@@ -3,11 +3,11 @@
 //
 // Schema de sub-escolha decidido em DECISOES-DESIGN.md ("Dados —
 // Espécies têm 3 naturezas diferentes de sub-escolha"). Das 6 espécies
-// com sub-escolha, Draconato/Golias/Elfo/Gnomo já têm as opções
-// estruturadas em `opcoesSubescolha` (ver `OpcaoSubescolha`); Aasimar
-// e Tiferino ainda têm o dado só como texto corrido dentro da
-// descrição do traço — extrair isso fica pra quando cada uma for
-// desbloqueada de verdade, ver `EmDev.md`/`PENDENCIAS.md`.
+// com sub-escolha, Draconato/Golias/Elfo/Gnomo/Tiferino já têm as
+// opções estruturadas em `opcoesSubescolha` (ver `OpcaoSubescolha`);
+// só Aasimar (natureza `escolha_reutilizavel` — escolhida a cada uso
+// em combate, não no wizard) ainda tem o dado só como texto corrido
+// dentro da descrição do traço, ver `EmDev.md`/`PENDENCIAS.md`.
 //
 // introducaoCurta vem da coluna "Descrição Curta (auto, revisar)" —
 // gerada automaticamente (corta na frase mais próxima de ~350
@@ -121,6 +121,12 @@ export interface Especie {
    * estruturadas (ver comentário no topo do arquivo) — `undefined`
    * pras que ainda têm o dado só como texto corrido no traço. */
   opcoesSubescolha?: OpcaoSubescolha[];
+  /** Truque concedido pra TODA a espécie, sem depender da sub-escolha
+   * (ex.: Presença Sobrenatural do Tiferino — Taumaturgia, igual pra
+   * qualquer Legado Ínfero escolhido). Diferente de
+   * `OpcaoSubescolha.truquesConhecidos`, que só o jogador que escolheu
+   * aquela opção específica recebe. */
+  truqueFixo?: string;
   disponivel: boolean;
   fonte: string;
 }
@@ -370,11 +376,35 @@ export const especies: Especie[] = [
     introducaoCurta: "Os tiferinos nascem nos Planos Inferiores ou têm ancestrais que se originaram lá. Estão ligados por sangue a um diabo, demônio ou outro Ínfero. Essa conexão representa o legado ínfero do tiferino, prometendo poder, mas não influi em sua perspectiva moral. Um tiferino decide aceitar ou lamentar seu legado ínfero.",
     traços: [
       { nome: "Visão no Escuro", descricao: "Você tem Visão no Escuro com um alcance de 18 metros.", sentidoConcedido: { tipo: 'visaoNoEscuro', alcanceMetros: 18 } },
-      { nome: "Legado Ínfero", descricao: "Você é o portador de um legado que lhe confere poderes sobrenaturais. Escolha um legado da tabela Legados Ínferos. Você adquire o benefício de nível 1 do legado escolhido. Ao atingir os níveis de personagem 3 e 5, você aprende magias de círculo superior, conforme indicado na tabela. Essas magias estão sempre preparadas e podem ser conjuradas uma vez sem usar um espaço de magia, sendo restauradas quando completa um Descanso Longo. Além disso, você pode conjurá-las utilizando qualquer espaço de magia que possua do círculo correspondente. Atributos como Inteligência, Sabedoria ou Carisma servem como seu atributo de conjuração para essas magias (escolha um atributo ao selecionar o legado). Tabela Legados Ínferos — Abissal: Nível 1: Resistência a dano Venenoso e o truque Rajada de Veneno; Nível 3: Raio Nauseante; Nível 5: Paralisar Pessoa. Ctônico: Nível 1: Resistência a dano Necrótico e o truque Toque Necrótico; Nível 3: Vitalidade Vazia; Nível 5: Raio do Enfraquecimento. Infernal: Nível 1: Resistência a dano Ígneo e o truque Raio de Fogo; Nível 3: Repreensão Diabólica; Nível 5: Escuridão." },
+      { nome: "Legado Ínfero", descricao: "Você é o portador de um legado que lhe confere poderes sobrenaturais. Escolha um legado da tabela Legados Ínferos. Você adquire o benefício de nível 1 do legado escolhido. Ao atingir os níveis de personagem 3 e 5, você aprende magias de círculo superior, conforme indicado na tabela. Essas magias estão sempre preparadas e podem ser conjuradas uma vez sem usar um espaço de magia, sendo restauradas quando completa um Descanso Longo. Além disso, você pode conjurá-las utilizando qualquer espaço de magia que possua do círculo correspondente. Atributos como Inteligência, Sabedoria ou Carisma servem como seu atributo de conjuração para essas magias (escolha um atributo ao selecionar o legado). Tabela Legados Ínferos — Abissal: Nível 1: Resistência a dano Venenoso e o truque Rajada de Veneno; Nível 3: Raio Nauseante; Nível 5: Paralisar Pessoa. Ctônico: Nível 1: Resistência a dano Necrótico e o truque Toque Necrótico; Nível 3: Vitalidade Vazia; Nível 5: Raio do Enfraquecimento. Infernal: Nível 1: Resistência a dano Ígneo e o truque Raio de Fogo; Nível 3: Repreensão Diabólica; Nível 5: Escuridão.", usaDescricaoEfeitoDaSubescolha: true },
       { nome: "Presença Sobrenatural", descricao: "Você conhece o truque Taumaturgia. Ao conjurar com este traço, a magia usa o mesmo atributo de conjuração que você usa para sua Característica Legado Ínfero." },
     ],
     subescolha: { nome: "Legado Ínfero", natureza: "linhagem_com_progressao_magica" },
-    disponivel: false,
+    opcoesSubescolha: [
+      {
+        nome: "Abissal",
+        descricaoEfeito: "Resistência a dano Venenoso e o truque Rajada de Veneno.",
+        truquesConhecidos: ["Rajada de Veneno"],
+        magiaNivel3: "Raio Nauseante",
+        magiaNivel5: "Paralisar Pessoa",
+      },
+      {
+        nome: "Ctônico",
+        descricaoEfeito: "Resistência a dano Necrótico e o truque Toque Necrótico.",
+        truquesConhecidos: ["Toque Necrótico"],
+        magiaNivel3: "Vitalidade Vazia",
+        magiaNivel5: "Raio do Enfraquecimento",
+      },
+      {
+        nome: "Infernal",
+        descricaoEfeito: "Resistência a dano Ígneo e o truque Raio de Fogo.",
+        truquesConhecidos: ["Raio de Fogo"],
+        magiaNivel3: "Repreensão Diabólica",
+        magiaNivel5: "Escuridão",
+      },
+    ],
+    truqueFixo: "Taumaturgia",
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
 ];
