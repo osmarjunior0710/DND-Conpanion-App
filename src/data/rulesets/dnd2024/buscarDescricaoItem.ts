@@ -17,7 +17,8 @@ for (const it of montariasVeiculos) {
   if (it.descricao) indiceDescricao.set(it.nome.toLowerCase(), it.descricao);
 }
 for (const it of armas) {
-  if (it.descricao) indiceDescricao.set(it.nome.toLowerCase(), it.descricao);
+  indiceDescricao.set(it.nome.toLowerCase(), it.descricaoCurta);
+  indiceDescricaoCompleta.set(it.nome.toLowerCase(), it.descricaoCompleta);
   if (it.peso) indicePeso.set(it.nome.toLowerCase(), it.peso);
 }
 for (const it of armaduras) {

@@ -355,9 +355,16 @@ listada no reporte, sem esperar aprovação prévia por item.
       antes só usado por Magias); `MochilaTab.tsx` já passa a completa
       pro popup de Armadura. `npm test` (160 passando) e `npm run
       build` OK.
-- [ ] **Armas (38 itens)** — mesmo processo (Cap.6 do Livro do
-      Jogador). Provavelmente mesmo achado de Armaduras (sem parágrafo
-      individual, só tabela + propriedades de Maestria) — confirmar.
+- [x] **Armas (38 itens) — FEITA.** Confirmado: mesmo achado de
+      Armaduras — livro só tem tabela + seções "Propriedades"/
+      "Propriedades de Maestria" (sem parágrafo por arma). Todos os 38
+      valores de tabela batiam com o livro, exceto 2 vírgulas sobrando
+      de extração (Espada Curta "Dano", Dardo "Propriedades") —
+      corrigidas na planilha e no `.ts`. `descricaoCompleta` gerada por
+      script (não digitada arma por arma) juntando categoria + dano +
+      explicação de cada propriedade/maestria específica. Mesmo padrão
+      de `armaduras.ts` (completa/curta + coluna nova na planilha).
+      `npm test` (160 passando) e `npm run build` OK.
 - [ ] **Equipamento de Aventura (98 itens)** — mesmo capítulo, mas
       aqui o livro TEM descrição própria por item em ordem alfabética
       (confirmado, diferente de Armas/Armaduras) — extrair texto
