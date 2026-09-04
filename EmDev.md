@@ -319,3 +319,53 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
 mecânica (Astúcia Mágica, Contatar Patrono, Arcana Mística, Dádiva
 Épica, Mestre Místico) e as outras 3 subclasses (Arquifada, Celestial,
 Grande Antigo).
+
+---
+
+## Auditoria de Conteúdo — Descrição Completa × Curta (Armas, Armaduras, Equipamento de Aventura, Itens Mágicos)
+
+> Plano do Bruxo acima continua pausado (Osmar trocou de assunto) — não
+> apagar, retomar depois. Ver `AUDITORIA-CONTEUDO.md` pro plano de fundo
+> completo desta frente.
+
+Fonte dos livros: Google Drive (autorizado pelo Osmar nesta entrega,
+exceção à regra normal de "só a planilha" — Cap.6 Equipamento do Livro
+do Jogador cobre Armas/Armaduras/Equipamento de Aventura; Cap.7 Tesouro
+Parte 2 do Livro do Mestre cobre Itens Mágicos). Decisões tomadas com o
+Osmar: `descricaoCompleta` entra tanto na planilha (`dnd-master-referencia.xlsx`,
+coluna nova por aba) quanto direto em `src/data/`; toda correção de
+dado achada contra o livro é aplicada nos dois lugares (xlsx + `.ts`) e
+listada no reporte, sem esperar aprovação prévia por item.
+
+- [x] **Armaduras (13 itens) — piloto, FEITA.** Conferido: todos os
+      valores de tabela (CA/Força mínima/Furtividade/Peso/Custo) batem
+      100% com o Cap.6 do Livro do Jogador — zero correção necessária.
+      Achado importante: o livro **não tem parágrafo de descrição por
+      armadura** (só a tabela + regras gerais de Categoria/Treinamento/
+      Furtividade/Força) — diferente de Magias. Decisão do Osmar:
+      `descricaoCompleta` de Armas/Armaduras é texto PRÓPRIO (não
+      literal) juntando a linha da tabela com a consequência mecânica
+      de cada regra (ex: Força mínima não atingida reduz deslocamento
+      em 3m — texto que não existia antes em lugar nenhum do app).
+      `armaduras.ts` ganhou `descricaoCompleta`/`descricaoCurta`
+      (renomeado de `descricao`); planilha ganhou coluna "Descrição
+      Completa" na aba Armaduras. `buscarDescricaoItem.ts` ganhou
+      `buscarDescricaoCompletaItem`; `ItemComDescricao.tsx` ganhou
+      toggle Desc. curta/longa (mesmo padrão do `MagiaComDescricao`,
+      antes só usado por Magias); `MochilaTab.tsx` já passa a completa
+      pro popup de Armadura. `npm test` (160 passando) e `npm run
+      build` OK.
+- [ ] **Armas (38 itens)** — mesmo processo (Cap.6 do Livro do
+      Jogador). Provavelmente mesmo achado de Armaduras (sem parágrafo
+      individual, só tabela + propriedades de Maestria) — confirmar.
+- [ ] **Equipamento de Aventura (98 itens)** — mesmo capítulo, mas
+      aqui o livro TEM descrição própria por item em ordem alfabética
+      (confirmado, diferente de Armas/Armaduras) — extrair texto
+      literal de verdade, seguindo o padrão de Magias.
+- [ ] **Itens Mágicos (288 itens)** — Livro do Mestre, Cap.7 Tesouro
+      Parte 2. Maior volume, fazer por último.
+- [ ] Depois das 4 categorias, avaliar se cabe uma entrada nova em
+      `DECISOES-DADOS.md` sobre o padrão "Completa nem sempre é texto
+      literal — depende se o livro tem prosa individual pro tipo de
+      conteúdo" (achado que muda como auditar qualquer catálogo novo
+      no futuro).
