@@ -1076,3 +1076,30 @@ sentido especial não vê seção nenhuma).
 
 **Data/origem:** 2026-09, pedido do Osmar depois de revisar a cadeia
 de pré-requisito das Invocações Místicas.
+
+## Ferramenta de teste "sorteia e aplica direto" — não reabre o fluxo real, gera o resultado final e chama o mesmo aplicador (2026-09)
+
+Padrão usado 2x agora (Personagem de Teste, Level Up Rápido) — vale
+pra qualquer botão de teste futuro que precise "pular" um fluxo de
+várias telas: em vez de rodar a UI de verdade em modo automático
+(clicando "Avançar" sozinho), uma função pura em `core/` recebe os
+mesmos parâmetros que a tela real receberia e devolve **o objeto de
+resultado final**, no formato exato que o `onConfirmar`/aplicador real
+espera — daí quem chama usa o mesmo aplicador de sempre (`FichaShell.
+confirmarLevelUp`, por ex.), sem duplicar a lógica de "o que fazer com
+o resultado". Zero tela aparece — clicou, já aplicou.
+
+A função de sorteio replica as MESMAS condições que decidem se cada
+passo se aplica (ex: `luSteps` do `LevelUpShell` — subclasse só no
+nível certo e se ainda não tinha, Especialista só nos níveis que
+concedem, etc.) — nunca reimplementa a regra do zero, só troca "tela
+com clique" por "sorteio". Sorteio em si (embaralhar/escolher 1)
+mora em `core/sorteio.ts`, compartilhado por qualquer ferramenta desse
+tipo — não duplicar `embaralhar`/`sorteiaUm` de novo num terceiro
+arquivo.
+
+**Level Up Rápido especificamente:** botão "⚡" ao lado do "⬆ Level
+Up" normal (aba Atributos), cor diferente (`var(--warn)`) só pra não
+confundir os dois. Sobe exatamente 1 nível por clique (pra subir mais,
+clica de novo) — PV sempre pela média (nunca rola dado, é pra ser
+instantâneo). `core/levelUpAleatorio.ts` (testado).

@@ -28,6 +28,10 @@ interface AtributosTabProps {
   onDescansoCurto: () => void;
   restStatus: string | null;
   onAbrirLevelUp: () => void;
+  /** "⚡ Level Up Rápido" — ferramenta de teste, sobe 1 nível sorteando
+   * tudo (mesmo espírito do "🎲 Personagem de Teste"), sem passar por
+   * nenhuma tela. `undefined` quando não tem classe (nada pra subir). */
+  onLevelUpRapido?: () => void;
   maestriaArma: string[];
   armasParaMaestria: Arma[];
   onTrocarArmaMaestria: (armaAntiga: string, armaNova: string) => void;
@@ -57,6 +61,7 @@ export default function AtributosTab({
   onDescansoCurto,
   restStatus,
   onAbrirLevelUp,
+  onLevelUpRapido,
   maestriaArma,
   armasParaMaestria,
   onTrocarArmaMaestria,
@@ -73,8 +78,19 @@ export default function AtributosTab({
           <div className="label">nível atual</div>
           <div style={{ fontSize: 17 }}>{nivel}</div>
         </div>
-        <div className="btn btn-primary" style={{ padding: '8px 16px' }} onClick={onAbrirLevelUp}>
-          ⬆ Level Up
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div className="btn btn-primary" style={{ padding: '8px 16px' }} onClick={onAbrirLevelUp}>
+            ⬆ Level Up
+          </div>
+          {onLevelUpRapido && (
+            <div
+              className="btn"
+              style={{ padding: '8px 16px', background: 'var(--warn)', borderColor: 'var(--warn)', color: '#fff', fontWeight: 'bold' }}
+              onClick={onLevelUpRapido}
+            >
+              ⚡ Rápido
+            </div>
+          )}
         </div>
       </div>
 

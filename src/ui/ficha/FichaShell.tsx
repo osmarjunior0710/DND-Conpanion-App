@@ -46,6 +46,7 @@ import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario'
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
+import { sortearLevelUpRapido } from '../../core/levelUpAleatorio';
 import { espacosARecuperar } from '../../core/astuciaMagica';
 import {
   espacosDeMagiaAtivos,
@@ -642,6 +643,25 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setLevelUpAberto(false);
   }
 
+  function levelUpRapido() {
+    if (!classe) return;
+    const resultado = sortearLevelUpRapido({
+      classe,
+      personagem,
+      truquesAtuais,
+      magiasPreparadasAtuais,
+      invocacoesMisticasAtuais,
+      arcanaMisticaAtuais,
+      periciasEspecialistaAtuais,
+      periciasProficientesDoPersonagem: [...periciasProficientes(selecao), ...periciasSubclasseBonusAtuais],
+      periciasSubclasseBonusAtuais,
+      magiasDescobertasMagicasAtuais,
+      atributosFinaisAtuais,
+      talentosGeraisAtuais,
+    });
+    confirmarLevelUp(resultado);
+  }
+
   if (levelUpAberto && classe) {
     return (
       <LevelUpShell
@@ -766,6 +786,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onDescansoCurto={descansoCurto}
             restStatus={restStatus}
             onAbrirLevelUp={() => setLevelUpAberto(true)}
+            onLevelUpRapido={classe ? levelUpRapido : undefined}
             maestriaArma={maestriaArma}
             armasParaMaestria={classe ? listarArmasParaMaestria(classe) : []}
             onTrocarArmaMaestria={trocarArmaMaestria}

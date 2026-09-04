@@ -34,6 +34,7 @@ import { valorRecursoClasse } from './recursosClasse';
 import { espacosDeMagiaAtivos } from './magiasPersonagem';
 import { niveisComASI, niveisComEspecialista, temEstiloDeLutaTrocavel, subclasseImplementada } from './levelUp';
 import { gerarIdPersonagem, type PersonagemSalvo } from './armazenamentoPersonagens';
+import { embaralhar, sorteiaUm } from './sorteio';
 
 const nomesAleatorios = [
   'Aria Ventos-Negros',
@@ -43,20 +44,6 @@ const nomesAleatorios = [
   'Sira Nuvem-de-Fogo',
   'Bram Duasluas',
 ];
-
-function embaralhar<T>(lista: T[]): T[] {
-  const copia = [...lista];
-  for (let i = copia.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copia[i], copia[j]] = [copia[j], copia[i]];
-  }
-  return copia;
-}
-
-function sorteiaUm<T>(lista: T[]): T | null {
-  if (lista.length === 0) return null;
-  return lista[Math.floor(Math.random() * lista.length)];
-}
 
 /** Monta uma `WizardSelection` completa e válida pra Classe/Origem/
  * Espécie escolhidas — mesma lógica dos `randomizarX` de
@@ -145,7 +132,10 @@ function gerarSelecaoNivel1(classe: Classe, origemNome: string, especieNome: str
   return selection;
 }
 
-function talentoDisponivel(t: Talento, nivel: number, atributosFinais: Record<Atributo, number>): boolean {
+/** Reaproveitada por `levelUpAleatorio.ts` (Level Up Rápido) — mesmo
+ * critério de disponibilidade de `TelaEscolherTalento.motivoIndisponivel`,
+ * só que como booleano (pra sortear em vez de exibir motivo). */
+export function talentoDisponivel(t: Talento, nivel: number, atributosFinais: Record<Atributo, number>): boolean {
   if (t.prerequisitos.nivelMinimo !== null && nivel < t.prerequisitos.nivelMinimo) return false;
   return t.prerequisitos.atributosMinimos.every((a) => (atributosFinais[a] ?? 10) >= 13);
 }
@@ -154,7 +144,7 @@ function talentoDisponivel(t: Talento, nivel: number, atributosFinais: Record<At
  * `LevelUpShell.aplicarAsiDoTalento`, sorteada em vez de escolhida) —
  * devolve os códigos de atributo pra `aumentarAtributos` (0, 1 ou 2
  * entradas). */
-function sortearAsiDoTalento(t: Talento): Atributo[] {
+export function sortearAsiDoTalento(t: Talento): Atributo[] {
   if (t.concedeAsi.tipo === 'nenhum') return [];
   if (t.concedeAsi.tipo === 'distribuir-dois') {
     const emUmSo = Math.random() < 0.5;
