@@ -67,5 +67,55 @@ sempre que possível — ver 6.1):
       fica e como o jogador ativa antes de codar** (regra do
       `LICOES-RAPIDAS.md`), deixado por último de propósito por causa
       disso.
+- [ ] **8. Mapeamento de traços ATIVOS de espécie pra Combat** —
+      achado no meio do foco (Ataque de Sopro do Draconato só aparece
+      como texto na aba Perfil hoje, igual todo outro traço — nenhum
+      traço ativo de espécie tem botão/ação em Combat ainda, nem os
+      já liberados). Combinado com o Osmar: primeiro terminar de
+      colocar as 10 espécies no sistema (itens 1-7), depois voltar
+      nisto de uma vez só — não é trava estrutural (não depende de
+      nada fora deste foco), é só decisão de ordem. Levantamento feito
+      agora pra não perder o mapeamento:
+
+  **Precisam de UI ativa em Combat (botão + rastreio de usos):**
+  - Anão — Conhecimento de Pedras (Ação Bônus, usos = Bônus de
+    Proficiência, recarrega Descanso Longo).
+  - Orc — Pico de Adrenalina (Ação Bônus, usos = Bônus de
+    Proficiência, recarrega Curto OU Longo — mesmo padrão de trava já
+    resolvido em Resistência Ínfera do Bruxo); Vigor Implacável (não é
+    "botão", é reativo — dispara sozinho ao cair a 0 PV, mas precisa
+    rastrear "já usado neste Descanso Longo" pra saber se ainda vale).
+  - Pequenino — Sorte (reroll em resultado 1 no d20 — parecido com o
+    padrão `BonusExtraProvider` já usado pra Sorte do Tenebroso/
+    Indomável, mas é REROLL, não bônus somado — precisa de variante
+    nova do mecanismo).
+  - Aasimar — Mãos Curativas (Ação Usar Magia, cura, 1x/Descanso
+    Longo); Revelação Celestial (já é o item 7 acima, 3 sub-opções por
+    uso).
+  - Draconato — Ataque de Sopro (substitui um ataque, Cone/Linha,
+    salvaguarda de Destreza, dano escala por nível, usos = Bônus de
+    Proficiência, Descanso Longo — precisa de modal parecido com
+    "Lançar no Inferno"); Voo Dracônico (Ação Bônus, nível 5+,
+    1x/Descanso Longo).
+  - Gnomo — Gnomo do Bosque (Falar com Animais grátis, usos = Bônus de
+    Proficiência, Descanso Longo); Gnomo das Rochas (fabricar
+    dispositivo — mais utilidade/downtime que combate, prioridade
+    baixa).
+  - Golias — Ancestralidade Gigante (5 opções bem diferentes entre si:
+    dano extra ao acertar, reação pra reduzir dano, teleporte por Ação
+    Bônus, derrubar ao acertar, reação de dano — usos = Bônus de
+    Proficiência, Descanso Longo); Forma Grande (Ação Bônus, nível 5+,
+    1x/Descanso Longo).
+
+  **Só passivo/descritivo — não precisa de UI em Combat, texto na
+  aba Perfil já resolve:** Visão no Escuro (todas — já é
+  `sentidoConcedido`), Resistência a Toxinas/Celestial/a Dano,
+  Tenacidade Anã, Corajoso, Agilidade Pequenina, Furtividade Natural,
+  Eficiente, Ancestralidade Feérica, Sentidos Aguçados, Transe,
+  Astúcia de Gnomo, Porte Poderoso, Presença Sobrenatural, Portador da
+  Luz (concede truque — entra na lista de magias normal, não é UI de
+  espécie própria), benefício de nível 1 de Linhagem Élfica/Legado
+  Ínfero (Alto Elfo/Drow/Elfo Silvestre e os 3 Legados Ínferos — truque
+  concedido + efeito passivo, sem botão de ativar).
 
 Começando agora pelo item 1 (Humano).
