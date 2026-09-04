@@ -1179,7 +1179,8 @@ export default function LevelUpShell({
                       <div key={circulo} className="opt-card" style={{ padding: '10px 12px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                           <div className="opt-card-name">
-                            {circulo}º círculo —{' '}
+                            {circulo}º círculo —
+                            <br />
                             {magiaAtual ? <MagiaComDescricao magia={magiaAtual} /> : atual}
                             {trocado && <span style={{ color: 'var(--danger)', fontSize: 11 }}> · trocado</span>}
                           </div>
@@ -1188,6 +1189,10 @@ export default function LevelUpShell({
                             valorAtual={atual}
                             opcoes={opcoesTrocaArcana(circulo)}
                             onTrocar={(nova) => setArcanaMisticaEscolhidas((prev) => ({ ...prev, [circulo]: nova }))}
+                            renderOpcao={(nome) => {
+                              const m = magiasBruxo.find((mm) => mm.nome === nome);
+                              return m ? <MagiaComDescricao magia={m} /> : nome;
+                            }}
                           />
                         </div>
                       </div>
