@@ -1,37 +1,49 @@
 import { describe, it, expect } from 'vitest';
-import { truqueEspecie, magiasEspecie } from './magiasEspecie';
+import { truquesEspecie, magiasEspecie } from './magiasEspecie';
 import { criarSelecaoInicial } from './personagem';
 
-function selecaoElfo(subescolhaEspecieEscolhida: string | null): ReturnType<typeof criarSelecaoInicial> {
-  return { ...criarSelecaoInicial(), especie: 'Elfo', subescolhaEspecieEscolhida };
+function selecao(especie: string, subescolhaEspecieEscolhida: string | null): ReturnType<typeof criarSelecaoInicial> {
+  return { ...criarSelecaoInicial(), especie, subescolhaEspecieEscolhida };
 }
 
-describe('truqueEspecie', () => {
+describe('truquesEspecie', () => {
   it('resolve o truque conhecido da linhagem escolhida', () => {
-    expect(truqueEspecie(selecaoElfo('Drow'))).toBe('Luzes Dançantes');
+    expect(truquesEspecie(selecao('Elfo', 'Drow'))).toEqual(['Luzes Dançantes']);
   });
 
-  it('retorna null sem espécie/sub-escolha compatível', () => {
-    expect(truqueEspecie(criarSelecaoInicial())).toBeNull();
+  it('resolve MAIS de um truque quando a opção concede vários (Gnomo das Rochas)', () => {
+    expect(truquesEspecie(selecao('Gnomo', 'Gnomo das Rochas'))).toEqual(['Prestidigitação Arcana', 'Reparar']);
+  });
+
+  it('retorna [] sem espécie/sub-escolha compatível', () => {
+    expect(truquesEspecie(criarSelecaoInicial())).toEqual([]);
   });
 });
 
 describe('magiasEspecie', () => {
-  it('nível 1-2: nenhuma magia ainda', () => {
-    expect(magiasEspecie(selecaoElfo('Alto Elfo'), 1)).toEqual([]);
-    expect(magiasEspecie(selecaoElfo('Alto Elfo'), 2)).toEqual([]);
+  it('nível 1-2: nenhuma magia ainda (Elfo — sem magia de nível 1)', () => {
+    expect(magiasEspecie(selecao('Elfo', 'Alto Elfo'), 1)).toEqual([]);
+    expect(magiasEspecie(selecao('Elfo', 'Alto Elfo'), 2)).toEqual([]);
   });
 
   it('nível 3: desbloqueia a magia de nível 3', () => {
-    expect(magiasEspecie(selecaoElfo('Alto Elfo'), 3)).toEqual(['Detectar Magia']);
+    expect(magiasEspecie(selecao('Elfo', 'Alto Elfo'), 3)).toEqual(['Detectar Magia']);
   });
 
   it('nível 5+: acumula a de nível 3 e a de nível 5', () => {
-    expect(magiasEspecie(selecaoElfo('Alto Elfo'), 5)).toEqual(['Detectar Magia', 'Passo Nebuloso']);
-    expect(magiasEspecie(selecaoElfo('Alto Elfo'), 20)).toEqual(['Detectar Magia', 'Passo Nebuloso']);
+    expect(magiasEspecie(selecao('Elfo', 'Alto Elfo'), 5)).toEqual(['Detectar Magia', 'Passo Nebuloso']);
+    expect(magiasEspecie(selecao('Elfo', 'Alto Elfo'), 20)).toEqual(['Detectar Magia', 'Passo Nebuloso']);
   });
 
   it('sem sub-escolha escolhida ainda, retorna vazio mesmo em nível alto', () => {
-    expect(magiasEspecie(selecaoElfo(null), 5)).toEqual([]);
+    expect(magiasEspecie(selecao('Elfo', null), 5)).toEqual([]);
+  });
+
+  it('magia de nível 1 (Gnomo do Bosque — Falar com Animais) já disponível desde a criação', () => {
+    expect(magiasEspecie(selecao('Gnomo', 'Gnomo do Bosque'), 1)).toEqual(['Falar com Animais']);
+  });
+
+  it('Gnomo das Rochas não tem magia de nível 1/3/5, só os truques', () => {
+    expect(magiasEspecie(selecao('Gnomo', 'Gnomo das Rochas'), 5)).toEqual([]);
   });
 });

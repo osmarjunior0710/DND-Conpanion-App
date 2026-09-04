@@ -3,11 +3,11 @@
 //
 // Schema de sub-escolha decidido em DECISOES-DESIGN.md ("Dados —
 // Espécies têm 3 naturezas diferentes de sub-escolha"). Das 6 espécies
-// com sub-escolha, Draconato/Golias/Elfo já têm as opções estruturadas
-// em `opcoesSubescolha` (ver `OpcaoSubescolha`); Aasimar, Gnomo e
-// Tiferino ainda têm o dado só como texto corrido dentro da descrição
-// do traço — extrair isso fica pra quando cada uma for desbloqueada de
-// verdade, ver `EmDev.md`/`PENDENCIAS.md`.
+// com sub-escolha, Draconato/Golias/Elfo/Gnomo já têm as opções
+// estruturadas em `opcoesSubescolha` (ver `OpcaoSubescolha`); Aasimar
+// e Tiferino ainda têm o dado só como texto corrido dentro da
+// descrição do traço — extrair isso fica pra quando cada uma for
+// desbloqueada de verdade, ver `EmDev.md`/`PENDENCIAS.md`.
 //
 // introducaoCurta vem da coluna "Descrição Curta (auto, revisar)" —
 // gerada automaticamente (corta na frase mais próxima de ~350
@@ -86,17 +86,22 @@ export interface Subescolha {
  *   por outro traço da espécie (ex.: Drow aumenta o alcance da Visão
  *   no Escuro) — somado em `core/sentidos.ts` junto das outras fontes,
  *   nunca sobrescrevendo o traço original.
- * - `truqueConhecido` — nome do truque concedido de forma permanente
- *   (`linhagem_com_progressao_magica`; ver `core/magiasEspecie.ts`).
- * - `magiaNivel3`/`magiaNivel5` — nome da magia sempre preparada
- *   desbloqueada automaticamente nesses níveis DE PERSONAGEM (não de
- *   classe) — só `linhagem_com_progressao_magica`. */
+ * - `truquesConhecidos` — nomes dos truques concedidos de forma
+ *   permanente (`linhagem_com_progressao_magica`; ver
+ *   `core/magiasEspecie.ts`) — normalmente 1, Gnomo das Rochas
+ *   concede 2 (Prestidigitação Arcana + Reparar).
+ * - `magiaNivel1`/`magiaNivel3`/`magiaNivel5` — nome da magia sempre
+ *   preparada desbloqueada automaticamente nesse nível DE PERSONAGEM
+ *   (não de classe) — só `linhagem_com_progressao_magica`.
+ *   `magiaNivel1` é raro (Gnomo do Bosque — Falar com Animais desde a
+ *   criação); Elfo/Tiferino só usam nível 3/5. */
 export interface OpcaoSubescolha {
   nome: string;
   tipoDano?: string;
   descricaoEfeito?: string;
   sentidoConcedido?: SentidoConcedido;
-  truqueConhecido?: string;
+  truquesConhecidos?: string[];
+  magiaNivel1?: string;
   magiaNivel3?: string;
   magiaNivel5?: string;
 }
@@ -268,14 +273,14 @@ export const especies: Especie[] = [
       {
         nome: "Alto Elfo",
         descricaoEfeito: "Você conhece o truque Prestidigitação Arcana (sempre que completar um Descanso Longo, pode substituir este truque por outro da lista de magias de Mago).",
-        truqueConhecido: "Prestidigitação Arcana",
+        truquesConhecidos: ["Prestidigitação Arcana"],
         magiaNivel3: "Detectar Magia",
         magiaNivel5: "Passo Nebuloso",
       },
       {
         nome: "Drow",
         descricaoEfeito: "O alcance da sua Visão no Escuro aumenta para 36 metros e você também conhece o truque Luzes Dançantes.",
-        truqueConhecido: "Luzes Dançantes",
+        truquesConhecidos: ["Luzes Dançantes"],
         magiaNivel3: "Fogo das Fadas",
         magiaNivel5: "Escuridão",
         sentidoConcedido: { tipo: 'visaoNoEscuro', alcanceMetros: 36 },
@@ -283,7 +288,7 @@ export const especies: Especie[] = [
       {
         nome: "Elfo Silvestre",
         descricaoEfeito: "Seu Deslocamento aumenta para 10,5 metros e você também conhece o truque Arte Druídica.",
-        truqueConhecido: "Arte Druídica",
+        truquesConhecidos: ["Arte Druídica"],
         magiaNivel3: "Passos Largos",
         // "Passo Sem Rastro" (singular) — assim que está no catálogo de
         // Magias (magias.ts, id "passosemrastro"); o texto oficial do
@@ -309,10 +314,23 @@ export const especies: Especie[] = [
     traços: [
       { nome: "Visão no Escuro", descricao: "Você tem Visão no Escuro com um alcance de 18 metros.", sentidoConcedido: { tipo: 'visaoNoEscuro', alcanceMetros: 18 } },
       { nome: "Astúcia de Gnomo", descricao: "Você tem Vantagem em salvaguardas de Inteligência, Sabedoria e Carisma." },
-      { nome: "Linhagem Gnômica", descricao: "Você pertence a uma linhagem que lhe confere habilidades sobrenaturais. Escolha uma das seguintes opções; sua escolha determina se Inteligência, Sabedoria ou Carisma é seu atributo de conjuração para as magias desse traço (escolha o atributo quando selecionar a linhagem): Gnomo das Rochas. Você conhece os truques Prestidigitação Arcana e Reparar. Além disso, você pode gastar 10 minutos conjurando Prestidigitação Arcana para fabricar um dispositivo mecânico minúsculo (CA 5, 1 PV), como um brinquedo, isqueiro mecânico ou caixa de música. Ao fabricar o dispositivo, você determina a função dele escolhendo um efeito de Prestidigitação Arcana; o dispositivo produz esse efeito sempre que você ou outra criatura executa uma Ação Bônus para ativá-lo com um toque. Se o efeito escolhido tiver opções possíveis, você escolhe uma dessas opções para o dispositivo ao fabricá-lo. Por exemplo, se você escolher o efeito de Brincar com Fogo da magia, você determina se o dispositivo acende ou extingue fogo; o dispositivo não faz ambas as coisas. Você pode ter três desses dispositivos ao mesmo tempo, e cada um se desfaz 8 horas após ser fabricado ou quando você o desmonta com um toque como uma ação Usar Objeto. Gnomo do Bosque. Você conhece o truque Ilusão Menor. Você também sempre tem a magia Falar com Animais preparada. É possível conjurá-la sem um espaço de magia um número de vezes igual ao seu Bônus de Proficiência, e você restaura todos os usos gastos quando completa um Descanso Longo. Você também pode usar qualquer espaço de magia que tiver para conjurá-la." },
+      { nome: "Linhagem Gnômica", descricao: "Você pertence a uma linhagem que lhe confere habilidades sobrenaturais. Escolha uma das seguintes opções; sua escolha determina se Inteligência, Sabedoria ou Carisma é seu atributo de conjuração para as magias desse traço (escolha o atributo quando selecionar a linhagem): Gnomo das Rochas. Você conhece os truques Prestidigitação Arcana e Reparar. Além disso, você pode gastar 10 minutos conjurando Prestidigitação Arcana para fabricar um dispositivo mecânico minúsculo (CA 5, 1 PV), como um brinquedo, isqueiro mecânico ou caixa de música. Ao fabricar o dispositivo, você determina a função dele escolhendo um efeito de Prestidigitação Arcana; o dispositivo produz esse efeito sempre que você ou outra criatura executa uma Ação Bônus para ativá-lo com um toque. Se o efeito escolhido tiver opções possíveis, você escolhe uma dessas opções para o dispositivo ao fabricá-lo. Por exemplo, se você escolher o efeito de Brincar com Fogo da magia, você determina se o dispositivo acende ou extingue fogo; o dispositivo não faz ambas as coisas. Você pode ter três desses dispositivos ao mesmo tempo, e cada um se desfaz 8 horas após ser fabricado ou quando você o desmonta com um toque como uma ação Usar Objeto. Gnomo do Bosque. Você conhece o truque Ilusão Menor. Você também sempre tem a magia Falar com Animais preparada. É possível conjurá-la sem um espaço de magia um número de vezes igual ao seu Bônus de Proficiência, e você restaura todos os usos gastos quando completa um Descanso Longo. Você também pode usar qualquer espaço de magia que tiver para conjurá-la.", usaDescricaoEfeitoDaSubescolha: true },
     ],
     subescolha: { nome: "Linhagem Gnômica", natureza: "linhagem_com_progressao_magica" },
-    disponivel: false,
+    opcoesSubescolha: [
+      {
+        nome: "Gnomo das Rochas",
+        descricaoEfeito: "Você conhece os truques Prestidigitação Arcana e Reparar. Além disso, você pode gastar 10 minutos conjurando Prestidigitação Arcana para fabricar um dispositivo mecânico minúsculo (CA 5, 1 PV), como um brinquedo, isqueiro mecânico ou caixa de música — mesmo efeito de Prestidigitação Arcana, ativado com um toque como Ação Bônus. Você pode ter três desses dispositivos ao mesmo tempo.",
+        truquesConhecidos: ["Prestidigitação Arcana", "Reparar"],
+      },
+      {
+        nome: "Gnomo do Bosque",
+        descricaoEfeito: "Você conhece o truque Ilusão Menor. Você também sempre tem a magia Falar com Animais preparada, conjurável sem espaço de magia um número de vezes igual ao seu Bônus de Proficiência (recarrega em Descanso Longo), além de com qualquer espaço de magia que tiver.",
+        truquesConhecidos: ["Ilusão Menor"],
+        magiaNivel1: "Falar com Animais",
+      },
+    ],
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {

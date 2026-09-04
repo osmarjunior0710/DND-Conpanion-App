@@ -46,7 +46,7 @@ import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario'
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
-import { truqueEspecie, magiasEspecie as magiasEspecieDoPersonagem } from '../../core/magiasEspecie';
+import { truquesEspecie, magiasEspecie as magiasEspecieDoPersonagem } from '../../core/magiasEspecie';
 import { usosSorteDoTenebroso } from '../../core/sorteDoTenebroso';
 import { useRoll } from '../roll/RollContext';
 import { sortearLevelUpRapido } from '../../core/levelUpAleatorio';
@@ -267,12 +267,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const magiasPactoDoInferoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Magias de Pacto do Ínfero', personagem.nivel);
   const magiasPactoDoInferoAtuais = magiasPactoDoInferoDisponivel ? magiasPactoDoInfero(personagem.nivel) : [];
   const magiasPactoDoInferoPreparadas = magiasPreparadasDoPersonagem(magiasPactoDoInferoAtuais);
-  // Truque + magias fixas da Linhagem Élfica (e futuramente Legado
-  // Ínfero) — gatilho é nível de PERSONAGEM, não de classe (espécie
-  // não tem classe própria), ver `core/magiasEspecie.ts`.
-  const truqueEspecieAtual = truqueEspecie(selecao);
+  // Truques + magias fixas da Linhagem Élfica/Gnômica (e futuramente
+  // Legado Ínfero) — gatilho é nível de PERSONAGEM, não de classe
+  // (espécie não tem classe própria), ver `core/magiasEspecie.ts`.
   const magiasEspecieAtuais = [
-    ...(truqueEspecieAtual ? [truqueEspecieAtual] : []),
+    ...truquesEspecie(selecao),
     ...magiasEspecieDoPersonagem(selecao, personagem.nivel),
   ];
   const magiasEspeciePreparadas = magiasPreparadasDoPersonagem(magiasEspecieAtuais);

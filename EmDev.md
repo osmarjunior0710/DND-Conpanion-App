@@ -107,8 +107,20 @@ sempre que possível — ver 6.1):
     diferentes); Drow mostra Visão no Escuro 36m na aba Atributos.
     `npx tsc -b`, `npm test -- --run` (180 testes) e `npm run build`
     passando.
-- [ ] **5. Gnomo** — mesma natureza, versão mais simples (Linhagem
-      Gnômica, 2 opções, só nível 1, sem progressão 3/5).
+- [x] **5. Gnomo** — mesma natureza, versão mais simples (Linhagem
+      Gnômica, 2 opções, só nível 1, sem progressão 3/5). Reaproveitou
+      100% o mecanismo do Elfo, só generalizando 2 pontos que o Elfo
+      não precisava:
+  - `truqueConhecido` (1 truque) virou `truquesConhecidos: string[]`
+    — Gnomo das Rochas concede 2 (Prestidigitação Arcana + Reparar).
+  - Novo `magiaNivel1` em `OpcaoSubescolha`/`core/magiasEspecie.ts` —
+    Gnomo do Bosque (Falar com Animais) já vem desde a criação, não
+    espera nível 3 como o Elfo.
+  - Testado com Playwright: Gnomo das Rochas mostra os 2 truques com
+    "Usar" habilitado (Ação, sem gastar espaço); Gnomo do Bosque no
+    nível 1 já mostra Ilusão Menor + Falar com Animais (1º círculo).
+    `npx tsc -b`, `npm test -- --run` (183 testes) e `npm run build`
+    passando.
 - [ ] **6. Tiferino** — mesma natureza, reaproveitando o padrão de
       Elfo/Gnomo (Legados Ínferos, 3 opções, progressão 3/5 como Elfo).
 - [ ] **7. Aasimar** — natureza `escolha_reutilizavel` (Revelação
