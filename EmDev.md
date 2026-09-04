@@ -129,10 +129,48 @@ listada no reporte, sem esperar aprovação prévia por item.
       nosso de extração. Todos os valores de Peso/Custo já batiam com
       o livro, nenhuma correção necessária. `npm test` (160 passando)
       e `npm run build` OK.
-- [ ] **Itens Mágicos (288 itens)** — Livro do Mestre, Cap.7 Tesouro
-      Parte 2. Maior volume, fazer por último.
-- [ ] Depois das 4 categorias, avaliar se cabe uma entrada nova em
-      `DECISOES-DADOS.md` sobre o padrão "Completa nem sempre é texto
-      literal — depende se o livro tem prosa individual pro tipo de
-      conteúdo" (achado que muda como auditar qualquer catálogo novo
-      no futuro).
+- [ ] **Itens Mágicos (288 itens) — em andamento, lotes de 50 (pedido
+      do Osmar).** Fonte real é 3 PDFs juntos (Livro do Mestre Cap.7
+      Tesouro "Parte 1/2/3" — o catálogo alfabético atravessa a divisão
+      de arquivos do Osmar, confirmado com `pypdf`/`pymupdf` já que o
+      `read_file_content` do Drive trunca PDF grande silenciosamente).
+      Além de completa/curta, ganhou classificação derivada acordada
+      com o Osmar (`AUDITORIA-CONTEUDO.md` seção 4.1): `tipoItem`
+      (arma/armadura/escudo/consumivel/passivo/ativo-com-carga),
+      `bonusItem` (+N de arma/armadura/escudo) e `cargas` — só no
+      `itensMagicos.ts`, não na planilha (é leitura/julgamento, não
+      dado bruto do livro).
+  - [x] **Lote 1 (50 itens, "Poção de Escalar" → "Manto da Arraia") —
+        FEITA.** `descricaoCompleta` extraída (script, cabeçalho
+        "NOME\nCategoria, Raridade" — formato diferente do Cap.6).
+        Achado: 9 itens (Estátua de Poderes Incríveis) compartilham 1
+        parágrafo mestre com sub-parágrafo próprio por nome ("Nome
+        (Raridade). texto...") — extração teve bug 2x (nome repetido
+        no texto vazou pro item errado; último item da lista sem
+        próximo cabeçalho vazou até o fim do capítulo) — os DOIS
+        casos foram achados por conferência de tamanho (outlier
+        gigante) e corrigidos, não passaram batido. **2 correções de
+        dado reais**: Botas do Inverno e Luvas de Nadar e Escalar
+        exigem sintonização no livro, planilha tinha "não" — corrigido
+        na planilha e no `.ts`. **5 itens ficaram com `tipoItem: null`**
+        de propósito (Baralho das Ilusões, Bastão Imóvel, Cajado da
+        Píton, Cajado da Víbora, Corda de Escalada) — mecânica própria
+        demais pro balde de 6 categorias (viram criatura controlada
+        com bloco de estatística, ou têm CA/PV próprios) — não forcei
+        classificação errada, ver `PENDENCIAS.md`. `npm test` (164
+        passando) e `npm run build` OK.
+  - [ ] **Lote 2 (itens 51-100)** — mesmo processo.
+  - [ ] **Lote 3 (itens 101-150)**
+  - [ ] **Lote 4 (itens 151-200)**
+  - [ ] **Lote 5 (itens 201-250)**
+  - [ ] **Lote 6 (itens 251-288)** — inclui as famílias compostas
+        adiadas do Lote 1 (Pedra Iônica ~14 variantes, Anel de
+        Comandar Elementais ~4, Poção de Cura (geral), Poção de Força
+        do Gigante (geral) — todas Raro+/Variável, não caem em lotes
+        anteriores por ordem alfabética/raridade da planilha, conferir
+        na hora).
+- [ ] Depois de Itens Mágicos completo, avaliar se cabe uma entrada
+      nova em `DECISOES-DADOS.md` sobre o padrão "Completa nem sempre é
+      texto literal — depende se o livro tem prosa individual pro tipo
+      de conteúdo" + o padrão de classificação derivada (tipoItem/
+      bonusItem/cargas) pra próximo catálogo parecido.

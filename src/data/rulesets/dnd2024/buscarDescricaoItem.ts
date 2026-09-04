@@ -38,6 +38,7 @@ for (const it of itensMagicos) {
     it.nome.toLowerCase(),
     `${it.categoria} · ${it.raridade}${it.requerSintonizacao ? ' · exige Sintonização' : ''}. ${it.efeitoResumido}`,
   );
+  if (it.descricaoCompleta) indiceDescricaoCompleta.set(it.nome.toLowerCase(), it.descricaoCompleta);
 }
 
 /** Busca a descrição de um item pelo nome (case-insensitive). Cobre

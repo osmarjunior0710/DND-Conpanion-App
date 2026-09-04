@@ -1387,3 +1387,30 @@ planilha) junto com o Osmar, apontando candidatas óbvias a fundir
 Aquáticos") e decidir se a fusão é só na planilha (organização) ou
 também exige tocar em algum `data/rulesets/dnd2024/*.ts` já gerado a
 partir de uma dessas abas.
+
+## Itens Mágicos — 5 itens do Lote 1 sem `tipoItem` (taxonomia de 6 categorias não cobre tudo)
+
+**O que é:** classificando o Lote 1 (50 itens) de `tipoItem`
+(`arma`/`armadura`/`escudo`/`consumivel`/`passivo`/`ativo-com-carga`
+— `AUDITORIA-CONTEUDO.md` seção 4.1), 5 itens não se encaixaram bem
+em nenhuma das 6 categorias: **Baralho das Ilusões** (efeito por
+carta, narrativo demais), **Bastão Imóvel** e **Corda de Escalada**
+(ação ativa sem carga numérica, mas a Corda tem CA/PV próprios — mais
+parecido com uma criatura/objeto rastreável que um "item ativo"
+simples), **Cajado da Píton** e **Cajado da Víbora** (transformam em
+criatura controlada com bloco de estatística próprio — Manual dos
+Monstros). Ficaram com `tipoItem: null` em vez de forçar uma
+categoria errada.
+
+**Por que importa:** se algum desses 5 vier a precisar de UI própria
+na Mochila/Combat (ex: o Osmar quiser equipar um deles em mesa), a
+classificação atual (`null`) não vai disparar nenhum componente —
+precisa de decisão explícita.
+
+**O que falta:** perguntar ao Osmar se vale criar uma 7ª categoria
+(ex: `ativo-sem-carga`, pra Bastão Imóvel/Cajados) ou se esses casos
+ficam mesmo fora do "20%" da seção 4.1 até aparecer pedido real de um
+jogador pra usar um desses itens. Mesma pergunta vale pros itens
+parecidos que aparecerem nos próximos lotes (provavelmente vão
+aparecer mais — cajados/bastões que viram criatura são comuns no
+catálogo).
