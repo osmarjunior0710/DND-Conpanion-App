@@ -139,13 +139,46 @@ export default function PerfilTab({
       <div className="section-title" style={{ marginTop: 16 }}>
         Espécie{especie ? ` — ${especie.nome}` : ''}
       </div>
+      {especie && especie.subescolha?.natureza === 'identidade_permanente' && especie.opcoesSubescolha && (
+        <div className="summary-row" style={{ marginBottom: 8 }}>
+          <span>{especie.subescolha.nome}</span>
+          <span>{selecao.subescolhaEspecieEscolhida ?? '—'}</span>
+        </div>
+      )}
+
       {especie && especie.traços.length > 0 ? (
-        especie.traços.map((t) => (
-          <div key={t.nome} className="opt-card" style={{ cursor: 'default' }}>
-            <div className="opt-card-name">{t.nome}</div>
-            <div className="opt-card-desc">{t.descricao}</div>
-          </div>
-        ))
+        especie.traços.map((t) => {
+          const talentoVersatil =
+            t.id === 'versatil' && selecao.talentoEspecieEscolhido
+              ? talentos.find((tt) => tt.id === selecao.talentoEspecieEscolhido)
+              : null;
+          const tipoDano = t.usaTipoDanoDaSubescolha
+            ? especie.opcoesSubescolha?.find((o) => o.nome === selecao.subescolhaEspecieEscolhida)?.tipoDano
+            : null;
+          return (
+            <div key={t.nome} className="opt-card" style={{ cursor: 'default' }}>
+              <div className="opt-card-name">{t.nome}</div>
+              <div className="opt-card-desc">
+                {t.descricao}
+                {t.id === 'habil' && selecao.periciaEspecieEscolhida && (
+                  <> — escolhida: <strong>{selecao.periciaEspecieEscolhida}</strong></>
+                )}
+                {talentoVersatil && (
+                  <>
+                    {' '}
+                    — escolhido: <strong>{talentoVersatil.nome}</strong>. {talentoVersatil.beneficios}
+                  </>
+                )}
+                {tipoDano && (
+                  <>
+                    {' '}
+                    (Tipo de dano: <strong>{tipoDano}</strong>)
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })
       ) : (
         <div className="label" style={{ marginBottom: 12 }}>
           Nenhum traço de espécie ainda.

@@ -47,132 +47,59 @@ Subclasses). Quando a planilha tiver essa coluna, nada muda no código
 — é só documentação pro Osmar rastrear bug, não fonte de dado
 importada.
 
-## Bruxo — Invocações Místicas Fase 2 + 3 subclasses restantes (Arquifada, Celestial, Grande Antigo)
+## Bruxo — o que ainda falta (base + Patrono Ínfero completos, ver DECISOES-CLASSES.md)
 
-**O que é:** o plano de implementação do Bruxo (`EmDev.md`) cobre a
-base completa (B0-B5) + só o Patrono Ínfero (B6, escolhido por ser o
-que o grupo do Osmar vai jogar primeiro). Ficam de fora por enquanto:
+**Feito e removido desta lista (2026-09):** base (B0-B5), Patrono
+Ínfero completo (B6.1-B6.6), Astúcia Mágica/Mestre Místico, Contatar
+Patrono, Arcana Mística (escolha inicial E troca a cada level-up),
+Dádiva Épica. Ver `DECISOES-CLASSES.md` pros detalhes de cada um —
+essa entrada aqui tinha ficado desatualizada por várias entregas,
+listando coisa já pronta; limpa no postmortem do Bruxo (2026-09).
 
-- **Invocações Místicas Fase 2** — efeito mecânico real das 28
-  invocações (hoje só a Fase 1 entra no plano: escolher da lista, sem
-  checar pré-requisito/dependência nem aplicar mecânica). Cada
-  invocação tem sua própria regra de frequência/custo (ver SDD
-  completo do Osmar — passiva, à vontade, ou limitada com teto
-  próprio) — vai precisar de vários lotes pequenos, mesmo padrão dos
-  Talentos Fase 4.
-- **Características nomeadas do Bruxo sem mecânica ainda** (texto já
-  importado em B1, "wiring" de verdade fica pra depois do B6, mesmo
-  tratamento do Bardo — grosso primeiro, especialização depois):
-  - **Astúcia Mágica** (nível 2) — recurso NOVO (não é Descanso Curto/
-    Longo comum): rito de 1 minuto que recupera metade (arred. pra
-    cima) dos Espaços de Pacto gastos, 1x entre Descansos Longos.
-    Precisa de contador de uso próprio (mesmo padrão de Surto de
-    Ação/Indomável do Guerreiro) + botão/ação pra ativar o rito.
-  - **Contatar Patrono** (nível 9) — Contato Extraplanar sempre
-    preparada, conjurável de graça (sem gastar espaço, sucesso
-    automático na salvaguarda) 1x por Descanso Longo. Precisa
-    confirmar se "Contato Extraplanar" já está no catálogo de magias.
-  - **Arcana Mística** (nível 11, 13, 15, 17) — escolhe 1 magia de
-    Bruxo de 6º/7º/8º/9º círculo (respectivamente) conjurável de
-    graça 1x por Descanso Longo cada; pode trocar 1 arcanum por
-    level-up. Maior que uma característica normal — é uma escolha
-    própria em 4 níveis diferentes, mais parecida com o tamanho do
-    Pacto do Tomo do que com uma invocação simples.
-  - **Dádiva Épica** (nível 19) — concede o talento Dádiva Épica (ou
-    outro talento à escolha que atenda pré-requisito) — mesmo
-    mecanismo de escolha de Talento Geral que já existe no Level Up
-    (ASI/Talento), só filtra pela categoria "Dádiva Épica"; checar se
-    essa categoria já existe no catálogo de Talentos antes de
-    implementar.
-  - **Mestre Místico** (nível 20) — Astúcia Mágica passa a recuperar
-    TODOS os espaços gastos, não só metade — ajuste pequeno na regra
-    de Astúcia Mágica acima, não vale entrega própria.
+**Genuinamente ainda em aberto:**
+
+- **Invocação Mística "repetível" — mecanismo genérico de múltiplas
+  escolhas ainda não existe.** Hoje `invocacoesMisticasEscolhidas`/
+  `invocacoesMisticasAtual` são só um array de ids, tipo checkbox —
+  marcar de novo uma invocação `repetivel: true` REMOVE em vez de
+  adicionar uma 2ª instância (o array não tem duplicata). Pra
+  invocações que só concedem efeito fixo sem escolha extra (a
+  maioria), isso nunca importou — mas as que têm (ou vão ter) uma
+  escolha extra por instância (Lições dos Grandes Antigos = 1 talento
+  por vez; Lança Mística = 1 truque por vez vinculado) precisam
+  poder ser pegas 2x+, cada vez com escolha própria guardada separada.
+  **Bloqueia:** Lições dos Grandes Antigos e Lança Mística (essa
+  também depende do item abaixo). **O que falta:** desenhar schema
+  novo (ex: `{ invocacaoId, escolha? }[]` em vez de `string[]`) +
+  decidir migração de personagens salvos já em `localStorage`.
+- **Lições dos Grandes Antigos** — trava só no item acima (plano de
+  implementação já mapeado, reaproveita a tela de Talento Geral do
+  Level Up filtrando por categoria "Origem", quase zero código novo).
+- **Lança Mística + Explosão Agonizante/Repulsiva** — travam num motor
+  de dano/alcance de magia que não existe (`alcance` em `magias.ts` é
+  texto livre, não numérico; não existe marcação de "esse truque causa
+  dano" nem motor de ataque de magia). Lança Mística também depende do
+  mecanismo de invocação repetível acima.
+- **Pacto da Corrente + Investimento do Mestre da Corrente, Punição
+  Mística + Sorvedouro de Vida, Presente dos Protetores + Olhar de
+  Duas Mentes** — dependem de sistemas que não existem ainda: Familiar,
+  motor de dano de magia, gatilho de "salvar de 0 PV". Sem plano de
+  implementação ainda (mais estrutural que os itens acima).
 - **Patrono Arquifada, Patrono Celestial, Patrono O Grande Antigo** —
-  as outras 3 subclasses de Bruxo, cada uma com 4-5 características
-  ativas próprias (algumas sem equivalente ainda no motor genérico,
-  ex: Passos Feéricos do Arquifada tem múltiplas opções de efeito
-  escolhidas na hora de conjurar).
+  as outras 3 subclasses, cada uma com 4-5 características ativas
+  próprias (algumas sem equivalente ainda no motor, ex: Passos
+  Feéricos do Arquifada tem múltiplas opções de efeito escolhidas na
+  hora de conjurar). **Achado do SDD a aplicar ao implementar Grande
+  Antigo:** "Magias Psíquicas" (nível 3) é do Grande Antigo, não do
+  Ínfero — o SDD v2 do Osmar tinha essa atribuição errada (planilha
+  mestra já está certa).
 
-**Regra de processo pra quando qualquer subclasse de Bruxo entrar
-(Ínfero incluso, B6):** quebrar a implementação em entregas pequenas
-por "unlock" — cada característica/sistema **genuinamente novo** (sem
-equivalente já existente no motor) vira sua própria entrega pequena,
-separada das que só reaproveitam padrão já validado (essas últimas
-viram etapa de verificação, não de código novo). Mesmo padrão já usado
-no B4 da base (B4.1/B4.2 = verificação de reuso, B4.3 = unlock de
-verdade — Invocações Místicas). Isso reduz o risco de uma entrega
-grande quebrar várias coisas de uma vez.
-
-**Por que foi adiado:** decisão do Osmar — Patrono Ínfero primeiro
-porque é o que o grupo de mesa dele vai usar; as outras 3 completam
-depois, sem pressa.
-
-**Lança Mística (Invocação Mística, Fase 2) — adiada até existir motor
-de dano/alcance.** Regra: "escolha um truque de Bruxo que cause dano e
-alcance ≥3m — o alcance aumenta 9m por nível de Bruxo." Hoje isso não
-dá pra implementar de forma útil: o campo `alcance` das magias
-(`magias.ts`) é texto livre, não numérico, não existe motor de
-dano/ataque nem marcação estruturada de "esse truque causa dano", e o
-mecanismo de "escolher 1 item de uma lista e vincular a uma invocação
-específica" também não existe ainda (hoje a lista de Invocações é só
-um array de ids tipo checkbox, sem escolha extra amarrada — nenhuma
-outra invocação implementada até agora precisa disso). Osmar pediu pra
-deixar como pendência e voltar quando o app tiver dano e distância
-estruturados (provavelmente junto do motor de ataque/dano de magia, que
-também falta pra outras coisas como Explosão Agonizante/Repulsiva).
-Decisão tomada em conversa (2026-09): "deixa esse como pendência e
-voltamos depois quanto tiver dano e distância."
-
-**Lições dos Grandes Antigos (Invocação Mística, Fase 2, IM.6) —
-adiada até o mecanismo genérico de invocação repetível abaixo
-existir.** Regra: "Concede permanentemente 1 talento de Origem à sua
-escolha." Plano de implementação já mapeado (praticamente zero código
-novo — reaproveita a tela de escolher Talento Geral do Level Up, só
-filtrando por categoria "Origem" em vez de "Geral", e a mesma lista
-`talentosGeraisAtual` guarda o resultado): a única peça que falta é a
-capacidade de a invocação ser pega mais de 1 vez (ver item abaixo).
-Osmar decidiu (2026-09): "deixa anotado e já voltamos nisso" — construir
-o mecanismo genérico de repetição primeiro, não fazer essa invocação
-como escolha única sabendo que vai precisar refazer depois.
-
-**Invocação Mística "repetível" — mecanismo genérico de múltiplas
-escolhas ainda não existe (bloqueia Lições dos Grandes Antigos e Lança
-Mística, provavelmente mais no futuro).** Hoje `invocacoesMisticasEscolhidas`/
-`invocacoesMisticasAtual` são só um array de ids, tipo checkbox — marcar
-de novo uma invocação `repetivel: true` (ex: Lança Mística, Lições dos
-Grandes Antigos) REMOVE em vez de adicionar uma 2ª instância, porque o
-array não tem duplicata. Pra invocações que só concedem um efeito fixo
-sem escolha extra amarrada (a maioria), isso nunca importou. Mas as
-`repetivel: true` que hoje têm (ou vão ter) uma escolha extra por
-instância (Lições dos Grandes Antigos = 1 talento por vez pego; Lança
-Mística = 1 truque por vez vinculado) precisam de verdade poder ser
-pegas 2x+, cada vez com sua própria escolha guardada separada — não dá
-pra generalizar isso como "1 escolha só" e fingir que resolve.
-
-**O que falta pra resolver:** desenhar o schema novo pra "invocação
-repetível com escolha extra" — provavelmente trocar de
-`invocacoesMisticasEscolhidas: string[]` pra algo que suporte múltiplas
-instâncias da mesma invocação, cada uma com sua própria escolha
-vinculada (ex: `{ invocacaoId: string; escolha?: string }[]`, ou um
-array plano com ids repetidos + um mapa `id → escolha[]` por instância).
-Precisa decidir migração de personagens salvos (o formato atual já está
-em `localStorage` de quem já tem Bruxo). Quando esse mecanismo existir,
-tanto Lições dos Grandes Antigos quanto Lança Mística voltam a ficar
-implementáveis (Lança Mística ainda depende TAMBÉM do motor de dano/
-alcance, ver pendência acima — não desbloqueia sozinha).
-
-**Achado do SDD que precisa ser aplicado ao implementar Grande
-Antigo:** a característica "Magias Psíquicas" (nível 3) é do **Patrono
-O Grande Antigo**, não do Patrono Ínfero — o SDD v2 do Osmar tinha essa
-atribuição errada (planilha mestra já está certa, conferido contra o
-livro).
-
-**O que falta pra resolver:** nada travado — só esperar a base +
-Ínfero serem entregues e testados antes de retomar.
-
-~~Arcana Mística — trocar arcanum a cada level-up~~ — **Completa**
-(2026-09). Ver `DECISOES-CLASSES.md` "Arcana Mística — troca de
-arcanum".
+**Regra de processo pra qualquer subclasse nova de Bruxo (confirmada
+no Patrono Ínfero):** quebrar em entregas pequenas por "unlock" — cada
+característica/sistema genuinamente novo vira entrega própria,
+separada das que só reaproveitam padrão já validado. Pra qualquer
+característica com interação ativa em Combat, perguntar onde ela fica
+e como ativa ANTES de codar (ver `LICOES-RAPIDAS.md`).
 
 ## Plano de Equipamento — COMPLETO (E1-E4 feitas)
 

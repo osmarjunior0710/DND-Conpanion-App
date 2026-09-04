@@ -11,6 +11,7 @@ import { classes } from '../../data/rulesets/dnd2024/classes';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../../data/rulesets/dnd2024/ferramentas';
+import { pericias } from '../../data/rulesets/dnd2024/pericias';
 import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
 import { invocacoesElegiveisAteNivel } from '../../core/invocacoesMisticas';
 import { criarSelecaoInicial, type WizardSelection } from '../../core/personagem';
@@ -161,7 +162,33 @@ export default function WizardShell() {
   function randomizarEspecie() {
     const disponiveis = especies.filter((e) => e.disponivel);
     const e = disponiveis[Math.floor(Math.random() * disponiveis.length)];
-    update({ especie: e.nome });
+    update({
+      especie: e.nome,
+      tamanhoEspecieEscolhido: null,
+      periciaEspecieEscolhida: null,
+      talentoEspecieEscolhido: null,
+      subescolhaEspecieEscolhida: null,
+    });
+  }
+  function randomizarEscolhasEspecie() {
+    const especieSelecionada = especies.find((e) => e.nome === selection.especie);
+    if (!especieSelecionada) return;
+    const patch: Partial<WizardSelection> = {};
+    if (especieSelecionada.tamanho.opcoes) {
+      const opcoes = especieSelecionada.tamanho.opcoes;
+      patch.tamanhoEspecieEscolhido = opcoes[Math.floor(Math.random() * opcoes.length)];
+    }
+    if (especieSelecionada.traços.some((t) => t.id === 'habil')) {
+      patch.periciaEspecieEscolhida = pericias[Math.floor(Math.random() * pericias.length)].nome;
+    }
+    if (especieSelecionada.traços.some((t) => t.id === 'versatil')) {
+      patch.talentoEspecieEscolhido = talentosOrigem[Math.floor(Math.random() * talentosOrigem.length)].id;
+    }
+    if (especieSelecionada.subescolha?.natureza === 'identidade_permanente' && especieSelecionada.opcoesSubescolha) {
+      const opcoes = especieSelecionada.opcoesSubescolha;
+      patch.subescolhaEspecieEscolhida = opcoes[Math.floor(Math.random() * opcoes.length)].nome;
+    }
+    update(patch);
   }
   function randomizarAtributos() {
     const valores = embaralhar(arrayPadrao);
@@ -267,7 +294,27 @@ export default function WizardShell() {
       mensagemInvalida: 'Escolha uma espécie antes de avançar.',
       randomize: randomizarEspecie,
     },
-    { name: '3b. Escolhas da Espécie', render: (p) => <EspecieEscolhasStep {...p} />, isValid: () => true },
+    {
+      name: '3b. Escolhas da Espécie',
+      render: (p) => <EspecieEscolhasStep {...p} />,
+      isValid: (s) => {
+        const especieSelecionada = especies.find((e) => e.nome === s.especie);
+        if (!especieSelecionada) return true;
+        if (especieSelecionada.tamanho.opcoes && s.tamanhoEspecieEscolhido === null) return false;
+        if (especieSelecionada.traços.some((t) => t.id === 'habil') && s.periciaEspecieEscolhida === null) return false;
+        if (especieSelecionada.traços.some((t) => t.id === 'versatil') && s.talentoEspecieEscolhido === null) return false;
+        if (
+          especieSelecionada.subescolha?.natureza === 'identidade_permanente' &&
+          especieSelecionada.opcoesSubescolha &&
+          s.subescolhaEspecieEscolhida === null
+        ) {
+          return false;
+        }
+        return true;
+      },
+      mensagemInvalida: 'Complete as escolhas da espécie antes de avançar.',
+      randomize: randomizarEscolhasEspecie,
+    },
     {
       name: '3c. Atributos',
       render: (p) => (

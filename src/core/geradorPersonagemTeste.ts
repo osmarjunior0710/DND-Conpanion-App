@@ -17,9 +17,10 @@ import { subclasses } from '../data/rulesets/dnd2024/subclasses';
 import { estilosDeLuta } from '../data/rulesets/dnd2024/estilosDeLuta';
 import { proficienciasIniciaisClasse } from '../data/rulesets/dnd2024/classesProficienciasIniciais';
 import { gruposFerramenta } from '../data/rulesets/dnd2024/ferramentas';
+import { pericias } from '../data/rulesets/dnd2024/pericias';
 import { magiasDaClasse } from '../data/rulesets/dnd2024/magias';
 import { invocacoesMisticas } from '../data/rulesets/dnd2024/invocacoesMisticas';
-import { talentos, type Talento } from '../data/rulesets/dnd2024/talentos';
+import { talentos, talentosOrigem, type Talento } from '../data/rulesets/dnd2024/talentos';
 import { dadoVidaValor } from '../data/levelUpFixtures';
 import {
   criarSelecaoInicial,
@@ -122,6 +123,22 @@ function gerarSelecaoNivel1(classe: Classe, origemNome: string, especieNome: str
   if (origemObj?.ferramenta.categoria === 'escolha') {
     const opcoes = gruposFerramenta[origemObj.ferramenta.grupo] ?? [];
     selection.ferramentaOrigemEscolhida = sorteiaUm(opcoes)?.nome ?? null;
+  }
+
+  // Escolhas da Espécie (Tamanho, Hábil, Versátil) — só as espécies com
+  // esses traços preenchem algo, mesma lógica de `randomizarEscolhasEspecie`.
+  const especieObj = especies.find((e) => e.nome === especieNome);
+  if (especieObj?.tamanho.opcoes) {
+    selection.tamanhoEspecieEscolhido = sorteiaUm(especieObj.tamanho.opcoes) ?? null;
+  }
+  if (especieObj?.traços.some((t) => t.id === 'habil')) {
+    selection.periciaEspecieEscolhida = sorteiaUm(pericias)?.nome ?? null;
+  }
+  if (especieObj?.traços.some((t) => t.id === 'versatil')) {
+    selection.talentoEspecieEscolhido = sorteiaUm(talentosOrigem)?.id ?? null;
+  }
+  if (especieObj?.subescolha?.natureza === 'identidade_permanente' && especieObj.opcoesSubescolha) {
+    selection.subescolhaEspecieEscolhida = sorteiaUm(especieObj.opcoesSubescolha)?.nome ?? null;
   }
 
   // Línguas, alinhamento — genérico, mesma lógica do wizard.
