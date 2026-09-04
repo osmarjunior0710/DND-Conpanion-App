@@ -1413,30 +1413,64 @@ por dia dentre uma lista fixa — mais parecido com "passivo com magia
 diária" que qualquer categoria das 6), **Espelho do Aprisionamento**
 (prisão de criaturas com várias células e regras próprias, não é um
 item "usado" pelo personagem) e **Garrafa do Efreeti** (convoca e
-aprisiona um efreeti — narrativo demais). Ficaram com `tipoItem: null`
-em vez de forçar uma categoria errada.
+aprisiona um efreeti — narrativo demais). No Lote 6 (último lote,
+288/288 concluído), mais sete: **Baralho das Surpresas** (mesmo caso
+do Baralho das Ilusões — efeito por carta, narrativo demais),
+**Dispositivo de Kwalish** (veículo com CA/PV próprios, mesmo padrão
+da Corda de Escalada/Estrangulamento), **Esfera de Aniquilação** e
+**Frasco de Ferro** (perigo ambiental/ferramenta narrativa, não é algo
+que o personagem "usa" em combate), **Instrumento dos Bardos** (7
+variantes com magias diferentes cada — mesmo caso de "molde que varia
+por exemplar" do "Arma +1, +2 ou +3", ver achado abaixo), **Pedra
+Iônica (geral)** e **Estátua de Poderes Incríveis (geral)** (linhas
+"introdução da família" na planilha — descrevem só a mecânica
+genérica de como a pedra/estátua funciona, sem efeito próprio; quem
+carrega o efeito de verdade são as variantes nomeadas, já
+classificadas). Ficaram com `tipoItem: null` em vez de forçar uma
+categoria errada.
 
 **Achado novo do Lote 4 — `bonusItem` não cobre item "genérico" com
 bônus variável por raridade.** "Arma +1, +2 ou +3", "Armadura +1, +2
 ou +3" e "Bastão Guardião de Pactos" não são um item específico — são
 um molde onde o bônus depende de qual exemplar (raridade) o jogador
 tem. No Lote 5, mais dois do mesmo padrão: "Escudo +1, +2 ou +3" e
-"Munição +1, +2 ou +3". `bonusItem` ficou `null` nesses 5 em vez de
-chutar um valor. Se
-algum jogador vier a usar um desses em mesa, vai precisar de uma
-pergunta manual ("qual variante você tem?") antes de qualquer cálculo
-automático usar o bônus certo — não é um bug, é limite do campo único
-pra este caso específico.
+"Munição +1, +2 ou +3". No Lote 6, "Instrumento dos Bardos" (7 tipos,
+cada um com raridade e lista de magias própria) também entra nesse
+balde. `bonusItem`/`tipoItem` ficaram `null` nesses 6 em vez de
+chutar um valor. Se algum jogador vier a usar um desses em mesa, vai
+precisar de uma pergunta manual ("qual variante você tem?") antes de
+qualquer cálculo automático usar o bônus certo — não é um bug, é
+limite do campo único pra este caso específico.
 
-**Por que importa:** se algum desses 5 vier a precisar de UI própria
-na Mochila/Combat (ex: o Osmar quiser equipar um deles em mesa), a
-classificação atual (`null`) não vai disparar nenhum componente —
-precisa de decisão explícita.
+**Achado do Lote 6 — `cargas.max` não cobre carga variável por
+exemplar.** "Lâmina da Sorte" tem uma propriedade (Desejo) com 1d4-1
+cargas — determinado por sorteio quando o item é criado, não um valor
+fixo conhecido igual aos outros itens com carga (que sempre tinham um
+número fixo, ex: 20, 50, 5, 3). `cargas` ficou `null` (`tipoItem:
+"ativo-com-carga"` e `bonusItem: 1` mantidos, já que o bônus fixo de
++1 arma esse sim é conhecido). Mesmo lote, "Manto de Invisibilidade"
+tem um recurso de DURAÇÃO acumulada (2 horas totais, recarrega 1h a
+cada 12h sem uso) em vez de cargas discretas — `cargas` também ficou
+`null` por não caber no formato `{max, recarga}` pensado pra
+contagem de usos, não pra minutos/horas de duração.
 
-**O que falta:** perguntar ao Osmar se vale criar uma 7ª categoria
-(ex: `ativo-sem-carga`, pra Bastão Imóvel/Cajados) ou se esses casos
-ficam mesmo fora do "20%" da seção 4.1 até aparecer pedido real de um
-jogador pra usar um desses itens. Mesma pergunta vale pros itens
-parecidos que aparecerem nos próximos lotes (provavelmente vão
-aparecer mais — cajados/bastões que viram criatura são comuns no
-catálogo).
+**Achado do Lote 6 — item do livro que não existe na planilha.**
+"Tapete Voador" (Guia do Mestre, pág. ~187, entre "Talismã do Mal
+Absoluto" e "Tomo da Língua Quieta" no catálogo alfabético) é um item
+mágico real do livro, mas não tem linha na aba "Itens Mágicos" da
+planilha mestra — os 288 itens processados nesta auditoria não o
+incluem. Avisado ao Osmar; não foi adicionado à planilha nem ao `.ts`
+sem confirmação (regra da seção 3 do `CLAUDE.md`: planilha é fonte de
+verdade, gap de dado vira aviso, não decisão unilateral).
+
+**Por que importa:** se algum dos itens `null` acima vier a precisar
+de UI própria na Mochila/Combat (ex: o Osmar quiser equipar um deles
+em mesa), a classificação atual (`null`) não vai disparar nenhum
+componente — precisa de decisão explícita.
+
+**Estado atual (auditoria de Itens Mágicos concluída, 288/288):**
+essa é a lista final de itens `tipoItem: null` — não há mais lotes
+pendentes. Falta perguntar ao Osmar se vale criar uma 7ª categoria
+(ex: `ativo-sem-carga`, pra Bastão Imóvel/Cajados que viram criatura)
+ou se esses casos ficam fora do "20%" da seção 4.1 até aparecer
+pedido real de um jogador pra usar um desses itens em mesa.

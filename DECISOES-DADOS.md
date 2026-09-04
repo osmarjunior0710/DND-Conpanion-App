@@ -610,3 +610,54 @@ mecanismo de "característica concede magia" que falta pro Talento de
 Origem Iniciado em Magia, ver `PENDENCIAS.md`).
 
 **Data/origem:** 2026-09.
+
+## Descrição Completa × Curta — padrão pra qualquer catálogo novo do livro
+
+**O que é:** decisão tomada ao longo da auditoria de Armas, Armaduras,
+Equipamento de Aventura e Itens Mágicos (288 itens, `AUDITORIA-CONTEUDO.md`).
+Generaliza pro próximo catálogo parecido (ex: Talentos).
+
+**Completa nem sempre é texto literal do livro — depende do formato da
+fonte.** Quando o livro tem 1 parágrafo de prosa por item (Magias,
+Equipamento de Aventura, Itens Mágicos), `descricaoCompleta` é o texto
+LITERAL extraído do PDF. Quando o livro só tem tabela + regras gerais
+sem parágrafo por item (Armas, Armaduras), `descricaoCompleta` é texto
+PRÓPRIO, sintetizado combinando a linha da tabela com a consequência
+mecânica de cada regra — não existia em lugar nenhum antes. Decidir
+qual dos dois vale ANTES de começar a extrair, não item por item.
+
+**Extração de PDF por fronteira de cabeçalho, com 3 armadilhas
+recorrentes:** localizar cada nome MAIÚSCULO no texto do capítulo e
+cortar até o próximo cabeçalho. As 3 armadilhas que apareceram em quase
+todo lote de 50, então valem checagem sistemática, não só quando
+"parece errado": (1) **cabeçalho repetido** (ex: nome do item aparece
+de novo numa legenda de tabela/imagem) some com o texto do item
+anterior; (2) **último item da lista sem fronteira seguinte** vaza até
+a próxima seção do capítulo; (3) **família com parágrafo mestre
+compartilhado** (Foco Arcano, Estátua de Poderes Incríveis, Pedra
+Iônica, Anel de Comandar Elementais) — se as variantes nomeadas forem
+excluídas da busca por já estarem previstas pra outro lote, o
+cabeçalho delas para de servir de fronteira e o item anterior vaza a
+seção inteira; a correção é sempre incluir o cabeçalho como fronteira
+mesmo sem atribuir texto a ele ainda. **Detecção:** conferir o
+tamanho (chars) de cada texto extraído do lote antes de commitar — um
+outlier (muito maior ou muito menor que os vizinhos) quase sempre é
+um dos 3 bugs acima, não conteúdo genuinamente longo.
+
+**Classificação derivada (`tipoItem`/`bonusItem`/`cargas` — só em
+Itens Mágicos, ver `AUDITORIA-CONTEUDO.md` seção 4.1) não tenta cobrir
+100% do catálogo.** Regra prática: se o item tem carga numérica (cargas
+por dia, cargas até destruir), `tipoItem` vira `"ativo-com-carga"`
+mesmo quando o item também é uma arma/armadura com bônus fixo (os 2
+campos convivem — `bonusItem` guarda o bônus, `cargas` guarda a carga).
+Só vira `"arma"`/`"armadura"`/`"escudo"` puro quando NÃO há carga, só
+bônus fixo. Item cuja mecânica varia por exemplar específico (ex: "Arma
++1, +2 ou +3", instrumentos com magias diferentes por tipo) fica com
+`bonusItem`/`tipoItem: null` de propósito — forçar um valor faria o
+código mentir sobre um item que na real precisa de uma pergunta manual
+("qual variante você tem?"). Item com bloco de estatística próprio
+(CA/PV, vira criatura controlada) ou efeito narrativo demais pra virar
+componente de UI também fica `null` — a lista completa de itens `null`
+e o motivo de cada um está em `PENDENCIAS.md`, não repetida aqui.
+
+**Data/origem:** 2026-09.
