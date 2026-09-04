@@ -65,8 +65,10 @@ export interface RollState {
   categoria?: CategoriaRolagemD20;
   /** Preenchido quando o jogador já aplicou o `BonusExtraProvider`
    * registrado — guarda rótulo + valor rolado, pra mostrar a quebra
-   * do total e travar o botão (regra real: no máximo 1x por jogada). */
-  bonusExtra?: { rotulo: string; valor: number } | null;
+   * do total e travar o botão (regra real: no máximo 1x por jogada).
+   * `valor: '🎲'` enquanto anima (mesmo efeito do 2º d20 de Vantagem/
+   * Desvantagem) — `total` só soma o valor quando a animação termina. */
+  bonusExtra?: { rotulo: string; lados: number; valor: number | string } | null;
 }
 
 interface RollD20Options {
@@ -252,10 +254,15 @@ export function RollProvider({ children }: { children: ReactNode }) {
     if (!estado.categoria || estado.bonusExtra) return;
     if (!bonusExtraProvider || bonusExtraProvider.restantes <= 0) return;
     if (!bonusExtraProvider.usar()) return;
-    const valor = 1 + Math.floor(Math.random() * bonusExtraProvider.lados);
-    setEstado((prev) =>
-      prev ? { ...prev, bonusExtra: { rotulo: bonusExtraProvider.rotulo, valor }, total: (prev.total ?? 0) + valor } : prev,
-    );
+    const { rotulo, lados } = bonusExtraProvider;
+    setEstado((prev) => (prev ? { ...prev, bonusExtra: { rotulo, lados, valor: '🎲' } } : prev));
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      const valor = 1 + Math.floor(Math.random() * lados);
+      setEstado((prev) =>
+        prev ? { ...prev, bonusExtra: { rotulo, lados, valor }, total: (prev.total ?? 0) + valor } : prev,
+      );
+    }, DURACAO_ANIMACAO_MS);
   }, [estado, bonusExtraProvider]);
 
   return (

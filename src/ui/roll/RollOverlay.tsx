@@ -58,9 +58,14 @@ export default function RollOverlay() {
           </div>
         )}
         {estado.categoria === 'atributoOuSalvaguarda' && estado.bonusExtra && (
-          <div className={styles.bonusExtraResultado}>
-            +1d{bonusExtraDisponivel?.lados ?? 10} ({estado.bonusExtra.rotulo}): {estado.bonusExtra.valor}
-          </div>
+          <>
+            <div className={styles.formula}>
+              +1d{estado.bonusExtra.lados} ({estado.bonusExtra.rotulo})
+            </div>
+            <div className={styles.diceRow}>
+              <div className={`${styles.die} ${styles.dieBonusExtra}`}>{estado.bonusExtra.valor}</div>
+            </div>
+          </>
         )}
         {estado.fase === 'concluido' &&
           estado.categoria === 'atributoOuSalvaguarda' &&
