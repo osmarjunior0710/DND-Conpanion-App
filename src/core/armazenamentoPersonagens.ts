@@ -89,6 +89,11 @@ export interface PersonagemSalvo {
    * Ínfero, nível 6) desde o último Descanso Longo — só ele reseta.
    * Máximo = mod. Carisma (mín. 1), ver `core/sorteDoTenebroso.ts`. */
   sorteDoTenebrosoGasto?: number;
+  /** Resistência Ínfera (Bruxo, Patrono Ínfero, nível 10) — tipo de
+   * dano escolhido na característica (qualquer um exceto Energético),
+   * trocável a cada Descanso Curto ou Longo. `null`/ausente = ainda
+   * não escolheu. Só informativo — ver `core/resistenciaInfera.ts`. */
+  resistenciaInferaAtual?: string | null;
   /** Arcana Mística (Bruxo, níveis 11/13/15/17) — círculo (6/7/8/9) →
    * nome da magia escolhida pra esse arcanum. Cresce 1 entrada por
    * nível desbloqueado (ver `core/arcanaMistica.ts`). */

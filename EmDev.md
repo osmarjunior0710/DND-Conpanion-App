@@ -285,8 +285,18 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
         Contra-Encantamento) — nunca em ataque/iniciativa/dano.
         Reaproveitável por qualquer característica parecida no futuro
         (ex: Orientação/Guidance), não é código exclusivo do Bruxo.
-  - [ ] **B6.5 — Resistência Ínfera.** Escolha de tipo de dano ao
-        descansar — informativo (sem motor de dano recebido ainda).
+  - [x] **B6.5 — Resistência Ínfera — FEITA.** Novo dado
+        `data/rulesets/dnd2024/tiposDeDano.ts` (13 tipos oficiais,
+        conferidos contra a planilha, aba Glossário de Regras) +
+        `core/resistenciaInfera.ts` (testado) — filtra Energético (a
+        regra real exclui). Nova seção na aba Atributos, mesmo padrão
+        visual de "Maestria em Arma" — mostra o tipo atual + ícone 🔄
+        que abre popup de escolha. Novo componente genérico
+        `TrocarValorSimples.tsx` (reaproveita o CSS de
+        `TrocarArmaMaestria`, mas pra lista de texto simples, sem dado
+        de arma) — serve pra qualquer "escolha 1 de uma lista curta"
+        parecida no futuro. Informativo: só guarda a escolha, não
+        existe motor de dano recebido pra aplicar a redução sozinho.
   - [ ] **B6.6 — Lançar no Inferno.** Ataque especial 1x/Descanso
         Longo, com opção de gastar 1 espaço de Pacto pra repetir.
 

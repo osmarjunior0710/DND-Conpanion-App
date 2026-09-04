@@ -3,10 +3,12 @@ import type { Arma } from '../../../data/rulesets/dnd2024/armas';
 import { buscarDescricaoMaestria } from '../../../data/rulesets/dnd2024/propriedadesMaestria';
 import { NOME_SENTIDO, type TipoSentido } from '../../../data/rulesets/dnd2024/sentidos';
 import { sentidosAtivos } from '../../../core/sentidos';
+import { tiposElegiveisResistenciaInfera } from '../../../core/resistenciaInfera';
 import { useRoll } from '../../roll/RollContext';
 import InfoValor from '../../components/InfoValor';
 import ItemComDescricao from '../../components/ItemComDescricao';
 import TrocarArmaMaestria from '../../components/TrocarArmaMaestria';
+import TrocarValorSimples from '../../components/TrocarValorSimples';
 import styles from './AtributosTab.module.css';
 
 interface AtributosTabProps {
@@ -40,6 +42,12 @@ interface AtributosTabProps {
    * Sismiconsciência) já somados de espécie + Invocações Místicas —
    * ver `core/sentidos.ts`. Seção some sozinha se tudo for 0. */
   sentidos: Record<TipoSentido, number>;
+  /** Resistência Ínfera (Bruxo, Patrono Ínfero, nível 10) — `null` =
+   * característica não desbloqueada, seção some. */
+  resistenciaInferaDisponivel: boolean;
+  /** `null` = ainda não escolheu nenhum tipo. */
+  resistenciaInferaAtual: string | null;
+  onTrocarResistenciaInfera: (tipo: string) => void;
 }
 
 export default function AtributosTab({
@@ -67,6 +75,9 @@ export default function AtributosTab({
   onTrocarArmaMaestria,
   onRolarIniciativa,
   sentidos,
+  resistenciaInferaDisponivel,
+  resistenciaInferaAtual,
+  onTrocarResistenciaInfera,
 }: AtributosTabProps) {
   const { rolarD20 } = useRoll();
   const sentidosParaExibir = sentidosAtivos(sentidos);
@@ -255,6 +266,27 @@ export default function AtributosTab({
           ))}
           <div className="label" style={{ marginTop: 6, marginBottom: 12 }}>
             já soma espécie + Invocações Místicas — o maior valor entre as fontes do mesmo tipo.
+          </div>
+        </>
+      )}
+
+      {resistenciaInferaDisponivel && (
+        <>
+          <div className="section-title">Resistência Ínfera</div>
+          <div className={styles.maestriaRow}>
+            <div className={styles.maestriaTop}>
+              <span>{resistenciaInferaAtual ?? 'nenhum tipo escolhido'}</span>
+              <TrocarValorSimples
+                titulo="Resistência Ínfera — escolher tipo de dano"
+                valorAtual={resistenciaInferaAtual ?? ''}
+                opcoes={tiposElegiveisResistenciaInfera()}
+                onTrocar={onTrocarResistenciaInfera}
+              />
+            </div>
+          </div>
+          <div className="label" style={{ marginTop: 2, marginBottom: 12 }}>
+            Resistência ao tipo escolhido — pode trocar ao completar um Descanso Curto ou Longo. Informativo: a Ficha
+            ainda não calcula dano recebido sozinha, então a redução é aplicada de cabeça na mesa.
           </div>
         </>
       )}

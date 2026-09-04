@@ -170,6 +170,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
+  const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
+    personagemSalvo.resistenciaInferaAtual ?? null,
+  );
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
   const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
   const [astuciaMagicaGasta, setAstuciaMagicaGasta] = useState(personagemSalvo.astuciaMagicaGasta ?? false);
@@ -283,6 +286,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const periciaInigualavelDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Perícia Inigualável', personagem.nivel);
   const bencaoDoTenebrosoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Bênção do Tenebroso', personagem.nivel);
   const sorteDoTenebrosoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'A Sorte do Próprio Tenebroso', personagem.nivel);
+  const resistenciaInferaDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Resistência Ínfera', personagem.nivel);
   const forMod = atributos.find((a) => a.atributo === 'FOR')?.mod ?? 0;
   const desMod = atributos.find((a) => a.atributo === 'DES')?.mod ?? 0;
   const carMod = atributos.find((a) => a.atributo === 'CAR')?.mod ?? 0;
@@ -340,6 +344,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       folegoGasto,
       indomavelGasto,
       sorteDoTenebrosoGasto,
+      resistenciaInferaAtual,
       surtoGasto,
       espacosGastosPorCirculo,
       inspiracaoGasto,
@@ -375,6 +380,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     folegoGasto,
     indomavelGasto,
     sorteDoTenebrosoGasto,
+    resistenciaInferaAtual,
     surtoGasto,
     espacosGastosPorCirculo,
     inspiracaoGasto,
@@ -827,6 +833,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             onTrocarArmaMaestria={trocarArmaMaestria}
             onRolarIniciativa={inspiracaoSuperiorDesbloqueada ? recuperarInspiracaoAoRolarIniciativa : undefined}
             sentidos={sentidos}
+            resistenciaInferaDisponivel={resistenciaInferaDisponivel}
+            resistenciaInferaAtual={resistenciaInferaAtual}
+            onTrocarResistenciaInfera={setResistenciaInferaAtual}
           />
         )}
         {tab === 'perfil' && (
