@@ -33,6 +33,12 @@ export interface TracoEspecie {
    * Pedras do Anão, Ação Bônus com usos limitados — não entra aqui,
    * só sentido sempre-ligado conta). */
   sentidoConcedido?: SentidoConcedido | null;
+  /** ID estável pra traço que o código precisa RECONHECER (não só
+   * exibir) — ver CLAUDE.md seção 13. Nunca comparar por `nome`.
+   * Hoje só usado pelos 2 traços do Humano que abrem uma escolha
+   * própria no wizard: `'habil'` (perícia à escolha) e `'versatil'`
+   * (talento de Origem à escolha). */
+  id?: string;
 }
 
 export type NaturezaSubescolha =
@@ -128,11 +134,11 @@ export const especies: Especie[] = [
     introducaoCurta: "Presentes em todo o multiverso, os humanos são variados e numerosos, buscando alcançar o máximo em seus anos de vida. Sua ambição e habilidade são admiradas, respeitadas e temidas em muitos mundos. Os humanos são tão diversos em aparência quanto as populações da Terra e adoram muitos deuses.",
     traços: [
       { nome: "Eficiente", descricao: "Você adquire Inspiração Heroica sempre que completar um Descanso Longo." },
-      { nome: "Hábil", descricao: "Você adquire proficiência em uma perícia à sua escolha." },
-      { nome: "Versátil", descricao: "Você adquire um talento de Origem à sua escolha (veja o capítulo 5). Habilidoso é recomendado." },
+      { nome: "Hábil", descricao: "Você adquire proficiência em uma perícia à sua escolha.", id: 'habil' },
+      { nome: "Versátil", descricao: "Você adquire um talento de Origem à sua escolha (veja o capítulo 5). Habilidoso é recomendado.", id: 'versatil' },
     ],
     subescolha: null,
-    disponivel: false,
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {

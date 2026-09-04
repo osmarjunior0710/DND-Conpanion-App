@@ -140,12 +140,29 @@ export default function PerfilTab({
         Espécie{especie ? ` — ${especie.nome}` : ''}
       </div>
       {especie && especie.traços.length > 0 ? (
-        especie.traços.map((t) => (
-          <div key={t.nome} className="opt-card" style={{ cursor: 'default' }}>
-            <div className="opt-card-name">{t.nome}</div>
-            <div className="opt-card-desc">{t.descricao}</div>
-          </div>
-        ))
+        especie.traços.map((t) => {
+          const talentoVersatil =
+            t.id === 'versatil' && selecao.talentoEspecieEscolhido
+              ? talentos.find((tt) => tt.id === selecao.talentoEspecieEscolhido)
+              : null;
+          return (
+            <div key={t.nome} className="opt-card" style={{ cursor: 'default' }}>
+              <div className="opt-card-name">{t.nome}</div>
+              <div className="opt-card-desc">
+                {t.descricao}
+                {t.id === 'habil' && selecao.periciaEspecieEscolhida && (
+                  <> — escolhida: <strong>{selecao.periciaEspecieEscolhida}</strong></>
+                )}
+                {talentoVersatil && (
+                  <>
+                    {' '}
+                    — escolhido: <strong>{talentoVersatil.nome}</strong>. {talentoVersatil.beneficios}
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })
       ) : (
         <div className="label" style={{ marginBottom: 12 }}>
           Nenhum traço de espécie ainda.

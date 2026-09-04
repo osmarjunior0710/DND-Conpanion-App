@@ -1,13 +1,26 @@
 import { especies } from '../../../data/rulesets/dnd2024/especies';
+import { pericias } from '../../../data/rulesets/dnd2024/pericias';
+import { origens } from '../../../data/rulesets/dnd2024/origens';
+import { proficienciasJaConcedidas } from '../../../core/proficienciasOrigem';
+import { valorFinalAtributo } from '../../../core/personagem';
+import { atributosOrdem, type Atributo } from '../../../data/wizardFixtures';
 import InfoChip from '../../components/InfoChip';
+import TelaEscolherTalento from '../../ficha/levelup/TelaEscolherTalento';
 import type { StepProps } from './StepProps';
 
-export default function EspecieEscolhasStep({ selection }: StepProps) {
+export default function EspecieEscolhasStep({ selection, update }: StepProps) {
   const especie = especies.find((e) => e.nome === selection.especie);
 
   if (!especie) {
     return <div className="label">Volte e selecione uma espécie primeiro.</div>;
   }
+
+  const temTraco = (id: string) => especie.traços.some((t) => t.id === id);
+  const origem = origens.find((o) => o.nome === selection.origem);
+  const jaConcedidas = proficienciasJaConcedidas(selection, origem);
+  const atributosFinais = Object.fromEntries(
+    atributosOrdem.map((a) => [a, valorFinalAtributo(selection, a) ?? 10]),
+  ) as Record<Atributo, number>;
 
   return (
     <>
@@ -22,12 +35,28 @@ export default function EspecieEscolhasStep({ selection }: StepProps) {
       </div>
       <div className="summary-row">
         <span>Tamanho</span>
-        <span>{especie.tamanho.fixo ?? especie.tamanho.opcoes?.join(' ou ')}</span>
+        <span>{especie.tamanho.fixo ?? selection.tamanhoEspecieEscolhido ?? especie.tamanho.opcoes?.join(' ou ')}</span>
       </div>
       <div className="summary-row">
         <span>Deslocamento</span>
         <span>{especie.deslocamento}</span>
       </div>
+
+      {especie.tamanho.opcoes && (
+        <>
+          <div className="section-title">Tamanho — escolha 1</div>
+          {especie.tamanho.opcoes.map((opcao) => (
+            <div
+              key={opcao}
+              className={`opt-card ${selection.tamanhoEspecieEscolhido === opcao ? 'selected' : ''}`}
+              style={{ padding: '10px 12px' }}
+              onClick={() => update({ tamanhoEspecieEscolhido: opcao })}
+            >
+              <span className="opt-card-name">{opcao}</span>
+            </div>
+          ))}
+        </>
+      )}
 
       <div className="section-title">Traços da espécie</div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
@@ -35,6 +64,39 @@ export default function EspecieEscolhasStep({ selection }: StepProps) {
           <InfoChip key={t.nome} nome={t.nome} descricao={t.descricao} />
         ))}
       </div>
+
+      {temTraco('habil') && (
+        <>
+          <div className="section-title">Hábil — perícia à escolha</div>
+          {pericias.map((p) => (
+            <div key={p.nome} className="check-row" onClick={() => update({ periciaEspecieEscolhida: p.nome })}>
+              <div className={`check-box ${selection.periciaEspecieEscolhida === p.nome ? 'checked' : ''}`} />
+              <span className="check-label">{p.nome}</span>
+              {jaConcedidas.pericias.has(p.nome) && (
+                <span className="tag" style={{ marginLeft: 'auto' }}>
+                  já possui
+                </span>
+              )}
+            </div>
+          ))}
+        </>
+      )}
+
+      {temTraco('versatil') && (
+        <>
+          <div className="section-title">Versátil — talento de Origem à escolha</div>
+          <TelaEscolherTalento
+            nivelAtual={1}
+            atributosFinais={atributosFinais}
+            categoria="Origem"
+            talentosGeraisAtuais={[]}
+            favoritos={[]}
+            onToggleFavorito={() => {}}
+            selecionado={selection.talentoEspecieEscolhido}
+            onSelecionar={(id) => update({ talentoEspecieEscolhido: id })}
+          />
+        </>
+      )}
     </>
   );
 }

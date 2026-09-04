@@ -293,7 +293,8 @@ export interface PericiaFinal {
  * duplicar essa lógica. */
 export function periciasProficientes(selection: WizardSelection): string[] {
   const origem = origens.find((o) => o.nome === selection.origem);
-  return [...new Set<string>([...(origem?.pericias ?? []), ...selection.periciasClasseEscolhidas])];
+  const periciaEspecie = selection.periciaEspecieEscolhida ? [selection.periciaEspecieEscolhida] : [];
+  return [...new Set<string>([...(origem?.pericias ?? []), ...selection.periciasClasseEscolhidas, ...periciaEspecie])];
 }
 
 /** As 18 perícias do jogo, sempre — não só as proficientes. Cada uma

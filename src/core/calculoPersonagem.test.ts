@@ -139,6 +139,22 @@ describe('calcularPericias (periciasBonusExtras — ex: "Proficiências Bônus" 
   });
 });
 
+describe('calcularPericias (perícia da espécie — Hábil do Humano)', () => {
+  it('perícia em periciaEspecieEscolhida vira proficiente', () => {
+    const s = selecaoGuerreiro({ periciaEspecieEscolhida: 'Arcanismo' });
+    const resultado = calcularPericias(s, 1);
+    const arcanismo = resultado.find((p) => p.nome === 'Arcanismo');
+    expect(arcanismo?.proficiente).toBe(true);
+  });
+
+  it('sem periciaEspecieEscolhida (espécie sem Hábil, ou ainda não escolhida) não afeta nada', () => {
+    const s = selecaoGuerreiro();
+    const resultado = calcularPericias(s, 1);
+    const arcanismo = resultado.find((p) => p.nome === 'Arcanismo');
+    expect(arcanismo?.proficiente).toBe(false);
+  });
+});
+
 describe('calcularProficienciasFerramenta', () => {
   it('lista só as ferramentas concedidas (Classe), com mod. atributo + Bônus de Proficiência', () => {
     const s = selecaoGuerreiro({ ferramentasClasseEscolhidas: ['Ferramentas de Ladrão'] }); // Destreza

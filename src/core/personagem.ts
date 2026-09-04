@@ -37,6 +37,13 @@ export interface WizardSelection {
    * catálogo/`gruposFerramenta`) misturados na mesma lista. */
   proficienciasTalentoOrigemEscolhidas: string[];
   especie: string | null;
+  /** Escolhas da espécie que a UI precisa reconhecer por ID (ver
+   * `TracoEspecie.id`) — hoje só o Humano preenche algum destes.
+   * `tamanhoEspecieEscolhido` é reaproveitável por qualquer espécie
+   * com `tamanho.opcoes` (Aasimar e Tiferino também têm). */
+  tamanhoEspecieEscolhido: string | null;
+  periciaEspecieEscolhida: string | null;
+  talentoEspecieEscolhido: string | null;
   linguas: string[];
   alinhamento: string | null;
   itens: ItemCarrinho[];
@@ -67,6 +74,9 @@ export function criarSelecaoInicial(): WizardSelection {
     equipamentoOrigemEscolhido: null,
     proficienciasTalentoOrigemEscolhidas: [],
     especie: null,
+    tamanhoEspecieEscolhido: null,
+    periciaEspecieEscolhida: null,
+    talentoEspecieEscolhido: null,
     linguas: ['Comum'],
     alinhamento: null,
     itens: [],
