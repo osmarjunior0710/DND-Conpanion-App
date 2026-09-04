@@ -1406,8 +1406,20 @@ aleatórios — não dá pra representar como `cargas.max` fixo). No Lote
 recargas diferentes dentro do mesmo item — não dá pra resumir num só
 `cargas`) e **Corda de Estrangulamento** (mesmo caso da Corda de
 Escalada — tem CA/PV próprios, mais parecido com objeto rastreável
-que item ativo simples). Ficaram com `tipoItem: null` em vez de
-forçar uma categoria errada.
+que item ativo simples). No Lote 4, mais um: **Penas de Quaal** (5
+tipos de pena com mecânicas completamente diferentes dentro do mesmo
+item). Ficaram com `tipoItem: null` em vez de forçar uma categoria
+errada.
+
+**Achado novo do Lote 4 — `bonusItem` não cobre item "genérico" com
+bônus variável por raridade.** "Arma +1, +2 ou +3", "Armadura +1, +2
+ou +3" e "Bastão Guardião de Pactos" não são um item específico — são
+um molde onde o bônus depende de qual exemplar (raridade) o jogador
+tem. `bonusItem` ficou `null` nesses 3 em vez de chutar um valor. Se
+algum jogador vier a usar um desses em mesa, vai precisar de uma
+pergunta manual ("qual variante você tem?") antes de qualquer cálculo
+automático usar o bônus certo — não é um bug, é limite do campo único
+pra este caso específico.
 
 **Por que importa:** se algum desses 5 vier a precisar de UI própria
 na Mochila/Combat (ex: o Osmar quiser equipar um deles em mesa), a

@@ -193,7 +193,23 @@ listada no reporte, sem esperar aprovação prévia por item.
         (arma com bônus fixo E habilidade de carga separada) —
         registrado como padrão, não é mais "ou uma coisa ou outra".
         `npm test` (164 passando) e `npm run build` OK.
-  - [ ] **Lote 4 (itens 151-200)**
+  - [x] **Lote 4 (itens 151-200) — FEITA.** Extraiu e dividiu a família
+        "Pedra Iônica" (14 variantes + intro geral — mesmo método de
+        sub-parágrafo "Nome (Raridade). texto..." já usado em Estátua
+        de Poderes Incríveis). 4 divergências de sintonização
+        encontradas eram falso-positivo (a nota "requer sintonização"
+        só aparece no parágrafo mestre da família, não repetida em
+        cada pedra — planilha já estava certa). Sem correção de dado
+        real neste lote. Confirmado o padrão de item com `tipoItem` +
+        `cargas` juntos quando faz sentido (cajados com bônus de
+        ataque E cargas de magia). 2 itens genéricos ("Arma +1, +2 ou
+        +3", "Armadura +1, +2 ou +3", "Bastão Guardião de Pactos")
+        ficaram com `bonusItem: null` de propósito — o bônus varia
+        conforme a raridade específica do exemplar, não é um valor
+        fixo por nome de item (registrado em PENDENCIAS.md). 1 item
+        (Penas de Quaal — 5 tipos de pena com mecânicas totalmente
+        diferentes) ficou com `tipoItem: null`. `npm test` (164
+        passando) e `npm run build` OK.
   - [ ] **Lote 5 (itens 201-250)**
   - [ ] **Lote 6 (itens 251-288)** — inclui as famílias compostas
         adiadas do Lote 1 (Pedra Iônica ~14 variantes, Anel de
