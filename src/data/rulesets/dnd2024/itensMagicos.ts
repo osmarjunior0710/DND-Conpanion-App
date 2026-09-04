@@ -16,9 +16,12 @@
 // Estátua/Pedra Iônica/Anel de Comandar Elementais) compartilham 1 parágrafo
 // entre várias entradas da planilha — extraído e dividido por sub-nome onde
 // o livro já separa por nome, senão o mesmo texto do grupo repete em cada
-// variante. Auditoria completa (288/288 itens, lotes de 50, ver EmDev.md
-// e AUDITORIA-CONTEUDO.md) — `descricaoCompleta` só fica `null` se não
-// houver texto próprio pra extrair (não deveria acontecer nesta lista).
+// variante. Auditoria completa (289 itens: os 288 da planilha, lotes de
+// 50, ver EmDev.md e AUDITORIA-CONTEUDO.md, + "Tapete Voador", achado
+// faltando na planilha durante o Lote 6 e adicionado com confirmação do
+// Osmar — ver DECISOES-DADOS.md) — `descricaoCompleta` só fica `null`
+// se não houver texto próprio pra extrair (não deveria acontecer nesta
+// lista).
 //
 // `tipoItem`/`bonusItem`/`cargas` são CLASSIFICAÇÃO DERIVADA (não vêm da
 // planilha, só do texto) — direção acordada com o Osmar em
@@ -3624,6 +3627,21 @@ export const itensMagicos: ItemMagico[] = [
     tipoItem: "ativo-com-carga",
     bonusItem: null,
     cargas: { max: 6, recarga: "1d6 por dia ao escurecer" },
+  },
+  {
+    id: "tapetevoador",
+    nome: "Tapete Voador",
+    categoria: "Item maravilhoso",
+    raridade: "Muito Raro",
+    requerSintonizacao: false,
+    sintonizacaoTexto: "Não",
+    efeitoResumido: "Tapete que flutua e voa ao comando falado, em 1 de 4 tamanhos possíveis (100 a 400 kg de capacidade, 21 a 9 m de deslocamento de voo); pode carregar até o dobro do peso normal, mas com deslocamento reduzido à metade.",
+    pagina: 208,
+    fonte: "Guia do Mestre (D&D 5e 2024)",
+    descricaoCompleta: "TAPETE VOADOR Item maravilhoso, muito raro Você pode falar a palavra de comando do tapete, com uma ação, para fazê-lo flutuar e voar. Ele se move na direção falada, considerando que você esteja a até 9 metros dele. Existem quatro tamanhos de tapete voador. O Mestre escolhe o tamanho do tapete ou o determina aleatoriamente. d100 Tamanho Capacidade Deslocamento de Voo 01–20 1 m x 1,5 m 100 kg 21 m 21–55 1,2 m x 1,8 m 200 kg 18 m 56–80 1,5 m x 2 m 300 kg 12 m 81–100 1,8 m x 2,8 m 400 kg 9 m O tapete pode carregar até o dobro do peso mostrado na tabela, mas seu deslocamento de voo é reduzido à metade se ele estiver carregando mais que a capacidade normal.",
+    tipoItem: null,
+    bonusItem: null,
+    cargas: null,
   },
   {
     id: "tomodacompreensao",

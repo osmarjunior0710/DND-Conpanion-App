@@ -660,4 +660,15 @@ código mentir sobre um item que na real precisa de uma pergunta manual
 componente de UI também fica `null` — a lista completa de itens `null`
 e o motivo de cada um está em `PENDENCIAS.md`, não repetida aqui.
 
+**Gap de dado achado no caminho — planilha vs. livro.** "Tapete
+Voador" é um item real do Guia do Mestre que não tinha linha na aba
+"Itens Mágicos" da planilha mestra (achado ao conferir o catálogo
+completo item a item). Confirmado com o Osmar antes de adicionar —
+inserida na posição certa por raridade+ordem alfabética (a aba não é
+alfabética pura: agrupa por Raridade primeiro — Comum, Incomum, Raro,
+Muito Raro, Lendário, Variável — e alfabético dentro de cada grupo).
+Padrão pra próxima vez que aparecer um gap parecido: nunca preencher
+sozinho, confirmar com o Osmar, e ao inserir, respeitar a ordem
+Raridade→Alfabético já usada na aba, não só ordem alfabética simples.
+
 **Data/origem:** 2026-09.

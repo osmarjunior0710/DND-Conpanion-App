@@ -1454,23 +1454,19 @@ cada 12h sem uso) em vez de cargas discretas — `cargas` também ficou
 `null` por não caber no formato `{max, recarga}` pensado pra
 contagem de usos, não pra minutos/horas de duração.
 
-**Achado do Lote 6 — item do livro que não existe na planilha.**
-"Tapete Voador" (Guia do Mestre, pág. ~187, entre "Talismã do Mal
-Absoluto" e "Tomo da Língua Quieta" no catálogo alfabético) é um item
-mágico real do livro, mas não tem linha na aba "Itens Mágicos" da
-planilha mestra — os 288 itens processados nesta auditoria não o
-incluem. Avisado ao Osmar; não foi adicionado à planilha nem ao `.ts`
-sem confirmação (regra da seção 3 do `CLAUDE.md`: planilha é fonte de
-verdade, gap de dado vira aviso, não decisão unilateral).
-
 **Por que importa:** se algum dos itens `null` acima vier a precisar
 de UI própria na Mochila/Combat (ex: o Osmar quiser equipar um deles
 em mesa), a classificação atual (`null`) não vai disparar nenhum
 componente — precisa de decisão explícita.
 
-**Estado atual (auditoria de Itens Mágicos concluída, 288/288):**
+**Estado atual (auditoria de Itens Mágicos concluída, 289 itens):**
 essa é a lista final de itens `tipoItem: null` — não há mais lotes
-pendentes. Falta perguntar ao Osmar se vale criar uma 7ª categoria
-(ex: `ativo-sem-carga`, pra Bastão Imóvel/Cajados que viram criatura)
-ou se esses casos ficam fora do "20%" da seção 4.1 até aparecer
-pedido real de um jogador pra usar um desses itens em mesa.
+pendentes. "Tapete Voador" (item real do livro, achado faltando na
+planilha durante o Lote 6, adicionado com confirmação do Osmar — ver
+`DECISOES-DADOS.md`) entra na mesma lista: não é arma/armadura/
+consumível/passivo nem tem carga própria, é mais parecido com uma
+montaria/veículo convocável (categoria "Montarias e Veículos" do app,
+não Itens Mágicos comum). Falta perguntar ao Osmar se vale criar uma
+7ª categoria (ex: `ativo-sem-carga`, pra Bastão Imóvel/Cajados que
+viram criatura) ou se esses casos ficam fora do "20%" da seção 4.1 até
+aparecer pedido real de um jogador pra usar um desses itens em mesa.
