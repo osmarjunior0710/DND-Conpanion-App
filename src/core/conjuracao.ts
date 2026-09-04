@@ -1,9 +1,10 @@
 // Deriva se o personagem tem fonte própria de conjuração — decisão
 // registrada em DECISOES-DESIGN.md ("Magia de item vs magia natural" +
-// "Aba Magias sempre visível, nunca escondida por classe"). Hoje só
-// olha a classe atual (nenhuma classe conjuradora foi importada ainda
-// — Guerreiro é a única), mas fica pronta pra somar outras fontes
-// assim que existirem de verdade no app:
+// "Aba Magias sempre visível, nunca escondida por classe"). Olha a
+// classe atual E a espécie (Linhagem Élfica do Elfo e afins concedem
+// truque/magia mesmo numa classe sem conjuração — ex.: Guerreiro Elfo
+// ainda conjura o truque da linhagem), mas fica pronta pra somar
+// outras fontes assim que existirem de verdade no app:
 // - Multiclasse (pendência em aberto, ver PENDENCIAS.md).
 // - Talento de Origem que concede magia (ex: "Iniciado em Magia" — dá
 //   2 truques + 1 magia de 1º círculo; concedido por Acólito/Guia/
@@ -16,6 +17,8 @@
 // (Mochila + ação "Usar Objeto"), não afeta essa resposta.
 
 import type { Classe } from '../data/rulesets/dnd2024/classes';
+import type { WizardSelection } from './personagem';
+import { temMagiaDeEspecie } from './magiasEspecie';
 
 /** Convenção assumida pra detectar recurso de conjuração: nome do
  * `RecursoClasse` menciona "Espaços de Magia" ou "Magias Preparadas"
@@ -24,7 +27,8 @@ import type { Classe } from '../data/rulesets/dnd2024/classes';
  * (Guardião/Paladino). Ainda não validado contra dado real de nenhuma
  * classe conjuradora importada — revisar quando a 1ª (Mago ou
  * Clérigo) entrar. */
-export function personagemConjura(classe: Classe | null): boolean {
-  if (!classe) return false;
-  return classe.recursos.some((r) => r.nome.includes('Espaços de Magia') || r.nome.includes('Magias Preparadas'));
+export function personagemConjura(classe: Classe | null, selecao?: WizardSelection): boolean {
+  const classeConjura = classe ? classe.recursos.some((r) => r.nome.includes('Espaços de Magia') || r.nome.includes('Magias Preparadas')) : false;
+  if (classeConjura) return true;
+  return selecao ? temMagiaDeEspecie(selecao) : false;
 }

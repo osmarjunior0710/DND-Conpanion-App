@@ -34,6 +34,7 @@ import { armasParaMaestria, quantidadeMaestriaEmArma } from './maestriaArma';
 import { valorRecursoClasse } from './recursosClasse';
 import { espacosDeMagiaAtivos } from './magiasPersonagem';
 import { niveisComASI, niveisComEspecialista, temEstiloDeLutaTrocavel, subclasseImplementada } from './levelUp';
+import { opcoesSubescolhaNoWizard, tracoComEscolhaDePericia } from './especieSubescolha';
 import { gerarIdPersonagem, type PersonagemSalvo } from './armazenamentoPersonagens';
 import { embaralhar, sorteiaUm } from './sorteio';
 
@@ -125,20 +126,24 @@ function gerarSelecaoNivel1(classe: Classe, origemNome: string, especieNome: str
     selection.ferramentaOrigemEscolhida = sorteiaUm(opcoes)?.nome ?? null;
   }
 
-  // Escolhas da Espécie (Tamanho, Hábil, Versátil) — só as espécies com
-  // esses traços preenchem algo, mesma lógica de `randomizarEscolhasEspecie`.
+  // Escolhas da Espécie (Tamanho, perícia à escolha, Versátil,
+  // sub-escolha) — só as espécies com esses traços preenchem algo,
+  // mesma lógica de `randomizarEscolhasEspecie`.
   const especieObj = especies.find((e) => e.nome === especieNome);
   if (especieObj?.tamanho.opcoes) {
     selection.tamanhoEspecieEscolhido = sorteiaUm(especieObj.tamanho.opcoes) ?? null;
   }
-  if (especieObj?.traços.some((t) => t.id === 'habil')) {
-    selection.periciaEspecieEscolhida = sorteiaUm(pericias)?.nome ?? null;
+  const tracoPericia = especieObj ? tracoComEscolhaDePericia(especieObj) : undefined;
+  if (tracoPericia) {
+    const opcoes = tracoPericia.opcoesPericia ?? pericias.map((p) => p.nome);
+    selection.periciaEspecieEscolhida = sorteiaUm(opcoes) ?? null;
   }
   if (especieObj?.traços.some((t) => t.id === 'versatil')) {
     selection.talentoEspecieEscolhido = sorteiaUm(talentosOrigem)?.id ?? null;
   }
-  if (especieObj?.subescolha?.natureza === 'identidade_permanente' && especieObj.opcoesSubescolha) {
-    selection.subescolhaEspecieEscolhida = sorteiaUm(especieObj.opcoesSubescolha)?.nome ?? null;
+  const opcoesSubescolha = especieObj ? opcoesSubescolhaNoWizard(especieObj) : null;
+  if (opcoesSubescolha) {
+    selection.subescolhaEspecieEscolhida = sorteiaUm(opcoesSubescolha)?.nome ?? null;
   }
 
   // Línguas, alinhamento — genérico, mesma lógica do wizard.

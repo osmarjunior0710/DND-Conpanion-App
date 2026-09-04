@@ -4,7 +4,7 @@ import { origens } from '../../../data/rulesets/dnd2024/origens';
 import { proficienciasJaConcedidas } from '../../../core/proficienciasOrigem';
 import { valorFinalAtributo } from '../../../core/personagem';
 import { atributosOrdem, type Atributo } from '../../../data/wizardFixtures';
-import { descricaoTracoResolvida } from '../../../core/especieSubescolha';
+import { descricaoTracoResolvida, opcoesSubescolhaNoWizard, tracoComEscolhaDePericia } from '../../../core/especieSubescolha';
 import InfoChip from '../../components/InfoChip';
 import TelaEscolherTalento from '../../ficha/levelup/TelaEscolherTalento';
 import type { StepProps } from './StepProps';
@@ -22,6 +22,9 @@ export default function EspecieEscolhasStep({ selection, update }: StepProps) {
   const atributosFinais = Object.fromEntries(
     atributosOrdem.map((a) => [a, valorFinalAtributo(selection, a) ?? 10]),
   ) as Record<Atributo, number>;
+  const opcoesSubescolha = opcoesSubescolhaNoWizard(especie);
+  const tracoPericia = tracoComEscolhaDePericia(especie);
+  const opcoesPericia = tracoPericia?.opcoesPericia ?? pericias.map((p) => p.nome);
 
   return (
     <>
@@ -59,10 +62,10 @@ export default function EspecieEscolhasStep({ selection, update }: StepProps) {
         </>
       )}
 
-      {especie.subescolha?.natureza === 'identidade_permanente' && especie.opcoesSubescolha && (
+      {opcoesSubescolha && especie.subescolha && (
         <>
           <div className="section-title">{especie.subescolha.nome} — escolha 1</div>
-          {especie.opcoesSubescolha.map((opcao) => (
+          {opcoesSubescolha.map((opcao) => (
             <div
               key={opcao.nome}
               className={`opt-card ${selection.subescolhaEspecieEscolhida === opcao.nome ? 'selected' : ''}`}
@@ -85,14 +88,14 @@ export default function EspecieEscolhasStep({ selection, update }: StepProps) {
         ))}
       </div>
 
-      {temTraco('habil') && (
+      {tracoPericia && (
         <>
-          <div className="section-title">Hábil — perícia à escolha</div>
-          {pericias.map((p) => (
-            <div key={p.nome} className="check-row" onClick={() => update({ periciaEspecieEscolhida: p.nome })}>
-              <div className={`check-box ${selection.periciaEspecieEscolhida === p.nome ? 'checked' : ''}`} />
-              <span className="check-label">{p.nome}</span>
-              {jaConcedidas.pericias.has(p.nome) && (
+          <div className="section-title">{tracoPericia.nome} — perícia à escolha</div>
+          {opcoesPericia.map((nome) => (
+            <div key={nome} className="check-row" onClick={() => update({ periciaEspecieEscolhida: nome })}>
+              <div className={`check-box ${selection.periciaEspecieEscolhida === nome ? 'checked' : ''}`} />
+              <span className="check-label">{nome}</span>
+              {jaConcedidas.pericias.has(nome) && (
                 <span className="tag" style={{ marginLeft: 'auto' }}>
                   já possui
                 </span>

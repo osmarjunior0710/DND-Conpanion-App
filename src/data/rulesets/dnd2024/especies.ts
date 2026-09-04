@@ -2,14 +2,12 @@
 // Não editar valores à mão.
 //
 // Schema de sub-escolha decidido em DECISOES-DESIGN.md ("Dados —
-// Espécies têm 3 naturezas diferentes de sub-escolha"). As 6 espécies
-// com sub-escolha (Aasimar, Draconato, Elfo, Gnomo, Golias, Tiferino)
-// ainda não têm as opções da sub-escolha estruturadas (ex: as 10 cores
-// de dragão do Draconato) — esse dado existe na planilha, mas embutido
-// como texto corrido dentro da descrição do traço (ex: "Tabela Herança
-// Dracônica (Dragão: Tipo de Dano) — Azul: Elétrico; ..."), não como
-// linhas próprias. Extrair isso fica pra quando cada espécie for
-// desbloqueada de verdade — ver PENDENCIAS.md.
+// Espécies têm 3 naturezas diferentes de sub-escolha"). Das 6 espécies
+// com sub-escolha, Draconato/Golias/Elfo já têm as opções estruturadas
+// em `opcoesSubescolha` (ver `OpcaoSubescolha`); Aasimar, Gnomo e
+// Tiferino ainda têm o dado só como texto corrido dentro da descrição
+// do traço — extrair isso fica pra quando cada uma for desbloqueada de
+// verdade, ver `EmDev.md`/`PENDENCIAS.md`.
 //
 // introducaoCurta vem da coluna "Descrição Curta (auto, revisar)" —
 // gerada automaticamente (corta na frase mais próxima de ~350
@@ -53,6 +51,13 @@ export interface TracoEspecie {
    * foi escolhida. Diferente de `usaTipoDanoDaSubescolha` (efeito
    * distribuído em outros traços, ex. Draconato). */
   usaDescricaoEfeitoDaSubescolha?: boolean;
+  /** Traço que concede proficiência numa perícia à escolha, restrita a
+   * uma lista curta (ex.: Sentidos Aguçados do Elfo — Intuição,
+   * Percepção ou Sobrevivência) — reaproveita o mesmo campo
+   * `WizardSelection.periciaEspecieEscolhida` do Hábil (Humano), só
+   * filtrando as opções mostradas. `undefined` = sem restrição (não
+   * usado hoje, já que Hábil não define este campo). */
+  opcoesPericia?: string[];
 }
 
 export type NaturezaSubescolha =
@@ -65,16 +70,35 @@ export interface Subescolha {
   natureza: NaturezaSubescolha;
 }
 
-/** Uma opção de sub-escolha `identidade_permanente` (ex.: cada cor de
- * dragão do Draconato, cada ancestralidade do Golias) — escolhida 1x
- * na criação, nunca muda depois. `tipoDano` só existe pras espécies
- * cujos traços dependem de um tipo de dano único (Draconato); Golias
- * não usa esse campo — cada ancestralidade já é um benefício descrito
- * por completo em `descricaoEfeito`. */
-export interface OpcaoIdentidadePermanente {
+/** Uma opção de sub-escolha `identidade_permanente` OU
+ * `linhagem_com_progressao_magica` (ex.: cada cor de dragão do
+ * Draconato, cada ancestralidade do Golias, cada linhagem do Elfo) —
+ * escolhida 1x na criação, nunca muda depois (mesma experiência de
+ * escolha nas duas naturezas, só o que a escolha desbloqueia depois
+ * difere — ver `NaturezaSubescolha`). Campos opcionais porque cada
+ * espécie usa só o subconjunto que faz sentido pro seu texto:
+ * - `tipoDano` — Draconato (traços que dependem de um tipo de dano
+ *   único, ver `TracoEspecie.usaTipoDanoDaSubescolha`).
+ * - `descricaoEfeito` — Golias (efeito completo, próprio traço já
+ *   lista todas as opções) e Elfo/Tiferino (benefício de nível 1 da
+ *   linhagem/legado).
+ * - `sentidoConcedido` — quando a opção muda um sentido já concedido
+ *   por outro traço da espécie (ex.: Drow aumenta o alcance da Visão
+ *   no Escuro) — somado em `core/sentidos.ts` junto das outras fontes,
+ *   nunca sobrescrevendo o traço original.
+ * - `truqueConhecido` — nome do truque concedido de forma permanente
+ *   (`linhagem_com_progressao_magica`; ver `core/magiasEspecie.ts`).
+ * - `magiaNivel3`/`magiaNivel5` — nome da magia sempre preparada
+ *   desbloqueada automaticamente nesses níveis DE PERSONAGEM (não de
+ *   classe) — só `linhagem_com_progressao_magica`. */
+export interface OpcaoSubescolha {
   nome: string;
   tipoDano?: string;
   descricaoEfeito?: string;
+  sentidoConcedido?: SentidoConcedido;
+  truqueConhecido?: string;
+  magiaNivel3?: string;
+  magiaNivel5?: string;
 }
 
 export interface Especie {
@@ -91,7 +115,7 @@ export interface Especie {
   /** Opções da sub-escolha, só preenchido pras espécies já
    * estruturadas (ver comentário no topo do arquivo) — `undefined`
    * pras que ainda têm o dado só como texto corrido no traço. */
-  opcoesSubescolha?: OpcaoIdentidadePermanente[];
+  opcoesSubescolha?: OpcaoSubescolha[];
   disponivel: boolean;
   fonte: string;
 }
@@ -234,13 +258,43 @@ export const especies: Especie[] = [
     introducaoCurta: "Criados por Corellon, os primeiros elfos podiam mudar de forma à vontade. Essa habilidade foi perdida quando Corellon os amaldiçoou por conspirarem com Lolth, que falhou em usurpar seu domínio. Após a queda de Lolth no Abismo, a maioria dos elfos a renunciou e recebeu o perdão de Corellon, mas o que ele havia tomado deles se perdeu para sempre.",
     traços: [
       { nome: "Visão no Escuro", descricao: "Você tem Visão no Escuro com um alcance de 18 metros.", sentidoConcedido: { tipo: 'visaoNoEscuro', alcanceMetros: 18 } },
-      { nome: "Linhagem Élfica", descricao: "Você é de uma linhagem que lhe concede habilidades sobrenaturais. Escolha uma linhagem da tabela Linhagem Élfica. Você adquire o benefício de nível 1 dessa linhagem. Ao atingir os níveis 3 e 5, você aprende uma magia de círculo superior, conforme indicado na tabela. Essa magia está sempre preparada e pode ser conjurada uma vez sem usar um espaço de magia, restaurando essa capacidade ao completar um Descanso Longo. Além disso, você pode conjurá-la usando qualquer espaço de magia apropriado que possua. Inteligência, Sabedoria ou Carisma é seu atributo de conjuração para as magias que você conjura com este traço (escolha o atributo quando selecionar a linhagem). Tabela Linhagem Élfica — Alto Elfo: Nível 1: você conhece o truque Prestidigitação Arcana (sempre que completar um Descanso Longo, pode substituir este truque por outro da lista de magias de Mago); Nível 3: Detectar Magia; Nível 5: Passo Nebuloso. Drow: Nível 1: o alcance da sua Visão no Escuro aumenta para 36 metros e você também conhece o truque Luzes Dançantes; Nível 3: Fogo das Fadas; Nível 5: Escuridão. Elfo Silvestre: Nível 1: seu Deslocamento aumenta para 10,5 metros e você também conhece o truque Arte Druídica; Nível 3: Passos Largos; Nível 5: Passos Sem Rastro." },
+      { nome: "Linhagem Élfica", descricao: "Você é de uma linhagem que lhe concede habilidades sobrenaturais. Escolha uma linhagem da tabela Linhagem Élfica. Você adquire o benefício de nível 1 dessa linhagem. Ao atingir os níveis 3 e 5, você aprende uma magia de círculo superior, conforme indicado na tabela. Essa magia está sempre preparada e pode ser conjurada uma vez sem usar um espaço de magia, restaurando essa capacidade ao completar um Descanso Longo. Além disso, você pode conjurá-la usando qualquer espaço de magia apropriado que possua. Inteligência, Sabedoria ou Carisma é seu atributo de conjuração para as magias que você conjura com este traço (escolha o atributo quando selecionar a linhagem). Tabela Linhagem Élfica — Alto Elfo: Nível 1: você conhece o truque Prestidigitação Arcana (sempre que completar um Descanso Longo, pode substituir este truque por outro da lista de magias de Mago); Nível 3: Detectar Magia; Nível 5: Passo Nebuloso. Drow: Nível 1: o alcance da sua Visão no Escuro aumenta para 36 metros e você também conhece o truque Luzes Dançantes; Nível 3: Fogo das Fadas; Nível 5: Escuridão. Elfo Silvestre: Nível 1: seu Deslocamento aumenta para 10,5 metros e você também conhece o truque Arte Druídica; Nível 3: Passos Largos; Nível 5: Passos Sem Rastro.", usaDescricaoEfeitoDaSubescolha: true },
       { nome: "Ancestralidade Feérica", descricao: "Você tem Vantagem ao realizar salvaguardas para evitar ou encerrar a condição Enfeitiçado." },
-      { nome: "Sentidos Aguçados", descricao: "Você tem proficiência na perícia Intuição, Percepção ou Sobrevivência." },
+      { nome: "Sentidos Aguçados", descricao: "Você tem proficiência na perícia Intuição, Percepção ou Sobrevivência.", opcoesPericia: ["Intuição", "Percepção", "Sobrevivência"] },
       { nome: "Transe", descricao: "Você pode completar um Descanso Longo em 4 horas ao meditar, sem a necessidade de dormir, mantendo a consciência, e magia não pode forçá-lo a dormir." },
     ],
     subescolha: { nome: "Linhagem Élfica", natureza: "linhagem_com_progressao_magica" },
-    disponivel: false,
+    opcoesSubescolha: [
+      {
+        nome: "Alto Elfo",
+        descricaoEfeito: "Você conhece o truque Prestidigitação Arcana (sempre que completar um Descanso Longo, pode substituir este truque por outro da lista de magias de Mago).",
+        truqueConhecido: "Prestidigitação Arcana",
+        magiaNivel3: "Detectar Magia",
+        magiaNivel5: "Passo Nebuloso",
+      },
+      {
+        nome: "Drow",
+        descricaoEfeito: "O alcance da sua Visão no Escuro aumenta para 36 metros e você também conhece o truque Luzes Dançantes.",
+        truqueConhecido: "Luzes Dançantes",
+        magiaNivel3: "Fogo das Fadas",
+        magiaNivel5: "Escuridão",
+        sentidoConcedido: { tipo: 'visaoNoEscuro', alcanceMetros: 36 },
+      },
+      {
+        nome: "Elfo Silvestre",
+        descricaoEfeito: "Seu Deslocamento aumenta para 10,5 metros e você também conhece o truque Arte Druídica.",
+        truqueConhecido: "Arte Druídica",
+        magiaNivel3: "Passos Largos",
+        // "Passo Sem Rastro" (singular) — assim que está no catálogo de
+        // Magias (magias.ts, id "passosemrastro"); o texto oficial do
+        // traço de Elfo (linha acima, nunca alterado) usa "Passos Sem
+        // Rastro" (plural). Divergência de nome entre as 2 abas da
+        // planilha mestra — avisado ao Osmar, usando aqui o nome que
+        // bate com o catálogo real pra busca funcionar.
+        magiaNivel5: "Passo Sem Rastro",
+      },
+    ],
+    disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",
   },
   {

@@ -15,6 +15,7 @@ import { pericias } from '../../data/rulesets/dnd2024/pericias';
 import { magiasDaClasse } from '../../data/rulesets/dnd2024/magias';
 import { invocacoesElegiveisAteNivel } from '../../core/invocacoesMisticas';
 import { criarSelecaoInicial, type WizardSelection } from '../../core/personagem';
+import { opcoesSubescolhaNoWizard, tracoComEscolhaDePericia } from '../../core/especieSubescolha';
 import { calcularPvMaximoNivel1 } from '../../core/calculoPersonagem';
 import { armasParaMaestria, quantidadeMaestriaEmArma } from '../../core/maestriaArma';
 import { valorRecursoClasse } from '../../core/recursosClasse';
@@ -178,15 +179,17 @@ export default function WizardShell() {
       const opcoes = especieSelecionada.tamanho.opcoes;
       patch.tamanhoEspecieEscolhido = opcoes[Math.floor(Math.random() * opcoes.length)];
     }
-    if (especieSelecionada.traços.some((t) => t.id === 'habil')) {
-      patch.periciaEspecieEscolhida = pericias[Math.floor(Math.random() * pericias.length)].nome;
+    const tracoPericia = tracoComEscolhaDePericia(especieSelecionada);
+    if (tracoPericia) {
+      const opcoes = tracoPericia.opcoesPericia ?? pericias.map((p) => p.nome);
+      patch.periciaEspecieEscolhida = opcoes[Math.floor(Math.random() * opcoes.length)];
     }
     if (especieSelecionada.traços.some((t) => t.id === 'versatil')) {
       patch.talentoEspecieEscolhido = talentosOrigem[Math.floor(Math.random() * talentosOrigem.length)].id;
     }
-    if (especieSelecionada.subescolha?.natureza === 'identidade_permanente' && especieSelecionada.opcoesSubescolha) {
-      const opcoes = especieSelecionada.opcoesSubescolha;
-      patch.subescolhaEspecieEscolhida = opcoes[Math.floor(Math.random() * opcoes.length)].nome;
+    const opcoesSubescolha = opcoesSubescolhaNoWizard(especieSelecionada);
+    if (opcoesSubescolha) {
+      patch.subescolhaEspecieEscolhida = opcoesSubescolha[Math.floor(Math.random() * opcoesSubescolha.length)].nome;
     }
     update(patch);
   }
@@ -301,15 +304,9 @@ export default function WizardShell() {
         const especieSelecionada = especies.find((e) => e.nome === s.especie);
         if (!especieSelecionada) return true;
         if (especieSelecionada.tamanho.opcoes && s.tamanhoEspecieEscolhido === null) return false;
-        if (especieSelecionada.traços.some((t) => t.id === 'habil') && s.periciaEspecieEscolhida === null) return false;
+        if (tracoComEscolhaDePericia(especieSelecionada) && s.periciaEspecieEscolhida === null) return false;
         if (especieSelecionada.traços.some((t) => t.id === 'versatil') && s.talentoEspecieEscolhido === null) return false;
-        if (
-          especieSelecionada.subescolha?.natureza === 'identidade_permanente' &&
-          especieSelecionada.opcoesSubescolha &&
-          s.subescolhaEspecieEscolhida === null
-        ) {
-          return false;
-        }
+        if (opcoesSubescolhaNoWizard(especieSelecionada) && s.subescolhaEspecieEscolhida === null) return false;
         return true;
       },
       mensagemInvalida: 'Complete as escolhas da espécie antes de avançar.',

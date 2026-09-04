@@ -3,12 +3,32 @@
 // Golias) — nunca duplicado como valor fixo em algum traço, sempre
 // lido daqui em tempo de exibição.
 
-import type { Especie, TracoEspecie } from '../data/rulesets/dnd2024/especies';
+import type { Especie, TracoEspecie, OpcaoSubescolha } from '../data/rulesets/dnd2024/especies';
 import type { WizardSelection } from './personagem';
 
 export function tipoDanoSubescolha(especie: Especie, selection: WizardSelection): string | null {
   const opcao = especie.opcoesSubescolha?.find((o) => o.nome === selection.subescolhaEspecieEscolhida);
   return opcao?.tipoDano ?? null;
+}
+
+/** Opções de sub-escolha escolhidas 1x no wizard e nunca mais mudadas
+ * — cobre as 2 naturezas com essa mesma experiência de criação
+ * (`identidade_permanente` e `linhagem_com_progressao_magica`; a
+ * 3ª natureza, `escolha_reutilizavel`, não aparece aqui — é escolhida
+ * de novo a cada uso, em Combat). `null` quando a espécie não tem
+ * sub-escolha estruturada desse tipo (ainda ou nunca). */
+export function opcoesSubescolhaNoWizard(especie: Especie): OpcaoSubescolha[] | null {
+  const natureza = especie.subescolha?.natureza;
+  if (natureza !== 'identidade_permanente' && natureza !== 'linhagem_com_progressao_magica') return null;
+  return especie.opcoesSubescolha ?? null;
+}
+
+/** Traço que concede proficiência numa perícia à escolha — Hábil
+ * (Humano, sem restrição) ou um traço com `opcoesPericia` (ex.:
+ * Sentidos Aguçados do Elfo, restrito a 3 opções). `undefined` se a
+ * espécie não tiver nenhum dos dois. */
+export function tracoComEscolhaDePericia(especie: Especie): TracoEspecie | undefined {
+  return especie.traços.find((t) => t.id === 'habil' || t.opcoesPericia);
 }
 
 /** Texto de exibição de um traço, com a opção de sub-escolha escolhida

@@ -68,9 +68,45 @@ sempre que possível — ver 6.1):
     diferentes, com o texto completo do benefício escolhido anexado ao
     fim do card. `npx tsc -b`, `npm test -- --run` (168 testes) e
     `npm run build` passando.
-- [ ] **4. Elfo** — piloto da natureza `linhagem_com_progressao_magica`:
-      Linhagem Élfica (3 opções), magia de círculo superior automática
-      nos níveis 3 e 5 — precisa "conversar" com o motor de level-up.
+- [x] **4. Elfo** — piloto da natureza `linhagem_com_progressao_magica`:
+      Linhagem Élfica (3 opções: Alto Elfo/Drow/Elfo Silvestre), cada
+      uma com truque conhecido fixo + 2 magias sempre preparadas
+      (níveis de PERSONAGEM 3 e 5, não de classe — `core/magiasEspecie.ts`,
+      com teste). Mudanças de maior alcance:
+  - `OpcaoIdentidadePermanente` renomeada pra `OpcaoSubescolha`
+    (genérica pras 2 naturezas com escolha única na criação) — Golias/
+    Draconato continuam funcionando sem alteração de comportamento.
+  - `core/conjuracao.ts` (`personagemConjura`) passou a aceitar a
+    seleção e contar magia de espécie como fonte própria — sem isso um
+    Guerreiro Elfo nunca veria a aba Magias, mesmo tendo truque/magia
+    da linhagem (testado e confirmado com teste automatizado).
+  - `core/sentidos.ts` (`calcularSentidos`) ganhou parâmetro pra somar
+    o sentido da opção de sub-escolha escolhida (Drow: Visão no Escuro
+    18m→36m), mesma regra de "usa o maior valor" já existente.
+  - Nova seção "Magias da Espécie" na aba Magias, mesmo padrão de
+    "Magias de Pacto do Ínfero" (sempre preparada, fora do limite
+    normal).
+  - "Sentidos Aguçados" (perícia à escolha entre 3 opções) generalizado
+    junto com o Hábil do Humano — `opcoesPericia` no traço, mesmo campo
+    `periciaEspecieEscolhida`.
+  - **Achado no caminho:** "Passos Sem Rastro" (texto oficial do traço)
+    não bate com o nome no catálogo de Magias (`"Passo Sem Rastro"`,
+    singular) — divergência entre 2 abas da planilha mestra. Usado o
+    nome do catálogo pra busca funcionar, comentário no código explica
+    — **avisar o Osmar** pra conferir/corrigir na planilha.
+  - **Não implementado nesta entrega (fora do pedido original):** a
+    escolha de atributo de conjuração (Int/Sab/Car) da Linhagem Élfica
+    pra ataque/CD das magias da espécie — nenhuma das 9 magias
+    concedidas pelas 3 linhagens precisa disso pra funcionar hoje
+    (Fogo das Fadas é a única com CD, ainda sem UI de salvaguarda no
+    app). Registrar como pendência quando a auditoria de Magias chegar
+    nesse ponto.
+  - Testado com Playwright: Guerreiro Elfo (classe sem magia) nível 5
+    mostra a aba Magias com o truque + as 2 magias da linhagem
+    sorteada (testado com Alto Elfo/Elfo Silvestre/Drow em rodadas
+    diferentes); Drow mostra Visão no Escuro 36m na aba Atributos.
+    `npx tsc -b`, `npm test -- --run` (180 testes) e `npm run build`
+    passando.
 - [ ] **5. Gnomo** — mesma natureza, versão mais simples (Linhagem
       Gnômica, 2 opções, só nível 1, sem progressão 3/5).
 - [ ] **6. Tiferino** — mesma natureza, reaproveitando o padrão de

@@ -46,6 +46,7 @@ import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario'
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
+import { truqueEspecie, magiasEspecie as magiasEspecieDoPersonagem } from '../../core/magiasEspecie';
 import { usosSorteDoTenebroso } from '../../core/sorteDoTenebroso';
 import { useRoll } from '../roll/RollContext';
 import { sortearLevelUpRapido } from '../../core/levelUpAleatorio';
@@ -236,7 +237,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const estiloDeLuta = estilosDeLuta.find((e) => e.nome === personagem.estiloDeLuta) ?? null;
   const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
-  const conjura = personagemConjura(classe);
+  const conjura = personagemConjura(classe, selecao);
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
   const magiasPreparadas = magiasPreparadasDoPersonagem(magiasPreparadasAtuais);
@@ -256,7 +257,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const astuciaMagicaRecupera = espacoPactoAtual
     ? espacosARecuperar(espacoPactoAtual.maximo, espacosGastosPacto, mestreMisticoDisponivel)
     : 0;
-  const sentidos = calcularSentidos(selecao.especie, invocacoesMisticasAtuais);
+  const sentidos = calcularSentidos(selecao.especie, invocacoesMisticasAtuais, selecao.subescolhaEspecieEscolhida);
   const faltamTruques = deficitTruques(classe, personagem.nivel, truquesAtuais);
   const faltamMagiasPreparadas = deficitMagiasPreparadas(classe, personagem.nivel, magiasPreparadasAtuais);
   // Descobertas Mágicas/Livro das Sombras contam como magia sempre
@@ -266,7 +267,22 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const magiasPactoDoInferoDisponivel = caracteristicaSubclasseDesbloqueada(personagem.subclasse, 'Magias de Pacto do Ínfero', personagem.nivel);
   const magiasPactoDoInferoAtuais = magiasPactoDoInferoDisponivel ? magiasPactoDoInfero(personagem.nivel) : [];
   const magiasPactoDoInferoPreparadas = magiasPreparadasDoPersonagem(magiasPactoDoInferoAtuais);
-  const magiasConjuraveis = [...magiasPreparadas, ...magiasDescobertasMagicas, ...livroDasSombras, ...magiasPactoDoInferoPreparadas];
+  // Truque + magias fixas da Linhagem Élfica (e futuramente Legado
+  // Ínfero) — gatilho é nível de PERSONAGEM, não de classe (espécie
+  // não tem classe própria), ver `core/magiasEspecie.ts`.
+  const truqueEspecieAtual = truqueEspecie(selecao);
+  const magiasEspecieAtuais = [
+    ...(truqueEspecieAtual ? [truqueEspecieAtual] : []),
+    ...magiasEspecieDoPersonagem(selecao, personagem.nivel),
+  ];
+  const magiasEspeciePreparadas = magiasPreparadasDoPersonagem(magiasEspecieAtuais);
+  const magiasConjuraveis = [
+    ...magiasPreparadas,
+    ...magiasDescobertasMagicas,
+    ...livroDasSombras,
+    ...magiasPactoDoInferoPreparadas,
+    ...magiasEspeciePreparadas,
+  ];
   const magiasPreparadasReacao = magiasConjuraveis.filter(ehMagiaDeReacao);
   const magiasPreparadasAcao = magiasConjuraveis.filter((m) => !ehMagiaDeReacao(m));
   const modAcertoConjuracao = calcularModAcertoConjuracao(selecao, classe, personagem.nivel);
@@ -920,6 +936,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             magiasGratisGastas={magiasGratisGastas}
             onUsarMagiaGratis={usarMagiaGratisDeInvocacao}
             magiasPactoDoInferoAtuais={magiasPactoDoInferoAtuais}
+            magiasEspecieAtuais={magiasEspecieAtuais}
             temPactoDaLamina={invocacoesMisticasAtuais.includes('pacto-da-lamina')}
             armaDePactoAtual={armaDePactoAtual(itensMochila)}
             onVincularArmaDePacto={vincularArmaDePactoHandler}
