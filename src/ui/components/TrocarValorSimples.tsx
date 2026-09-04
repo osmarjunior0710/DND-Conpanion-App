@@ -7,6 +7,9 @@ interface TrocarValorSimplesProps {
   valorAtual: string;
   opcoes: string[];
   onTrocar: (novoValor: string) => void;
+  /** `true` = ícone fica opaco e não abre o popup (ex: já trocado
+   * desde o último Descanso, travado até o próximo). */
+  desabilitado?: boolean;
 }
 
 /** Versão genérica do popup "🔄 trocar X por Y" de `TrocarArmaMaestria`
@@ -14,7 +17,7 @@ interface TrocarValorSimplesProps {
  * texto (sem dado de arma), reaproveitando o mesmo CSS module. Usado
  * hoje só por Resistência Ínfera (Bruxo), mas serve pra qualquer
  * "escolha 1 de uma lista curta" parecida no futuro. */
-export default function TrocarValorSimples({ titulo, valorAtual, opcoes, onTrocar }: TrocarValorSimplesProps) {
+export default function TrocarValorSimples({ titulo, valorAtual, opcoes, onTrocar, desabilitado }: TrocarValorSimplesProps) {
   const [aberto, setAberto] = useState(false);
   useLockBodyScroll(aberto);
 
@@ -22,9 +25,10 @@ export default function TrocarValorSimples({ titulo, valorAtual, opcoes, onTroca
     <>
       <span
         className={styles.icon}
+        style={desabilitado ? { opacity: 0.35, pointerEvents: 'none' } : undefined}
         onClick={(e) => {
           e.stopPropagation();
-          setAberto(true);
+          if (!desabilitado) setAberto(true);
         }}
       >
         🔄

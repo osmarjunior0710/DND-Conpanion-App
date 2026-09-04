@@ -297,6 +297,11 @@ Grande Antigo, não do Patrono Ínfero (planilha já estava certa).
         de arma) — serve pra qualquer "escolha 1 de uma lista curta"
         parecida no futuro. Informativo: só guarda a escolha, não
         existe motor de dano recebido pra aplicar a redução sozinho.
+        Ícone 🔄 trava depois de escolher (`resistenciaInferaGasto`,
+        persistido) até o próximo Descanso Curto OU Longo (a regra
+        real permite trocar nos dois) — reseta nas duas funções de
+        descanso, diferente da maioria dos outros "Gasto" do Bruxo
+        (que só resetam no Longo).
   - [ ] **B6.6 — Lançar no Inferno.** Ataque especial 1x/Descanso
         Longo, com opção de gastar 1 espaço de Pacto pra repetir.
 

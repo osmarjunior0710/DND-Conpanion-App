@@ -47,6 +47,9 @@ interface AtributosTabProps {
   resistenciaInferaDisponivel: boolean;
   /** `null` = ainda não escolheu nenhum tipo. */
   resistenciaInferaAtual: string | null;
+  /** `true` = já trocada desde o último Descanso — ícone 🔄 travado
+   * até o próximo Descanso Curto ou Longo. */
+  resistenciaInferaGasto: boolean;
   onTrocarResistenciaInfera: (tipo: string) => void;
 }
 
@@ -77,6 +80,7 @@ export default function AtributosTab({
   sentidos,
   resistenciaInferaDisponivel,
   resistenciaInferaAtual,
+  resistenciaInferaGasto,
   onTrocarResistenciaInfera,
 }: AtributosTabProps) {
   const { rolarD20 } = useRoll();
@@ -281,12 +285,16 @@ export default function AtributosTab({
                 valorAtual={resistenciaInferaAtual ?? ''}
                 opcoes={tiposElegiveisResistenciaInfera()}
                 onTrocar={onTrocarResistenciaInfera}
+                desabilitado={resistenciaInferaGasto}
               />
             </div>
           </div>
           <div className="label" style={{ marginTop: 2, marginBottom: 12 }}>
-            Resistência ao tipo escolhido — pode trocar ao completar um Descanso Curto ou Longo. Informativo: a Ficha
-            ainda não calcula dano recebido sozinha, então a redução é aplicada de cabeça na mesa.
+            {resistenciaInferaGasto
+              ? 'Já trocada — disponível de novo após Descanso Curto ou Longo.'
+              : 'Toque no 🔄 pra escolher — trava até o próximo Descanso Curto ou Longo.'}{' '}
+            Informativo: a Ficha ainda não calcula dano recebido sozinha, então a redução é aplicada de cabeça na
+            mesa.
           </div>
         </>
       )}

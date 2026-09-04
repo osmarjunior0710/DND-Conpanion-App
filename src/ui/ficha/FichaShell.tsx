@@ -173,6 +173,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
     personagemSalvo.resistenciaInferaAtual ?? null,
   );
+  const [resistenciaInferaGasto, setResistenciaInferaGasto] = useState(personagemSalvo.resistenciaInferaGasto ?? false);
   const [surtoGasto, setSurtoGasto] = useState(personagemSalvo.surtoGasto ?? 0);
   const [inspiracaoGasto, setInspiracaoGasto] = useState(personagemSalvo.inspiracaoGasto ?? 0);
   const [astuciaMagicaGasta, setAstuciaMagicaGasta] = useState(personagemSalvo.astuciaMagicaGasta ?? false);
@@ -345,6 +346,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       indomavelGasto,
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
+      resistenciaInferaGasto,
       surtoGasto,
       espacosGastosPorCirculo,
       inspiracaoGasto,
@@ -381,6 +383,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     indomavelGasto,
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
+    resistenciaInferaGasto,
     surtoGasto,
     espacosGastosPorCirculo,
     inspiracaoGasto,
@@ -489,6 +492,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setLivroDasSombrasGasto(false);
     setAstuciaMagicaGasta(false);
     setContatarPatronoGasto(false);
+    setResistenciaInferaGasto(false);
     setArcanaMisticaGastos([]);
     setMagiasGratisGastas([]);
     fimDoTurno();
@@ -507,6 +511,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (fonteDeInspiracao) setInspiracaoGasto(0);
     setFolegoGasto((v) => Math.max(0, v - 1));
     setLivroDasSombrasGasto(false);
+    setResistenciaInferaGasto(false);
     setRestStatus(
       `Descanso Curto: ${circulosQueRecuperam.length > 0 ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
     );
@@ -835,7 +840,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             sentidos={sentidos}
             resistenciaInferaDisponivel={resistenciaInferaDisponivel}
             resistenciaInferaAtual={resistenciaInferaAtual}
-            onTrocarResistenciaInfera={setResistenciaInferaAtual}
+            resistenciaInferaGasto={resistenciaInferaGasto}
+            onTrocarResistenciaInfera={(tipo) => {
+              setResistenciaInferaAtual(tipo);
+              setResistenciaInferaGasto(true);
+            }}
           />
         )}
         {tab === 'perfil' && (

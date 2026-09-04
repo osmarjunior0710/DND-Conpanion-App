@@ -94,6 +94,12 @@ export interface PersonagemSalvo {
    * trocável a cada Descanso Curto ou Longo. `null`/ausente = ainda
    * não escolheu. Só informativo — ver `core/resistenciaInfera.ts`. */
   resistenciaInferaAtual?: string | null;
+  /** `true` = já trocada desde o último Descanso Curto ou Longo — o
+   * ícone 🔄 fica travado até o próximo (a regra real só permite
+   * trocar ao completar um dos dois). Reseta pra `false` nos dois
+   * tipos de descanso, diferente da maioria dos outros "Gasto" do
+   * Bruxo (que só resetam no Longo). */
+  resistenciaInferaGasto?: boolean;
   /** Arcana Mística (Bruxo, níveis 11/13/15/17) — círculo (6/7/8/9) →
    * nome da magia escolhida pra esse arcanum. Cresce 1 entrada por
    * nível desbloqueado (ver `core/arcanaMistica.ts`). */
