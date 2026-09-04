@@ -157,6 +157,16 @@ export interface PersonagemSalvo {
    * Ver DECISOES-DESIGN.md "Level Up — dado de vida rolado...". */
   levelUpHpModo?: 'media' | 'rolar' | null;
   levelUpHpRolado?: number | null;
+  /** Vigor Implacável (Orc) já disparou desde o último Descanso Longo
+   * — só ele reseta. Ver `core/vigorImplacavel.ts`. */
+  vigorImplacavelGasto?: boolean;
+  /** Usos gastos de Conhecimento de Pedras (Anão) desde o último
+   * Descanso Longo — só ele reseta. Máximo = Bônus de Proficiência. */
+  conhecimentoDePedrasGasto?: number;
+  /** Usos gastos de Pico de Adrenalina (Orc) desde o último Descanso
+   * Curto OU Longo — os dois resetam (mesmo padrão de Recuperar
+   * Fôlego). Máximo = Bônus de Proficiência. */
+  picoDeAdrenalinaGasto?: number;
 }
 
 export interface ArmazenamentoPersonagens {

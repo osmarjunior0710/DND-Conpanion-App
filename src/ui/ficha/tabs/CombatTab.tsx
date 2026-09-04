@@ -46,6 +46,14 @@ interface CombatTabProps {
   usosFolegoMaximo: number;
   usosFolegoRestantes: number;
   onUsarUsoFolego: () => boolean;
+  /** Conhecimento de Pedras (Anão) — 0 = espécie não é Anão. */
+  usosConhecimentoDePedrasMaximo: number;
+  usosConhecimentoDePedrasRestantes: number;
+  onUsarConhecimentoDePedras: () => boolean;
+  /** Pico de Adrenalina (Orc) — 0 = espécie não é Orc. */
+  usosPicoDeAdrenalinaMaximo: number;
+  usosPicoDeAdrenalinaRestantes: number;
+  onUsarPicoDeAdrenalina: () => boolean;
   conjura: boolean;
   truques: Magia[];
   magiasPreparadasAcao: Magia[];
@@ -106,6 +114,12 @@ export default function CombatTab({
   usosFolegoMaximo,
   usosFolegoRestantes,
   onUsarUsoFolego,
+  usosConhecimentoDePedrasMaximo,
+  usosConhecimentoDePedrasRestantes,
+  onUsarConhecimentoDePedras,
+  usosPicoDeAdrenalinaMaximo,
+  usosPicoDeAdrenalinaRestantes,
+  onUsarPicoDeAdrenalina,
   conjura,
   truques,
   magiasPreparadasAcao,
@@ -187,6 +201,16 @@ export default function CombatTab({
     setPainelAberto(null);
     setFeedback(`${nome} — ${desc}`);
     setDanoPendente(dano ?? null);
+  }
+
+  function usarConhecimentoDePedras() {
+    if (!onUsarConhecimentoDePedras()) return;
+    onMarcarUsado('bonus');
+  }
+
+  function usarPicoDeAdrenalina() {
+    if (!onUsarPicoDeAdrenalina()) return;
+    onMarcarUsado('bonus');
   }
 
   function usarRecuperarFolego() {
@@ -594,6 +618,12 @@ export default function CombatTab({
             usosFolegoMaximo={usosFolegoMaximo}
             usosFolegoRestantes={usosFolegoRestantes}
             onUsarRecuperarFolego={usarRecuperarFolego}
+            usosConhecimentoDePedrasMaximo={usosConhecimentoDePedrasMaximo}
+            usosConhecimentoDePedrasRestantes={usosConhecimentoDePedrasRestantes}
+            onUsarConhecimentoDePedras={usarConhecimentoDePedras}
+            usosPicoDeAdrenalinaMaximo={usosPicoDeAdrenalinaMaximo}
+            usosPicoDeAdrenalinaRestantes={usosPicoDeAdrenalinaRestantes}
+            onUsarPicoDeAdrenalina={usarPicoDeAdrenalina}
             ataqueBonus={ataqueBonus}
             onUsarAtaqueBonus={usarAtaqueMaoSecundaria}
             usosInspiracaoMaximo={usosInspiracaoMaximo}

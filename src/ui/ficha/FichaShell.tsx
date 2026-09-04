@@ -43,6 +43,7 @@ import { quantidadeRecuperarFolego } from '../../core/recursosClasse';
 import { personagemConjura } from '../../core/conjuracao';
 import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../core/invocacoesMagiaGratis';
 import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
+import { deveAplicarVigorImplacavel } from '../../core/vigorImplacavel';
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
@@ -169,6 +170,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [talentosGeraisAtuais, setTalentosGeraisAtuais] = useState<string[]>(personagemSalvo.talentosGeraisAtual ?? []);
   const [talentosFavoritos, setTalentosFavoritos] = useState<string[]>(personagemSalvo.talentosFavoritosAtual ?? []);
   const [folegoGasto, setFolegoGasto] = useState(personagemSalvo.folegoGasto ?? 0);
+  const [vigorImplacavelGasto, setVigorImplacavelGasto] = useState(personagemSalvo.vigorImplacavelGasto ?? false);
+  const [conhecimentoDePedrasGasto, setConhecimentoDePedrasGasto] = useState(personagemSalvo.conhecimentoDePedrasGasto ?? 0);
+  const [picoDeAdrenalinaGasto, setPicoDeAdrenalinaGasto] = useState(personagemSalvo.picoDeAdrenalinaGasto ?? 0);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
   const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
@@ -237,6 +241,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const estiloDeLuta = estilosDeLuta.find((e) => e.nome === personagem.estiloDeLuta) ?? null;
   const usosFolegoMaximo = classe ? quantidadeRecuperarFolego(classe, personagem.nivel) : 0;
   const usosFolegoRestantes = Math.max(0, usosFolegoMaximo - folegoGasto);
+  const temVigorImplacavel = selecao.especie === 'Orc';
+  const usosConhecimentoDePedrasMaximo = selecao.especie === 'Anão' && classe ? bonusProficiencia(classe, personagem.nivel) : 0;
+  const usosConhecimentoDePedrasRestantes = Math.max(0, usosConhecimentoDePedrasMaximo - conhecimentoDePedrasGasto);
+  const usosPicoDeAdrenalinaMaximo = selecao.especie === 'Orc' && classe ? bonusProficiencia(classe, personagem.nivel) : 0;
+  const usosPicoDeAdrenalinaRestantes = Math.max(0, usosPicoDeAdrenalinaMaximo - picoDeAdrenalinaGasto);
   const conjura = personagemConjura(classe, selecao);
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
@@ -360,6 +369,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       estiloDeLutaAtual: personagem.estiloDeLuta,
       maestriaArmaAtual: maestriaArma,
       folegoGasto,
+      vigorImplacavelGasto,
+      conhecimentoDePedrasGasto,
+      picoDeAdrenalinaGasto,
       indomavelGasto,
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
@@ -398,6 +410,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     pvTemporario,
     maestriaArma,
     folegoGasto,
+    vigorImplacavelGasto,
+    conhecimentoDePedrasGasto,
+    picoDeAdrenalinaGasto,
     indomavelGasto,
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
@@ -432,8 +447,28 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function alterarPv(delta: number) {
     const resultado = aplicarAlteracaoPv(pvAtual, personagem.pvMax, pvTemporario, delta);
+    if (temVigorImplacavel && deveAplicarVigorImplacavel(pvAtual, resultado.pvAtual, vigorImplacavelGasto)) {
+      setPvAtual(1);
+      setVigorImplacavelGasto(true);
+      setRestStatus('🩸 Vigor Implacável — em vez de cair a 0, você fica com 1 Ponto de Vida (recarrega no Descanso Longo).');
+      setPvTemporario(resultado.pvTemporario);
+      return;
+    }
     setPvAtual(resultado.pvAtual);
     setPvTemporario(resultado.pvTemporario);
+  }
+
+  function usarConhecimentoDePedras(): boolean {
+    if (usosConhecimentoDePedrasRestantes <= 0) return false;
+    setConhecimentoDePedrasGasto((v) => v + 1);
+    return true;
+  }
+
+  function usarPicoDeAdrenalina(): boolean {
+    if (usosPicoDeAdrenalinaRestantes <= 0) return false;
+    setPicoDeAdrenalinaGasto((v) => v + 1);
+    setPvTemporario((atual) => ganharPvTemporario(atual, bonusProficienciaAtual));
+    return true;
   }
 
   function marcarUsado(categoria: RecursoTurno) {
@@ -504,6 +539,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setPvAtual(personagem.pvMax);
     setEspacosGastosPorCirculo({});
     setFolegoGasto(0);
+    setVigorImplacavelGasto(false);
+    setConhecimentoDePedrasGasto(0);
+    setPicoDeAdrenalinaGasto(0);
     setIndomavelGasto(0);
     setSorteDoTenebrosoGasto(0);
     setSurtoGasto(0);
@@ -516,7 +554,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setArcanaMisticaGastos([]);
     setMagiasGratisGastas([]);
     fimDoTurno();
-    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação e Inspiração de Bardo recuperados.`);
+    setRestStatus(`Descanso Longo: PV restaurado para ${personagem.pvMax}/${personagem.pvMax}, Espaços de Magia, Recuperar Fôlego, Indomável, Surto de Ação, Inspiração de Bardo e traços de espécie recuperados.`);
   }
 
   function descansoCurto() {
@@ -532,8 +570,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setFolegoGasto((v) => Math.max(0, v - 1));
     setLivroDasSombrasGasto(false);
     setResistenciaInferaGasto(false);
+    setPicoDeAdrenalinaGasto(0);
     setRestStatus(
-      `Descanso Curto: ${circulosQueRecuperam.length > 0 ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido. PV não recupera automaticamente por descanso curto.`,
+      `Descanso Curto: ${circulosQueRecuperam.length > 0 ? 'Espaços de Magia recuperados, ' : ''}${fonteDeInspiracao ? 'Inspiração de Bardo recuperada, ' : ''}1 uso de Recuperar Fôlego devolvido, Pico de Adrenalina recuperado. PV não recupera automaticamente por descanso curto.`,
     );
   }
 
@@ -877,6 +916,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
               setResistenciaInferaAtual(tipo);
               setResistenciaInferaGasto(true);
             }}
+            temVigorImplacavel={temVigorImplacavel}
+            vigorImplacavelGasto={vigorImplacavelGasto}
           />
         )}
         {tab === 'perfil' && (
@@ -969,6 +1010,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             usosFolegoMaximo={usosFolegoMaximo}
             usosFolegoRestantes={usosFolegoRestantes}
             onUsarUsoFolego={usarUsoFolego}
+            usosConhecimentoDePedrasMaximo={usosConhecimentoDePedrasMaximo}
+            usosConhecimentoDePedrasRestantes={usosConhecimentoDePedrasRestantes}
+            onUsarConhecimentoDePedras={usarConhecimentoDePedras}
+            usosPicoDeAdrenalinaMaximo={usosPicoDeAdrenalinaMaximo}
+            usosPicoDeAdrenalinaRestantes={usosPicoDeAdrenalinaRestantes}
+            onUsarPicoDeAdrenalina={usarPicoDeAdrenalina}
             conjura={conjura}
             truques={truques}
             magiasPreparadasAcao={magiasPreparadasAcao}

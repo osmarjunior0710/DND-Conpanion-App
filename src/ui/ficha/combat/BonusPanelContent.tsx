@@ -20,6 +20,14 @@ interface BonusPanelContentProps {
   onUsarInspiracao: () => void;
   onRecuperarInspiracaoComEspaco: () => void;
   detalhesAtivo: boolean;
+  /** Conhecimento de Pedras (Anão) — 0 = espécie não é Anão. */
+  usosConhecimentoDePedrasMaximo: number;
+  usosConhecimentoDePedrasRestantes: number;
+  onUsarConhecimentoDePedras: () => void;
+  /** Pico de Adrenalina (Orc) — 0 = espécie não é Orc. */
+  usosPicoDeAdrenalinaMaximo: number;
+  usosPicoDeAdrenalinaRestantes: number;
+  onUsarPicoDeAdrenalina: () => void;
 }
 
 export default function BonusPanelContent({
@@ -37,8 +45,20 @@ export default function BonusPanelContent({
   onUsarInspiracao,
   onRecuperarInspiracaoComEspaco,
   detalhesAtivo,
+  usosConhecimentoDePedrasMaximo,
+  usosConhecimentoDePedrasRestantes,
+  onUsarConhecimentoDePedras,
+  usosPicoDeAdrenalinaMaximo,
+  usosPicoDeAdrenalinaRestantes,
+  onUsarPicoDeAdrenalina,
 }: BonusPanelContentProps) {
-  if (usosFolegoMaximo === 0 && usosInspiracaoMaximo === 0 && !ataqueBonus) {
+  if (
+    usosFolegoMaximo === 0 &&
+    usosInspiracaoMaximo === 0 &&
+    usosConhecimentoDePedrasMaximo === 0 &&
+    usosPicoDeAdrenalinaMaximo === 0 &&
+    !ataqueBonus
+  ) {
     return (
       <div className="box" style={{ padding: 14, color: 'var(--text-faint)', fontSize: 12, textAlign: 'center' }}>
         Nenhuma ação bônus disponível pra este personagem no nível atual.
@@ -137,6 +157,64 @@ export default function BonusPanelContent({
             )}
           </div>
           {semUsos && (
+            <div className="label" style={{ marginTop: 6 }}>
+              sem usos disponíveis — descanse pra recuperar.
+            </div>
+          )}
+        </>
+      )}
+      {usosConhecimentoDePedrasMaximo > 0 && (
+        <>
+          <div className={styles.slotCounter}>
+            <span>Conhecimento de Pedras:</span>
+            <TickPips total={usosConhecimentoDePedrasMaximo} usados={usosConhecimentoDePedrasMaximo - usosConhecimentoDePedrasRestantes} />
+            <span style={{ color: 'var(--text-faint)' }}>
+              {usosConhecimentoDePedrasRestantes}/{usosConhecimentoDePedrasMaximo} disponíveis
+            </span>
+          </div>
+          <div
+            className={styles.row}
+            style={usosConhecimentoDePedrasRestantes <= 0 ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            onClick={onUsarConhecimentoDePedras}
+          >
+            <div className={styles.rowName}>🪨 Conhecimento de Pedras</div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Adquire Sismiconsciência (18m) por 10 minutos — precisa estar em/tocando pedra. Gasta 1 uso, todos
+                voltam no Descanso Longo.
+              </div>
+            )}
+          </div>
+          {usosConhecimentoDePedrasRestantes <= 0 && (
+            <div className="label" style={{ marginTop: 6 }}>
+              sem usos disponíveis — descanse pra recuperar.
+            </div>
+          )}
+        </>
+      )}
+      {usosPicoDeAdrenalinaMaximo > 0 && (
+        <>
+          <div className={styles.slotCounter}>
+            <span>Pico de Adrenalina:</span>
+            <TickPips total={usosPicoDeAdrenalinaMaximo} usados={usosPicoDeAdrenalinaMaximo - usosPicoDeAdrenalinaRestantes} />
+            <span style={{ color: 'var(--text-faint)' }}>
+              {usosPicoDeAdrenalinaRestantes}/{usosPicoDeAdrenalinaMaximo} disponíveis
+            </span>
+          </div>
+          <div
+            className={styles.row}
+            style={usosPicoDeAdrenalinaRestantes <= 0 ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            onClick={onUsarPicoDeAdrenalina}
+          >
+            <div className={styles.rowName}>⚡ Pico de Adrenalina</div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Executa a ação Correr como Ação Bônus e concede PV Temporário igual ao seu Bônus de Proficiência.
+                Gasta 1 uso — todos voltam no Descanso Curto ou Longo.
+              </div>
+            )}
+          </div>
+          {usosPicoDeAdrenalinaRestantes <= 0 && (
             <div className="label" style={{ marginTop: 6 }}>
               sem usos disponíveis — descanse pra recuperar.
             </div>

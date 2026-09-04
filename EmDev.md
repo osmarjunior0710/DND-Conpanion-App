@@ -151,28 +151,30 @@ sempre que possível — ver 6.1):
     "sub-escolha", já que Revelação Celestial não é escolhida no
     wizard). `npx tsc -b`, `npm test -- --run` (187 testes) e
     `npm run build` passando.
-- [ ] **8. Mapeamento de traços ATIVOS de espécie pra Combat** —
-      achado no meio do foco (Ataque de Sopro do Draconato só aparece
-      como texto na aba Perfil hoje, igual todo outro traço — nenhum
-      traço ativo de espécie tem botão/ação em Combat ainda, nem os
-      já liberados). Combinado com o Osmar: primeiro terminar de
-      colocar as 10 espécies no sistema (itens 1-7), depois voltar
-      nisto de uma vez só — não é trava estrutural (não depende de
-      nada fora deste foco), é só decisão de ordem. Levantamento feito
-      agora pra não perder o mapeamento:
+- [ ] **8. Traços ATIVOS de espécie em Combat** — achado no meio do
+      foco (Ataque de Sopro do Draconato só aparecia como texto na aba
+      Perfil, igual todo outro traço — nenhum traço ativo de espécie
+      tinha botão/ação em Combat). Decisão do Osmar: fechar tudo agora,
+      nesta mesma sessão, sem pausar entre as espécies. Ordem de
+      entrega (menor/mais reaproveitável primeiro):
 
-  **Precisam de UI ativa em Combat (botão + rastreio de usos):**
-  - Anão — Conhecimento de Pedras (Ação Bônus, usos = Bônus de
-    Proficiência, recarrega Descanso Longo).
-  - Orc — Pico de Adrenalina (Ação Bônus, usos = Bônus de
-    Proficiência, recarrega Curto OU Longo — mesmo padrão de trava já
-    resolvido em Resistência Ínfera do Bruxo); Vigor Implacável (não é
-    "botão", é reativo — dispara sozinho ao cair a 0 PV, mas precisa
-    rastrear "já usado neste Descanso Longo" pra saber se ainda vale).
-  - Pequenino — Sorte (reroll em resultado 1 no d20 — parecido com o
-    padrão `BonusExtraProvider` já usado pra Sorte do Tenebroso/
-    Indomável, mas é REROLL, não bônus somado — precisa de variante
-    nova do mecanismo).
+  - [x] **8a. Anão — Conhecimento de Pedras** + **Orc — Pico de
+        Adrenalina e Vigor Implacável** — mesmo padrão de "Ação Bônus
+        com usos = Bônus de Proficiência" já existente (Recuperar
+        Fôlego do Guerreiro), 2 cards novos em `BonusPanelContent.tsx`.
+        Vigor Implacável é reativo (sem botão) — hook direto em
+        `alterarPv()` (`core/vigorImplacavel.ts`, com teste), com
+        status mostrado na aba Atributos. Testado com Playwright: Anão
+        nível 5 mostra "Conhecimento de Pedras 3/3", decrementa ao
+        usar; Orc mostra "Pico de Adrenalina 3/3" que aplica +3 PV
+        Temporário (Bônus de Proficiência) e trava o botão "Bônus" do
+        turno; Vigor Implacável aparece "DISPONÍVEL" na aba Atributos.
+        `npx tsc -b`, `npm test -- --run` (191 testes) e `npm run
+        build` passando.
+  - [ ] **8b. Pequenino — Sorte** (reroll em resultado 1 no d20 —
+        parecido com o padrão `BonusExtraProvider` já usado pra Sorte
+        do Tenebroso/Indomável, mas é REROLL, não bônus somado —
+        precisa de variante nova do mecanismo).
   - Aasimar — Mãos Curativas (Ação Usar Magia, toca 1 criatura, cura
     Xd4 = Bônus de Proficiência, 1x/Descanso Longo); Revelação
     Celestial (nível 3+, Ação Bônus, escolhe 1 de 3 formas — Asas

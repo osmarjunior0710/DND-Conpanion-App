@@ -51,6 +51,10 @@ interface AtributosTabProps {
    * até o próximo Descanso Curto ou Longo. */
   resistenciaInferaGasto: boolean;
   onTrocarResistenciaInfera: (tipo: string) => void;
+  /** `true` só pra espécie Orc — controla se a seção aparece. */
+  temVigorImplacavel: boolean;
+  /** `true` = já disparou desde o último Descanso Longo. */
+  vigorImplacavelGasto: boolean;
 }
 
 export default function AtributosTab({
@@ -82,6 +86,8 @@ export default function AtributosTab({
   resistenciaInferaAtual,
   resistenciaInferaGasto,
   onTrocarResistenciaInfera,
+  temVigorImplacavel,
+  vigorImplacavelGasto,
 }: AtributosTabProps) {
   const { rolarD20 } = useRoll();
   const sentidosParaExibir = sentidosAtivos(sentidos);
@@ -295,6 +301,17 @@ export default function AtributosTab({
               : 'Toque no 🔄 pra escolher — trava até o próximo Descanso Curto ou Longo.'}{' '}
             Informativo: a Ficha ainda não calcula dano recebido sozinha, então a redução é aplicada de cabeça na
             mesa.
+          </div>
+        </>
+      )}
+
+      {temVigorImplacavel && (
+        <>
+          <div className="section-title">Vigor Implacável</div>
+          <div className="label" style={{ marginBottom: 12 }}>
+            {vigorImplacavelGasto
+              ? 'Já usado — disponível de novo após Descanso Longo.'
+              : 'Disponível — ao ser reduzido a 0 PV, você fica com 1 em vez disso (automático, sem precisar tocar em nada).'}
           </div>
         </>
       )}
