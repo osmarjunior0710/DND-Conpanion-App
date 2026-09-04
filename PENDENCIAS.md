@@ -1408,14 +1408,21 @@ recargas diferentes dentro do mesmo item — não dá pra resumir num só
 Escalada — tem CA/PV próprios, mais parecido com objeto rastreável
 que item ativo simples). No Lote 4, mais um: **Penas de Quaal** (5
 tipos de pena com mecânicas completamente diferentes dentro do mesmo
-item). Ficaram com `tipoItem: null` em vez de forçar uma categoria
-errada.
+item). No Lote 5, mais três: **Elmo Brilhante** (concede uma magia
+por dia dentre uma lista fixa — mais parecido com "passivo com magia
+diária" que qualquer categoria das 6), **Espelho do Aprisionamento**
+(prisão de criaturas com várias células e regras próprias, não é um
+item "usado" pelo personagem) e **Garrafa do Efreeti** (convoca e
+aprisiona um efreeti — narrativo demais). Ficaram com `tipoItem: null`
+em vez de forçar uma categoria errada.
 
 **Achado novo do Lote 4 — `bonusItem` não cobre item "genérico" com
 bônus variável por raridade.** "Arma +1, +2 ou +3", "Armadura +1, +2
 ou +3" e "Bastão Guardião de Pactos" não são um item específico — são
 um molde onde o bônus depende de qual exemplar (raridade) o jogador
-tem. `bonusItem` ficou `null` nesses 3 em vez de chutar um valor. Se
+tem. No Lote 5, mais dois do mesmo padrão: "Escudo +1, +2 ou +3" e
+"Munição +1, +2 ou +3". `bonusItem` ficou `null` nesses 5 em vez de
+chutar um valor. Se
 algum jogador vier a usar um desses em mesa, vai precisar de uma
 pergunta manual ("qual variante você tem?") antes de qualquer cálculo
 automático usar o bônus certo — não é um bug, é limite do campo único

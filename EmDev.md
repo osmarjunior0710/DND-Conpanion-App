@@ -210,13 +210,49 @@ listada no reporte, sem esperar aprovação prévia por item.
         (Penas de Quaal — 5 tipos de pena com mecânicas totalmente
         diferentes) ficou com `tipoItem: null`. `npm test` (164
         passando) e `npm run build` OK.
-  - [ ] **Lote 5 (itens 201-250)**
-  - [ ] **Lote 6 (itens 251-288)** — inclui as famílias compostas
-        adiadas do Lote 1 (Pedra Iônica ~14 variantes, Anel de
-        Comandar Elementais ~4, Poção de Cura (geral), Poção de Força
-        do Gigante (geral) — todas Raro+/Variável, não caem em lotes
-        anteriores por ordem alfabética/raridade da planilha, conferir
-        na hora).
+  - [x] **Lote 5 (itens 201-250) — FEITA.** Completou a família "Anel
+        de Comandar Elementais" (bare + variantes da Água/da Terra/do
+        Fogo — as 4 caem neste lote) e mais 1 variante de "Estátua de
+        Poderes Incríveis" (Corcel de Obsidiana), mesmo método de
+        sub-parágrafo já usado nos lotes anteriores — 1ª tentativa de
+        extração das variantes do Anel usou fronteira errada (fronteira
+        "ANEL DE EVASÃO" pulou 2 itens no meio, texto inchou ~4x),
+        auto-detectado por conferência de tamanho (outlier) antes de
+        commitar, corrigido usando a fronteira imediata certa ("ANEL DE
+        ESCUDO MENTAL"). **2 correções retroativas em dado já commitado
+        do Lote 4**: "Poção de Clarividência" e "Poção de Forma Gasosa"
+        tinham vazado, cada uma, o parágrafo mestre inteiro de
+        "Poção de Cura"/"Poção de Força do Gigante" (que ficam
+        logo depois delas no catálogo alfabético e foram excluídas da
+        busca de fronteira por serem adiadas pro Lote 6/5) — só
+        descoberto ao extrair "Poção de Cura (geral)" deste lote e notar
+        que a busca não achava texto próprio pra ela. Corrigido nos 2
+        lugares (truncando as entradas de Clarividência/Forma Gasosa na
+        planilha e no `.ts`) e extraído o texto próprio de "Poção de
+        Cura (geral)" (o de "Poção de Força do Gigante (geral)" também
+        foi extraído nessa correção, mas o item cai no Lote 6 por
+        posição na planilha). 1 erro de OCR (não do livro) corrigido:
+        "Poção de Invisibilidade" saiu como "Poção, muito **ara**" no
+        texto extraído (falta o "r" de "rara") — corrigido pra "muito
+        rara". Sem divergência real de sintonização/raridade neste
+        lote (as únicas flags do script eram falso-positivo, mesmo
+        padrão de família com parágrafo mestre compartilhado dos lotes
+        3/4). 3 itens ficaram com `tipoItem: null` de propósito (Elmo
+        Brilhante, Espelho do Aprisionamento, Garrafa do Efreeti — vira
+        criatura/prisão/gênio com mecânica própria, não cabe no balde
+        de 6 categorias). "Cajado do Poder" ganhou `tipoItem` +
+        `bonusItem: 2` + `cargas` juntos (mesmo padrão de cajado com
+        bônus fixo E cargas de magia dos lotes anteriores). `npm test`
+        (164 passando) e `npm run build` OK.
+  - [ ] **Lote 6 (itens 251-288, últimos 38) — inclui só o que restou
+        das famílias compostas** (Pedra Iônica: Grande Absorção/
+        Maestria/Regeneração — 3 variantes — + a entrada "geral"
+        introdutória da família; "Estátua de Poderes Incríveis" —
+        entrada "geral", as 9 variantes nomeadas já foram todas feitas
+        nos lotes 1-5; "Poção de Força do Gigante (geral)" — já
+        extraída no Lote 5 por engano de posição, só falta classificar
+        e conferir sintonização/raridade). Família "Anel de Comandar
+        Elementais" já está 100% completa desde o Lote 5.
 - [ ] Depois de Itens Mágicos completo, avaliar se cabe uma entrada
       nova em `DECISOES-DADOS.md` sobre o padrão "Completa nem sempre é
       texto literal — depende se o livro tem prosa individual pro tipo
