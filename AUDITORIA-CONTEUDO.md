@@ -142,6 +142,38 @@ por fora das conversas)? Se for a segunda opção, **não é bloqueante**
 — reportar como pendência formal, o Osmar decide se vale o esforço de
 preencher ~390 linhas.
 
+### 3.1 Direção recomendada pro que estruturar em Magias (discutida com o Osmar, 2026-09)
+
+O Upcast já foi estruturado (colunas N-S da aba Magias, ver
+`DECISOES-DADOS.md` "Magias — Upcast estruturado") e o Dano Base já
+está registrado como pendência formal (`PENDENCIAS.md` "Motor de
+rolagem de dano de Magia") — a auditoria não precisa reabrir essas
+duas, só confirmar que continuam valendo. O que falta acrescentar à
+lista de campos a estruturar, no mesmo espírito (colunas novas,
+mesmo processo de cruzar PDF + planilha já usado no Upcast):
+
+- **`DanoBase_Dado` + `DanoBase_Tipo`** — a peça que falta pra fechar
+  o motor de rolagem junto com o Upcast já feito (dado + tipo de dano
+  no círculo mínimo da magia, ex: Bola de Fogo = 8d6 Ígneo no 3º
+  círculo).
+- **`AtaqueOuSalvaguarda`** — um de: Ataque à Distância / Ataque
+  Corpo-a-Corpo / Salvaguarda de [atributo] / Nenhum. Sem isso não dá
+  pra saber se a magia soma o modificador de acerto do personagem
+  (rola d20 pra acertar) ou pede uma CD pro alvo resistir — informação
+  que hoje só existe implícita no texto e é adivinhada por regex em
+  `core/classificarMagia.ts` (ver seção 3 acima).
+- **Alcance dobrado por Aprimoramento de Truque** — vários truques já
+  têm esse texto na Descrição Completa (ex: "Acudir os Moribundos"
+  dobra o alcance nos níveis 5/11/17); só vale estruturar se/quando o
+  motor for calcular alcance de verdade — registrar como observação,
+  não bloqueante agora.
+
+**O que fica de fora de propósito:** qualquer efeito condicional,
+narrativo ou não-linear demais (mesmo espírito dos 18 casos
+`Upcast_Tipo = "Outro"` já aceitos como texto livre) — não vale
+inventar taxonomia nova pra cobrir 100% das 390 magias, só o
+suficiente pra rodar dano/acerto/CD das magias mais comuns em combate.
+
 ## 4. O outro problema junto: criar/receber item novo (arma, item mágico)
 
 Confirmado nesta conversa: `core/mochila.ts`'s `criarItemManual(nome,
@@ -156,6 +188,36 @@ Isso já estava parcialmente anotado em `PENDENCIAS.md` (seção de
 Equipamento, "Catálogo pra 'Adicionar item' na Mochila, com tipos
 estruturados") — **não duplicar entrada, só linkar** quando a Fase 2
 desenhar o schema de verdade.
+
+### 4.1 Direção recomendada pro que estruturar em Itens Mágicos (discutida com o Osmar, 2026-09)
+
+Posição confirmada do Osmar: **não é objetivo implementar a função
+mecânica dos 288 itens mágicos catalogados** — o que importa é que os
+itens realmente usados em combate tenham a função básica cobrindo,
+o resto fica como texto em `efeitoResumido`/info (mesmo tratamento
+que hoje). `itensMagicos.ts` hoje é 100% texto solto, sem nenhum campo
+estruturado — a lista abaixo é o "20% que cobre a maioria dos itens
+usados em mesa", não uma tentativa de cobrir tudo:
+
+- **`bonusItem: number | null`** — o caso mais comum e mais valioso:
+  arma/armadura/escudo +1/+2/+3, soma direto em acerto+dano ou CA.
+  Sozinho já cobre boa parte dos itens "ativos" mais comuns.
+- **`tipoItem` categorizado** (além da `categoria` solta que já
+  existe: Poção, Anel, etc.) — algo como `arma` | `armadura` |
+  `escudo` | `consumível` (poção/pergaminho, some do inventário ao
+  usar) | `passivo` (efeito sempre ligado, sem ação do jogador) |
+  `ativo-com-carga`. Decide qual componente de UI o item usa (ex:
+  consumível vira "usar 1x e remover da mochila", ativo-com-carga
+  precisa de contador de cargas — mesmo padrão de `TickPips` já usado
+  em Espaços de Magia).
+- **`cargas: { max: number; recarga: string } | null`** — bastante
+  item mágico (varinhas, bastões, alguns anéis) funciona por carga;
+  sem isso cada um vira texto solto de novo, igual hoje.
+
+**O que fica de fora de propósito:** qualquer efeito único,
+condicional ou muito narrativo (a maioria dos itens Raro+/Lendário) —
+esses continuam só como texto em `efeitoResumido`, sem campo
+estruturado, até o Osmar pedir um item específico.
 
 ## 5. Fases do trabalho
 
