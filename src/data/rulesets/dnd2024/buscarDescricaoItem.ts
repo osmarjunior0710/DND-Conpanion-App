@@ -10,7 +10,8 @@ const indiceDescricaoCompleta = new Map<string, string>();
 const indicePeso = new Map<string, string>();
 
 for (const it of equipamentoAventura) {
-  if (it.descricao) indiceDescricao.set(it.nome.toLowerCase(), it.descricao);
+  if (it.descricaoCurta) indiceDescricao.set(it.nome.toLowerCase(), it.descricaoCurta);
+  indiceDescricaoCompleta.set(it.nome.toLowerCase(), it.descricaoCompleta);
   if (it.peso) indicePeso.set(it.nome.toLowerCase(), it.peso);
 }
 for (const it of montariasVeiculos) {

@@ -365,10 +365,22 @@ listada no reporte, sem esperar aprovação prévia por item.
       explicação de cada propriedade/maestria específica. Mesmo padrão
       de `armaduras.ts` (completa/curta + coluna nova na planilha).
       `npm test` (160 passando) e `npm run build` OK.
-- [ ] **Equipamento de Aventura (98 itens)** — mesmo capítulo, mas
-      aqui o livro TEM descrição própria por item em ordem alfabética
-      (confirmado, diferente de Armas/Armaduras) — extrair texto
-      literal de verdade, seguindo o padrão de Magias.
+- [x] **Equipamento de Aventura (98 itens) — FEITA.** Confirmado: o
+      livro TEM texto próprio por item em ordem alfabética (Cap.6 do
+      Livro do Jogador) — `descricaoCompleta` aqui é literal, igual
+      Magias (diferente de Armas/Armaduras). 4 grupos de variantes
+      (Foco Arcano, Foco Druídico, Munição, Símbolo Sagrado — 16 itens
+      no total) compartilham 1 parágrafo entre as variantes da mesma
+      tabela, também literal. Extração via script (não digitado à
+      mão): localiza cada cabeçalho MAIÚSCULO no texto do capítulo,
+      corta o trecho até o próximo cabeçalho, remove hifenização de
+      quebra de linha do PDF e 1 legenda de imagem solta (Fogo
+      Alquímico). Achado curioso: o próprio livro tem uma errata no
+      verbete "Pote" (diz "Um Frasco armazena..." em vez de "Um
+      Pote...") — preservado literal, reportado ao Osmar, não é bug
+      nosso de extração. Todos os valores de Peso/Custo já batiam com
+      o livro, nenhuma correção necessária. `npm test` (160 passando)
+      e `npm run build` OK.
 - [ ] **Itens Mágicos (288 itens)** — Livro do Mestre, Cap.7 Tesouro
       Parte 2. Maior volume, fazer por último.
 - [ ] Depois das 4 categorias, avaliar se cabe uma entrada nova em
