@@ -159,7 +159,24 @@ listada no reporte, sem esperar aprovação prévia por item.
         com bloco de estatística, ou têm CA/PV próprios) — não forcei
         classificação errada, ver `PENDENCIAS.md`. `npm test` (164
         passando) e `npm run build` OK.
-  - [ ] **Lote 2 (itens 51-100)** — mesmo processo.
+  - [x] **Lote 2 (itens 51-100) — FEITA.** Achou e corrigiu **2 bugs
+        novos de extração** que afetavam itens fora deste lote (não
+        pegos na conferência do Lote 1 porque só apareciam ao processar
+        os cabeçalhos vizinhos certos): "Unguento de Keoghtom" tinha
+        vazado o texto de "Varinha das Maravilhas" — livro escreve
+        "MARAVILLHAS" com erro de digitação, diferente da grafia da
+        planilha, então o cabeçalho da Varinha não foi reconhecido
+        como fronteira; "Anel de Cativar Animais" tinha vazado a seção
+        inteira de "Anel de Comandar Elementais" (grupo adiado pro
+        Lote 6 — excluir da busca também removeu ele como fronteira,
+        corrigido incluindo o cabeçalho como fronteira mesmo sem
+        atribuir texto ainda). De brinde, corrigido também o
+        "Vingadora Sagrada" (não está neste lote, mas mesma classe de
+        bug do "Veneno Básico" em Equipamento — é o último item
+        alfabético do catálogo, vazou até a próxima seção do livro).
+        **1 correção de dado real**: Anel de Queda Suave exige
+        sintonização no livro, planilha tinha "não". `npm test` (164
+        passando) e `npm run build` OK.
   - [ ] **Lote 3 (itens 101-150)**
   - [ ] **Lote 4 (itens 151-200)**
   - [ ] **Lote 5 (itens 201-250)**
