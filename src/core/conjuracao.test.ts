@@ -24,4 +24,9 @@ describe('personagemConjura', () => {
     const s = { ...criarSelecaoInicial(), especie: 'Elfo', subescolhaEspecieEscolhida: null };
     expect(personagemConjura(guerreiro, s)).toBe(false);
   });
+
+  it('espécie com truque fixo sem depender de sub-escolha (Aasimar — Portador da Luz): true', () => {
+    const s = { ...criarSelecaoInicial(), especie: 'Aasimar' };
+    expect(personagemConjura(guerreiro, s)).toBe(true);
+  });
 });

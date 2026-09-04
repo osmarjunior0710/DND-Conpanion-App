@@ -134,12 +134,23 @@ sempre que possível — ver 6.1):
     (nível 5) na aba Magias, e "Legado Ínfero: Ctônico" resolvido na
     aba Perfil. `npx tsc -b`, `npm test -- --run` (185 testes) e
     `npm run build` passando.
-- [ ] **7. Aasimar** — natureza `escolha_reutilizavel` (Revelação
-      Celestial): não é escolha do wizard, é escolha repetida toda vez
-      que a habilidade é usada em combate. **Perguntar ao Osmar onde
-      fica e como o jogador ativa antes de codar** (regra do
-      `LICOES-RAPIDAS.md`), deixado por último de propósito por causa
-      disso.
+- [x] **7. Aasimar** — decisão do Osmar: habilitar a espécie AGORA
+      (`disponivel: true`) mesmo sem a mecânica ativa pronta, deixando
+      os 2 traços ativos (Mãos Curativas, Revelação Celestial) como
+      características ganhas/texto na Perfil por enquanto — mesmo
+      tratamento que todo outro traço ativo ainda não mecanizado (ver
+      item 8). Único pedaço que dava pra ligar sem esperar Combat:
+      Portador da Luz (truque Luz, igual pra qualquer Aasimar,
+      independente da Revelação Celestial) — reaproveitou o
+      `Especie.truqueFixo` criado pro Tiferino, então já aparece na aba
+      Magias/soma pra "Guerreiro Aasimar também conjura" igual aos
+      outros casos.
+  - Testado com Playwright: as 10 espécies do Livro do Jogador
+    aparecem na lista (nenhuma mais "em breve"); Aasimar mostra "Luz"
+    na aba Magias e os 5 traços como texto na Perfil (sem linha de
+    "sub-escolha", já que Revelação Celestial não é escolhida no
+    wizard). `npx tsc -b`, `npm test -- --run` (187 testes) e
+    `npm run build` passando.
 - [ ] **8. Mapeamento de traços ATIVOS de espécie pra Combat** —
       achado no meio do foco (Ataque de Sopro do Draconato só aparece
       como texto na aba Perfil hoje, igual todo outro traço — nenhum
@@ -162,9 +173,13 @@ sempre que possível — ver 6.1):
     padrão `BonusExtraProvider` já usado pra Sorte do Tenebroso/
     Indomável, mas é REROLL, não bônus somado — precisa de variante
     nova do mecanismo).
-  - Aasimar — Mãos Curativas (Ação Usar Magia, cura, 1x/Descanso
-    Longo); Revelação Celestial (já é o item 7 acima, 3 sub-opções por
-    uso).
+  - Aasimar — Mãos Curativas (Ação Usar Magia, toca 1 criatura, cura
+    Xd4 = Bônus de Proficiência, 1x/Descanso Longo); Revelação
+    Celestial (nível 3+, Ação Bônus, escolhe 1 de 3 formas — Asas
+    Celestiais/Manto Necrótico/Transfiguração Radiante — a CADA vez que
+    transforma, 1min ou até encerrar, 1x/Descanso Longo, dano bônus
+    extra por turno enquanto ativa — natureza `escolha_reutilizavel`,
+    não tem escolha no wizard).
   - Draconato — Ataque de Sopro (substitui um ataque, Cone/Linha,
     salvaguarda de Destreza, dano escala por nível, usos = Bônus de
     Proficiência, Descanso Longo — precisa de modal parecido com
@@ -191,4 +206,6 @@ sempre que possível — ver 6.1):
   Ínfero (Alto Elfo/Drow/Elfo Silvestre e os 3 Legados Ínferos — truque
   concedido + efeito passivo, sem botão de ativar).
 
-Começando agora pelo item 1 (Humano).
+Itens 1-7 concluídos — as 10 espécies do Livro do Jogador 2024 estão
+todas disponíveis no wizard. Falta só o item 8 (mapeamento já feito
+acima, mecânica ainda não implementada) pra fechar o foco de vez.

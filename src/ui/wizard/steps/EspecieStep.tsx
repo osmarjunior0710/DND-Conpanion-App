@@ -24,8 +24,9 @@ export default function EspecieStep({ selection, update }: StepProps) {
         </div>
       ))}
       <div className="label" style={{ marginTop: 6 }}>
-        1 espécie fica "(em breve)" — tem uma sub-escolha (Revelação Celestial) escolhida a cada
-        uso em combate, não na criação. Ver <code>PENDENCIAS.md</code>.
+        As 10 espécies do Livro do Jogador estão disponíveis. Alguns traços ativos (ex: Mãos
+        Curativas e Revelação Celestial do Aasimar) ainda não têm ação própria em Combat — aparecem
+        como texto na aba Perfil por enquanto. Ver <code>EmDev.md</code>.
       </div>
     </>
   );

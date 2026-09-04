@@ -26,6 +26,10 @@ describe('truquesEspecie', () => {
   it('truque fixo aparece mesmo sem sub-escolha escolhida ainda', () => {
     expect(truquesEspecie(selecao('Tiferino', null))).toEqual(['Taumaturgia']);
   });
+
+  it('espécie com truque fixo e SEM linhagem estruturada ainda (Aasimar — Portador da Luz)', () => {
+    expect(truquesEspecie(selecao('Aasimar', null))).toEqual(['Luz']);
+  });
 });
 
 describe('magiasEspecie', () => {
