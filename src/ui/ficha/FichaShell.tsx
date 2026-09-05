@@ -189,6 +189,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo.ancestralidadeGiganteGasto ?? 0,
   );
   const [formaGrandeGasto, setFormaGrandeGasto] = useState(personagemSalvo.formaGrandeGasto ?? false);
+  const [formaGrandeAtiva, setFormaGrandeAtiva] = useState(personagemSalvo.formaGrandeAtiva ?? false);
   const [maosCurativasGasto, setMaosCurativasGasto] = useState(personagemSalvo.maosCurativasGasto ?? false);
   const [revelacaoCelestialGasto, setRevelacaoCelestialGasto] = useState(personagemSalvo.revelacaoCelestialGasto ?? false);
   const [revelacaoCelestialFormaAtiva, setRevelacaoCelestialFormaAtiva] = useState(
@@ -256,8 +257,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const pericias = calcularPericias(selecao, personagem.nivel, periciasEspecialistaAtuais, periciasSubclasseBonusAtuais);
   const proficienciasFerramenta = calcularProficienciasFerramenta(selecao, personagem.nivel);
   const bonusProficienciaAtual = classe ? bonusProficiencia(classe, personagem.nivel) : 0;
-  const capacidadeMaxima = calcularCapacidadeMaxima(selecao);
-  const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao);
+  const capacidadeMaxima = calcularCapacidadeMaxima(selecao, formaGrandeAtiva);
+  const explicacaoCapacidadeMaxima = explicarCapacidadeMaxima(selecao, formaGrandeAtiva);
   const explicacaoPv = explicarPvMaximo(selecao, personagem.pvMax);
   const explicacaoCa = explicarCAEquipado(itensMochila, desValor, personagem.estiloDeLuta, talentosEfetivos);
   const explicacaoIniciativa = explicarIniciativa(selecao, classe, personagem.nivel, talentosEfetivos);
@@ -436,6 +437,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       vooDraconicoGasto,
       ancestralidadeGiganteGasto,
       formaGrandeGasto,
+      formaGrandeAtiva,
       maosCurativasGasto,
       revelacaoCelestialGasto,
       revelacaoCelestialFormaAtiva,
@@ -485,6 +487,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     vooDraconicoGasto,
     ancestralidadeGiganteGasto,
     formaGrandeGasto,
+    formaGrandeAtiva,
     maosCurativasGasto,
     revelacaoCelestialGasto,
     revelacaoCelestialFormaAtiva,
@@ -565,9 +568,19 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     return true;
   }
 
+  /** Toggle — ligar (1ª vez, gasta o uso) ou desligar (encerrar antes
+   * do Descanso Longo, sem devolver o uso) a Forma Grande. Só o
+   * Descanso Longo desliga sozinho e devolve o uso (ver
+   * `descansoLongo`) — o app não segue tempo real pra saber quando os
+   * 10 minutos da transformação acabam. */
   function usarFormaGrande(): boolean {
+    if (formaGrandeAtiva) {
+      setFormaGrandeAtiva(false);
+      return true;
+    }
     if (formaGrandeGasto) return false;
     setFormaGrandeGasto(true);
+    setFormaGrandeAtiva(true);
     return true;
   }
 
@@ -665,6 +678,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setVooDraconicoGasto(false);
     setAncestralidadeGiganteGasto(0);
     setFormaGrandeGasto(false);
+    setFormaGrandeAtiva(false);
     setMaosCurativasGasto(false);
     setRevelacaoCelestialGasto(false);
     setRevelacaoCelestialFormaAtiva(null);
@@ -1167,6 +1181,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             modConstituicaoAtual={modConstituicaoAtual}
             formaGrandeDisponivel={formaGrandeDisponivel}
             formaGrandeGasto={formaGrandeGasto}
+            formaGrandeAtiva={formaGrandeAtiva}
             onUsarFormaGrande={usarFormaGrande}
             maosCurativasDisponivel={maosCurativasDisponivel}
             maosCurativasGasto={maosCurativasGasto}

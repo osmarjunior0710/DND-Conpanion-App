@@ -181,6 +181,13 @@ export interface PersonagemSalvo {
   /** `true` = Forma Grande (Golias, nível 5+) já usada desde o último
    * Descanso Longo — só ele reseta. */
   formaGrandeGasto?: boolean;
+  /** `true` = Forma Grande está TRANSFORMADA agora (diferente de
+   * `formaGrandeGasto`: o app não segue tempo real, então quem ativou
+   * também controla quando desliga — ligar/desligar não mexe no uso
+   * gasto, só o Descanso Longo desliga e devolve o uso junto). Usado
+   * pra saber se o bônus de tamanho de Capacidade de Carga (Porte
+   * Poderoso + Forma Grande) está valendo agora — ver `core/mochila.ts`. */
+  formaGrandeAtiva?: boolean;
   /** `true` = Mãos Curativas (Aasimar) já usada desde o último Descanso
    * Longo — só ele reseta. */
   maosCurativasGasto?: boolean;

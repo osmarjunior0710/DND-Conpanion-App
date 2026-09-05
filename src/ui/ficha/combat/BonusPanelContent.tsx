@@ -43,6 +43,11 @@ interface BonusPanelContentProps {
   /** Forma Grande (Golias, nível 5+) — `false` = não disponível. */
   formaGrandeDisponivel: boolean;
   formaGrandeGasto: boolean;
+  /** `true` = transformado agora. Diferente de `formaGrandeGasto`:
+   * como o app não segue tempo real, quem ativa também controla
+   * quando desliga (toggle) — ligar/desligar não mexe no uso gasto,
+   * só o Descanso Longo desliga e devolve o uso junto. */
+  formaGrandeAtiva: boolean;
   onUsarFormaGrande: () => void;
   /** Revelação Celestial (Aasimar, nível 3+) — natureza
    * `escolha_reutilizavel`: a forma é escolhida de novo a cada uso,
@@ -88,6 +93,7 @@ export default function BonusPanelContent({
   onUsarSaltoDaNuvem,
   formaGrandeDisponivel,
   formaGrandeGasto,
+  formaGrandeAtiva,
   onUsarFormaGrande,
   revelacaoCelestialDisponivel,
   revelacaoCelestialGasto,
@@ -357,19 +363,25 @@ export default function BonusPanelContent({
       {formaGrandeDisponivel && (
         <>
           <div
-            className={styles.row}
-            style={formaGrandeGasto ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            className={`${styles.row} ${styles.toggleRowLine}`}
+            style={formaGrandeGasto && !formaGrandeAtiva ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
             onClick={onUsarFormaGrande}
           >
-            <div className={styles.rowName}>🗿 Forma Grande</div>
-            {detalhesAtivo && (
-              <div className={styles.rowDesc}>
-                Tamanho vira Grande por 10 minutos — Vantagem em testes de Força, Deslocamento +3m. 1x — recupera no
-                Descanso Longo.
-              </div>
-            )}
+            <div>
+              <div className={styles.rowName}>🗿 Forma Grande</div>
+              {detalhesAtivo && (
+                <div className={styles.rowDesc}>
+                  Tamanho vira Grande — Vantagem em testes de Força, Deslocamento +3m e +1 tamanho na Capacidade de
+                  Carga enquanto ativa. Sem tempo real no app: você mesmo liga/desliga (desligar não devolve o uso).
+                  1x — recupera (e desliga sozinha) no Descanso Longo.
+                </div>
+              )}
+            </div>
+            <div className={`${styles.switchTrack} ${formaGrandeAtiva ? styles.switchOn : ''}`}>
+              <div className={styles.switchThumb} />
+            </div>
           </div>
-          {formaGrandeGasto && (
+          {formaGrandeGasto && !formaGrandeAtiva && (
             <div className="label" style={{ marginTop: 6 }}>
               já usado — descanse pra recuperar.
             </div>

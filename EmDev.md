@@ -309,6 +309,32 @@ botão nenhum pra apertar e AINDA ASSIM alterar um número que o core
 calcula (CA, PV, iniciativa, etc.). Releia a `descricao` de cada traço
 "passivo" com essa pergunta em mente antes de arquivar como só-texto.
 
-Itens 1-7 concluídos — as 10 espécies do Livro do Jogador 2024 estão
-todas disponíveis no wizard. Falta só o item 8 (mapeamento já feito
-acima, mecânica ainda não implementada) pra fechar o foco de vez.
+Depois do item 9, o Osmar pediu uma auditoria completa das 10 espécies
+(todo bônus, implementado ou não) — feita em resposta no chat, achou
+mais 1 bug real (item 10) e 1 pendência (Inspiração Heroica do Humano,
+que o Osmar vai definir como implementar antes da gente mexer).
+
+- [x] **10. Porte Poderoso (Golias) não afetava Capacidade de Carga**
+      — mesma categoria de bug do item 9: o traço "conta como 1 tamanho
+      maior" pra Capacidade de Carga, um número real que o app já
+      calculava (`core/mochila.ts`), mas a fórmula nunca lia isso —
+      sempre usava o multiplicador de Pequeno/Médio (×7 kg), mesmo pra
+      Golias. Corrigido lendo a tabela oficial completa (Pequeno/Médio
+      ×7, Grande ×13,5, Enorme ×27, Colossal ×54,5 — já confirmada em
+      DECISOES-FICHA.md) e contando "passos de tamanho acima do
+      padrão": Porte Poderoso sempre soma 1 passo (Golias vira Grande
+      só pra esse cálculo). Forma Grande (traço separado, 10 min ou até
+      encerrar) soma outro passo ENQUANTO ativa — como o app não segue
+      tempo real, vira um **toggle** de verdade na Ficha (ligar/
+      desligar manual, não um botão de uso único): ligar gasta o uso
+      (1x/Descanso Longo) e desligar não devolve, só o Descanso Longo
+      desliga sozinho e devolve o uso junto. Toggle novo reaproveita o
+      mesmo estilo visual do switch "Detalhes" do painel lateral (CSS
+      movido pra `PanelRows.module.css` pra virar reaproveitável).
+      Testado com Playwright: Golias FOR 8 nível 5 mostra Capacidade
+      Máxima 108 kg (8 × 13,5, Porte Poderoso) com o popup ⓘ explicando
+      "conta 1 tamanho acima... + Porte Poderoso"; ligar Forma Grande
+      no painel Bônus mostra o switch aceso e a Capacidade de Carga na
+      aba Mochila sobe pra 216 kg (8 × 27, Enorme = 2 tamanhos acima).
+      `npx tsc -b`, `npm test -- --run` (203 testes, 5 novos) e `npm
+      run build` passando.

@@ -79,6 +79,9 @@ interface CombatTabProps {
   /** Forma Grande (Golias, nível 5+) — `false` = não disponível. */
   formaGrandeDisponivel: boolean;
   formaGrandeGasto: boolean;
+  /** `true` = transformado agora (diferente de `formaGrandeGasto` —
+   * ver comentário em `armazenamentoPersonagens.ts`). */
+  formaGrandeAtiva: boolean;
   onUsarFormaGrande: () => boolean;
   /** Mãos Curativas (Aasimar) — `false` = espécie não é Aasimar. */
   maosCurativasDisponivel: boolean;
@@ -184,6 +187,7 @@ export default function CombatTab({
   modConstituicaoAtual,
   formaGrandeDisponivel,
   formaGrandeGasto,
+  formaGrandeAtiva,
   onUsarFormaGrande,
   maosCurativasDisponivel,
   maosCurativasGasto,
@@ -810,6 +814,7 @@ export default function CombatTab({
             onUsarSaltoDaNuvem={usarSaltoDaNuvem}
             formaGrandeDisponivel={formaGrandeDisponivel}
             formaGrandeGasto={formaGrandeGasto}
+            formaGrandeAtiva={formaGrandeAtiva}
             onUsarFormaGrande={usarFormaGrande}
             revelacaoCelestialDisponivel={revelacaoCelestialDisponivel}
             revelacaoCelestialGasto={revelacaoCelestialGasto}
