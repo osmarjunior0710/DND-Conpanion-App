@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   bonusProficiencia,
+  bonusPvPorNivelDaEspecie,
   calcularCA,
   calcularCAEquipado,
   calcularPvMaximoNivel1,
@@ -45,9 +46,24 @@ function itemEquipado(nome: string, slot: ItemMochila['slot']): ItemMochila {
   return { id: nome, nome, quantidade: 1, peso: null, origemDoItem: 'Manual', slot };
 }
 
+describe('bonusPvPorNivelDaEspecie (Tenacidade Anã)', () => {
+  it('Anão tem +1 de PV máximo por nível', () => {
+    expect(bonusPvPorNivelDaEspecie(selecaoGuerreiro({ especie: 'Anão' }))).toBe(1);
+  });
+
+  it('qualquer outra espécie (ou nenhuma ainda escolhida) não tem bônus', () => {
+    expect(bonusPvPorNivelDaEspecie(selecaoGuerreiro({ especie: 'Elfo' }))).toBe(0);
+    expect(bonusPvPorNivelDaEspecie(criarSelecaoInicial())).toBe(0);
+  });
+});
+
 describe('calcularPvMaximoNivel1', () => {
   it('usa o dado de vida MÁXIMO da classe + mod. Constituição (nunca rola nem tira média no nível 1)', () => {
     expect(calcularPvMaximoNivel1(selecaoGuerreiro())).toBe(10 + 1); // d10 + mod. CON 13 (+1)
+  });
+
+  it('Anão soma +1 de Tenacidade Anã por cima do dado de vida + mod. Constituição', () => {
+    expect(calcularPvMaximoNivel1(selecaoGuerreiro({ especie: 'Anão' }))).toBe(10 + 1 + 1); // d10 + mod. CON (+1) + Tenacidade Anã (+1)
   });
 
   it('retorna null quando falta Constituição ou Classe (personagem em criação)', () => {

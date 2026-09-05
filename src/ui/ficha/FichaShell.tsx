@@ -12,6 +12,7 @@ import {
   calcularPericias,
   calcularProficienciasFerramenta,
   calcularPvMaximoNivel1,
+  bonusPvPorNivelDaEspecie,
   classeDaSelecao,
   explicarCAEquipado,
   explicarIniciativa,
@@ -148,6 +149,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     conMod: conValor !== null ? modificador(conValor) : 0,
     subclasse: personagemSalvo.subclasseAtual ?? null,
     estiloDeLuta: personagemSalvo.estiloDeLutaAtual ?? selecao.estiloDeLutaEscolhido,
+    bonusPvPorNivel: bonusPvPorNivelDaEspecie(selecao),
   });
   const [pvAtual, setPvAtual] = useState(personagemSalvo.pvAtual);
   const [pvTemporario, setPvTemporario] = useState(personagemSalvo.pvTemporarioAtual ?? 0);

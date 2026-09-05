@@ -61,6 +61,17 @@ export function bonusProficiencia(classe: Classe, nivel: number): number {
   return parseInt(linha.bonusProficiencia.replace(/[^0-9]/g, ''), 10) || 2;
 }
 
+/** Tenacidade Anã (Anão): PV máximo +1 já no nível 1, e mais +1 a cada
+ * nível ganho depois — único traço de espécie hoje que afeta PV
+ * máximo diretamente (nenhuma sub-escolha envolvida, vale pra todo
+ * Anão). Reaproveitado por `calcularPvMaximoNivel1`/
+ * `explicarPvMaximoNivel1` (nível 1) e por quem soma PV de Level Up
+ * (`LevelUpShell`, `levelUpAleatorio.ts`, `geradorPersonagemTeste.ts`)
+ * — cada um soma esse mesmo valor 1x por nível ganho. */
+export function bonusPvPorNivelDaEspecie(selection: WizardSelection): number {
+  return selection.especie === 'Anão' ? 1 : 0;
+}
+
 /**
  * Nível 1 nunca rola nem tira média — dado de vida MÁXIMO + mod. CON.
  * Exceções de classe pra PV (nenhuma conhecida hoje) entrariam aqui.
@@ -69,7 +80,7 @@ export function calcularPvMaximoNivel1(selection: WizardSelection): number | nul
   const classe = classeDaSelecao(selection);
   const conValor = valorFinalAtributo(selection, 'CON');
   if (!classe || conValor === null) return null;
-  return parseDadoDeVida(classe.dadoDeVida) + modificador(conValor);
+  return parseDadoDeVida(classe.dadoDeVida) + modificador(conValor) + bonusPvPorNivelDaEspecie(selection);
 }
 
 /** Item de armadura (se houver) escolhido no equipamento inicial da classe. */
@@ -430,12 +441,17 @@ export function explicarPvMaximoNivel1(selection: WizardSelection): ExplicacaoCa
   }
   const dado = parseDadoDeVida(classe.dadoDeVida);
   const conMod = modificador(conValor);
+  const bonusEspecie = bonusPvPorNivelDaEspecie(selection);
+  const linhas = [
+    { label: `Dado de Vida máximo da classe (${classe.dadoDeVida})`, valor: `${dado}` },
+    { label: 'mod. Constituição', valor: fmtMod(conMod) },
+  ];
+  if (bonusEspecie > 0) {
+    linhas.push({ label: 'Tenacidade Anã', valor: fmtMod(bonusEspecie) });
+  }
   return {
-    linhas: [
-      { label: `Dado de Vida máximo da classe (${classe.dadoDeVida})`, valor: `${dado}` },
-      { label: 'mod. Constituição', valor: fmtMod(conMod) },
-    ],
-    total: { label: 'Pontos de Vida máximos', valor: `${dado + conMod}` },
+    linhas,
+    total: { label: 'Pontos de Vida máximos', valor: `${dado + conMod + bonusEspecie}` },
   };
 }
 
@@ -456,11 +472,14 @@ export function explicarPvMaximo(selection: WizardSelection, pvMaxAtual: number)
   }
   const dado = parseDadoDeVida(classe.dadoDeVida);
   const conMod = modificador(conValor);
-  const baseNivel1 = dado + conMod;
+  const bonusEspecie = bonusPvPorNivelDaEspecie(selection);
+  const baseNivel1 = dado + conMod + bonusEspecie;
   const ganhoPosterior = pvMaxAtual - baseNivel1;
-  const linhas = [
-    { label: `Nível 1 (Dado de Vida máximo da classe (${classe.dadoDeVida}) + mod. Constituição)`, valor: `${baseNivel1}` },
-  ];
+  const rotuloNivel1 =
+    bonusEspecie > 0
+      ? `Nível 1 (Dado de Vida máximo da classe (${classe.dadoDeVida}) + mod. Constituição + Tenacidade Anã)`
+      : `Nível 1 (Dado de Vida máximo da classe (${classe.dadoDeVida}) + mod. Constituição)`;
+  const linhas = [{ label: rotuloNivel1, valor: `${baseNivel1}` }];
   if (ganhoPosterior > 0) {
     linhas.push({ label: 'Ganho em Level Ups seguintes', valor: fmtMod(ganhoPosterior) });
   }

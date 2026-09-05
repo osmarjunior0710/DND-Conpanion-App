@@ -275,13 +275,39 @@ propósito, fabricar dispositivo é utilidade/downtime, não combate).
   **Só passivo/descritivo — não precisa de UI em Combat, texto na
   aba Perfil já resolve:** Visão no Escuro (todas — já é
   `sentidoConcedido`), Resistência a Toxinas/Celestial/a Dano,
-  Tenacidade Anã, Corajoso, Agilidade Pequenina, Furtividade Natural,
+  Corajoso, Agilidade Pequenina, Furtividade Natural,
   Eficiente, Ancestralidade Feérica, Sentidos Aguçados, Transe,
   Astúcia de Gnomo, Porte Poderoso, Presença Sobrenatural, Portador da
   Luz (concede truque — entra na lista de magias normal, não é UI de
   espécie própria), benefício de nível 1 de Linhagem Élfica/Legado
   Ínfero (Alto Elfo/Drow/Elfo Silvestre e os 3 Legados Ínferos — truque
   concedido + efeito passivo, sem botão de ativar).
+
+- [x] **9. Tenacidade Anã (Anão) não afetava PV máximo** — achado pelo
+      Osmar depois do item 8 fechar: essa característica tinha sido
+      classificada como "só passivo/descritivo" (lista acima), mas na
+      real ela MUDA um número (PV máximo +1 no nível 1, e mais +1 a
+      cada Level Up) — não é só texto, é cálculo que faltava em
+      `core/calculoPersonagem.ts` (nova `bonusPvPorNivelDaEspecie`,
+      testada) e nos 3 lugares que somam PV ganho por nível
+      (`LevelUpShell.tsx` — Level Up de verdade —,
+      `core/levelUpAleatorio.ts` — Level Up Rápido ⚡ — e
+      `core/geradorPersonagemTeste.ts` — Personagem de Teste). O popup
+      ⓘ de PV máximo (`explicarPvMaximoNivel1`/`explicarPvMaximo`)
+      também não citava o bônus, então mesmo cabendo, o número certo
+      não tinha como ser conferido. Testado com Playwright: Anão
+      Guerreiro CON 14 nível 1 mostra PV 13/13 (10 do dado d10+mod CON,
+      +1 Tenacidade Anã) com o popup ⓘ citando "+ Tenacidade Anã";
+      Level Up Rápido pra nível 2 (CON 8, -1) soma +6 (média d10 6 -1
+      +1 Tenacidade Anã), popup mostra "Ganho em Level Ups seguintes
+      +6" = 16 total. `npx tsc -b`, `npm test -- --run` (198 testes,
+      3 novos) e `npm run build` passando.
+
+**Lição pro processo:** "não precisa de UI em Combat" não é o mesmo
+teste que "é puramente descritivo" — uma característica pode não ter
+botão nenhum pra apertar e AINDA ASSIM alterar um número que o core
+calcula (CA, PV, iniciativa, etc.). Releia a `descricao` de cada traço
+"passivo" com essa pergunta em mente antes de arquivar como só-texto.
 
 Itens 1-7 concluídos — as 10 espécies do Livro do Jogador 2024 estão
 todas disponíveis no wizard. Falta só o item 8 (mapeamento já feito
