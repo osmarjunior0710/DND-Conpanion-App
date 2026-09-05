@@ -13,6 +13,7 @@ import AcaoPanelContent, { type DanoPendente } from '../combat/AcaoPanelContent'
 import BonusPanelContent from '../combat/BonusPanelContent';
 import ReacaoPanelContent from '../combat/ReacaoPanelContent';
 import LancarNoInfernoModal from '../combat/LancarNoInfernoModal';
+import AtaqueDeSoproModal from '../combat/AtaqueDeSoproModal';
 import styles from './CombatTab.module.css';
 
 export type RecursoTurno = 'acao' | 'bonus' | 'reacao';
@@ -54,6 +55,18 @@ interface CombatTabProps {
   usosPicoDeAdrenalinaMaximo: number;
   usosPicoDeAdrenalinaRestantes: number;
   onUsarPicoDeAdrenalina: () => boolean;
+  /** Ataque de Sopro (Draconato) — `false` = espécie não é Draconato. */
+  ataqueDeSoproDisponivel: boolean;
+  usosAtaqueDeSoproMaximo: number;
+  usosAtaqueDeSoproRestantes: number;
+  cdAtaqueDeSopro: number;
+  numDadosAtaqueDeSopro: number;
+  tipoDanoAtaqueDeSopro: string | null;
+  onUsarAtaqueDeSopro: () => boolean;
+  /** Voo Dracônico (Draconato, nível 5+) — `false` = não disponível. */
+  vooDraconicoDisponivel: boolean;
+  vooDraconicoGasto: boolean;
+  onUsarVooDraconico: () => boolean;
   conjura: boolean;
   truques: Magia[];
   magiasPreparadasAcao: Magia[];
@@ -120,6 +133,16 @@ export default function CombatTab({
   usosPicoDeAdrenalinaMaximo,
   usosPicoDeAdrenalinaRestantes,
   onUsarPicoDeAdrenalina,
+  ataqueDeSoproDisponivel,
+  usosAtaqueDeSoproMaximo,
+  usosAtaqueDeSoproRestantes,
+  cdAtaqueDeSopro,
+  numDadosAtaqueDeSopro,
+  tipoDanoAtaqueDeSopro,
+  onUsarAtaqueDeSopro,
+  vooDraconicoDisponivel,
+  vooDraconicoGasto,
+  onUsarVooDraconico,
   conjura,
   truques,
   magiasPreparadasAcao,
@@ -159,6 +182,7 @@ export default function CombatTab({
   const [iniciativaValor, setIniciativaValor] = useState<number | null>(null);
   const [periciaInigualavelPendente, setPericiaInigualavelPendente] = useState(false);
   const [lancarNoInfernoAberto, setLancarNoInfernoAberto] = useState(false);
+  const [ataqueDeSoproAberto, setAtaqueDeSoproAberto] = useState(false);
   const cdLancarNoInferno = modAcertoConjuracao !== null ? cdConjuracao(modAcertoConjuracao) : null;
   const temEspacoDePactoDisponivel = espacos.some((e) => (espacosGastosPorCirculo[e.circulo] ?? 0) < e.maximo);
   const { rolarD20, rolarDados } = useRoll();
@@ -211,6 +235,27 @@ export default function CombatTab({
   function usarPicoDeAdrenalina() {
     if (!onUsarPicoDeAdrenalina()) return;
     onMarcarUsado('bonus');
+  }
+
+  function usarVooDraconico() {
+    if (!onUsarVooDraconico()) return;
+    onMarcarUsado('bonus');
+  }
+
+  function abrirAtaqueDeSopro() {
+    if (!onUsarAtaqueDeSopro()) return;
+    setAtaqueDeSoproAberto(true);
+  }
+
+  function rolarDanoAtaqueDeSopro() {
+    setAtaqueDeSoproAberto(false);
+    rolarDados({
+      label: 'Ataque de Sopro — Dano',
+      formula: `${numDadosAtaqueDeSopro}d10`,
+      quantidade: numDadosAtaqueDeSopro,
+      lados: 10,
+      mod: 0,
+    });
   }
 
   function usarRecuperarFolego() {
@@ -448,6 +493,24 @@ export default function CombatTab({
         </div>
       )}
 
+      {ataqueDeSoproDisponivel && (
+        <div
+          className="opt-card"
+          style={{
+            marginBottom: 12,
+            cursor: usosAtaqueDeSoproRestantes > 0 ? 'pointer' : 'default',
+            opacity: usosAtaqueDeSoproRestantes > 0 ? 1 : 0.5,
+          }}
+          onClick={usosAtaqueDeSoproRestantes > 0 ? abrirAtaqueDeSopro : undefined}
+        >
+          <div className="opt-card-name">🐉 Ataque de Sopro</div>
+          <div className="opt-card-desc">
+            substitui um ataque — Cone de 4,5m ou Linha de 9m×1,5m ({usosAtaqueDeSoproRestantes}/
+            {usosAtaqueDeSoproMaximo} usos — recarrega no Descanso Longo)
+          </div>
+        </div>
+      )}
+
       {(estiloDeLuta || mestreTatico || ataquesEstudados || ajusteTatico) && (
         <>
           <div className="section-title">Características</div>
@@ -624,6 +687,9 @@ export default function CombatTab({
             usosPicoDeAdrenalinaMaximo={usosPicoDeAdrenalinaMaximo}
             usosPicoDeAdrenalinaRestantes={usosPicoDeAdrenalinaRestantes}
             onUsarPicoDeAdrenalina={usarPicoDeAdrenalina}
+            vooDraconicoDisponivel={vooDraconicoDisponivel}
+            vooDraconicoGasto={vooDraconicoGasto}
+            onUsarVooDraconico={usarVooDraconico}
             ataqueBonus={ataqueBonus}
             onUsarAtaqueBonus={usarAtaqueMaoSecundaria}
             usosInspiracaoMaximo={usosInspiracaoMaximo}
@@ -659,6 +725,15 @@ export default function CombatTab({
           cd={cdLancarNoInferno}
           onRolarDano={rolarDanoLancarNoInferno}
           onFechar={() => setLancarNoInfernoAberto(false)}
+        />
+      )}
+      {ataqueDeSoproAberto && (
+        <AtaqueDeSoproModal
+          cd={cdAtaqueDeSopro}
+          tipoDano={tipoDanoAtaqueDeSopro}
+          numDados={numDadosAtaqueDeSopro}
+          onRolarDano={rolarDanoAtaqueDeSopro}
+          onFechar={() => setAtaqueDeSoproAberto(false)}
         />
       )}
     </>

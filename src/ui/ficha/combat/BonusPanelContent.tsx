@@ -28,6 +28,10 @@ interface BonusPanelContentProps {
   usosPicoDeAdrenalinaMaximo: number;
   usosPicoDeAdrenalinaRestantes: number;
   onUsarPicoDeAdrenalina: () => void;
+  /** Voo Dracônico (Draconato, nível 5+) — `false` = não disponível. */
+  vooDraconicoDisponivel: boolean;
+  vooDraconicoGasto: boolean;
+  onUsarVooDraconico: () => void;
 }
 
 export default function BonusPanelContent({
@@ -51,12 +55,16 @@ export default function BonusPanelContent({
   usosPicoDeAdrenalinaMaximo,
   usosPicoDeAdrenalinaRestantes,
   onUsarPicoDeAdrenalina,
+  vooDraconicoDisponivel,
+  vooDraconicoGasto,
+  onUsarVooDraconico,
 }: BonusPanelContentProps) {
   if (
     usosFolegoMaximo === 0 &&
     usosInspiracaoMaximo === 0 &&
     usosConhecimentoDePedrasMaximo === 0 &&
     usosPicoDeAdrenalinaMaximo === 0 &&
+    !vooDraconicoDisponivel &&
     !ataqueBonus
   ) {
     return (
@@ -217,6 +225,28 @@ export default function BonusPanelContent({
           {usosPicoDeAdrenalinaRestantes <= 0 && (
             <div className="label" style={{ marginTop: 6 }}>
               sem usos disponíveis — descanse pra recuperar.
+            </div>
+          )}
+        </>
+      )}
+      {vooDraconicoDisponivel && (
+        <>
+          <div
+            className={styles.row}
+            style={vooDraconicoGasto ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            onClick={onUsarVooDraconico}
+          >
+            <div className={styles.rowName}>🐲 Voo Dracônico</div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Cria asas espectrais — Deslocamento de Voo igual ao seu Deslocamento por 10 minutos ou até retrair.
+                1x — recupera no Descanso Longo.
+              </div>
+            )}
+          </div>
+          {vooDraconicoGasto && (
+            <div className="label" style={{ marginTop: 6 }}>
+              já usado — descanse pra recuperar.
             </div>
           )}
         </>

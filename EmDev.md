@@ -183,6 +183,22 @@ sempre que possível — ver 6.1):
         o resultado muda de 1→11 ao usar; Humano (controle) não mostra
         o botão. `npx tsc -b`, `npm test -- --run` (191 testes) e
         `npm run build` passando.
+  - [x] **8c. Draconato — Ataque de Sopro + Voo Dracônico** — Ataque
+        de Sopro reaproveita 100% o padrão visual/mecânico de "Lançar
+        no Inferno" (novo `AtaqueDeSoproModal.tsx`, mesmo CSS): card
+        de nível superior na aba Combat (fora dos painéis Ação/Bônus/
+        Reação, igual Lançar no Inferno), CD = 8 + mod. Constituição +
+        Bônus de Proficiência (`core/ataqueDeSopro.ts`, dados escalam
+        1d10→4d10 por nível, com teste), tipo de dano resolvido pela
+        cor de dragão já escolhida (`tipoDanoSubescolha`, reaproveitado
+        do Draconato). Voo Dracônico é um toggle simples (1x/Descanso
+        Longo, nível 5+) no molde do Recuperar Fôlego, sem dado. Testado
+        com Playwright: Draconato nível 5 mostra "Ataque de Sopro 3/3",
+        modal com "CD 14" e "2d10 de dano Elétrico" corretos pra cor
+        Azul, "Rolar Dano" aciona o RollOverlay compartilhado (16 no
+        2d10), usos decrementam pra 2/3; "Voo Dracônico" aparece no
+        painel Bônus. `npx tsc -b`, `npm test -- --run` (195 testes) e
+        `npm run build` passando.
   - Aasimar — Mãos Curativas (Ação Usar Magia, toca 1 criatura, cura
     Xd4 = Bônus de Proficiência, 1x/Descanso Longo); Revelação
     Celestial (nível 3+, Ação Bônus, escolhe 1 de 3 formas — Asas
@@ -190,11 +206,6 @@ sempre que possível — ver 6.1):
     transforma, 1min ou até encerrar, 1x/Descanso Longo, dano bônus
     extra por turno enquanto ativa — natureza `escolha_reutilizavel`,
     não tem escolha no wizard).
-  - Draconato — Ataque de Sopro (substitui um ataque, Cone/Linha,
-    salvaguarda de Destreza, dano escala por nível, usos = Bônus de
-    Proficiência, Descanso Longo — precisa de modal parecido com
-    "Lançar no Inferno"); Voo Dracônico (Ação Bônus, nível 5+,
-    1x/Descanso Longo).
   - Gnomo — Gnomo do Bosque (Falar com Animais grátis, usos = Bônus de
     Proficiência, Descanso Longo); Gnomo das Rochas (fabricar
     dispositivo — mais utilidade/downtime que combate, prioridade

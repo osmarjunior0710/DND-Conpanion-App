@@ -167,6 +167,12 @@ export interface PersonagemSalvo {
    * Curto OU Longo — os dois resetam (mesmo padrão de Recuperar
    * Fôlego). Máximo = Bônus de Proficiência. */
   picoDeAdrenalinaGasto?: number;
+  /** Usos gastos de Ataque de Sopro (Draconato) desde o último
+   * Descanso Longo — só ele reseta. Máximo = Bônus de Proficiência. */
+  ataqueDeSoproGasto?: number;
+  /** `true` = Voo Dracônico (Draconato, nível 5+) já usado desde o
+   * último Descanso Longo — só ele reseta. */
+  vooDraconicoGasto?: boolean;
 }
 
 export interface ArmazenamentoPersonagens {

@@ -44,6 +44,8 @@ import { personagemConjura } from '../../core/conjuracao';
 import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../core/invocacoesMagiaGratis';
 import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
 import { deveAplicarVigorImplacavel } from '../../core/vigorImplacavel';
+import { tipoDanoSubescolha } from '../../core/especieSubescolha';
+import { dadosAtaqueDeSopro } from '../../core/ataqueDeSopro';
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
 import { magiasPactoDoInfero } from '../../core/magiasPactoDoInfero';
@@ -72,6 +74,7 @@ import {
 } from '../../core/levelUp';
 import { estilosDeLuta } from '../../data/rulesets/dnd2024/estilosDeLuta';
 import { origens } from '../../data/rulesets/dnd2024/origens';
+import { especies } from '../../data/rulesets/dnd2024/especies';
 import { magias, magiasDaClasse, type Magia } from '../../data/rulesets/dnd2024/magias';
 import AvatarMenu from './AvatarMenu';
 import styles from './FichaShell.module.css';
@@ -173,6 +176,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [vigorImplacavelGasto, setVigorImplacavelGasto] = useState(personagemSalvo.vigorImplacavelGasto ?? false);
   const [conhecimentoDePedrasGasto, setConhecimentoDePedrasGasto] = useState(personagemSalvo.conhecimentoDePedrasGasto ?? 0);
   const [picoDeAdrenalinaGasto, setPicoDeAdrenalinaGasto] = useState(personagemSalvo.picoDeAdrenalinaGasto ?? 0);
+  const [ataqueDeSoproGasto, setAtaqueDeSoproGasto] = useState(personagemSalvo.ataqueDeSoproGasto ?? 0);
+  const [vooDraconicoGasto, setVooDraconicoGasto] = useState(personagemSalvo.vooDraconicoGasto ?? false);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
   const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
@@ -246,6 +251,15 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosConhecimentoDePedrasRestantes = Math.max(0, usosConhecimentoDePedrasMaximo - conhecimentoDePedrasGasto);
   const usosPicoDeAdrenalinaMaximo = selecao.especie === 'Orc' && classe ? bonusProficiencia(classe, personagem.nivel) : 0;
   const usosPicoDeAdrenalinaRestantes = Math.max(0, usosPicoDeAdrenalinaMaximo - picoDeAdrenalinaGasto);
+  const especieAtual = especies.find((e) => e.nome === selecao.especie) ?? null;
+  const ataqueDeSoproDisponivel = selecao.especie === 'Draconato';
+  const usosAtaqueDeSoproMaximo = ataqueDeSoproDisponivel && classe ? bonusProficiencia(classe, personagem.nivel) : 0;
+  const usosAtaqueDeSoproRestantes = Math.max(0, usosAtaqueDeSoproMaximo - ataqueDeSoproGasto);
+  const conValorFinal = valorFinalAtributo(selecao, 'CON') ?? 10;
+  const cdAtaqueDeSopro = 8 + modificador(conValorFinal) + bonusProficienciaAtual;
+  const numDadosAtaqueDeSopro = dadosAtaqueDeSopro(personagem.nivel);
+  const tipoDanoAtaqueDeSopro = especieAtual ? tipoDanoSubescolha(especieAtual, selecao) : null;
+  const vooDraconicoDisponivel = selecao.especie === 'Draconato' && personagem.nivel >= 5;
   const conjura = personagemConjura(classe, selecao);
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
@@ -372,6 +386,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       vigorImplacavelGasto,
       conhecimentoDePedrasGasto,
       picoDeAdrenalinaGasto,
+      ataqueDeSoproGasto,
+      vooDraconicoGasto,
       indomavelGasto,
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
@@ -413,6 +429,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     vigorImplacavelGasto,
     conhecimentoDePedrasGasto,
     picoDeAdrenalinaGasto,
+    ataqueDeSoproGasto,
+    vooDraconicoGasto,
     indomavelGasto,
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
@@ -468,6 +486,18 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     if (usosPicoDeAdrenalinaRestantes <= 0) return false;
     setPicoDeAdrenalinaGasto((v) => v + 1);
     setPvTemporario((atual) => ganharPvTemporario(atual, bonusProficienciaAtual));
+    return true;
+  }
+
+  function usarAtaqueDeSopro(): boolean {
+    if (usosAtaqueDeSoproRestantes <= 0) return false;
+    setAtaqueDeSoproGasto((v) => v + 1);
+    return true;
+  }
+
+  function usarVooDraconico(): boolean {
+    if (vooDraconicoGasto) return false;
+    setVooDraconicoGasto(true);
     return true;
   }
 
@@ -542,6 +572,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setVigorImplacavelGasto(false);
     setConhecimentoDePedrasGasto(0);
     setPicoDeAdrenalinaGasto(0);
+    setAtaqueDeSoproGasto(0);
+    setVooDraconicoGasto(false);
     setIndomavelGasto(0);
     setSorteDoTenebrosoGasto(0);
     setSurtoGasto(0);
@@ -1023,6 +1055,16 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             usosPicoDeAdrenalinaMaximo={usosPicoDeAdrenalinaMaximo}
             usosPicoDeAdrenalinaRestantes={usosPicoDeAdrenalinaRestantes}
             onUsarPicoDeAdrenalina={usarPicoDeAdrenalina}
+            ataqueDeSoproDisponivel={ataqueDeSoproDisponivel}
+            usosAtaqueDeSoproMaximo={usosAtaqueDeSoproMaximo}
+            usosAtaqueDeSoproRestantes={usosAtaqueDeSoproRestantes}
+            cdAtaqueDeSopro={cdAtaqueDeSopro}
+            numDadosAtaqueDeSopro={numDadosAtaqueDeSopro}
+            tipoDanoAtaqueDeSopro={tipoDanoAtaqueDeSopro}
+            onUsarAtaqueDeSopro={usarAtaqueDeSopro}
+            vooDraconicoDisponivel={vooDraconicoDisponivel}
+            vooDraconicoGasto={vooDraconicoGasto}
+            onUsarVooDraconico={usarVooDraconico}
             conjura={conjura}
             truques={truques}
             magiasPreparadasAcao={magiasPreparadasAcao}
