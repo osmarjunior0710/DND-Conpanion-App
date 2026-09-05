@@ -3,13 +3,13 @@
 //
 // Schema de sub-escolha decidido em DECISOES-DESIGN.md ("Dados —
 // Espécies têm 3 naturezas diferentes de sub-escolha"). Das 6 espécies
-// com sub-escolha, Draconato/Golias/Elfo/Gnomo/Tiferino já têm as
-// opções estruturadas em `opcoesSubescolha` (ver `OpcaoSubescolha`),
-// escolhidas 1x no wizard. Aasimar (natureza `escolha_reutilizavel`)
+// com sub-escolha, todas já têm as opções estruturadas em
+// `opcoesSubescolha` (ver `OpcaoSubescolha`). Draconato/Golias/Elfo/
+// Gnomo/Tiferino escolhem 1x no wizard (`identidade_permanente`/
+// `linhagem_com_progressao_magica`). Aasimar (`escolha_reutilizavel`)
 // é diferente: a Revelação Celestial é escolhida de novo A CADA USO em
-// combate, não no wizard — por isso `opcoesSubescolha` fica vazio
-// mesmo com a espécie já liberada; a tela de Combat pra isso (e pra
-// Mãos Curativas) ainda não existe, ver `EmDev.md`/`PENDENCIAS.md`.
+// combate, não no wizard — ver `core/especieSubescolha.ts`
+// (`opcoesEscolhaReutilizavel`) e a UI em `BonusPanelContent.tsx`.
 //
 // Todas as 10 espécies do Livro do Jogador 2024 já estão liberadas
 // (`disponivel: true`) — o que falta agora é só mecânica de traço
@@ -229,6 +229,23 @@ export const especies: Especie[] = [
       { nome: "Revelação Celestial", descricao: "No nível 3 de personagem, você pode se transformar como uma Ação Bônus usando uma das opções abaixo (escolha a opção cada vez que você se transformar). A transformação se mantém por 1 minuto ou até você a encerrar (nenhuma ação é necessária). Uma vez que você se transforma, não pode fazê-lo novamente até completar um Descanso Longo. Uma vez em cada um dos seus turnos, até que a transformação termine, você pode infligir dano adicional a um alvo ao causar dano a ele com um ataque ou uma magia. O dano adicional é igual ao seu Bônus de Proficiência, e o tipo de dano adicional é Necrótico para Manto Necrótico ou Radiante para Asas Celestiais e Transfiguração Radiante. Aqui estão as opções de transformação: Asas Celestiais. Duas asas espectrais brotam em suas costas temporariamente. Até que a transformação se encerre, você tem um Deslocamento de Voo igual ao seu Deslocamento. Manto Necrótico. Seus olhos se tornam brevemente poças de escuridão, e asas que não voam brotam em suas costas temporariamente. Criaturas que não sejam seus aliados a até 3 metros de você devem ser bem-sucedidas em uma salvaguarda de Carisma (CD 8 + seu modificador de Carisma e seu Bônus de Proficiência) ou têm a condição Amedrontado até o final do seu próximo turno. Transfiguração Radiante. Luz abrasadora irradia temporariamente de seus olhos e boca. Pela duração da transformação, você emite Luz Plena em um raio de 3 metros e Meia-luz por mais 3 metros, e no fim de cada um de seus turnos, cada criatura a até 3 metros de você sofre dano Radiante igual ao seu Bônus de Proficiência." },
     ],
     subescolha: { nome: "Revelação Celestial", natureza: "escolha_reutilizavel" },
+    opcoesSubescolha: [
+      {
+        nome: "Asas Celestiais",
+        tipoDano: "Radiante",
+        descricaoEfeito: "Duas asas espectrais brotam em suas costas temporariamente. Até que a transformação se encerre, você tem um Deslocamento de Voo igual ao seu Deslocamento.",
+      },
+      {
+        nome: "Manto Necrótico",
+        tipoDano: "Necrótico",
+        descricaoEfeito: "Seus olhos se tornam brevemente poças de escuridão, e asas que não voam brotam em suas costas temporariamente. Criaturas que não sejam seus aliados a até 3 metros de você devem ser bem-sucedidas em uma salvaguarda de Carisma (CD 8 + seu modificador de Carisma e seu Bônus de Proficiência) ou têm a condição Amedrontado até o final do seu próximo turno.",
+      },
+      {
+        nome: "Transfiguração Radiante",
+        tipoDano: "Radiante",
+        descricaoEfeito: "Luz abrasadora irradia temporariamente de seus olhos e boca. Pela duração da transformação, você emite Luz Plena em um raio de 3 metros e Meia-luz por mais 3 metros, e no fim de cada um de seus turnos, cada criatura a até 3 metros de você sofre dano Radiante igual ao seu Bônus de Proficiência.",
+      },
+    ],
     truqueFixo: "Luz",
     disponivel: true,
     fonte: "Livro do Jogador (D&D 5e 2024)",

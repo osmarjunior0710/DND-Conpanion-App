@@ -23,6 +23,15 @@ export function opcoesSubescolhaNoWizard(especie: Especie): OpcaoSubescolha[] | 
   return especie.opcoesSubescolha ?? null;
 }
 
+/** Opções de sub-escolha `escolha_reutilizavel` (ex.: as 3 formas da
+ * Revelação Celestial do Aasimar) — escolhidas de novo a cada uso, em
+ * Combat, nunca no wizard. `null` quando a espécie não tem sub-escolha
+ * dessa natureza. */
+export function opcoesEscolhaReutilizavel(especie: Especie): OpcaoSubescolha[] | null {
+  if (especie.subescolha?.natureza !== 'escolha_reutilizavel') return null;
+  return especie.opcoesSubescolha ?? null;
+}
+
 /** Traço que concede proficiência numa perícia à escolha — Hábil
  * (Humano, sem restrição) ou um traço com `opcoesPericia` (ex.:
  * Sentidos Aguçados do Elfo, restrito a 3 opções). `undefined` se a

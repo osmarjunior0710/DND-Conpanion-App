@@ -181,6 +181,19 @@ export interface PersonagemSalvo {
   /** `true` = Forma Grande (Golias, nível 5+) já usada desde o último
    * Descanso Longo — só ele reseta. */
   formaGrandeGasto?: boolean;
+  /** `true` = Mãos Curativas (Aasimar) já usada desde o último Descanso
+   * Longo — só ele reseta. */
+  maosCurativasGasto?: boolean;
+  /** `true` = Revelação Celestial (Aasimar, nível 3+) já usada desde o
+   * último Descanso Longo — só ele reseta. */
+  revelacaoCelestialGasto?: boolean;
+  /** Nome da forma de Revelação Celestial ativa no momento (Asas
+   * Celestiais/Manto Necrótico/Transfiguração Radiante) — `null`/
+   * ausente = nenhuma transformação ativa. Como o app não rastreia
+   * tempo real (a transformação dura "1 minuto ou até encerrar"), essa
+   * lembrança fica visível até o próximo Descanso Longo, junto com
+   * `revelacaoCelestialGasto` (reseta os dois juntos). */
+  revelacaoCelestialFormaAtiva?: string | null;
 }
 
 export interface ArmazenamentoPersonagens {

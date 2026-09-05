@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import type { AtaqueResolvido } from '../../../core/ataque';
+import type { OpcaoSubescolha } from '../../../data/rulesets/dnd2024/especies';
 import TickPips from '../../components/TickPips';
 import styles from './PanelRows.module.css';
 
@@ -42,6 +44,18 @@ interface BonusPanelContentProps {
   formaGrandeDisponivel: boolean;
   formaGrandeGasto: boolean;
   onUsarFormaGrande: () => void;
+  /** Revelação Celestial (Aasimar, nível 3+) — natureza
+   * `escolha_reutilizavel`: a forma é escolhida de novo a cada uso,
+   * por isso as opções vêm daqui (não do wizard). */
+  revelacaoCelestialDisponivel: boolean;
+  revelacaoCelestialGasto: boolean;
+  /** Forma ativa no momento (lembrança até o próximo Descanso Longo,
+   * já que o app não rastreia tempo real) — `null` = nenhuma. */
+  revelacaoCelestialFormaAtiva: string | null;
+  opcoesRevelacaoCelestial: OpcaoSubescolha[];
+  danoBonusRevelacaoCelestial: number;
+  cdMantoNecrotico: number;
+  onUsarRevelacaoCelestial: (formaEscolhida: string) => void;
 }
 
 export default function BonusPanelContent({
@@ -75,7 +89,16 @@ export default function BonusPanelContent({
   formaGrandeDisponivel,
   formaGrandeGasto,
   onUsarFormaGrande,
+  revelacaoCelestialDisponivel,
+  revelacaoCelestialGasto,
+  revelacaoCelestialFormaAtiva,
+  opcoesRevelacaoCelestial,
+  danoBonusRevelacaoCelestial,
+  cdMantoNecrotico,
+  onUsarRevelacaoCelestial,
 }: BonusPanelContentProps) {
+  const [escolhendoFormaRevelacao, setEscolhendoFormaRevelacao] = useState(false);
+
   if (
     usosFolegoMaximo === 0 &&
     usosInspiracaoMaximo === 0 &&
@@ -84,6 +107,7 @@ export default function BonusPanelContent({
     !vooDraconicoDisponivel &&
     !saltoDaNuvemDisponivel &&
     !formaGrandeDisponivel &&
+    !revelacaoCelestialDisponivel &&
     !ataqueBonus
   ) {
     return (
@@ -97,6 +121,37 @@ export default function BonusPanelContent({
   const semUsosInspiracao = usosInspiracaoRestantes <= 0;
   const nadaParaRecuperar = usosInspiracaoRestantes >= usosInspiracaoMaximo;
   const recuperarDesabilitado = !temEspacoDisponivel || nadaParaRecuperar;
+
+  if (escolhendoFormaRevelacao) {
+    return (
+      <>
+        <div className="section-title">Revelação Celestial — escolha a forma</div>
+        {opcoesRevelacaoCelestial.map((opcao) => (
+          <div
+            key={opcao.nome}
+            className="opt-card"
+            onClick={() => {
+              onUsarRevelacaoCelestial(opcao.nome);
+              setEscolhendoFormaRevelacao(false);
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="opt-card-name">{opcao.nome}</span>
+              {opcao.tipoDano && <span className="label">Dano {opcao.tipoDano}</span>}
+            </div>
+            {opcao.descricaoEfeito && <div className="opt-card-desc">{opcao.descricaoEfeito}</div>}
+          </div>
+        ))}
+        <div className="label" style={{ marginTop: 4 }}>
+          Enquanto transformado: 1x por turno, ao causar dano com ataque ou magia, some +{danoBonusRevelacaoCelestial}{' '}
+          de dano do tipo acima. Manto Necrótico também impõe Amedrontado (CD {cdMantoNecrotico}) a quem chegar perto.
+        </div>
+        <div className={styles.row} onClick={() => setEscolhendoFormaRevelacao(false)}>
+          <div className={styles.rowName}>← Voltar</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -315,6 +370,40 @@ export default function BonusPanelContent({
             )}
           </div>
           {formaGrandeGasto && (
+            <div className="label" style={{ marginTop: 6 }}>
+              já usado — descanse pra recuperar.
+            </div>
+          )}
+        </>
+      )}
+      {revelacaoCelestialDisponivel && (
+        <>
+          {revelacaoCelestialFormaAtiva ? (
+            <div className="box" style={{ padding: 10, marginBottom: 8 }}>
+              <div className={styles.rowName}>🔒 Transformado: {revelacaoCelestialFormaAtiva}</div>
+              <div className={styles.rowDesc}>
+                {opcoesRevelacaoCelestial.find((o) => o.nome === revelacaoCelestialFormaAtiva)?.descricaoEfeito}
+              </div>
+              <div className="label" style={{ marginTop: 4 }}>
+                Lembrete até o Descanso Longo — some +{danoBonusRevelacaoCelestial} de dano 1x por turno ao acertar.
+              </div>
+            </div>
+          ) : (
+            <div
+              className={styles.row}
+              style={revelacaoCelestialGasto ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+              onClick={() => setEscolhendoFormaRevelacao(true)}
+            >
+              <div className={styles.rowName}>✨ Revelação Celestial</div>
+              {detalhesAtivo && (
+                <div className={styles.rowDesc}>
+                  Transforme-se — escolha 1 de 3 formas. Dura até o Descanso Longo (o app não segue tempo real). 1x —
+                  recupera no Descanso Longo.
+                </div>
+              )}
+            </div>
+          )}
+          {revelacaoCelestialGasto && !revelacaoCelestialFormaAtiva && (
             <div className="label" style={{ marginTop: 6 }}>
               já usado — descanse pra recuperar.
             </div>

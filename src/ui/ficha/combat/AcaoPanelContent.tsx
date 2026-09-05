@@ -34,6 +34,11 @@ interface AcaoPanelContentProps {
   onUsarSurto: () => void;
   ataqueAtual: AtaqueResolvido | null;
   detalhesAtivo: boolean;
+  /** Mãos Curativas (Aasimar) — `false` = espécie não é Aasimar. */
+  maosCurativasDisponivel: boolean;
+  maosCurativasGasto: boolean;
+  dadosMaosCurativas: number;
+  onUsarMaosCurativas: () => boolean;
 }
 
 export default function AcaoPanelContent({
@@ -54,9 +59,19 @@ export default function AcaoPanelContent({
   onUsarSurto,
   ataqueAtual,
   detalhesAtivo,
+  maosCurativasDisponivel,
+  maosCurativasGasto,
+  dadosMaosCurativas,
+  onUsarMaosCurativas,
 }: AcaoPanelContentProps) {
   const [telaMagia, setTelaMagia] = useState<'lista' | { magia: Magia; circulos: number[] } | null>(null);
-  const { rolarD20 } = useRoll();
+  const { rolarD20, rolarDados } = useRoll();
+
+  function usarMaosCurativas() {
+    if (!onUsarMaosCurativas()) return;
+    rolarDados({ label: 'Mãos Curativas — Cura', formula: `${dadosMaosCurativas}d4`, quantidade: dadosMaosCurativas, lados: 4, mod: 0 });
+    onEscolher('🙌 Mãos Curativas', 'Toque uma criatura — ela recupera o total mostrado em Pontos de Vida.');
+  }
 
   function rolarAtaque(nome: string, ataque: AtaqueInfo, finalizar: (nome: string, desc: string, dano: DanoPendente) => void) {
     rolarD20({
@@ -170,6 +185,29 @@ export default function AcaoPanelContent({
           <div className={styles.rowName}>✨ Usar Magia</div>
           {detalhesAtivo && <div className={styles.rowDesc}>Conjurar Truque ou Magia Preparada</div>}
         </div>
+      )}
+
+      {maosCurativasDisponivel && (
+        <>
+          <div
+            className={styles.row}
+            style={maosCurativasGasto ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            onClick={usarMaosCurativas}
+          >
+            <div className={styles.rowName}>🙌 Mãos Curativas</div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Ação Usar Magia — toque uma criatura, jogue {dadosMaosCurativas}d4 e ela recupera esse total em
+                Pontos de Vida. 1x — recupera no Descanso Longo.
+              </div>
+            )}
+          </div>
+          {maosCurativasGasto && (
+            <div className="label" style={{ marginTop: 6 }}>
+              já usado — descanse pra recuperar.
+            </div>
+          )}
+        </>
       )}
 
       <div

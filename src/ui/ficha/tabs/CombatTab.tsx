@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { EstiloDeLuta } from '../../../data/rulesets/dnd2024/estilosDeLuta';
 import type { Magia } from '../../../data/rulesets/dnd2024/magias';
+import type { OpcaoSubescolha } from '../../../data/rulesets/dnd2024/especies';
 import type { CaracteristicaNivel } from '../../../core/levelUp';
 import type { AtaqueResolvido } from '../../../core/ataque';
 import type { EspacoDeMagiaAtivo } from '../../../core/magiasPersonagem';
@@ -79,6 +80,21 @@ interface CombatTabProps {
   formaGrandeDisponivel: boolean;
   formaGrandeGasto: boolean;
   onUsarFormaGrande: () => boolean;
+  /** Mãos Curativas (Aasimar) — `false` = espécie não é Aasimar. */
+  maosCurativasDisponivel: boolean;
+  maosCurativasGasto: boolean;
+  dadosMaosCurativas: number;
+  onUsarMaosCurativas: () => boolean;
+  /** Revelação Celestial (Aasimar, nível 3+) — escolhida de novo a
+   * cada uso (natureza `escolha_reutilizavel`), por isso a lista de
+   * opções vem daqui, não do wizard. */
+  revelacaoCelestialDisponivel: boolean;
+  revelacaoCelestialGasto: boolean;
+  revelacaoCelestialFormaAtiva: string | null;
+  opcoesRevelacaoCelestial: OpcaoSubescolha[];
+  danoBonusRevelacaoCelestial: number;
+  cdMantoNecrotico: number;
+  onUsarRevelacaoCelestial: (formaEscolhida: string) => boolean;
   conjura: boolean;
   truques: Magia[];
   magiasPreparadasAcao: Magia[];
@@ -163,6 +179,17 @@ export default function CombatTab({
   formaGrandeDisponivel,
   formaGrandeGasto,
   onUsarFormaGrande,
+  maosCurativasDisponivel,
+  maosCurativasGasto,
+  dadosMaosCurativas,
+  onUsarMaosCurativas,
+  revelacaoCelestialDisponivel,
+  revelacaoCelestialGasto,
+  revelacaoCelestialFormaAtiva,
+  opcoesRevelacaoCelestial,
+  danoBonusRevelacaoCelestial,
+  cdMantoNecrotico,
+  onUsarRevelacaoCelestial,
   conjura,
   truques,
   magiasPreparadasAcao,
@@ -283,6 +310,11 @@ export default function CombatTab({
 
   function usarFormaGrande() {
     if (!onUsarFormaGrande()) return;
+    onMarcarUsado('bonus');
+  }
+
+  function usarRevelacaoCelestial(formaEscolhida: string) {
+    if (!onUsarRevelacaoCelestial(formaEscolhida)) return;
     onMarcarUsado('bonus');
   }
 
@@ -738,6 +770,10 @@ export default function CombatTab({
             onUsarSurto={usarSurtoDeAcao}
             ataqueAtual={ataqueAtual}
             detalhesAtivo={detalhesAtivo}
+            maosCurativasDisponivel={maosCurativasDisponivel}
+            maosCurativasGasto={maosCurativasGasto}
+            dadosMaosCurativas={dadosMaosCurativas}
+            onUsarMaosCurativas={onUsarMaosCurativas}
           />
         )}
         {painelAberto === 'bonus' && (
@@ -761,6 +797,13 @@ export default function CombatTab({
             formaGrandeDisponivel={formaGrandeDisponivel}
             formaGrandeGasto={formaGrandeGasto}
             onUsarFormaGrande={usarFormaGrande}
+            revelacaoCelestialDisponivel={revelacaoCelestialDisponivel}
+            revelacaoCelestialGasto={revelacaoCelestialGasto}
+            revelacaoCelestialFormaAtiva={revelacaoCelestialFormaAtiva}
+            opcoesRevelacaoCelestial={opcoesRevelacaoCelestial}
+            danoBonusRevelacaoCelestial={danoBonusRevelacaoCelestial}
+            cdMantoNecrotico={cdMantoNecrotico}
+            onUsarRevelacaoCelestial={usarRevelacaoCelestial}
             ataqueBonus={ataqueBonus}
             onUsarAtaqueBonus={usarAtaqueMaoSecundaria}
             usosInspiracaoMaximo={usosInspiracaoMaximo}

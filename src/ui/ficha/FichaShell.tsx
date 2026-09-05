@@ -44,7 +44,7 @@ import { personagemConjura } from '../../core/conjuracao';
 import { magiasGratisDasInvocacoes, type MagiaGratisDeInvocacao } from '../../core/invocacoesMagiaGratis';
 import { aplicarAlteracaoPv, ganharPvTemporario } from '../../core/pvTemporario';
 import { deveAplicarVigorImplacavel } from '../../core/vigorImplacavel';
-import { tipoDanoSubescolha } from '../../core/especieSubescolha';
+import { tipoDanoSubescolha, opcoesEscolhaReutilizavel } from '../../core/especieSubescolha';
 import { dadosAtaqueDeSopro } from '../../core/ataqueDeSopro';
 import { calcularSentidos } from '../../core/sentidos';
 import { valorBencaoDoTenebroso } from '../../core/bencaoDoTenebroso';
@@ -182,6 +182,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     personagemSalvo.ancestralidadeGiganteGasto ?? 0,
   );
   const [formaGrandeGasto, setFormaGrandeGasto] = useState(personagemSalvo.formaGrandeGasto ?? false);
+  const [maosCurativasGasto, setMaosCurativasGasto] = useState(personagemSalvo.maosCurativasGasto ?? false);
+  const [revelacaoCelestialGasto, setRevelacaoCelestialGasto] = useState(personagemSalvo.revelacaoCelestialGasto ?? false);
+  const [revelacaoCelestialFormaAtiva, setRevelacaoCelestialFormaAtiva] = useState(
+    personagemSalvo.revelacaoCelestialFormaAtiva ?? null,
+  );
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
   const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
@@ -270,6 +275,13 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const usosAncestralidadeGiganteRestantes = Math.max(0, usosAncestralidadeGiganteMaximo - ancestralidadeGiganteGasto);
   const formaGrandeDisponivel = selecao.especie === 'Golias' && personagem.nivel >= 5;
   const modConstituicaoAtual = modificador(conValorFinal);
+  const maosCurativasDisponivel = selecao.especie === 'Aasimar';
+  const dadosMaosCurativas = bonusProficienciaAtual;
+  const revelacaoCelestialDisponivel = selecao.especie === 'Aasimar' && personagem.nivel >= 3;
+  const opcoesRevelacaoCelestial = especieAtual ? opcoesEscolhaReutilizavel(especieAtual) ?? [] : [];
+  const danoBonusRevelacaoCelestial = bonusProficienciaAtual;
+  const carValorFinal = valorFinalAtributo(selecao, 'CAR') ?? 10;
+  const cdMantoNecrotico = 8 + modificador(carValorFinal) + bonusProficienciaAtual;
   const conjura = personagemConjura(classe, selecao);
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
@@ -400,6 +412,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       vooDraconicoGasto,
       ancestralidadeGiganteGasto,
       formaGrandeGasto,
+      maosCurativasGasto,
+      revelacaoCelestialGasto,
+      revelacaoCelestialFormaAtiva,
       indomavelGasto,
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
@@ -445,6 +460,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     vooDraconicoGasto,
     ancestralidadeGiganteGasto,
     formaGrandeGasto,
+    maosCurativasGasto,
+    revelacaoCelestialGasto,
+    revelacaoCelestialFormaAtiva,
     indomavelGasto,
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
@@ -527,6 +545,19 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     return true;
   }
 
+  function usarMaosCurativas(): boolean {
+    if (maosCurativasGasto) return false;
+    setMaosCurativasGasto(true);
+    return true;
+  }
+
+  function usarRevelacaoCelestial(formaEscolhida: string): boolean {
+    if (revelacaoCelestialGasto) return false;
+    setRevelacaoCelestialGasto(true);
+    setRevelacaoCelestialFormaAtiva(formaEscolhida);
+    return true;
+  }
+
   function marcarUsado(categoria: RecursoTurno) {
     setTurnState((prev) => ({ ...prev, [categoria]: 'usada' }));
   }
@@ -602,6 +633,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setVooDraconicoGasto(false);
     setAncestralidadeGiganteGasto(0);
     setFormaGrandeGasto(false);
+    setMaosCurativasGasto(false);
+    setRevelacaoCelestialGasto(false);
+    setRevelacaoCelestialFormaAtiva(null);
     setIndomavelGasto(0);
     setSorteDoTenebrosoGasto(0);
     setSurtoGasto(0);
@@ -1101,6 +1135,17 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             formaGrandeDisponivel={formaGrandeDisponivel}
             formaGrandeGasto={formaGrandeGasto}
             onUsarFormaGrande={usarFormaGrande}
+            maosCurativasDisponivel={maosCurativasDisponivel}
+            maosCurativasGasto={maosCurativasGasto}
+            dadosMaosCurativas={dadosMaosCurativas}
+            onUsarMaosCurativas={usarMaosCurativas}
+            revelacaoCelestialDisponivel={revelacaoCelestialDisponivel}
+            revelacaoCelestialGasto={revelacaoCelestialGasto}
+            revelacaoCelestialFormaAtiva={revelacaoCelestialFormaAtiva}
+            opcoesRevelacaoCelestial={opcoesRevelacaoCelestial}
+            danoBonusRevelacaoCelestial={danoBonusRevelacaoCelestial}
+            cdMantoNecrotico={cdMantoNecrotico}
+            onUsarRevelacaoCelestial={usarRevelacaoCelestial}
             conjura={conjura}
             truques={truques}
             magiasPreparadasAcao={magiasPreparadasAcao}

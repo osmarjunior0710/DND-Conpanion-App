@@ -219,13 +219,33 @@ sempre que possível — ver 6.1):
         no painel Reação e marca a Reação do turno como "usada".
         `npx tsc -b`, `npm test -- --run` (195 testes) e `npm run
         build` passando.
-  - Aasimar — Mãos Curativas (Ação Usar Magia, toca 1 criatura, cura
-    Xd4 = Bônus de Proficiência, 1x/Descanso Longo); Revelação
-    Celestial (nível 3+, Ação Bônus, escolhe 1 de 3 formas — Asas
-    Celestiais/Manto Necrótico/Transfiguração Radiante — a CADA vez que
-    transforma, 1min ou até encerrar, 1x/Descanso Longo, dano bônus
-    extra por turno enquanto ativa — natureza `escolha_reutilizavel`,
-    não tem escolha no wizard).
+  - [x] **8e. Aasimar — Mãos Curativas + Revelação Celestial** — Mãos
+        Curativas é card no painel Ação (Usar Magia), rola Xd4 (X =
+        Bônus de Proficiência), 1x/Descanso Longo. Revelação Celestial
+        é a 1ª mecânica `escolha_reutilizavel` de verdade: card no
+        painel Bônus abre uma tela com as 3 formas (Asas Celestiais/
+        Manto Necrótico/Transfiguração Radiante) — cada uma com o texto
+        completo do efeito, reaproveitando o mesmo componente
+        `opt-card`/`opt-card-desc` já usado nos cards de sub-escolha do
+        wizard (pedido do Osmar: nunca esconder o efeito atrás de um
+        modal minúsculo). Escolhida a forma, o app não segue tempo real
+        (a transformação dura "1 minuto ou até encerrar" no livro) —
+        então em vez de contar minuto, o painel Bônus passa a mostrar
+        um bloco fixo "🔒 Transformado: X" com o texto completo da
+        forma, como lembrete, até o Descanso Longo resetar (mesmo
+        Descanso que devolve o uso). As 3 opções entraram em
+        `especies.ts` como `opcoesSubescolha` novo helper
+        `opcoesEscolhaReutilizavel()` em `core/especieSubescolha.ts`
+        busca essas opções sem misturar com os *Subescolha escolhidos
+        no wizard (`opcoesSubescolhaNoWizard`). Testado com Playwright:
+        Aasimar nível 5 mostra "Mãos Curativas — 3d4" no painel Ação
+        (rola 11, marca Ação como usada); painel Bônus mostra "Revelação
+        Celestial", ao tocar abre as 3 formas com texto completo e CD
+        do Manto Necrótico calculada certa (14 = 8 + mod. Carisma +
+        Bônus de Proficiência); escolher Manto Necrótico grava a
+        lembrança no painel Bônus e marca a Ação Bônus do turno como
+        usada. `npx tsc -b`, `npm test -- --run` (195 testes) e `npm
+        run build` passando.
   - Gnomo — Gnomo do Bosque (Falar com Animais grátis, usos = Bônus de
     Proficiência, Descanso Longo); Gnomo das Rochas (fabricar
     dispositivo — mais utilidade/downtime que combate, prioridade
