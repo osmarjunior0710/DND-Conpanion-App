@@ -67,6 +67,18 @@ interface CombatTabProps {
   vooDraconicoDisponivel: boolean;
   vooDraconicoGasto: boolean;
   onUsarVooDraconico: () => boolean;
+  /** Ancestralidade Gigante (Golias) — nome da opção escolhida na
+   * criação (ex.: "Arrepio do Gelo (Gigante do Gelo)"), `null` = não é
+   * Golias. Mesmo contador de usos pras 6 opções possíveis. */
+  ancestralidadeGiganteEscolhida: string | null;
+  usosAncestralidadeGiganteMaximo: number;
+  usosAncestralidadeGiganteRestantes: number;
+  onUsarAncestralidadeGigante: () => boolean;
+  modConstituicaoAtual: number;
+  /** Forma Grande (Golias, nível 5+) — `false` = não disponível. */
+  formaGrandeDisponivel: boolean;
+  formaGrandeGasto: boolean;
+  onUsarFormaGrande: () => boolean;
   conjura: boolean;
   truques: Magia[];
   magiasPreparadasAcao: Magia[];
@@ -143,6 +155,14 @@ export default function CombatTab({
   vooDraconicoDisponivel,
   vooDraconicoGasto,
   onUsarVooDraconico,
+  ancestralidadeGiganteEscolhida,
+  usosAncestralidadeGiganteMaximo,
+  usosAncestralidadeGiganteRestantes,
+  onUsarAncestralidadeGigante,
+  modConstituicaoAtual,
+  formaGrandeDisponivel,
+  formaGrandeGasto,
+  onUsarFormaGrande,
   conjura,
   truques,
   magiasPreparadasAcao,
@@ -239,6 +259,30 @@ export default function CombatTab({
 
   function usarVooDraconico() {
     if (!onUsarVooDraconico()) return;
+    onMarcarUsado('bonus');
+  }
+
+  function usarAncestralidadeGiganteAoAcertar() {
+    if (!onUsarAncestralidadeGigante()) return;
+    if (ancestralidadeGiganteEscolhida === 'Arrepio do Gelo (Gigante do Gelo)') {
+      rolarDados({ label: 'Arrepio do Gelo — Dano', formula: '1d6', quantidade: 1, lados: 6, mod: 0 });
+      setFeedback('🧊 Arrepio do Gelo — soma esse dano Gélido e reduz o Deslocamento do alvo em 3m até o início do seu próximo turno.');
+    } else if (ancestralidadeGiganteEscolhida === 'Queimadura de Fogo (Gigante de Fogo)') {
+      rolarDados({ label: 'Queimadura de Fogo — Dano', formula: '1d10', quantidade: 1, lados: 10, mod: 0 });
+      setFeedback('🔥 Queimadura de Fogo — soma esse dano Ígneo.');
+    } else if (ancestralidadeGiganteEscolhida === 'Tombo da Colina (Gigante da Colina)') {
+      setFeedback('⛰️ Tombo da Colina — o alvo (Grande ou menor) fica Caído, sem dano extra.');
+    }
+  }
+
+  function usarSaltoDaNuvem() {
+    if (!onUsarAncestralidadeGigante()) return;
+    onMarcarUsado('bonus');
+    setFeedback('☁️ Salto da Nuvem — teleporte até 9m pra um espaço desocupado à sua vista.');
+  }
+
+  function usarFormaGrande() {
+    if (!onUsarFormaGrande()) return;
     onMarcarUsado('bonus');
   }
 
@@ -511,6 +555,26 @@ export default function CombatTab({
         </div>
       )}
 
+      {(ancestralidadeGiganteEscolhida === 'Arrepio do Gelo (Gigante do Gelo)' ||
+        ancestralidadeGiganteEscolhida === 'Queimadura de Fogo (Gigante de Fogo)' ||
+        ancestralidadeGiganteEscolhida === 'Tombo da Colina (Gigante da Colina)') && (
+        <div
+          className="opt-card"
+          style={{
+            marginBottom: 12,
+            cursor: usosAncestralidadeGiganteRestantes > 0 ? 'pointer' : 'default',
+            opacity: usosAncestralidadeGiganteRestantes > 0 ? 1 : 0.5,
+          }}
+          onClick={usosAncestralidadeGiganteRestantes > 0 ? usarAncestralidadeGiganteAoAcertar : undefined}
+        >
+          <div className="opt-card-name">🏔 {ancestralidadeGiganteEscolhida.split(' (')[0]}</div>
+          <div className="opt-card-desc">
+            toque ao acertar um ataque ({usosAncestralidadeGiganteRestantes}/{usosAncestralidadeGiganteMaximo} usos —
+            recarrega no Descanso Longo)
+          </div>
+        </div>
+      )}
+
       {(estiloDeLuta || mestreTatico || ataquesEstudados || ajusteTatico) && (
         <>
           <div className="section-title">Características</div>
@@ -690,6 +754,13 @@ export default function CombatTab({
             vooDraconicoDisponivel={vooDraconicoDisponivel}
             vooDraconicoGasto={vooDraconicoGasto}
             onUsarVooDraconico={usarVooDraconico}
+            saltoDaNuvemDisponivel={ancestralidadeGiganteEscolhida === 'Salto da Nuvem (Gigante das Nuvens)'}
+            usosSaltoDaNuvemMaximo={usosAncestralidadeGiganteMaximo}
+            usosSaltoDaNuvemRestantes={usosAncestralidadeGiganteRestantes}
+            onUsarSaltoDaNuvem={usarSaltoDaNuvem}
+            formaGrandeDisponivel={formaGrandeDisponivel}
+            formaGrandeGasto={formaGrandeGasto}
+            onUsarFormaGrande={usarFormaGrande}
             ataqueBonus={ataqueBonus}
             onUsarAtaqueBonus={usarAtaqueMaoSecundaria}
             usosInspiracaoMaximo={usosInspiracaoMaximo}
@@ -717,6 +788,12 @@ export default function CombatTab({
             usosInspiracaoRestantes={usosInspiracaoRestantes}
             tamanhoDadoInspiracao={tamanhoDadoInspiracao}
             onUsarInspiracao={onUsarInspiracao}
+            resistenciaDaPedraDisponivel={ancestralidadeGiganteEscolhida === 'Resistência da Pedra (Gigante da Pedra)'}
+            trovaoDaTempestadeDisponivel={ancestralidadeGiganteEscolhida === 'Trovão da Tempestade (Gigante da Tempestade)'}
+            usosAncestralidadeGiganteMaximo={usosAncestralidadeGiganteMaximo}
+            usosAncestralidadeGiganteRestantes={usosAncestralidadeGiganteRestantes}
+            onUsarAncestralidadeGigante={onUsarAncestralidadeGigante}
+            modConstituicaoAtual={modConstituicaoAtual}
           />
         )}
       </SidePanel>

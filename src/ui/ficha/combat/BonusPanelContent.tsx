@@ -32,6 +32,16 @@ interface BonusPanelContentProps {
   vooDraconicoDisponivel: boolean;
   vooDraconicoGasto: boolean;
   onUsarVooDraconico: () => void;
+  /** Salto da Nuvem (Golias, Ancestralidade Gigante) — só aparece
+   * quando essa foi a opção escolhida na criação. */
+  saltoDaNuvemDisponivel: boolean;
+  usosSaltoDaNuvemMaximo: number;
+  usosSaltoDaNuvemRestantes: number;
+  onUsarSaltoDaNuvem: () => void;
+  /** Forma Grande (Golias, nível 5+) — `false` = não disponível. */
+  formaGrandeDisponivel: boolean;
+  formaGrandeGasto: boolean;
+  onUsarFormaGrande: () => void;
 }
 
 export default function BonusPanelContent({
@@ -58,6 +68,13 @@ export default function BonusPanelContent({
   vooDraconicoDisponivel,
   vooDraconicoGasto,
   onUsarVooDraconico,
+  saltoDaNuvemDisponivel,
+  usosSaltoDaNuvemMaximo,
+  usosSaltoDaNuvemRestantes,
+  onUsarSaltoDaNuvem,
+  formaGrandeDisponivel,
+  formaGrandeGasto,
+  onUsarFormaGrande,
 }: BonusPanelContentProps) {
   if (
     usosFolegoMaximo === 0 &&
@@ -65,6 +82,8 @@ export default function BonusPanelContent({
     usosConhecimentoDePedrasMaximo === 0 &&
     usosPicoDeAdrenalinaMaximo === 0 &&
     !vooDraconicoDisponivel &&
+    !saltoDaNuvemDisponivel &&
+    !formaGrandeDisponivel &&
     !ataqueBonus
   ) {
     return (
@@ -245,6 +264,57 @@ export default function BonusPanelContent({
             )}
           </div>
           {vooDraconicoGasto && (
+            <div className="label" style={{ marginTop: 6 }}>
+              já usado — descanse pra recuperar.
+            </div>
+          )}
+        </>
+      )}
+      {saltoDaNuvemDisponivel && (
+        <>
+          <div className={styles.slotCounter}>
+            <span>Salto da Nuvem:</span>
+            <TickPips total={usosSaltoDaNuvemMaximo} usados={usosSaltoDaNuvemMaximo - usosSaltoDaNuvemRestantes} />
+            <span style={{ color: 'var(--text-faint)' }}>
+              {usosSaltoDaNuvemRestantes}/{usosSaltoDaNuvemMaximo} disponíveis
+            </span>
+          </div>
+          <div
+            className={styles.row}
+            style={usosSaltoDaNuvemRestantes <= 0 ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            onClick={onUsarSaltoDaNuvem}
+          >
+            <div className={styles.rowName}>☁️ Salto da Nuvem</div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Teleporte-se magicamente até 9m pra um espaço desocupado à sua vista. Gasta 1 uso — todos voltam no
+                Descanso Longo.
+              </div>
+            )}
+          </div>
+          {usosSaltoDaNuvemRestantes <= 0 && (
+            <div className="label" style={{ marginTop: 6 }}>
+              sem usos disponíveis — descanse pra recuperar.
+            </div>
+          )}
+        </>
+      )}
+      {formaGrandeDisponivel && (
+        <>
+          <div
+            className={styles.row}
+            style={formaGrandeGasto ? { opacity: 0.5, pointerEvents: 'none' } : undefined}
+            onClick={onUsarFormaGrande}
+          >
+            <div className={styles.rowName}>🗿 Forma Grande</div>
+            {detalhesAtivo && (
+              <div className={styles.rowDesc}>
+                Tamanho vira Grande por 10 minutos — Vantagem em testes de Força, Deslocamento +3m. 1x — recupera no
+                Descanso Longo.
+              </div>
+            )}
+          </div>
+          {formaGrandeGasto && (
             <div className="label" style={{ marginTop: 6 }}>
               já usado — descanse pra recuperar.
             </div>

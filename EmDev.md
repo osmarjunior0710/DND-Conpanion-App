@@ -199,6 +199,26 @@ sempre que possível — ver 6.1):
         2d10), usos decrementam pra 2/3; "Voo Dracônico" aparece no
         painel Bônus. `npx tsc -b`, `npm test -- --run` (195 testes) e
         `npm run build` passando.
+  - [x] **8d. Golias — Ancestralidade Gigante + Forma Grande** — as 6
+        ancestralidades compartilham 1 pool de usos (= Bônus de
+        Proficiência, Descanso Longo) mas caem em 3 locais de UI
+        diferentes conforme a opção escolhida na criação: Arrepio do
+        Gelo/Queimadura de Fogo/Tombo da Colina viram card de nível
+        superior em Combat (toque ao acertar, igual Ataque de Sopro/
+        Lançar no Inferno); Salto da Nuvem entra no painel Bônus
+        (teleporte, sem dado); Resistência da Pedra/Trovão da
+        Tempestade entram no painel Reação (`ReacaoPanelContent.tsx`,
+        mesmo padrão do Contra-Encantamento). Forma Grande é o toggle
+        simples de sempre (1x/Descanso Longo, nível 5+, molde do Voo
+        Dracônico) no painel Bônus. Testado com Playwright forçando
+        `Math.random` pra fixar cada ancestralidade: Arrepio do Gelo
+        rola 1d6 e mostra "3/3 usos" no card de nível superior; Salto
+        da Nuvem e Forma Grande aparecem certos no painel Bônus (usa
+        decrementa 3/3→2/3, Forma Grande marca "já usado" depois de 1
+        uso); Resistência da Pedra rola "1d12 + 1" (mod. Constituição)
+        no painel Reação e marca a Reação do turno como "usada".
+        `npx tsc -b`, `npm test -- --run` (195 testes) e `npm run
+        build` passando.
   - Aasimar — Mãos Curativas (Ação Usar Magia, toca 1 criatura, cura
     Xd4 = Bônus de Proficiência, 1x/Descanso Longo); Revelação
     Celestial (nível 3+, Ação Bônus, escolhe 1 de 3 formas — Asas
@@ -210,11 +230,6 @@ sempre que possível — ver 6.1):
     Proficiência, Descanso Longo); Gnomo das Rochas (fabricar
     dispositivo — mais utilidade/downtime que combate, prioridade
     baixa).
-  - Golias — Ancestralidade Gigante (5 opções bem diferentes entre si:
-    dano extra ao acertar, reação pra reduzir dano, teleporte por Ação
-    Bônus, derrubar ao acertar, reação de dano — usos = Bônus de
-    Proficiência, Descanso Longo); Forma Grande (Ação Bônus, nível 5+,
-    1x/Descanso Longo).
 
   **Só passivo/descritivo — não precisa de UI em Combat, texto na
   aba Perfil já resolve:** Visão no Escuro (todas — já é

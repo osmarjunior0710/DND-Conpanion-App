@@ -173,6 +173,14 @@ export interface PersonagemSalvo {
   /** `true` = Voo Dracônico (Draconato, nível 5+) já usado desde o
    * último Descanso Longo — só ele reseta. */
   vooDraconicoGasto?: boolean;
+  /** Usos gastos de Ancestralidade Gigante (Golias) desde o último
+   * Descanso Longo — só ele reseta. Máximo = Bônus de Proficiência.
+   * Mesmo contador pras 6 ancestralidades (só 1 foi escolhida na
+   * criação, ver `selecao.subescolhaEspecieEscolhida`). */
+  ancestralidadeGiganteGasto?: number;
+  /** `true` = Forma Grande (Golias, nível 5+) já usada desde o último
+   * Descanso Longo — só ele reseta. */
+  formaGrandeGasto?: boolean;
 }
 
 export interface ArmazenamentoPersonagens {

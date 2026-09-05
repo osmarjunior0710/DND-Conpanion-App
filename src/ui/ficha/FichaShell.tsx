@@ -178,6 +178,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [picoDeAdrenalinaGasto, setPicoDeAdrenalinaGasto] = useState(personagemSalvo.picoDeAdrenalinaGasto ?? 0);
   const [ataqueDeSoproGasto, setAtaqueDeSoproGasto] = useState(personagemSalvo.ataqueDeSoproGasto ?? 0);
   const [vooDraconicoGasto, setVooDraconicoGasto] = useState(personagemSalvo.vooDraconicoGasto ?? false);
+  const [ancestralidadeGiganteGasto, setAncestralidadeGiganteGasto] = useState(
+    personagemSalvo.ancestralidadeGiganteGasto ?? 0,
+  );
+  const [formaGrandeGasto, setFormaGrandeGasto] = useState(personagemSalvo.formaGrandeGasto ?? false);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
   const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
@@ -260,6 +264,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const numDadosAtaqueDeSopro = dadosAtaqueDeSopro(personagem.nivel);
   const tipoDanoAtaqueDeSopro = especieAtual ? tipoDanoSubescolha(especieAtual, selecao) : null;
   const vooDraconicoDisponivel = selecao.especie === 'Draconato' && personagem.nivel >= 5;
+  const ancestralidadeGiganteEscolhida = selecao.especie === 'Golias' ? selecao.subescolhaEspecieEscolhida : null;
+  const usosAncestralidadeGiganteMaximo =
+    ancestralidadeGiganteEscolhida && classe ? bonusProficiencia(classe, personagem.nivel) : 0;
+  const usosAncestralidadeGiganteRestantes = Math.max(0, usosAncestralidadeGiganteMaximo - ancestralidadeGiganteGasto);
+  const formaGrandeDisponivel = selecao.especie === 'Golias' && personagem.nivel >= 5;
+  const modConstituicaoAtual = modificador(conValorFinal);
   const conjura = personagemConjura(classe, selecao);
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
@@ -388,6 +398,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       picoDeAdrenalinaGasto,
       ataqueDeSoproGasto,
       vooDraconicoGasto,
+      ancestralidadeGiganteGasto,
+      formaGrandeGasto,
       indomavelGasto,
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
@@ -431,6 +443,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     picoDeAdrenalinaGasto,
     ataqueDeSoproGasto,
     vooDraconicoGasto,
+    ancestralidadeGiganteGasto,
+    formaGrandeGasto,
     indomavelGasto,
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
@@ -498,6 +512,18 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   function usarVooDraconico(): boolean {
     if (vooDraconicoGasto) return false;
     setVooDraconicoGasto(true);
+    return true;
+  }
+
+  function usarAncestralidadeGigante(): boolean {
+    if (usosAncestralidadeGiganteRestantes <= 0) return false;
+    setAncestralidadeGiganteGasto((v) => v + 1);
+    return true;
+  }
+
+  function usarFormaGrande(): boolean {
+    if (formaGrandeGasto) return false;
+    setFormaGrandeGasto(true);
     return true;
   }
 
@@ -574,6 +600,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setPicoDeAdrenalinaGasto(0);
     setAtaqueDeSoproGasto(0);
     setVooDraconicoGasto(false);
+    setAncestralidadeGiganteGasto(0);
+    setFormaGrandeGasto(false);
     setIndomavelGasto(0);
     setSorteDoTenebrosoGasto(0);
     setSurtoGasto(0);
@@ -1065,6 +1093,14 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             vooDraconicoDisponivel={vooDraconicoDisponivel}
             vooDraconicoGasto={vooDraconicoGasto}
             onUsarVooDraconico={usarVooDraconico}
+            ancestralidadeGiganteEscolhida={ancestralidadeGiganteEscolhida}
+            usosAncestralidadeGiganteMaximo={usosAncestralidadeGiganteMaximo}
+            usosAncestralidadeGiganteRestantes={usosAncestralidadeGiganteRestantes}
+            onUsarAncestralidadeGigante={usarAncestralidadeGigante}
+            modConstituicaoAtual={modConstituicaoAtual}
+            formaGrandeDisponivel={formaGrandeDisponivel}
+            formaGrandeGasto={formaGrandeGasto}
+            onUsarFormaGrande={usarFormaGrande}
             conjura={conjura}
             truques={truques}
             magiasPreparadasAcao={magiasPreparadasAcao}
