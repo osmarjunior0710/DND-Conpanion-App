@@ -69,6 +69,9 @@ export interface RollState {
    * `valor: '🎲'` enquanto anima (mesmo efeito do 2º d20 de Vantagem/
    * Desvantagem) — `total` só soma o valor quando a animação termina. */
   bonusExtra?: { rotulo: string; lados: number; valor: number | string } | null;
+  /** `true` = o jogador já usou Sorte (Pequenino) nesta rolagem — só 1x
+   * por rolagem, mesmo que o novo resultado também seja 1. */
+  sorteUsada?: boolean;
 }
 
 interface RollD20Options {
@@ -117,6 +120,16 @@ interface RollContextValue {
    * numa rolagem 'd20' concluída, com a categoria certa, sem bônus
    * já aplicado, e com usos restantes. */
   aplicarBonusExtra: () => void;
+  /** `true` só pro personagem da tela atual ter Sorte (Pequenino) —
+   * controla se o botão de reroll aparece quando o d20 mostrar 1. */
+  sorteDisponivel: boolean;
+  registrarSorte: (disponivel: boolean) => void;
+  /** Joga de novo o d20 de uma rolagem 'd20' concluída que mostrou 1,
+   * sem Vantagem/Desvantagem em jogo e ainda não usada nesta rolagem —
+   * substitui o resultado (não soma um 2º dado, diferente de
+   * Vantagem/Desvantagem e do Bônus Extra). Sempre usa a nova jogada,
+   * mesmo se também sair 1 (regra real). */
+  usarSorte: () => void;
 }
 
 const RollContext = createContext<RollContextValue | null>(null);
@@ -172,6 +185,7 @@ export function RollProvider({ children }: { children: ReactNode }) {
           podeEscolherVantagem: false,
           categoria,
           bonusExtra: null,
+          sorteUsada: false,
         });
         onResultado?.(total, usado);
       } else {
@@ -190,6 +204,7 @@ export function RollProvider({ children }: { children: ReactNode }) {
           podeEscolherVantagem: true,
           categoria,
           bonusExtra: null,
+          sorteUsada: false,
         });
         onResultado?.(total, rolagem1);
       }
@@ -265,6 +280,25 @@ export function RollProvider({ children }: { children: ReactNode }) {
     }, DURACAO_ANIMACAO_MS);
   }, [estado, bonusExtraProvider]);
 
+  const [sorteDisponivel, setSorteDisponivel] = useState(false);
+  const registrarSorte = useCallback((disponivel: boolean) => setSorteDisponivel(disponivel), []);
+
+  const usarSorte = useCallback(() => {
+    if (!sorteDisponivel) return;
+    if (!estado || estado.fase !== 'concluido' || estado.tipo !== 'd20') return;
+    if (estado.valorDado !== 1 || estado.dado2 || estado.sorteUsada) return;
+    setEstado((prev) => (prev ? { ...prev, valorDado: '🎲', sorteUsada: true } : prev));
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setEstado((prev) => {
+        if (!prev || prev.tipo !== 'd20') return prev;
+        const novaRolagem = rolarD20Dado();
+        const total = novaRolagem + (prev.mod ?? 0) + (typeof prev.bonusExtra?.valor === 'number' ? prev.bonusExtra.valor : 0);
+        return { ...prev, valorDado: novaRolagem, total, critico: criticoDe(novaRolagem) };
+      });
+    }, DURACAO_ANIMACAO_MS);
+  }, [estado, sorteDisponivel]);
+
   return (
     <RollContext.Provider
       value={{
@@ -276,6 +310,9 @@ export function RollProvider({ children }: { children: ReactNode }) {
         bonusExtraDisponivel: bonusExtraProvider,
         registrarBonusExtra,
         aplicarBonusExtra,
+        sorteDisponivel,
+        registrarSorte,
+        usarSorte,
       }}
     >
       {children}

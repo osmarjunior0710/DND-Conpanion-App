@@ -2,7 +2,8 @@ import { useRoll } from './RollContext';
 import styles from './RollOverlay.module.css';
 
 export default function RollOverlay() {
-  const { estado, escolherVantagemPosRolagem, fechar, bonusExtraDisponivel, aplicarBonusExtra } = useRoll();
+  const { estado, escolherVantagemPosRolagem, fechar, bonusExtraDisponivel, aplicarBonusExtra, sorteDisponivel, usarSorte } =
+    useRoll();
 
   if (!estado) return null;
 
@@ -57,6 +58,16 @@ export default function RollOverlay() {
             </div>
           </div>
         )}
+        {sorteDisponivel &&
+          estado.fase === 'concluido' &&
+          estado.tipo === 'd20' &&
+          estado.valorDado === 1 &&
+          !estado.dado2 &&
+          !estado.sorteUsada && (
+            <div className={styles.bonusExtraBtn} onClick={usarSorte}>
+              🍀 Sorte — jogar de novo
+            </div>
+          )}
         {estado.categoria === 'atributoOuSalvaguarda' && estado.bonusExtra && (
           <>
             <div className={styles.formula}>

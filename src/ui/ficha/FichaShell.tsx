@@ -127,7 +127,7 @@ export default function FichaShell() {
 
 function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }) {
   const navigate = useNavigate();
-  const { registrarBonusExtra } = useRoll();
+  const { registrarBonusExtra, registrarSorte } = useRoll();
   const [selecao, setSelecao] = useState<WizardSelection>(personagemSalvo.selecao);
   const classe = classeDaSelecao(selecao);
   const conValor = selecao.atributos.CON;
@@ -698,6 +698,13 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     });
     return () => registrarBonusExtra(null);
   }, [sorteDoTenebrosoDisponivel, sorteDoTenebrosoRestantes, sorteDoTenebrosoMaximo, registrarBonusExtra]);
+
+  // Registra Sorte (Pequenino) no modal de rolagem global — some
+  // sozinho se a Ficha desmontar ou a espécie mudar.
+  useEffect(() => {
+    registrarSorte(selecao.especie === 'Pequenino');
+    return () => registrarSorte(false);
+  }, [selecao.especie, registrarSorte]);
 
   function usarSurto(): boolean {
     if (surtoRestantes <= 0 || surtoUsadoTurno) return false;

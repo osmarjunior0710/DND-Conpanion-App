@@ -171,10 +171,18 @@ sempre que possível — ver 6.1):
         turno; Vigor Implacável aparece "DISPONÍVEL" na aba Atributos.
         `npx tsc -b`, `npm test -- --run` (191 testes) e `npm run
         build` passando.
-  - [ ] **8b. Pequenino — Sorte** (reroll em resultado 1 no d20 —
-        parecido com o padrão `BonusExtraProvider` já usado pra Sorte
-        do Tenebroso/Indomável, mas é REROLL, não bônus somado —
-        precisa de variante nova do mecanismo).
+  - [x] **8b. Pequenino — Sorte** — reroll no d20 quando sai 1, em
+        QUALQUER teste de d20 (não só atributo/salvaguarda, diferente
+        do Bônus Extra) — variante nova no `RollContext.tsx`
+        (`sorteDisponivel`/`registrarSorte`/`usarSorte`), botão "🍀
+        Sorte — jogar de novo" no `RollOverlay.tsx` ao lado de
+        Vantagem/Desvantagem, sem limite de usos (regra real), só 1x
+        por rolagem mesmo que o novo resultado também seja 1
+        (`sorteUsada`). Testado com Playwright forçando `Math.random`
+        pra garantir o 1 e depois o reroll: Pequenino mostra o botão e
+        o resultado muda de 1→11 ao usar; Humano (controle) não mostra
+        o botão. `npx tsc -b`, `npm test -- --run` (191 testes) e
+        `npm run build` passando.
   - Aasimar — Mãos Curativas (Ação Usar Magia, toca 1 criatura, cura
     Xd4 = Bônus de Proficiência, 1x/Descanso Longo); Revelação
     Celestial (nível 3+, Ação Bônus, escolhe 1 de 3 formas — Asas
