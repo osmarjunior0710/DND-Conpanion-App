@@ -338,3 +338,29 @@ que o Osmar vai definir como implementar antes da gente mexer).
       aba Mochila sobe pra 216 kg (8 × 27, Enorme = 2 tamanhos acima).
       `npx tsc -b`, `npm test -- --run` (203 testes, 5 novos) e `npm
       run build` passando.
+
+- [x] **11. Inspiração Heroica (Humano/universal)** — SDD lido e
+      validado com o Osmar antes de codar (`17ef8e54-sddinspiracaoheroica.md`).
+      Recurso universal, flag booleano (nunca contador — "nunca mais
+      de uma de cada vez"). Layout da aba Atributos mudou: Nível +
+      botões de Level Up (agora só ícone ⬆️/⚡, sem texto, pra caber)
+      dividem a linha com PV; a antiga posição do PV na segunda linha
+      virou a caixa nova "Ins. Her." (boolean, toque liga/desliga —
+      representa concessão do Mestre, já que o app não tem modo
+      Mestre). Humano (traço Eficiente) liga sozinho a cada Descanso
+      Longo, sem nunca desligar sozinho. Efeito implementado (por
+      enquanto só em rolagens de D20, ver Backlog.md pra dano): igual
+      ao padrão já usado pela Sorte do Pequenino (`RollContext.tsx`/
+      `RollOverlay.tsx`) — se `disponivel`, qualquer d20 concluído (sem
+      Vantagem/Desvantagem em jogo) ganha o botão "✨ Inspiração
+      Heroica" com o texto menor "Rola dado novamente e fica com novo
+      valor"; usar reroga o dado e desliga o flag. Criado `Backlog.md`
+      (regra de atualização em CLAUDE.md seção 17) pra guardar melhoria
+      conhecida mas não prioritária agora — primeira entrada é o
+      próprio reroll de dano da Inspiração Heroica. Testado com
+      Playwright: caixa "Ins. Her." liga/desliga tocando; ao rolar
+      Iniciativa com ela ligada aparece o botão novo ao lado de
+      Vantagem/Desvantagem; usar reroga o d20 e a caixa volta pra "—";
+      Humano nível 1 mostra "—" antes do Descanso Longo e "✨ Sim"
+      depois. `npx tsc -b`, `npm test -- --run` (203 testes) e `npm
+      run build` passando.

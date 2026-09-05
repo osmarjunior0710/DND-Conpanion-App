@@ -136,7 +136,7 @@ export default function FichaShell() {
 
 function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }) {
   const navigate = useNavigate();
-  const { registrarBonusExtra, registrarSorte } = useRoll();
+  const { registrarBonusExtra, registrarSorte, registrarInspiracaoHeroica } = useRoll();
   const [selecao, setSelecao] = useState<WizardSelection>(personagemSalvo.selecao);
   const classe = classeDaSelecao(selecao);
   const conValor = selecao.atributos.CON;
@@ -198,6 +198,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [falarComAnimaisGnomoGasto, setFalarComAnimaisGnomoGasto] = useState(
     personagemSalvo.falarComAnimaisGnomoGasto ?? 0,
   );
+  const [inspiracaoHeroicaAtiva, setInspiracaoHeroicaAtiva] = useState(personagemSalvo.inspiracaoHeroicaAtiva ?? false);
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
   const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
@@ -442,6 +443,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       revelacaoCelestialGasto,
       revelacaoCelestialFormaAtiva,
       falarComAnimaisGnomoGasto,
+      inspiracaoHeroicaAtiva,
       indomavelGasto,
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
@@ -492,6 +494,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     revelacaoCelestialGasto,
     revelacaoCelestialFormaAtiva,
     falarComAnimaisGnomoGasto,
+    inspiracaoHeroicaAtiva,
     indomavelGasto,
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
@@ -669,6 +672,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
 
   function descansoLongo() {
     setPvAtual(personagem.pvMax);
+    // Eficiente (Humano) — "começa cada dia com Inspiração Heroica";
+    // como o app não segue tempo real, a aproximação (ver SDD) é
+    // conceder de novo a cada Descanso Longo. Nunca desliga sozinho
+    // aqui — só o jogador desliga (manual ou usando o reroll).
+    if (selecao.especie === 'Humano') setInspiracaoHeroicaAtiva(true);
     setEspacosGastosPorCirculo({});
     setFolegoGasto(0);
     setVigorImplacavelGasto(false);
@@ -846,6 +854,21 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     registrarSorte(selecao.especie === 'Pequenino');
     return () => registrarSorte(false);
   }, [selecao.especie, registrarSorte]);
+
+  function alternarInspiracaoHeroica() {
+    setInspiracaoHeroicaAtiva((v) => !v);
+  }
+
+  // Registra Inspiração Heroica no modal de rolagem global — some
+  // sozinha se a Ficha desmontar. `usar` zera o flag quando o
+  // jogador reroga um d20 pelo RollOverlay (ver RollContext).
+  useEffect(() => {
+    registrarInspiracaoHeroica({
+      disponivel: inspiracaoHeroicaAtiva,
+      usar: () => setInspiracaoHeroicaAtiva(false),
+    });
+    return () => registrarInspiracaoHeroica(null);
+  }, [inspiracaoHeroicaAtiva, registrarInspiracaoHeroica]);
 
   function usarSurto(): boolean {
     if (surtoRestantes <= 0 || surtoUsadoTurno) return false;
@@ -1066,6 +1089,8 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             }}
             temVigorImplacavel={temVigorImplacavel}
             vigorImplacavelGasto={vigorImplacavelGasto}
+            inspiracaoHeroicaAtiva={inspiracaoHeroicaAtiva}
+            onAlternarInspiracaoHeroica={alternarInspiracaoHeroica}
           />
         )}
         {tab === 'perfil' && (

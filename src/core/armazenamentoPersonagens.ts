@@ -205,6 +205,14 @@ export interface PersonagemSalvo {
    * Bosque) desde o último Descanso Longo — só ele reseta. Máximo =
    * Bônus de Proficiência. */
   falarComAnimaisGnomoGasto?: number;
+  /** Inspiração Heroica (recurso universal, ver `Backlog.md`/SDD) —
+   * flag booleano, nunca contador ("nunca mais de uma de cada vez").
+   * `true` = personagem tem agora. O jogador liga/desliga manualmente
+   * na aba Atributos (representa concessão do Mestre, já que o app
+   * não tem modo Mestre); Humano também vira `true` sozinho a cada
+   * Descanso Longo (traço Eficiente). Gasto = usar o reroll no
+   * RollOverlay, que zera pra `false`. */
+  inspiracaoHeroicaAtiva?: boolean;
 }
 
 export interface ArmazenamentoPersonagens {

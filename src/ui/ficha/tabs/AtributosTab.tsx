@@ -55,6 +55,10 @@ interface AtributosTabProps {
   temVigorImplacavel: boolean;
   /** `true` = já disparou desde o último Descanso Longo. */
   vigorImplacavelGasto: boolean;
+  /** Inspiração Heroica (recurso universal, flag booleano — nunca
+   * contador). O jogador liga/desliga tocando na caixa. */
+  inspiracaoHeroicaAtiva: boolean;
+  onAlternarInspiracaoHeroica: () => void;
 }
 
 export default function AtributosTab({
@@ -88,34 +92,35 @@ export default function AtributosTab({
   onTrocarResistenciaInfera,
   temVigorImplacavel,
   vigorImplacavelGasto,
+  inspiracaoHeroicaAtiva,
+  onAlternarInspiracaoHeroica,
 }: AtributosTabProps) {
   const { rolarD20 } = useRoll();
   const sentidosParaExibir = sentidosAtivos(sentidos);
 
   return (
     <>
-      <div className={`box-solid ${styles.levelBox}`}>
-        <div>
-          <div className="label">nível atual</div>
-          <div style={{ fontSize: 17 }}>{nivel}</div>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <div className="btn btn-primary" style={{ padding: '8px 16px' }} onClick={onAbrirLevelUp}>
-            ⬆ Level Up
+      <div className={styles.topRow}>
+        <div className={`box-solid ${styles.levelBox}`}>
+          <div>
+            <div className="label">nível atual</div>
+            <div style={{ fontSize: 17 }}>{nivel}</div>
           </div>
-          {onLevelUpRapido && (
-            <div
-              className="btn"
-              style={{ padding: '8px 16px', background: 'var(--warn)', borderColor: 'var(--warn)', color: '#fff', fontWeight: 'bold' }}
-              onClick={onLevelUpRapido}
-            >
-              ⚡ Rápido
+          <div style={{ display: 'flex', gap: 8 }}>
+            <div className="btn btn-primary" style={{ padding: '8px 10px' }} onClick={onAbrirLevelUp}>
+              ⬆️
             </div>
-          )}
+            {onLevelUpRapido && (
+              <div
+                className="btn"
+                style={{ padding: '8px 10px', background: 'var(--warn)', borderColor: 'var(--warn)', color: '#fff', fontWeight: 'bold' }}
+                onClick={onLevelUpRapido}
+              >
+                ⚡
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-
-      <div className={styles.hpRow}>
         <div className={`box ${styles.hpBox}`}>
           <div className="label">
             PV <InfoValor titulo="Pontos de Vida máximos" explicacao={explicacaoPv} />
@@ -123,6 +128,16 @@ export default function AtributosTab({
           <div className={styles.hpNum}>
             {pvAtual}/{pvMax}
           </div>
+        </div>
+      </div>
+
+      <div className={styles.hpRow}>
+        <div
+          className={`box ${styles.hpBox} ${inspiracaoHeroicaAtiva ? styles.hpBoxAtivo : ''}`}
+          onClick={onAlternarInspiracaoHeroica}
+        >
+          <div className="label">Ins. Her.</div>
+          <div className={styles.hpNum}>{inspiracaoHeroicaAtiva ? '✨ Sim' : '—'}</div>
         </div>
         <div className={`box ${styles.hpBox}`}>
           <div className="label">

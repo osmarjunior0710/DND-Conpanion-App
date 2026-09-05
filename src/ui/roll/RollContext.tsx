@@ -72,6 +72,22 @@ export interface RollState {
   /** `true` = o jogador já usou Sorte (Pequenino) nesta rolagem — só 1x
    * por rolagem, mesmo que o novo resultado também seja 1. */
   sorteUsada?: boolean;
+  /** `true` = o jogador já usou Inspiração Heroica nesta rolagem. */
+  inspiracaoHeroicaUsada?: boolean;
+}
+
+/** Inspiração Heroica — flag booleano por personagem (nunca contador,
+ * ver SDD): se `disponivel`, rejoga QUALQUER d20 já concluído (sem
+ * Vantagem/Desvantagem em jogo) e usa o novo resultado, gastando a
+ * inspiração (`usar()` zera o flag no personagem). Registrado pela
+ * Ficha do mesmo jeito que `BonusExtraProvider`, pelo mesmo motivo
+ * (`RollOverlay` é global, sem acesso direto ao estado do personagem).
+ * Só cobre rolagens de D20 por enquanto — reroll de dano fica pro
+ * Backlog.md. */
+export interface InspiracaoHeroicaProvider {
+  disponivel: boolean;
+  /** Gasta a Inspiração Heroica no personagem (zera o flag). */
+  usar: () => void;
 }
 
 interface RollD20Options {
@@ -130,6 +146,16 @@ interface RollContextValue {
    * Vantagem/Desvantagem e do Bônus Extra). Sempre usa a nova jogada,
    * mesmo se também sair 1 (regra real). */
   usarSorte: () => void;
+  /** `true` só quando o personagem da tela atual tem Inspiração
+   * Heroica agora — controla se o botão de reroll aparece em QUALQUER
+   * d20 concluído (sem Vantagem/Desvantagem em jogo). */
+  inspiracaoHeroicaDisponivel: boolean;
+  registrarInspiracaoHeroica: (provider: InspiracaoHeroicaProvider | null) => void;
+  /** Joga de novo o d20 de uma rolagem 'd20' concluída (qualquer
+   * resultado, sem Vantagem/Desvantagem em jogo, ainda não usada
+   * nesta rolagem) — substitui o resultado e gasta a Inspiração
+   * Heroica do personagem (`InspiracaoHeroicaProvider.usar`). */
+  usarInspiracaoHeroica: () => void;
 }
 
 const RollContext = createContext<RollContextValue | null>(null);
@@ -186,6 +212,7 @@ export function RollProvider({ children }: { children: ReactNode }) {
           categoria,
           bonusExtra: null,
           sorteUsada: false,
+          inspiracaoHeroicaUsada: false,
         });
         onResultado?.(total, usado);
       } else {
@@ -205,6 +232,7 @@ export function RollProvider({ children }: { children: ReactNode }) {
           categoria,
           bonusExtra: null,
           sorteUsada: false,
+          inspiracaoHeroicaUsada: false,
         });
         onResultado?.(total, rolagem1);
       }
@@ -299,6 +327,29 @@ export function RollProvider({ children }: { children: ReactNode }) {
     }, DURACAO_ANIMACAO_MS);
   }, [estado, sorteDisponivel]);
 
+  const [inspiracaoHeroicaProvider, setInspiracaoHeroicaProvider] = useState<InspiracaoHeroicaProvider | null>(null);
+  const registrarInspiracaoHeroica = useCallback(
+    (provider: InspiracaoHeroicaProvider | null) => setInspiracaoHeroicaProvider(provider),
+    [],
+  );
+
+  const usarInspiracaoHeroica = useCallback(() => {
+    if (!inspiracaoHeroicaProvider?.disponivel) return;
+    if (!estado || estado.fase !== 'concluido' || estado.tipo !== 'd20') return;
+    if (estado.dado2 || estado.inspiracaoHeroicaUsada) return;
+    inspiracaoHeroicaProvider.usar();
+    setEstado((prev) => (prev ? { ...prev, valorDado: '🎲', inspiracaoHeroicaUsada: true } : prev));
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setEstado((prev) => {
+        if (!prev || prev.tipo !== 'd20') return prev;
+        const novaRolagem = rolarD20Dado();
+        const total = novaRolagem + (prev.mod ?? 0) + (typeof prev.bonusExtra?.valor === 'number' ? prev.bonusExtra.valor : 0);
+        return { ...prev, valorDado: novaRolagem, total, critico: criticoDe(novaRolagem) };
+      });
+    }, DURACAO_ANIMACAO_MS);
+  }, [estado, inspiracaoHeroicaProvider]);
+
   return (
     <RollContext.Provider
       value={{
@@ -313,6 +364,9 @@ export function RollProvider({ children }: { children: ReactNode }) {
         sorteDisponivel,
         registrarSorte,
         usarSorte,
+        inspiracaoHeroicaDisponivel: inspiracaoHeroicaProvider?.disponivel ?? false,
+        registrarInspiracaoHeroica,
+        usarInspiracaoHeroica,
       }}
     >
       {children}
