@@ -52,7 +52,7 @@ describe('magiasEspecie', () => {
   });
 
   it('magia de nível 1 (Gnomo do Bosque — Falar com Animais) já disponível desde a criação', () => {
-    expect(magiasEspecie(selecao('Gnomo', 'Gnomo do Bosque'), 1)).toEqual(['Falar com Animais']);
+    expect(magiasEspecie(selecao('Gnomo', 'Gnomo do Bosque'), 1)).toEqual(['Falar com Animais - Traço de Gnomo']);
   });
 
   it('Gnomo das Rochas não tem magia de nível 1/3/5, só os truques', () => {

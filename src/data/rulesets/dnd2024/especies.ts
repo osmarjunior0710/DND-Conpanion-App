@@ -357,7 +357,7 @@ export const especies: Especie[] = [
         nome: "Gnomo do Bosque",
         descricaoEfeito: "Você conhece o truque Ilusão Menor. Você também sempre tem a magia Falar com Animais preparada, conjurável sem espaço de magia um número de vezes igual ao seu Bônus de Proficiência (recarrega em Descanso Longo), além de com qualquer espaço de magia que tiver.",
         truquesConhecidos: ["Ilusão Menor"],
-        magiaNivel1: "Falar com Animais",
+        magiaNivel1: "Falar com Animais - Traço de Gnomo",
       },
     ],
     disponivel: true,

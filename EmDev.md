@@ -246,10 +246,31 @@ sempre que possível — ver 6.1):
         lembrança no painel Bônus e marca a Ação Bônus do turno como
         usada. `npx tsc -b`, `npm test -- --run` (195 testes) e `npm
         run build` passando.
-  - Gnomo — Gnomo do Bosque (Falar com Animais grátis, usos = Bônus de
-    Proficiência, Descanso Longo); Gnomo das Rochas (fabricar
-    dispositivo — mais utilidade/downtime que combate, prioridade
-    baixa).
+  - [x] **8f. Gnomo do Bosque — Falar com Animais grátis** — a magia
+        concedida pelo traço é conjurável sem gastar Espaço de Magia um
+        número de vezes = Bônus de Proficiência (Descanso Longo), mas
+        antes disso o app tratava ela igual a qualquer magia normal de
+        1º círculo — exigindo um Espaço de Magia de verdade, o que
+        travava totalmente quem não tem espaço (ex.: Guerreiro Gnomo do
+        Bosque). Correção: criada uma 2ª entrada no catálogo de magias,
+        **"Falar com Animais - Traço de Gnomo"** (mesmo efeito, nome
+        próprio pra nunca colidir com a "Falar com Animais" que um
+        conjurador de verdade, ex. Druida, já conhece pela classe — se
+        o personagem tiver as duas, aparecem como 2 linhas separadas,
+        cada uma com sua própria regra de custo). Essa entrada saiu da
+        lista genérica de "Usar Magia" (que sempre pede Espaço de
+        Magia) e ganhou card e contador PRÓPRIOS no painel Ação, igual
+        Mãos Curativas do Aasimar — continua listada em "Magias da
+        Espécie" na aba Magias só como referência. Testado com
+        Playwright: Gnomo do Bosque nível 5 mostra "Falar com Animais
+        (Traço de Gnomo)" com 3/3 usos no painel Ação; tocar marca a
+        Ação do turno como usada e fecha o painel com o lembrete. `npx
+        tsc -b`, `npm test -- --run` (195 testes) e `npm run build`
+        passando.
+
+Item 8 fechado — todas as espécies com traço ATIVO em Combat têm
+mecânica funcional (Gnomo das Rochas continua só descritivo de
+propósito, fabricar dispositivo é utilidade/downtime, não combate).
 
   **Só passivo/descritivo — não precisa de UI em Combat, texto na
   aba Perfil já resolve:** Visão no Escuro (todas — já é

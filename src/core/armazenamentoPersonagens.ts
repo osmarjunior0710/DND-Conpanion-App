@@ -194,6 +194,10 @@ export interface PersonagemSalvo {
    * lembrança fica visível até o próximo Descanso Longo, junto com
    * `revelacaoCelestialGasto` (reseta os dois juntos). */
   revelacaoCelestialFormaAtiva?: string | null;
+  /** Usos gastos de "Falar com Animais - Traço de Gnomo" (Gnomo do
+   * Bosque) desde o último Descanso Longo — só ele reseta. Máximo =
+   * Bônus de Proficiência. */
+  falarComAnimaisGnomoGasto?: number;
 }
 
 export interface ArmazenamentoPersonagens {

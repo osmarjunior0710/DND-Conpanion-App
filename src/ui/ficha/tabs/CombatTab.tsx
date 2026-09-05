@@ -95,6 +95,12 @@ interface CombatTabProps {
   danoBonusRevelacaoCelestial: number;
   cdMantoNecrotico: number;
   onUsarRevelacaoCelestial: (formaEscolhida: string) => boolean;
+  /** Falar com Animais - Traço de Gnomo (Gnomo do Bosque) — `false` =
+   * não é essa sub-escolha. */
+  falarComAnimaisGnomoDisponivel: boolean;
+  usosFalarComAnimaisGnomoMaximo: number;
+  usosFalarComAnimaisGnomoRestantes: number;
+  onUsarFalarComAnimaisGnomo: () => boolean;
   conjura: boolean;
   truques: Magia[];
   magiasPreparadasAcao: Magia[];
@@ -190,6 +196,10 @@ export default function CombatTab({
   danoBonusRevelacaoCelestial,
   cdMantoNecrotico,
   onUsarRevelacaoCelestial,
+  falarComAnimaisGnomoDisponivel,
+  usosFalarComAnimaisGnomoMaximo,
+  usosFalarComAnimaisGnomoRestantes,
+  onUsarFalarComAnimaisGnomo,
   conjura,
   truques,
   magiasPreparadasAcao,
@@ -774,6 +784,10 @@ export default function CombatTab({
             maosCurativasGasto={maosCurativasGasto}
             dadosMaosCurativas={dadosMaosCurativas}
             onUsarMaosCurativas={onUsarMaosCurativas}
+            falarComAnimaisGnomoDisponivel={falarComAnimaisGnomoDisponivel}
+            usosFalarComAnimaisGnomoMaximo={usosFalarComAnimaisGnomoMaximo}
+            usosFalarComAnimaisGnomoRestantes={usosFalarComAnimaisGnomoRestantes}
+            onUsarFalarComAnimaisGnomo={onUsarFalarComAnimaisGnomo}
           />
         )}
         {painelAberto === 'bonus' && (

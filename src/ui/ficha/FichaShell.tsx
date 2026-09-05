@@ -89,6 +89,11 @@ import LivroDasSombrasShell from './levelup/LivroDasSombrasShell';
 
 type TabName = 'atributos' | 'perfil' | 'mochila' | 'magias' | 'combat';
 
+/** Nome do "Falar com Animais" concedido pelo Gnomo do Bosque — ver
+ * comentário em `magias.ts` (id "falarcomanimais-gnomo") sobre por que
+ * é uma entrada separada da magia normal. */
+const NOME_FALAR_COM_ANIMAIS_GNOMO = 'Falar com Animais - Traço de Gnomo';
+
 const TABS: { id: TabName; label: string; icon: string }[] = [
   { id: 'atributos', label: 'Atributos', icon: '🧬' },
   { id: 'perfil', label: 'Perfil', icon: '📜' },
@@ -187,6 +192,9 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const [revelacaoCelestialFormaAtiva, setRevelacaoCelestialFormaAtiva] = useState(
     personagemSalvo.revelacaoCelestialFormaAtiva ?? null,
   );
+  const [falarComAnimaisGnomoGasto, setFalarComAnimaisGnomoGasto] = useState(
+    personagemSalvo.falarComAnimaisGnomoGasto ?? 0,
+  );
   const [indomavelGasto, setIndomavelGasto] = useState(personagemSalvo.indomavelGasto ?? 0);
   const [sorteDoTenebrosoGasto, setSorteDoTenebrosoGasto] = useState(personagemSalvo.sorteDoTenebrosoGasto ?? 0);
   const [resistenciaInferaAtual, setResistenciaInferaAtual] = useState<string | null>(
@@ -282,6 +290,11 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
   const danoBonusRevelacaoCelestial = bonusProficienciaAtual;
   const carValorFinal = valorFinalAtributo(selecao, 'CAR') ?? 10;
   const cdMantoNecrotico = 8 + modificador(carValorFinal) + bonusProficienciaAtual;
+  const falarComAnimaisGnomoDisponivel =
+    selecao.especie === 'Gnomo' && selecao.subescolhaEspecieEscolhida === 'Gnomo do Bosque';
+  const usosFalarComAnimaisGnomoMaximo =
+    falarComAnimaisGnomoDisponivel && classe ? bonusProficiencia(classe, personagem.nivel) : 0;
+  const usosFalarComAnimaisGnomoRestantes = Math.max(0, usosFalarComAnimaisGnomoMaximo - falarComAnimaisGnomoGasto);
   const conjura = personagemConjura(classe, selecao);
   const espacos = espacosDeMagiaAtivos(classe, personagem.nivel);
   const truques = truquesDoPersonagem(truquesAtuais);
@@ -320,12 +333,21 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     ...magiasEspecieDoPersonagem(selecao, personagem.nivel),
   ];
   const magiasEspeciePreparadas = magiasPreparadasDoPersonagem(magiasEspecieAtuais);
+  // "Falar com Animais - Traço de Gnomo" sai da lista genérica de
+  // conjuração (que sempre exige gastar Espaço de Magia de verdade) —
+  // ela tem card e contador PRÓPRIOS no painel Ação (usos = Bônus de
+  // Proficiência, grátis, ver `usarFalarComAnimaisGnomo` abaixo), mas
+  // continua aparecendo em "Magias da Espécie" na aba Magias
+  // (`magiasEspecieAtuais`, sem filtro) só como referência.
+  const magiasEspeciePreparadasConjuraveis = magiasEspeciePreparadas.filter(
+    (m) => m.nome !== NOME_FALAR_COM_ANIMAIS_GNOMO,
+  );
   const magiasConjuraveis = [
     ...magiasPreparadas,
     ...magiasDescobertasMagicas,
     ...livroDasSombras,
     ...magiasPactoDoInferoPreparadas,
-    ...magiasEspeciePreparadas,
+    ...magiasEspeciePreparadasConjuraveis,
   ];
   const magiasPreparadasReacao = magiasConjuraveis.filter(ehMagiaDeReacao);
   const magiasPreparadasAcao = magiasConjuraveis.filter((m) => !ehMagiaDeReacao(m));
@@ -415,6 +437,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
       maosCurativasGasto,
       revelacaoCelestialGasto,
       revelacaoCelestialFormaAtiva,
+      falarComAnimaisGnomoGasto,
       indomavelGasto,
       sorteDoTenebrosoGasto,
       resistenciaInferaAtual,
@@ -463,6 +486,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     maosCurativasGasto,
     revelacaoCelestialGasto,
     revelacaoCelestialFormaAtiva,
+    falarComAnimaisGnomoGasto,
     indomavelGasto,
     sorteDoTenebrosoGasto,
     resistenciaInferaAtual,
@@ -558,6 +582,12 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     return true;
   }
 
+  function usarFalarComAnimaisGnomo(): boolean {
+    if (usosFalarComAnimaisGnomoRestantes <= 0) return false;
+    setFalarComAnimaisGnomoGasto((v) => v + 1);
+    return true;
+  }
+
   function marcarUsado(categoria: RecursoTurno) {
     setTurnState((prev) => ({ ...prev, [categoria]: 'usada' }));
   }
@@ -636,6 +666,7 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
     setMaosCurativasGasto(false);
     setRevelacaoCelestialGasto(false);
     setRevelacaoCelestialFormaAtiva(null);
+    setFalarComAnimaisGnomoGasto(0);
     setIndomavelGasto(0);
     setSorteDoTenebrosoGasto(0);
     setSurtoGasto(0);
@@ -1146,6 +1177,10 @@ function FichaConteudo({ personagemSalvo }: { personagemSalvo: PersonagemSalvo }
             danoBonusRevelacaoCelestial={danoBonusRevelacaoCelestial}
             cdMantoNecrotico={cdMantoNecrotico}
             onUsarRevelacaoCelestial={usarRevelacaoCelestial}
+            falarComAnimaisGnomoDisponivel={falarComAnimaisGnomoDisponivel}
+            usosFalarComAnimaisGnomoMaximo={usosFalarComAnimaisGnomoMaximo}
+            usosFalarComAnimaisGnomoRestantes={usosFalarComAnimaisGnomoRestantes}
+            onUsarFalarComAnimaisGnomo={usarFalarComAnimaisGnomo}
             conjura={conjura}
             truques={truques}
             magiasPreparadasAcao={magiasPreparadasAcao}
